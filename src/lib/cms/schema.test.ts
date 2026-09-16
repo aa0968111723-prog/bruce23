@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
-import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink } from "../canva/parse.ts";
+import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
 import { verifyDemoUrl } from "../demo/verify.ts";
 import { projectInputSchema } from "./schema.ts";
 import { toPublicProject } from "./store.ts";
@@ -100,6 +100,20 @@ describe("canva allowlist", () => {
     assert.equal(stored.embedUrl, null);
     assert.equal(stored.designId, null);
     assert.equal(stored.statusHint, "pending");
+    assert.equal(classifyCanvaNavigationUrl("https://www.canva.com/d/ysK5sYZisVEjZFe").class, "short-link");
+    assert.equal(classifyCanvaNavigationUrl("https://www.canva.com/d/ysK5sYZisVEjZFe").designId, null);
+    assert.equal(classifyCanvaNavigationUrl("https://www.canva.com/design/DAGfromNav/view").class, "design");
+    assert.equal(
+      classifyCanvaPageOutcome({ url: "https://www.canva.com/d/ysK5sYZisVEjZFe", title: "Just a moment..." }),
+      "cloudflare-challenge",
+    );
+    assert.equal(
+      classifyCanvaPageOutcome({
+        url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        title: "Looks like we hit a roadblock",
+      }),
+      "not-found",
+    );
   });
 
   it("keeps a resolved embed when the share field is still a /d/ short URL", () => {
@@ -262,7 +276,7 @@ describe("privacy", () => {
           shareUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe",
           embedUrl: null,
           designId: null,
-          thumbnailUrl: null,
+          thumbnailUrl: "/media/covers/ai-director-os.svg",
           status: "unavailable",
           lastSyncedAt: null,
         },

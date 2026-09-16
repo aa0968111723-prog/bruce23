@@ -15,8 +15,13 @@ export const Route = createFileRoute("/archive")({
   component: Archive,
 });
 
-function hasPublicCanvaEmbed(item: PublicArchiveItem): boolean {
-  return Boolean(parseCanvaDesign(item.canva.embedUrl || item.canva.shareUrl));
+function hasPublicCanvaSurface(item: PublicArchiveItem): boolean {
+  return Boolean(
+    parseCanvaDesign(item.canva.embedUrl || item.canva.shareUrl) ||
+      item.canva.shareUrl ||
+      item.canva.status === "unavailable" ||
+      item.canva.status === "failed",
+  );
 }
 
 function Archive() {
@@ -69,11 +74,13 @@ function Archive() {
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((item) => (
           <article key={item.id} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-            {hasPublicCanvaEmbed(item) ? (
+            {hasPublicCanvaSurface(item) ? (
               <CanvaStage
                 project={
                   {
+                    slug: item.id,
                     title: item.title,
+                    experienceConfig: {},
                     canva: {
                       shareUrl: item.canva.shareUrl,
                       embedUrl: item.canva.embedUrl,

@@ -43,6 +43,17 @@ export function CanvaStage({ project }: { project: PublicProject }) {
               : "站內只放已匯出的縮圖。沒有 canva.com 分享／嵌入網址，所以不嵌入空白 iframe。"}
           </p>
           {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
+          {original ? (
+            <a
+              className="inline-flex min-h-11 items-center gap-2 text-mint-deep"
+              href={original}
+              rel="noreferrer"
+              target="_blank"
+            >
+              在 Canva 開啟原作
+              <ExternalLink className="size-4" />
+            </a>
+          ) : null}
           <p className="text-xs text-muted">來源標記：公開嵌入模式 · 狀態 {canva.status} · 未宣稱 Connect 已連線</p>
         </div>
       </div>
@@ -62,7 +73,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
           <p className="text-muted">
             {canva.status === "pending" && !embed
               ? "伺服器還沒有從 canva.com 轉址得到 /design/{id}。不會嵌入空白 iframe，也不會標成已驗證。"
-              : "可能是權限改成私人、短網址停在登入牆、分享連結失效，或瀏覽器擋住嵌入。沒有空白 iframe。"}
+              : "可能是失效短網址、Cloudflare 驗證頁、登入牆，或瀏覽器擋住嵌入。沒有空白 iframe。"}
           </p>
           {original ? (
             <a

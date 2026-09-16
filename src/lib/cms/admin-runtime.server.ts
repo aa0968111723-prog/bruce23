@@ -22,7 +22,10 @@ export async function persistCanvaEmbedTest(
   sql: Sql,
   actorUserId: string,
   data: { id?: string; url?: string },
-  options: { fetchImpl?: typeof fetch } = {},
+  options: {
+    fetchImpl?: typeof fetch;
+    navigateImpl?: (url: string) => Promise<{ url: string; title?: string | null }>;
+  } = {},
 ) {
   let raw = data.url ?? "";
   if (data.id && !raw) {
@@ -30,7 +33,10 @@ export async function persistCanvaEmbedTest(
     const project = await getAdminProject(sql, data.id);
     raw = project.canva_embed_url || project.canva_share_url || "";
   }
-  const payload = await resolveCanvaShareUrl(raw, { fetchImpl: options.fetchImpl });
+  const payload = await resolveCanvaShareUrl(raw, {
+    fetchImpl: options.fetchImpl,
+    navigateImpl: options.navigateImpl,
+  });
   if (!data.id) return payload;
   const parsedOk = payload.status === "pending" && payload.parsed === true;
   await sql.query(

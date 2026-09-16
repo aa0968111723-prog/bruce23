@@ -140,8 +140,8 @@ export function canvaFieldsForProject(project: (typeof projects)[number]): Canva
       alt: local?.alt ?? null,
       caption:
         local?.caption ??
-        "Canva 短網址。伺服器跟隨 canva.com 轉址成功後才嵌入，不會標成已驗證。",
-      status: "pending",
+        "瀏覽器與伺服器跟隨後都沒有落到 canva.com/design/{id}（404 或 Cloudflare 驗證頁）。不會嵌入空白 iframe，也不會標成已驗證。",
+      status: "unavailable",
     };
   }
   return fieldsFromParsed(null, local);

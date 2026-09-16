@@ -83,8 +83,8 @@ export function canvaViewerState(canva: CanvaPublicSlice, failed: boolean) {
     return "embed" as const;
   }
   if (canva.status === "unavailable" || canva.status === "failed") {
-    if (canva.thumbnailUrl) return "local" as const;
     if (canva.shareUrl) return "fallback" as const;
+    if (canva.thumbnailUrl) return "local" as const;
     return "empty" as const;
   }
   if (canva.embedUrl || canva.shareUrl) return "fallback" as const;

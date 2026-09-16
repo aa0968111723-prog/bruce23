@@ -10,7 +10,7 @@ import { parseCanvaDesign } from "../canva/parse.ts";
 export const GITHUB_HYDRATE_KEY = "github_hydrate";
 export const GITHUB_HYDRATE_VERSION = "4";
 export const CANVA_SHORTLINK_HYDRATE_KEY = "canva_shortlink_hydrate";
-export const CANVA_SHORTLINK_HYDRATE_VERSION = "2";
+export const CANVA_SHORTLINK_HYDRATE_VERSION = "3";
 
 export type HydrateGithubResult = {
   attempted: number;
@@ -210,7 +210,7 @@ let canvaHydrateInflight: Promise<HydrateCanvaResult> | null = null;
 
 export async function hydratePendingCanvaShortLinks(
   sql: Sql,
-  options: { fetchImpl?: typeof fetch; force?: boolean } = {},
+  options: { fetchImpl?: typeof fetch; force?: boolean; navigateImpl?: (url: string) => Promise<{ url: string; title?: string | null }> } = {},
 ): Promise<HydrateCanvaResult> {
   if (!options.force && canvaHydrateInflight) return canvaHydrateInflight;
   const run = hydratePendingCanvaShortLinksOnce(sql, options);
@@ -225,7 +225,7 @@ export async function hydratePendingCanvaShortLinks(
 
 async function hydratePendingCanvaShortLinksOnce(
   sql: Sql,
-  options: { fetchImpl?: typeof fetch; force?: boolean } = {},
+  options: { fetchImpl?: typeof fetch; force?: boolean; navigateImpl?: (url: string) => Promise<{ url: string; title?: string | null }> } = {},
 ): Promise<HydrateCanvaResult> {
   if (!options.force && !shouldHydrateGithub()) {
     return { attempted: 0, resolved: 0, unavailable: 0, skipped: true };
@@ -269,9 +269,14 @@ async function hydratePendingCanvaShortLinksOnce(
     if (unique.length === 0) continue;
 
     let landed = false;
+    let lastError =
+      "Canva 短網址沒有公開轉到 /design/{id}（登入牆、403、Cloudflare 或失效連結）。不會嵌入空白 iframe，也不會標成已驗證。";
     for (const url of unique) {
       attempted += 1;
-      const result = await resolveCanvaShareUrl(url, { fetchImpl: options.fetchImpl });
+      const result = await resolveCanvaShareUrl(url, {
+        fetchImpl: options.fetchImpl,
+        navigateImpl: options.navigateImpl,
+      });
       if (result.status === "pending" && result.parsed) {
         await sql.query(
           `update projects set
@@ -285,6 +290,7 @@ async function hydratePendingCanvaShortLinksOnce(
         landed = true;
         break;
       }
+      lastError = result.error;
       if (result.status === "unavailable") unavailable += 1;
     }
     if (!landed && unique.length > 0) {
@@ -298,11 +304,7 @@ async function hydratePendingCanvaShortLinksOnce(
           canva_last_synced_at = now(),
           updated_at = now()
          where id = $1 and (canva_embed_url is null or canva_embed_url = '')`,
-        [
-          row.id,
-          "Canva 短網址沒有公開轉到 /design/{id}（登入牆、403 或非公開）。不會嵌入空白 iframe，也不會標成已驗證。",
-          unique[0],
-        ],
+        [row.id, lastError, unique[0]],
       );
     }
   }

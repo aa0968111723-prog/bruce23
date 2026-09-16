@@ -1,0 +1,142 @@
+{
+  "generatedAt": "2026-09-16T15:39:17.696Z",
+  "method": "playwright page.url() after load; fetch Location headers only; HTML unread",
+  "results": [
+    {
+      "shortUrl": "https://www.canva.com/d/ysK5sYZisVEjZFe",
+      "fetchStudioFinalClass": "short-link",
+      "fetchStudio": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "fetchChromeFinalClass": "short-link",
+      "fetchChrome": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "playwright": {
+        "startUrl": "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        "finalUrl": "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        "urlClass": "short-link",
+        "designId": null,
+        "host": "www.canva.com",
+        "path": "/d/ysK5sYZisVEjZFe",
+        "titleClass": null,
+        "titleKind": "present",
+        "navError": null,
+        "elapsedMs": 3159,
+        "screenshot": "/screenshots/canva-nav-1.png"
+      }
+    },
+    {
+      "shortUrl": "https://www.canva.com/d/WJgjSP967WEuhhN",
+      "fetchStudioFinalClass": "short-link",
+      "fetchStudio": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "fetchChromeFinalClass": "short-link",
+      "fetchChrome": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "playwright": {
+        "startUrl": "https://www.canva.com/d/WJgjSP967WEuhhN",
+        "finalUrl": "https://www.canva.com/d/WJgjSP967WEuhhN",
+        "urlClass": "cloudflare-challenge",
+        "designId": null,
+        "host": "www.canva.com",
+        "path": "/d/WJgjSP967WEuhhN",
+        "titleClass": "cloudflare-challenge",
+        "titleKind": "cloudflare-challenge",
+        "navError": null,
+        "elapsedMs": 3319,
+        "screenshot": "/screenshots/canva-nav-2.png"
+      }
+    },
+    {
+      "shortUrl": "https://www.canva.com/d/g4tColMMj63-XRu",
+      "fetchStudioFinalClass": "short-link",
+      "fetchStudio": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "fetchChromeFinalClass": "short-link",
+      "fetchChrome": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "playwright": {
+        "startUrl": "https://www.canva.com/d/g4tColMMj63-XRu",
+        "finalUrl": "https://www.canva.com/d/g4tColMMj63-XRu",
+        "urlClass": "cloudflare-challenge",
+        "designId": null,
+        "host": "www.canva.com",
+        "path": "/d/g4tColMMj63-XRu",
+        "titleClass": "cloudflare-challenge",
+        "titleKind": "cloudflare-challenge",
+        "navError": null,
+        "elapsedMs": 3204,
+        "screenshot": "/screenshots/canva-nav-3.png"
+      }
+    },
+    {
+      "shortUrl": "https://www.canva.com/d/kFV4KQpB2QzPjb0",
+      "fetchStudioFinalClass": "short-link",
+      "fetchStudio": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "fetchChromeFinalClass": "short-link",
+      "fetchChrome": [
+        {
+          "urlClass": "short-link",
+          "status": 403,
+          "location": null,
+          "locationClass": null
+        }
+      ],
+      "playwright": {
+        "startUrl": "https://www.canva.com/d/kFV4KQpB2QzPjb0",
+        "finalUrl": "https://www.canva.com/d/kFV4KQpB2QzPjb0",
+        "urlClass": "cloudflare-challenge",
+        "designId": null,
+        "host": "www.canva.com",
+        "path": "/d/kFV4KQpB2QzPjb0",
+        "titleClass": "cloudflare-challenge",
+        "titleKind": "cloudflare-challenge",
+        "navError": null,
+        "elapsedMs": 4159,
+        "screenshot": "/screenshots/canva-nav-4.png"
+      }
+    }
+  ]
+}

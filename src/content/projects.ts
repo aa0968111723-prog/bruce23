@@ -86,7 +86,7 @@ export const projects: Project[] = [
       {
         label: "Canva 短網址 · healing-studio 品牌主視覺",
         href: "https://www.canva.com/d/ysK5sYZisVEjZFe",
-        note: "來自 healing-studio docs/design-reference.md。短網址不是 design id；只有伺服器跟隨 canva.com 轉址成功後才嵌入。",
+        note: "來自 healing-studio docs/design-reference.md。短網址不是 design id。瀏覽器跟隨後仍停在 /d/（404），所以不嵌入、也不標成已驗證。",
       },
       {
         label: "公開站 · ai-os-app.zeabur.app",

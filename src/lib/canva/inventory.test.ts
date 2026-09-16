@@ -46,7 +46,7 @@ describe("canva content inventory", () => {
     assert.ok(parsed[0].embedUrl.includes("embed"));
   });
 
-  it("keeps all eight works honest: local thumbnails, pending short links, never invented embeds", () => {
+  it("keeps all eight works honest: local thumbnails, unavailable short links, never invented embeds", () => {
     const inventory = projectCanvaInventory();
     assert.equal(Object.keys(inventory).length, 8);
     assert.equal(projects.length, 8);
@@ -60,7 +60,9 @@ describe("canva content inventory", () => {
         assert.equal(fields.thumbnailUrl, "/media/archive/tku-zen-poster.svg");
       } else if (project.slug === "ai-director-os") {
         assert.equal(fields.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
-        assert.equal(fields.status, "pending");
+        assert.equal(fields.status, "unavailable");
+        assert.equal(fields.embedUrl, null);
+        assert.equal(fields.designId, null);
         assert.equal(fields.thumbnailUrl, null);
       } else {
         assert.equal(fields.shareUrl, null, project.slug);

@@ -355,4 +355,33 @@ describe("canva shortlink hydrate", () => {
     assert.equal(admin.canva_design_id, null);
     assert.ok(admin.canva_share_url?.includes("/d/"));
   });
+
+  it("accepts a viewer navigation landing on /design/{id} and never marks verified", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "ai-director-os",
+        title: "AI Director OS",
+        category: "AI Product",
+        year: "2026",
+        product_status: "in-progress",
+        publication_status: "published",
+        featured: true,
+        sort_order: 0,
+      }),
+      "seed",
+    );
+    const { hydratePendingCanvaShortLinks } = await import("./hydrate.ts");
+    await hydratePendingCanvaShortLinks(sql, {
+      force: true,
+      fetchImpl: async () => new Response("blocked", { status: 403 }),
+      navigateImpl: async () => ({ url: "https://www.canva.com/design/DAGhydrateFromNav/view" }),
+    });
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.canva_design_id, "DAGhydrateFromNav");
+    assert.equal(admin.canva_status, "pending");
+    assert.notEqual(admin.canva_status, "verified");
+    assert.ok(admin.canva_embed_url?.includes("embed"));
+  });
 });

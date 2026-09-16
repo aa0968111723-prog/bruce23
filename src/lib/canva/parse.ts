@@ -122,6 +122,85 @@ export function isCanvaLoginUrl(input: string): boolean {
   }
 }
 
+export type CanvaNavigationClass =
+  | "design"
+  | "official-embed"
+  | "short-link"
+  | "login-wall"
+  | "cloudflare-challenge"
+  | "not-found"
+  | "non-design"
+  | "invalid";
+
+/** Classify a navigation URL only. Never reads HTML or invents a design id. */
+export function classifyCanvaNavigationUrl(input: string): {
+  class: CanvaNavigationClass;
+  designId: string | null;
+} {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    return { class: "invalid", designId: null };
+  }
+  if (url.protocol !== "https:" || !isCanvaRedirectHost(url.hostname)) {
+    return { class: "non-design", designId: null };
+  }
+  const parsed = parseCanvaDesign(url.toString());
+  if (parsed) {
+    const embed = url.searchParams.has("embed") || /\/embed\/?$/.test(url.pathname);
+    return { class: embed ? "official-embed" : "design", designId: parsed.designId };
+  }
+  if (isCanvaLoginUrl(url.toString())) return { class: "login-wall", designId: null };
+  if (isCanvaShortLink(url.toString())) return { class: "short-link", designId: null };
+  const path = url.pathname.toLowerCase();
+  if (path.includes("cdn-cgi") || path.includes("challenge")) {
+    return { class: "cloudflare-challenge", designId: null };
+  }
+  if (path.includes("/404") || path.endsWith("/not-found")) {
+    return { class: "not-found", designId: null };
+  }
+  return { class: "non-design", designId: null };
+}
+
+/**
+ * Combine page.url() with page.title() after a viewer-like navigation.
+ * Title is only used to tell challenge / login / 404 from a stuck /d/ URL.
+ * Never parsed for DAG ids.
+ */
+export function classifyCanvaPageOutcome(input: { url: string; title?: string | null }): CanvaNavigationClass {
+  const fromUrl = classifyCanvaNavigationUrl(input.url);
+  if (
+    fromUrl.class === "design" ||
+    fromUrl.class === "official-embed" ||
+    fromUrl.class === "login-wall" ||
+    fromUrl.class === "invalid"
+  ) {
+    return fromUrl.class;
+  }
+  const title = (input.title ?? "").toLowerCase();
+  if (
+    title.includes("just a moment") ||
+    title.includes("attention required") ||
+    title.includes("cloudflare") ||
+    title.includes("verifying")
+  ) {
+    return "cloudflare-challenge";
+  }
+  if (title.includes("log in") || title.includes("sign up") || title.includes("sign in")) {
+    return "login-wall";
+  }
+  if (
+    title.includes("roadblock") ||
+    title.includes("doesn't work") ||
+    title.includes("page not found") ||
+    /\b404\b/.test(title)
+  ) {
+    return "not-found";
+  }
+  return fromUrl.class;
+}
+
 export type CanvaPersistShape = {
   shareUrl: string | null;
   embedUrl: string | null;

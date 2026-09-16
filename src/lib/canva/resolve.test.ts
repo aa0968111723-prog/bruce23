@@ -80,12 +80,56 @@ describe("canva short-link resolve", () => {
   });
 
   it("treats 403 as unavailable permission, not verified", async () => {
+    const uas: string[] = [];
     const result = await resolveCanvaShareUrl(SHORT, {
-      fetchImpl: async () => new Response("blocked", { status: 403 }),
+      fetchImpl: async (_input, init) => {
+        const headers = init?.headers as Record<string, string> | undefined;
+        uas.push(headers?.["User-Agent"] ?? "");
+        return new Response("blocked", { status: 403 });
+      },
     });
     assert.equal(result.status, "unavailable");
     assert.notEqual(result.status, "verified");
     assert.equal(result.embedUrl, null);
+    assert.ok(uas.some((ua) => ua.includes("LuminousStudio")));
+    assert.ok(uas.some((ua) => ua.includes("Chrome")));
+  });
+
+  it("persists /design/{id} from navigateImpl page.url() without reading HTML", async () => {
+    const result = await resolveCanvaShareUrl(SHORT, {
+      fetchImpl: async () => new Response("blocked", { status: 403 }),
+      navigateImpl: async () => ({ url: "https://www.canva.com/design/DAGfromPlaywrightNav/view" }),
+    });
+    assert.equal(result.status, "pending");
+    assert.equal(result.status === "pending" && result.liveProbe, true);
+    assert.equal(result.status === "pending" && result.designId, "DAGfromPlaywrightNav");
+    assert.notEqual(result.status, "verified");
+  });
+
+  it("keeps a Cloudflare challenge navigation as unavailable", async () => {
+    const result = await resolveCanvaShareUrl(SHORT, {
+      fetchImpl: async () => new Response("blocked", { status: 403 }),
+      navigateImpl: async () => ({
+        url: SHORT,
+        title: "Just a moment...",
+      }),
+    });
+    assert.equal(result.status, "unavailable");
+    assert.equal(result.designId, null);
+    assert.match(result.error, /Cloudflare/);
+  });
+
+  it("keeps a Canva 404 roadblock as unavailable without a design id", async () => {
+    const result = await resolveCanvaShareUrl(SHORT, {
+      fetchImpl: async () => new Response("blocked", { status: 403 }),
+      navigateImpl: async () => ({
+        url: SHORT,
+        title: "Looks like we hit a roadblock",
+      }),
+    });
+    assert.equal(result.status, "unavailable");
+    assert.equal(result.embedUrl, null);
+    assert.match(result.error, /失效/);
   });
 
   it("keeps a /design URL as pending without a live probe", async () => {
@@ -112,5 +156,12 @@ describe("canva short-link resolve", () => {
       assert.doesNotMatch(source, /fetch\([^)]*canva\.com/);
       assert.doesNotMatch(source, /canva\.com\/d\/[^"']+["']\s*\)/);
     }
+  });
+
+  it("viewer probe records page.url() and does not scrape HTML for design ids", () => {
+    const source = readFileSync(new URL("../../../scripts/resolve-canva-shortlinks.mjs", import.meta.url), "utf8");
+    assert.match(source, /page\.url\(\)/);
+    assert.doesNotMatch(source, /page\.content\(/);
+    assert.doesNotMatch(source, /innerHTML/);
   });
 });
