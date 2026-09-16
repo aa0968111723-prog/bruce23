@@ -14,6 +14,7 @@ import {
   restoreRevision,
   saveProjectRecord,
   setPublication,
+  toPreviewProject,
   upsertArchive,
 } from "./store.ts";
 import { ensureSeed } from "./seed.ts";
@@ -191,6 +192,16 @@ describe("cms persistence", () => {
     assert.equal(after.problem, "問題敘事");
     assert.equal(after.github_readme, "# FrameLab");
     assert.equal(after.github_sync_status, "verified");
+  });
+
+  it("lets an admin preview a draft without putting it on the public site", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+    const preview = toPreviewProject(created);
+    assert.equal(preview.slug, "test-work");
+    assert.equal(preview.title, "Test Work");
+    assert.equal(preview.summary, "draft only");
   });
 
   it("hides drafts from getPublishedProject and sitemap-facing lists", async () => {

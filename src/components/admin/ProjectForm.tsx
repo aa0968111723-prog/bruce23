@@ -82,6 +82,12 @@ export function ProjectForm({ project }: { project: AdminProject }) {
     >
       {status ? <p className="rounded-xl bg-surface-mint px-4 py-3 text-sm">{status}</p> : null}
       {dirty ? <p className="text-sm text-muted">有未儲存的修改。</p> : null}
+      <p className="text-sm">
+        <a href={`/admin/draft/${form.slug}`} className="text-mint-deep">
+          後台預覽這件作品
+        </a>
+        <span className="text-muted"> · 不會發布到前台</span>
+      </p>
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">敘事</legend>

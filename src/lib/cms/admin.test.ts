@@ -91,6 +91,7 @@ describe("admin allowlist", () => {
     assert.match(source, /canvaCredentialsPresent/);
     assert.doesNotMatch(source, /connected:\s*true/);
     assert.match(source, /authMiddleware/);
+    assert.match(source, /previewDraftFn/);
   });
 
   it("builds sitemap from published projects only", () => {
@@ -105,5 +106,6 @@ describe("admin allowlist", () => {
     assert.doesNotMatch(source, /requireAdminActor/);
     assert.doesNotMatch(source, /GITHUB_READ_TOKEN/);
     assert.doesNotMatch(source, /CANVA_CLIENT_SECRET/);
+    assert.doesNotMatch(source, /previewDraftFn/);
   });
 });

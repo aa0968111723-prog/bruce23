@@ -398,6 +398,19 @@ export const hydrateGithubFn = createServerFn({ method: "POST" })
     return hydratePendingGithub(sql, { force: true });
   });
 
+export const previewDraftFn = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ slug: z.string().min(1) }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { getAdminProjectBySlug, toPreviewProject } = await import("./store");
+    const admin = await getAdminProjectBySlug(sql, data.slug);
+    return {
+      publicationStatus: admin.publication_status,
+      project: toPreviewProject(admin),
+    };
+  });
+
 async function fetchGithub(sql: import("@/lib/db").Sql, url: string) {
   const { fetchPublicRepo } = await import("@/lib/github/client.server");
   const { githubClientOptions } = await import("@/lib/github/sql-cache");

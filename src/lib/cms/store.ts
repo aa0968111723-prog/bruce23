@@ -142,9 +142,7 @@ export function rowToAdminProject(row: ProjectRow): AdminProject {
   };
 }
 
-export function toPublicProject(row: ProjectRow): PublicProject | null {
-  if (row.publication_status !== "published") return null;
-  const admin = rowToAdminProject(row);
+export function serializePublicProject(admin: AdminProject): PublicProject {
   const meta = asRecord(admin.github_metadata);
   const isPrivate = meta.private === true;
   const githubOk = !isPrivate;
@@ -218,6 +216,15 @@ export function toPublicProject(row: ProjectRow): PublicProject | null {
       error: admin.live_demo_error ?? null,
     },
   });
+}
+
+export function toPublicProject(row: ProjectRow): PublicProject | null {
+  if (row.publication_status !== "published") return null;
+  return serializePublicProject(rowToAdminProject(row));
+}
+
+export function toPreviewProject(admin: AdminProject): PublicProject {
+  return serializePublicProject(admin);
 }
 
 export async function listPublishedProjects(sql: Sql): Promise<PublicProject[]> {

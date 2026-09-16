@@ -28,6 +28,9 @@ function PreviewPage() {
               <Link to="/admin/projects/$id/edit" params={{ id: project.id }} className="text-mint-deep">
                 編輯
               </Link>
+              <a href={`/admin/draft/${project.slug}`} className="text-mint-deep">
+                後台預覽
+              </a>
               {project.publication_status === "published" ? (
                 <a href={`/work/${project.slug}`} className="text-mint-deep" target="_blank" rel="noreferrer">
                   前台
