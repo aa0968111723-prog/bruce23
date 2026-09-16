@@ -52,6 +52,7 @@
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-bg);
     color: var(--color-ink);
+    overflow-x: hidden;
   }
 
   body {
@@ -111,6 +112,9 @@
   .orbit {
     animation: orbit 60s linear infinite;
   }
+  .relation-space {
+    transform: rotateX(12deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -120,7 +124,8 @@
     animation: none !important;
   }
 
-  .float-card {
+  .float-card,
+  .relation-space {
     transform: none;
   }
 }

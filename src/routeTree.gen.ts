@@ -12,9 +12,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ArchiveRouteImport } from './routes/archive'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminArchiveRouteImport } from './routes/admin/archive'
+import { Route as AdminIntegrationsRouteImport } from './routes/admin/integrations'
+import { Route as AdminPreviewRouteImport } from './routes/admin/preview'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as WorkIndexRouteImport } from './routes/work/index'
 import { Route as WorkSlugRouteImport } from './routes/work/$slug'
+import { Route as AdminProjectsIndexRouteImport } from './routes/admin/projects/index'
+import { Route as AdminProjectsNewRouteImport } from './routes/admin/projects/new'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiCanvaCallbackRouteImport } from './routes/api/canva/callback'
+import { Route as AdminProjectsIdEditRouteImport } from './routes/admin/projects/$id/edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,10 +44,50 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArchiveRoute = ArchiveRouteImport.update({
   id: '/archive',
   path: '/archive',
   getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminArchiveRoute = AdminArchiveRouteImport.update({
+  id: '/archive',
+  path: '/archive',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminIntegrationsRoute = AdminIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPreviewRoute = AdminPreviewRouteImport.update({
+  id: '/preview',
+  path: '/preview',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
 } as any)
 const WorkIndexRoute = WorkIndexRouteImport.update({
   id: '/work/',
@@ -46,47 +99,172 @@ const WorkSlugRoute = WorkSlugRouteImport.update({
   path: '/work/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjectsIndexRoute = AdminProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProjectsNewRoute = AdminProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCanvaCallbackRoute = ApiCanvaCallbackRouteImport.update({
+  id: '/api/canva/callback',
+  path: '/api/canva/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProjectsIdEditRoute = AdminProjectsIdEditRouteImport.update({
+  id: '/projects/$id/edit',
+  path: '/projects/$id/edit',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/archive': typeof ArchiveRoute
+  '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/archive': typeof AdminArchiveRoute
+  '/admin/integrations': typeof AdminIntegrationsRoute
+  '/admin/preview': typeof AdminPreviewRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/work/$slug': typeof WorkSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
+  '/admin/projects/new': typeof AdminProjectsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canva/callback': typeof ApiCanvaCallbackRoute
+  '/admin/projects/': typeof AdminProjectsIndexRoute
+  '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/archive': typeof ArchiveRoute
+  '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/archive': typeof AdminArchiveRoute
+  '/admin/integrations': typeof AdminIntegrationsRoute
+  '/admin/preview': typeof AdminPreviewRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/work/$slug': typeof WorkSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/work': typeof WorkIndexRoute
+  '/admin/projects/new': typeof AdminProjectsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canva/callback': typeof ApiCanvaCallbackRoute
+  '/admin/projects': typeof AdminProjectsIndexRoute
+  '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/archive': typeof ArchiveRoute
+  '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/archive': typeof AdminArchiveRoute
+  '/admin/integrations': typeof AdminIntegrationsRoute
+  '/admin/preview': typeof AdminPreviewRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/work/$slug': typeof WorkSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
+  '/admin/projects/new': typeof AdminProjectsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canva/callback': typeof ApiCanvaCallbackRoute
+  '/admin/projects/': typeof AdminProjectsIndexRoute
+  '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$' | '/about' | '/archive' | '/work/$slug' | '/work/'
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/admin'
+    | '/archive'
+    | '/login'
+    | '/sitemap.xml'
+    | '/admin/archive'
+    | '/admin/integrations'
+    | '/admin/preview'
+    | '/admin/settings'
+    | '/work/$slug'
+    | '/admin/'
+    | '/work/'
+    | '/admin/projects/new'
+    | '/api/auth/$'
+    | '/api/canva/callback'
+    | '/admin/projects/'
+    | '/admin/projects/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/about' | '/archive' | '/work/$slug' | '/work'
-  id: '__root__' | '/' | '/$' | '/about' | '/archive' | '/work/$slug' | '/work/'
+  to:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/archive'
+    | '/login'
+    | '/sitemap.xml'
+    | '/admin/archive'
+    | '/admin/integrations'
+    | '/admin/preview'
+    | '/admin/settings'
+    | '/work/$slug'
+    | '/admin'
+    | '/work'
+    | '/admin/projects/new'
+    | '/api/auth/$'
+    | '/api/canva/callback'
+    | '/admin/projects'
+    | '/admin/projects/$id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/about'
+    | '/admin'
+    | '/archive'
+    | '/login'
+    | '/sitemap.xml'
+    | '/admin/archive'
+    | '/admin/integrations'
+    | '/admin/preview'
+    | '/admin/settings'
+    | '/work/$slug'
+    | '/admin/'
+    | '/work/'
+    | '/admin/projects/new'
+    | '/api/auth/$'
+    | '/api/canva/callback'
+    | '/admin/projects/'
+    | '/admin/projects/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ArchiveRoute: typeof ArchiveRoute
+  LoginRoute: typeof LoginRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WorkSlugRoute: typeof WorkSlugRoute
   WorkIndexRoute: typeof WorkIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCanvaCallbackRoute: typeof ApiCanvaCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -112,12 +290,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/archive': {
       id: '/archive'
       path: '/archive'
       fullPath: '/archive'
       preLoaderRoute: typeof ArchiveRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/archive': {
+      id: '/admin/archive'
+      path: '/archive'
+      fullPath: '/admin/archive'
+      preLoaderRoute: typeof AdminArchiveRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/integrations': {
+      id: '/admin/integrations'
+      path: '/integrations'
+      fullPath: '/admin/integrations'
+      preLoaderRoute: typeof AdminIntegrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/preview': {
+      id: '/admin/preview'
+      path: '/preview'
+      fullPath: '/admin/preview'
+      preLoaderRoute: typeof AdminPreviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/work/': {
       id: '/work/'
@@ -133,16 +367,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projects/': {
+      id: '/admin/projects/'
+      path: '/projects'
+      fullPath: '/admin/projects/'
+      preLoaderRoute: typeof AdminProjectsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/projects/new': {
+      id: '/admin/projects/new'
+      path: '/projects/new'
+      fullPath: '/admin/projects/new'
+      preLoaderRoute: typeof AdminProjectsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/canva/callback': {
+      id: '/api/canva/callback'
+      path: '/api/canva/callback'
+      fullPath: '/api/canva/callback'
+      preLoaderRoute: typeof ApiCanvaCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/projects/$id/edit': {
+      id: '/admin/projects/$id/edit'
+      path: '/projects/$id/edit'
+      fullPath: '/admin/projects/$id/edit'
+      preLoaderRoute: typeof AdminProjectsIdEditRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminArchiveRoute: typeof AdminArchiveRoute
+  AdminIntegrationsRoute: typeof AdminIntegrationsRoute
+  AdminPreviewRoute: typeof AdminPreviewRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminProjectsNewRoute: typeof AdminProjectsNewRoute
+  AdminProjectsIndexRoute: typeof AdminProjectsIndexRoute
+  AdminProjectsIdEditRoute: typeof AdminProjectsIdEditRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminArchiveRoute: AdminArchiveRoute,
+  AdminIntegrationsRoute: AdminIntegrationsRoute,
+  AdminPreviewRoute: AdminPreviewRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminProjectsNewRoute: AdminProjectsNewRoute,
+  AdminProjectsIndexRoute: AdminProjectsIndexRoute,
+  AdminProjectsIdEditRoute: AdminProjectsIdEditRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ArchiveRoute: ArchiveRoute,
+  LoginRoute: LoginRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   WorkSlugRoute: WorkSlugRoute,
   WorkIndexRoute: WorkIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCanvaCallbackRoute: ApiCanvaCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

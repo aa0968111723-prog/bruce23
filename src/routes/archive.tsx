@@ -1,12 +1,17 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MediaFrame } from "@/components/site/MediaFrame";
-import { archiveItems, archiveKinds } from "@/content/archive";
+import { archiveKinds } from "@/content/archive";
+import { fetchPublishedArchive } from "@/lib/cms/public-fns";
 import { cn } from "@/lib/cn";
 
-export const Route = createFileRoute("/archive")({ component: Archive });
+export const Route = createFileRoute("/archive")({
+  loader: () => fetchPublishedArchive(),
+  component: Archive,
+});
 
 function Archive() {
+  const archiveItems = Route.useLoaderData();
   const [kind, setKind] = useState<(typeof archiveKinds)[number]["id"]>("all");
   const visible = useMemo(() => {
     if (kind === "all") return archiveItems;
@@ -14,13 +19,13 @@ function Archive() {
       return archiveItems.filter((item) => item.kind === "graphic" || item.kind === "social");
     }
     return archiveItems.filter((item) => item.kind === kind);
-  }, [kind]);
+  }, [kind, archiveItems]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">Archive</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        攝影、平面、活動、社團文宣與招生活動互動。原始大檔與私人 Drive 資料夾不公開；能放原作縮圖的會標示來源。
+        攝影、平面、活動、社團文宣與招生活動互動。草稿與私人 Drive 不公開。
       </p>
 
       <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Archive 分類">
@@ -57,9 +62,7 @@ function Archive() {
               </div>
             )}
             <div className="p-5">
-              <p className="text-xs font-medium tracking-wide text-muted">
-                {item.year}
-              </p>
+              <p className="text-xs font-medium tracking-wide text-muted">{item.year}</p>
               <h2 className="mt-1 font-display text-xl font-semibold">{item.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">{item.summary}</p>
               <p className="mt-3 text-xs text-muted">{item.originNote}</p>

@@ -1,8 +1,8 @@
 {
   "name": "Luminous Studio",
   "person": "陳柏能 / Bruce Chen",
-  "repo": "https://github.com/aa0968111723-prog/ai-director-portfolio-site",
-  "cycle": 1,
+  "repo": "https://github.com/aa0968111723-prog/bruce23",
+  "cycle": 2,
   "featured": [
     "ai-director-os",
     "framelab",
@@ -13,7 +13,8 @@
     "hermes-console",
     "tku-zen-ai"
   ],
-  "content": "static-typescript",
-  "dataLayer": "none-until-phase-2",
+  "content": "postgres-cms-with-static-seed",
+  "dataLayer": "neon-pglite",
+  "auth": "better-auth-admin-allowlist",
   "theme": "light-only"
 }
