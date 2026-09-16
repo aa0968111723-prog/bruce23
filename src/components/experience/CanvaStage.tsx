@@ -9,11 +9,33 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   const pages = canva.pageIds?.length ? canva.pageIds : ["cover"];
   const state = canvaViewerState(canva, failed);
   const embed = canva.embedUrl;
+  const thumb = canva.thumbnailUrl ? (
+    <img src={canva.thumbnailUrl} alt={canva.alt ?? project.title} className="w-full object-cover" />
+  ) : project.media[0] ? (
+    <img src={project.media[0].src} alt={project.media[0].alt} className="w-full object-cover" />
+  ) : null;
 
   if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
-        這件作品還沒有公開的 Canva 嵌入。不會顯示空白 iframe，也不會假裝已連上 Canva API。
+        這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect
+        憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。
+      </div>
+    );
+  }
+
+  if (state === "local") {
+    return (
+      <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
+        {thumb}
+        <div className="space-y-2 p-4 text-sm">
+          <p className="font-medium">Canva 原作沒有公開分享連結</p>
+          <p className="text-muted">
+            站內只放已匯出的縮圖。沒有 canva.com 分享／嵌入網址，所以不嵌入空白 iframe。
+          </p>
+          {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
+          <p className="text-xs text-muted">來源標記：公開嵌入模式 · 狀態 {canva.status}</p>
+        </div>
       </div>
     );
   }
@@ -21,11 +43,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   if (state === "fallback" || !embed) {
     return (
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
-        {canva.thumbnailUrl ? (
-          <img src={canva.thumbnailUrl} alt={canva.alt ?? project.title} className="w-full object-cover" />
-        ) : project.media[0] ? (
-          <img src={project.media[0].src} alt={project.media[0].alt} className="w-full object-cover" />
-        ) : null}
+        {thumb}
         <div className="space-y-2 p-4 text-sm">
           <p className="font-medium">Canva 嵌入無法顯示</p>
           <p className="text-muted">

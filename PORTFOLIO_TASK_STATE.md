@@ -33,7 +33,10 @@ Updated: 2026-09-16
 
 - Original photography and event photos (Drive originals not on a public CDN)
 - Original AI video files (too large for git; old Manus URLs are dead)
-- More Canva posters: 美食地圖、淡水生存指南 — CDN blocked, need export or share
+- Canva share / embed URLs: none exist in `src/content`, archive, PORTFOLIO_TASK_STATE, or project-manifest. All 8 works are honest `not_configured` except `tku-zen-ai` (`unavailable` + local SVG thumbnail). Archive Canva items (`tku-zen-poster`, `tku-zen-brand-deck`, `tku-zen-page2`) are the same. 美食地圖、淡水生存指南 are named here only — they are not content rows and have no share URL.
+- Canva Connect credentials (`CANVA_CLIENT_ID` / `CANVA_CLIENT_SECRET`) — public-embed mode until they exist
+- Google login as `aa0968111723@gmail.com` to browser-prove admin draft → preview → publish
+- `GITHUB_READ_TOKEN` for private repos; public hydrate uses unauthenticated REST
 - Notion connection
 - Confirm whether `https://ai-os-ten.vercel.app` should stay listed (status can drift)
 - Push this rebuild back to `ai-director-portfolio-site` when you want GitHub updated

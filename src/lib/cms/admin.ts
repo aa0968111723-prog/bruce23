@@ -2,6 +2,26 @@ import { AdminConfigError, ForbiddenError } from "./errors.ts";
 
 export const DEFAULT_ADMIN_EMAIL = "aa0968111723@gmail.com";
 const DEV_USER_ID = "dev-user";
+const LOCAL_ADMIN_HOSTS = new Set(["localhost:8080", "127.0.0.1:8080", "[::1]:8080"]);
+
+/** Fail-closed origin check used by admin server functions. Missing Origin is allowed (non-browser / same-origin GET). */
+export function isAllowedAdminOrigin(
+  originHeader: string | null | undefined,
+  hostHeader: string | null | undefined,
+): boolean {
+  if (!originHeader) return true;
+  let originHost: string;
+  try {
+    originHost = new URL(originHeader).host;
+  } catch {
+    return false;
+  }
+  if (hostHeader && originHost === hostHeader) return true;
+  if (LOCAL_ADMIN_HOSTS.has(originHost) && hostHeader && LOCAL_ADMIN_HOSTS.has(hostHeader)) {
+    return true;
+  }
+  return false;
+}
 
 export function parseAdminEmails(raw: string | undefined | null): string[] {
   if (!raw || !raw.trim()) return [];

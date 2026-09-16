@@ -2,6 +2,7 @@ import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
+import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
 import { experienceForSlug } from "../experiences/catalog.ts";
 import { parseGithubUrl } from "../github/parse.ts";
 import { projectInputSchema } from "./schema.ts";
@@ -10,31 +11,67 @@ import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive }
 export const SEED_VERSION = "portfolio-cms-1";
 
 async function ensureSeedComplements(sql: Sql): Promise<void> {
-  await sql.query(
-    `update projects
-     set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $1),
-         canva_alt = coalesce(nullif(canva_alt, ''), $2),
-         canva_caption = coalesce(canva_caption, $3),
-         canva_status = case
-           when canva_share_url is null and canva_embed_url is null then 'unavailable'
-           else canva_status
-         end
-     where slug = 'tku-zen-ai'`,
-    [
-      "/media/archive/tku-zen-poster.svg",
-      "淡大禪學社文宣原作縮圖",
-      "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
-    ],
-  );
-  await sql.query(
-    `update archive_items
-     set canva_status = 'unavailable',
-         canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), media->>'src')
-     where origin_note ilike '%Canva%'
-       and canva_share_url is null
-       and canva_embed_url is null
-       and canva_status in ('pending', 'not_configured')`,
-  );
+  for (const project of projects) {
+    const fields = canvaFieldsForProject(project);
+    await sql.query(
+      `update projects
+       set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $2),
+           canva_alt = coalesce(nullif(canva_alt, ''), $3),
+           canva_caption = coalesce(canva_caption, $4),
+           canva_share_url = coalesce(canva_share_url, $5),
+           canva_embed_url = coalesce(canva_embed_url, $6),
+           canva_design_id = coalesce(canva_design_id, $7),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
+               then case
+                 when canva_status in ('not_configured', 'unavailable')
+                   and canva_share_url is null and canva_embed_url is null
+                   then 'pending'
+                 else canva_status
+               end
+             else $8
+           end
+       where slug = $1`,
+      [
+        project.slug,
+        fields.thumbnailUrl,
+        fields.alt,
+        fields.caption,
+        fields.shareUrl,
+        fields.embedUrl,
+        fields.designId,
+        fields.status,
+      ],
+    );
+  }
+  for (const item of archiveItems) {
+    const fields = canvaFieldsForArchive(item);
+    await sql.query(
+      `update archive_items
+       set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $2),
+           canva_alt = coalesce(nullif(canva_alt, ''), $3),
+           canva_caption = coalesce(canva_caption, $4),
+           canva_share_url = coalesce(canva_share_url, $5),
+           canva_embed_url = coalesce(canva_embed_url, $6),
+           canva_design_id = coalesce(canva_design_id, $7),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
+               then canva_status
+             else $8
+           end
+       where slug = $1 or id = $1`,
+      [
+        item.id,
+        fields.thumbnailUrl,
+        fields.alt,
+        fields.caption,
+        fields.shareUrl,
+        fields.embedUrl,
+        fields.designId,
+        fields.status,
+      ],
+    );
+  }
 }
 
 export async function ensureSeed(
@@ -100,6 +137,7 @@ export async function ensureSeed(
     const parsed = parseGithubUrl(project.links.github);
     const catalog = experienceForSlug(project.slug);
     const demoUrl = project.links.live ?? project.links.demo ?? null;
+    const canva = canvaFieldsForProject(project);
     const input = projectInputSchema.parse({
       slug: project.slug,
       title: project.title,
@@ -139,13 +177,13 @@ export async function ensureSeed(
       live_demo_type: demoUrl ? "link" : "unavailable",
       live_demo_embed_enabled: false,
       live_demo_status: demoUrl ? "pending" : "not_configured",
-      canva_thumbnail_url: project.slug === "tku-zen-ai" ? "/media/archive/tku-zen-poster.svg" : null,
-      canva_alt: project.slug === "tku-zen-ai" ? "淡大禪學社文宣原作縮圖" : null,
-      canva_caption:
-        project.slug === "tku-zen-ai"
-          ? "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。"
-          : null,
-      canva_status: project.slug === "tku-zen-ai" ? "unavailable" : "not_configured",
+      canva_share_url: canva.shareUrl,
+      canva_embed_url: canva.embedUrl,
+      canva_design_id: canva.designId,
+      canva_thumbnail_url: canva.thumbnailUrl,
+      canva_alt: canva.alt,
+      canva_caption: canva.caption,
+      canva_status: canva.status,
       experience_mode: catalog?.mode ?? "github-explorer",
       experience_config: catalog
         ? {
@@ -172,6 +210,7 @@ export async function ensureSeed(
       [item.id, item.id],
     );
     if (existing[0]) continue;
+    const canva = canvaFieldsForArchive(item);
     await upsertArchive(
       sql,
       {
@@ -188,10 +227,13 @@ export async function ensureSeed(
         origin_note: item.originNote,
         publication_status: "published",
         sort_order: index,
-        canva_thumbnail_url: item.originNote.includes("Canva")
-          ? (item.media?.src.replace(/\.jpg$/i, ".svg") ?? null)
-          : null,
-        canva_status: item.originNote.includes("Canva") ? "unavailable" : "not_configured",
+        canva_share_url: canva.shareUrl,
+        canva_embed_url: canva.embedUrl,
+        canva_design_id: canva.designId,
+        canva_thumbnail_url: canva.thumbnailUrl,
+        canva_alt: canva.alt,
+        canva_caption: canva.caption,
+        canva_status: canva.status,
       },
       actor,
     );

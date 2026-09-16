@@ -164,6 +164,34 @@ describe("privacy", () => {
       "fallback",
     );
     assert.equal(
+      canvaViewerState(
+        {
+          shareUrl: null,
+          embedUrl: null,
+          designId: null,
+          thumbnailUrl: "/media/archive/tku-zen-poster.svg",
+          status: "unavailable",
+          lastSyncedAt: null,
+        },
+        false,
+      ),
+      "local",
+    );
+    assert.equal(
+      canvaViewerState(
+        {
+          shareUrl: null,
+          embedUrl: null,
+          designId: null,
+          thumbnailUrl: null,
+          status: "not_configured",
+          lastSyncedAt: null,
+        },
+        false,
+      ),
+      "empty",
+    );
+    assert.equal(
       demoViewerState(
         {
           url: "https://demo.example",

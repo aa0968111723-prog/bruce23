@@ -7,13 +7,20 @@ import {
   countProjects,
   createProjectRecord,
   getAdminProject,
+  getPublishedProject,
+  listPublishedArchive,
   listPublishedProjects,
+  listRevisions,
+  restoreRevision,
   saveProjectRecord,
   setPublication,
+  upsertArchive,
 } from "./store.ts";
 import { ensureSeed } from "./seed.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
+import { NotFoundError } from "./errors.ts";
+import { projectCanvaInventory } from "../canva/inventory.ts";
 
 function sqlFrom(pg: PGlite): Sql {
   const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
@@ -184,5 +191,111 @@ describe("cms persistence", () => {
     assert.equal(after.problem, "問題敘事");
     assert.equal(after.github_readme, "# FrameLab");
     assert.equal(after.github_sync_status, "verified");
+  });
+
+  it("hides drafts from getPublishedProject and sitemap-facing lists", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(sql, sample(), "admin-1");
+    await assert.rejects(() => getPublishedProject(sql, "test-work"), NotFoundError);
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+  });
+
+  it("archive then restore updates public visibility", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({ ...sample(), publication_status: "published" }),
+      "admin-1",
+    );
+    assert.equal((await listPublishedProjects(sql)).length, 1);
+    await setPublication(sql, created.id, "archived", "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+    await setPublication(sql, created.id, "published", "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 1);
+  });
+
+  it("keeps a revision history and can restore a previous snapshot", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    await saveProjectRecord(sql, created.id, { title: "Changed Title" }, "admin-1", "save");
+    const revisions = await listRevisions(sql, created.id);
+    assert.ok(revisions.length >= 2);
+    const beforeChange = revisions.find((item) => item.note === "save");
+    assert.ok(beforeChange);
+    const restored = await restoreRevision(sql, created.id, beforeChange.id, "admin-1");
+    assert.equal(restored.title, "Test Work");
+  });
+
+  it("excludes draft archive items from the public archive", async () => {
+    const { sql } = await setup();
+    await upsertArchive(
+      sql,
+      {
+        slug: "hidden-poster",
+        title: "Hidden poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "draft",
+        origin_note: "test",
+        publication_status: "draft",
+        sort_order: 0,
+        canva_status: "not_configured",
+      },
+      "admin-1",
+    );
+    await upsertArchive(
+      sql,
+      {
+        slug: "public-poster",
+        title: "Public poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "live",
+        origin_note: "test",
+        publication_status: "published",
+        sort_order: 1,
+        canva_status: "not_configured",
+      },
+      "admin-1",
+    );
+    const published = await listPublishedArchive(sql);
+    assert.equal(published.length, 1);
+    assert.equal(published[0].slug, "public-poster");
+  });
+
+  it("persists a real Canva share URL onto the public slice without inventing one", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/design/DAGadminPasted/view",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.designId, "DAGadminPasted");
+    assert.equal(published.canva.shareUrl, "https://www.canva.com/design/DAGadminPasted/view");
+    assert.ok(published.canva.embedUrl?.includes("embed"));
+  });
+
+  it("seeds honest Canva fields for every featured work", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const expected = projectCanvaInventory();
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 8);
+    for (const project of published) {
+      const fields = expected[project.slug];
+      assert.equal(project.canva.shareUrl, fields.shareUrl, project.slug);
+      assert.equal(project.canva.embedUrl, fields.embedUrl, project.slug);
+      assert.equal(project.canva.status, fields.status, project.slug);
+    }
+    const archive = await listPublishedArchive(sql);
+    const zen = archive.find((item) => item.id === "tku-zen-poster");
+    assert.equal(zen?.canva.status, "unavailable");
+    assert.equal(zen?.canva.shareUrl, null);
   });
 });

@@ -6,6 +6,7 @@ import { GithubExplorer } from "./GithubExplorer";
 import { CanvaStage } from "./CanvaStage";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
+import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 const TABS = [
   { id: "play", label: "立即體驗" },
@@ -28,6 +29,11 @@ export function ExperiencePanel({
   variant?: "overlay" | "page";
 }) {
   const [tab, setTab] = useState<TabId>("play");
+  const tabs = useRovingTabs(
+    TABS.map((item) => item.id) as TabId[],
+    tab,
+    (next) => setTab(next),
+  );
   const honesty = useMemo(() => {
     const label = project.experienceConfig.honestyLabel;
     return typeof label === "string" ? label : null;
@@ -71,15 +77,18 @@ export function ExperiencePanel({
         className="flex gap-1 overflow-x-auto px-3 pt-3"
         role="tablist"
         aria-label="作品體驗"
+        onKeyDown={tabs.onKeyDown}
       >
         {TABS.map((item) => {
           const active = item.id === tab;
           return (
             <button
               key={item.id}
+              ref={tabs.setRef(item.id)}
               type="button"
               role="tab"
               aria-selected={active}
+              tabIndex={tabs.tabIndex(item.id)}
               className={cn(
                 "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium",
                 active ? "bg-ink text-bg" : "bg-surface text-muted shadow-card",

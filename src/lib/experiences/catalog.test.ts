@@ -62,7 +62,25 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(panel, /role="tab"/);
+    assert.match(panel, /tabIndex/);
+    assert.match(panel, /useRovingTabs/);
+    assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
     assert.match(header, /mobile-nav/);
+    const roving = readFileSync(
+      new URL("../../../src/components/site/useRovingTabs.ts", import.meta.url),
+      "utf8",
+    );
+    assert.match(roving, /ArrowRight/);
+    const work = readFileSync(new URL("../../../src/routes/work/index.tsx", import.meta.url), "utf8");
+    assert.match(work, /useRovingTabs/);
+    const archive = readFileSync(new URL("../../../src/routes/archive.tsx", import.meta.url), "utf8");
+    assert.match(archive, /useRovingTabs/);
+    const stage = readFileSync(
+      new URL("../../../src/components/experience/CanvaStage.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(stage, /沒有公開分享連結/);
+    assert.match(stage, /空白 iframe/);
   });
 });
