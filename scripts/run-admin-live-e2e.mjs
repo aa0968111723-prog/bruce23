@@ -315,6 +315,7 @@ async function proveLiveAdmin(page, request) {
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+  await page.waitForLoadState("networkidle");
 
   const share = page.getByLabel(/Canva 分享/);
   await share.waitFor({ timeout: 15000 });

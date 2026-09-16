@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   applyGithubFn,
@@ -79,6 +79,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   const [revisions, setRevisions] = useState<Array<{ id: string; note: string | null; created_at: string }>>([]);
   const [githubDiff, setGithubDiff] = useState<GithubDiffRow[] | null>(null);
   const [githubFetch, setGithubFetch] = useState<string | null>(null);
+  const canvaShareRef = useRef<HTMLInputElement>(null);
 
   const initial = useMemo(() => JSON.stringify(toForm(project)), [project]);
 
@@ -464,6 +465,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           value={form.canva_share_url ?? ""}
           placeholder="https://www.canva.com/design/{id}/view"
           emptyHint="空著就不會嵌入。請貼公開分享連結，不要發明設計編號。"
+          inputRef={canvaShareRef}
           onChange={(value) => {
             const parsed = parseCanvaDesign(value);
             patch("canva_share_url", parsed?.shareUrl ?? value);
@@ -527,7 +529,8 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() => {
-              const url = form.canva_share_url || form.canva_embed_url || undefined;
+              const typed = canvaShareRef.current?.value?.trim();
+              const url = form.canva_share_url || form.canva_embed_url || typed || undefined;
               void testCanvaEmbedFn({
                 data: { id: project.id, url },
               })
@@ -954,17 +957,20 @@ function Field({
   onChange,
   placeholder,
   emptyHint,
+  inputRef,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   emptyHint?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
 }) {
   return (
     <label className="grid gap-1 text-sm">
       {label}
       <input
+        ref={inputRef}
         className="min-h-11 rounded-xl border border-line px-3"
         value={value}
         placeholder={placeholder}
