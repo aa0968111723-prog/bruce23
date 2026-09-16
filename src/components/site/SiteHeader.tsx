@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { nav, site } from "@/content/site";
 import { cn } from "@/lib/cn";
+import { getAdminContextFn } from "@/lib/portfolio/cms-fns";
+import { SignedIn, UserButton } from "@/lib/auth/gates";
 
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    void getAdminContextFn()
+      .then((ctx) => setAdmin(Boolean(ctx.admin)))
+      .catch(() => setAdmin(false));
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/80 backdrop-blur-md">
@@ -49,6 +58,17 @@ export function SiteHeader() {
           >
             GitHub
           </a>
+          {admin ? (
+            <Link
+              to="/admin"
+              className="inline-flex min-h-11 items-center rounded-xl px-3.5 text-sm font-medium text-mint-deep"
+            >
+              後台
+            </Link>
+          ) : null}
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </nav>
 
         <button
@@ -91,6 +111,17 @@ export function SiteHeader() {
                 GitHub
               </a>
             </li>
+            {admin ? (
+              <li>
+                <Link
+                  to="/admin"
+                  className="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium text-ink"
+                  onClick={() => setOpen(false)}
+                >
+                  後台
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
       ) : null}

@@ -1,15 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Github } from "lucide-react";
+import { ExploreField } from "@/components/explore/ExploreField";
 import { LightField } from "@/components/site/LightField";
 import { MediaFrame } from "@/components/site/MediaFrame";
 import { ProjectCard } from "@/components/site/ProjectCard";
-import { featuredProjects } from "@/content/projects";
-import { modalities, processSteps, site } from "@/content/site";
+import { processSteps, modalities } from "@/content/site";
+import { getPublicSiteFn, listPublicProjectsFn } from "@/lib/portfolio/public-fns";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const [projects, site] = await Promise.all([listPublicProjectsFn(), getPublicSiteFn()]);
+    return { projects, site };
+  },
+  component: Home,
+});
 
 function Home() {
-  const featured = featuredProjects();
+  const { projects, site } = Route.useLoaderData();
+  const featured = projects.filter((p) => p.featured).sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <div>
@@ -23,9 +31,7 @@ function Home() {
             <h1 className="mt-4 max-w-xl font-display text-4xl font-semibold text-ink sm:text-5xl lg:text-6xl">
               {site.headline}
             </h1>
-            <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">
-              {site.subhead}
-            </p>
+            <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">{site.subhead}</p>
             <p className="mt-3 max-w-lg text-sm text-ink/80">{site.narrative}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -35,27 +41,14 @@ function Home() {
                 看精選作品
                 <ArrowRight className="size-4" />
               </Link>
-              <Link
-                to="/about"
-                className="inline-flex min-h-11 items-center rounded-full bg-surface px-6 text-sm font-semibold text-ink shadow-card transition-transform duration-150 active:scale-[0.96]"
+              <a
+                href="#explore"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface px-6 text-sm font-semibold text-ink shadow-card"
               >
-                關於定位
-              </Link>
+                從模態探索
+              </a>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-2 text-xs font-medium text-muted">
-              {["AI Designer", "Multimodal", "Product Builder", "Interaction"].map(
-                (item) => (
-                  <li
-                    key={item}
-                    className="rounded-full bg-surface px-3 py-1.5 shadow-card"
-                  >
-                    {item}
-                  </li>
-                ),
-              )}
-            </ul>
           </div>
-
           <div className="relative mx-auto w-full max-w-lg">
             <div className="float-card overflow-hidden rounded-2xl bg-surface p-1.5">
               <div className="overflow-hidden rounded-[1.15rem]">
@@ -68,25 +61,24 @@ function Home() {
                 />
               </div>
             </div>
-            <p className="mt-3 text-center text-xs text-muted">
-              作品像漂在光場裡的展品。圖為工作室視覺，不是截圖。
-            </p>
+            <p className="mt-3 text-center text-xs text-muted">作品像漂在光場裡的展品。圖為工作室視覺，不是截圖。</p>
           </div>
         </div>
       </section>
+
+      <div id="explore">
+        <ExploreField projects={projects} />
+      </div>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="font-display text-3xl font-semibold">精選作品</h2>
             <p className="mt-2 max-w-xl text-sm text-muted">
-              只放最能代表定位的 8 件。狀態按真實進度標示，沒有使用者數或成效數字。
+              只放已發布的作品。狀態按真實進度標示，沒有使用者數或成效數字。
             </p>
           </div>
-          <Link
-            to="/work"
-            className="inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
-          >
+          <Link to="/work" className="inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
             全部作品
           </Link>
         </div>
@@ -106,9 +98,7 @@ function Home() {
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <h2 className="font-display text-3xl font-semibold">AI 創作流程</h2>
-            <p className="mt-3 text-sm text-muted">
-              導演不是堆模型。先現場、再模態、再工具，最後問：這東西能不能被使用。
-            </p>
+            <p className="mt-3 text-sm text-muted">導演不是堆模型。先現場、再模態、再工具，最後問：這東西能不能被使用。</p>
             <div className="mt-6 overflow-hidden rounded-2xl shadow-card">
               <MediaFrame
                 media={{
@@ -122,14 +112,9 @@ function Home() {
           </div>
           <ol className="grid gap-4 sm:grid-cols-2">
             {processSteps.map((step) => (
-              <li
-                key={step.n}
-                className="rounded-2xl bg-surface p-5 shadow-card"
-              >
+              <li key={step.n} className="rounded-2xl bg-surface p-5 shadow-card">
                 <p className="font-display text-sm text-mint-deep">{step.n}</p>
-                <h3 className="mt-2 font-display text-lg font-semibold">
-                  {step.title}
-                </h3>
+                <h3 className="mt-2 font-display text-lg font-semibold">{step.title}</h3>
                 <p className="mt-2 text-sm text-muted">{step.body}</p>
               </li>
             ))}
@@ -139,9 +124,7 @@ function Home() {
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="font-display text-3xl font-semibold">多模態能力</h2>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
-          不是六個開關全開。每件作品只使用它真正接上的模態，沒接上的會寫在限制裡。
-        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">不是六個開關全開。點上方探索，只會連到真正使用該模態的作品。</p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {modalities.map((item) => (
             <li key={item.label} className="rounded-2xl bg-surface p-5 shadow-card">
@@ -161,19 +144,11 @@ function Home() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <a
-              href={site.github}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg"
-              rel="noreferrer"
-              target="_blank"
-            >
+            <a href={site.github} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg" rel="noreferrer" target="_blank">
               <Github className="size-4" />
               GitHub
             </a>
-            <a
-              href={`mailto:${site.email}`}
-              className="inline-flex min-h-11 items-center rounded-full bg-surface px-5 text-sm font-medium shadow-card"
-            >
+            <a href={`mailto:${site.email}`} className="inline-flex min-h-11 items-center rounded-full bg-surface px-5 text-sm font-medium shadow-card">
               {site.email}
             </a>
           </div>

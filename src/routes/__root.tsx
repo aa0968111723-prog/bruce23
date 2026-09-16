@@ -8,6 +8,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/site/SiteShell";
 import { NotFoundView } from "@/components/site/NotFoundView";
+import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Luminous Studio · 柏能";
@@ -61,6 +62,7 @@ function RootDocument() {
           <SiteShell>
             <Outlet />
           </SiteShell>
+          <Toaster position="top-center" richColors />
         </AuthProvider>
         <Scripts />
       </body>

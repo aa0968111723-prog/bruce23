@@ -52,6 +52,7 @@
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-bg);
     color: var(--color-ink);
+    overflow-x: hidden;
   }
 
   body {
@@ -111,17 +112,42 @@
   .orbit {
     animation: orbit 60s linear infinite;
   }
+
+  .input {
+    min-height: 44px;
+    width: 100%;
+    border-radius: 0.875rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    padding: 0.5rem 0.85rem;
+    color: var(--color-ink);
+  }
+
+  .relation-node {
+    transform: perspective(900px) rotateX(6deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .orb,
   .orbit,
   .drift {
     animation: none !important;
   }
 
-  .float-card {
-    transform: none;
+  .float-card,
+  .relation-node,
+  .spatial-stage {
+    transform: none !important;
   }
 }
 
