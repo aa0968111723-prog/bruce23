@@ -234,6 +234,8 @@ describe("frontend contract", () => {
     assert.match(settings, /highlightSlugs/);
     assert.match(settings, /localeZhSeoTitle/);
     assert.match(settings, /localeEnSeoDescription/);
+    assert.match(settings, /localeEnSubhead/);
+    assert.match(settings, /localeZhSubhead/);
     const index = readFileSync(new URL("../../../src/routes/index.tsx", import.meta.url), "utf8");
     assert.match(index, /resolveHomepageCopy/);
     assert.match(index, /seoTitle/);
@@ -263,6 +265,12 @@ describe("frontend contract", () => {
     assert.match(form, /localeKey/);
     assert.match(form, /中文 SEO 標題/);
     assert.match(form, /英文 SEO 描述/);
+    assert.match(form, /封面說明/);
+    assert.match(form, /影片封面/);
+    assert.match(form, /其他圖片/);
+    assert.match(form, /GitHub branch/);
+    assert.match(form, /patchMediaItem/);
+    assert.match(form, /persistDemoVerify|verifyDemoFn/);
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
     const archiveForm = readFileSync(
@@ -275,6 +283,9 @@ describe("frontend contract", () => {
     assert.match(archiveForm, /媒體路徑/);
     assert.match(archiveForm, /canva.com\/design\/\{id\}/);
     assert.match(archiveForm, /目前沒有 Canva 分享連結/);
+    assert.match(archiveForm, /canva_page_ids/);
+    assert.match(archiveForm, /媒體類型/);
+    assert.match(archiveForm, /canva_thumbnail_url/);
     const privacy = readFileSync(new URL("../../../src/routes/privacy.tsx", import.meta.url), "utf8");
     assert.match(privacy, /不會公開的/);
     assert.match(privacy, /電話/);
@@ -289,6 +300,10 @@ describe("frontend contract", () => {
     assert.match(editor, /FrameLab 時間軸/);
     assert.match(editor, /PLANFORM 物件與動線/);
     assert.match(editor, /不要加頁面標籤或虛構頁面 ID/);
+    assert.match(editor, /Demo 說明/);
+    assert.match(editor, /Canva 說明/);
+    assert.match(editor, /GitHub 說明/);
+    assert.match(editor, /廊說明/);
     const field = readFileSync(
       new URL("../../../src/components/home/ExplorationField.tsx", import.meta.url),
       "utf8",
@@ -304,6 +319,7 @@ describe("frontend contract", () => {
     assert.match(archive, /尚未提供分享連結/);
     assert.match(archive, /parseCanvaDesign/);
     assert.match(archive, /ArchiveLocalCover/);
+    assert.match(archive, /pageIds: item.canva.pageIds/);
     assert.doesNotMatch(archive, /直接可翻頁/);
     assert.doesNotMatch(archive, /有 Canva 嵌入的會/);
     const integrations = readFileSync(

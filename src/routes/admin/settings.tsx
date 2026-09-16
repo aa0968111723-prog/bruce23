@@ -25,6 +25,8 @@ function SettingsPage() {
     highlightSlugs: "",
     localeZhHeadline: "",
     localeEnHeadline: "",
+    localeZhSubhead: "",
+    localeEnSubhead: "",
     localeZhNarrative: "",
     localeEnNarrative: "",
     localeZhSeoTitle: "",
@@ -54,6 +56,8 @@ function SettingsPage() {
         highlightSlugs: (row.homepage_json?.highlightSlugs ?? []).join("\n"),
         localeZhHeadline: String(row.locale_json?.zh?.headline ?? ""),
         localeEnHeadline: String(row.locale_json?.en?.headline ?? ""),
+        localeZhSubhead: String(row.locale_json?.zh?.subhead ?? ""),
+        localeEnSubhead: String(row.locale_json?.en?.subhead ?? ""),
         localeZhNarrative: String(row.locale_json?.zh?.narrative ?? ""),
         localeEnNarrative: String(row.locale_json?.en?.narrative ?? ""),
         localeZhSeoTitle: String(row.locale_json?.zh?.seoTitle ?? ""),
@@ -119,12 +123,14 @@ function SettingsPage() {
             locale_json: {
               zh: {
                 headline: form.localeZhHeadline,
+                subhead: form.localeZhSubhead,
                 narrative: form.localeZhNarrative,
                 seoTitle: form.localeZhSeoTitle,
                 seoDescription: form.localeZhSeoDescription,
               },
               en: {
                 headline: form.localeEnHeadline,
+                subhead: form.localeEnSubhead,
                 narrative: form.localeEnNarrative,
                 seoTitle: form.localeEnSeoTitle,
                 seoDescription: form.localeEnSeoDescription,
@@ -195,6 +201,28 @@ function SettingsPage() {
           onChange={(event) => {
             setDirty(true);
             setForm((current) => ({ ...current, localeEnHeadline: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 subhead
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeZhSubhead}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSubhead: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 subhead
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeEnSubhead}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSubhead: event.target.value }));
           }}
         />
       </label>

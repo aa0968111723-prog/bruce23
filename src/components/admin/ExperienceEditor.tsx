@@ -103,6 +103,15 @@ export function ExperienceEditor({
       </p>
       <Field label="誠實標籤" value={config.honestyLabel ?? ""} onChange={(value) => patch({ honestyLabel: value })} />
       <Field label="體驗引言" value={config.intro ?? ""} onChange={(value) => patch({ intro: value })} multiline />
+      <Field label="Demo 說明" value={config.demoNote ?? ""} onChange={(value) => patch({ demoNote: value })} multiline />
+      <Field label="Canva 說明" value={config.canvaNote ?? ""} onChange={(value) => patch({ canvaNote: value })} multiline />
+      <Field
+        label="GitHub 說明"
+        value={config.githubIntro ?? ""}
+        onChange={(value) => patch({ githubIntro: value })}
+        multiline
+      />
+      <Field label="廊說明" value={config.galleryNote ?? ""} onChange={(value) => patch({ galleryNote: value })} multiline />
 
       <div className="grid gap-2">
         <p className="text-sm font-medium">如何運作（互動步驟）</p>
@@ -126,16 +135,7 @@ export function ExperienceEditor({
       {mode === "spatial-preview" ? <SpatialFields config={config} patch={patch} /> : null}
       {mode === "image-comparison" ? <ComparisonFields config={config} patch={patch} /> : null}
       {mode === "conversation-preview" ? <ConversationFields config={config} patch={patch} /> : null}
-      {mode === "live-demo" ? (
-        <Field label="Demo 說明" value={config.demoNote ?? ""} onChange={(value) => patch({ demoNote: value })} multiline />
-      ) : null}
-      {mode === "github-explorer" ? (
-        <Field label="GitHub 說明" value={config.githubIntro ?? ""} onChange={(value) => patch({ githubIntro: value })} multiline />
-      ) : null}
       {mode === "canva-embed" ? <CanvaFields config={config} patch={patch} /> : null}
-      {mode === "media-gallery" ? (
-        <Field label="廊說明" value={config.galleryNote ?? ""} onChange={(value) => patch({ galleryNote: value })} multiline />
-      ) : null}
 
       <FileHintFields config={config} patch={patch} />
 
@@ -739,7 +739,6 @@ function CanvaFields({
   const pages = config.canvaPageLabels ?? [];
   return (
     <div className="grid gap-2">
-      <Field label="Canva 說明" value={config.canvaNote ?? ""} onChange={(value) => patch({ canvaNote: value })} multiline />
       {pages.length === 0 ? (
         <p className="rounded-xl bg-surface-blue/70 px-3 py-2 text-xs text-muted">
           還沒有公開 canva.com/design/{"{id}"} 分享連結時，不要加頁面標籤或虛構頁面 ID。貼上真實分享連結之後再填實際頁面。

@@ -185,12 +185,13 @@ export const verifyDemoFn = createServerFn({ method: "POST" })
     }
     const result = await verifyDemoUrl(url);
     if (data.id) {
-      await sql.query(
-        `update projects set live_demo_status = $2, live_demo_embed_enabled = $3,
-          live_demo_error = $4, live_demo_last_verified_at = now(), updated_by = $5, updated_at = now()
-         where id = $1`,
-        [data.id, result.status, result.embedEnabled, result.error ?? null, actor.userId],
-      );
+      const { persistDemoVerify } = await import("./store");
+      return persistDemoVerify(sql, data.id, actor.userId, {
+        url,
+        status: result.status,
+        embedEnabled: result.embedEnabled,
+        error: result.error ?? null,
+      });
     }
     return result;
   });

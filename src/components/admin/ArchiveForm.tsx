@@ -135,6 +135,7 @@ export function ArchiveForm({
                   alt: form.media?.alt || form.title,
                   kind: form.media?.kind ?? "image",
                   caption: form.media?.caption,
+                  poster: form.media?.poster,
                 }
               : null,
           );
@@ -152,6 +153,31 @@ export function ArchiveForm({
         value={form.media?.caption ?? ""}
         onChange={(value) =>
           patch("media", form.media ? { ...form.media, caption: value || undefined } : null)
+        }
+      />
+      <label className="grid gap-1 text-sm">
+        媒體類型
+        <select
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.media?.kind ?? "image"}
+          onChange={(event) =>
+            patch(
+              "media",
+              form.media
+                ? { ...form.media, kind: event.target.value as "image" | "video" }
+                : null,
+            )
+          }
+        >
+          <option value="image">image</option>
+          <option value="video">video</option>
+        </select>
+      </label>
+      <Field
+        label="影片封面（poster）"
+        value={form.media?.poster ?? ""}
+        onChange={(value) =>
+          patch("media", form.media ? { ...form.media, poster: value || undefined } : null)
         }
       />
       <Field label="公開連結" value={form.href ?? ""} onChange={(value) => patch("href", value || null)} />
@@ -198,6 +224,24 @@ export function ArchiveForm({
         label="Canva 說明"
         value={form.canva_caption ?? ""}
         onChange={(value) => patch("canva_caption", value || null)}
+      />
+      <Field
+        label="Canva 封面（只接受站內 /media/ 路徑）"
+        value={form.canva_thumbnail_url ?? ""}
+        onChange={(value) => patch("canva_thumbnail_url", value || null)}
+      />
+      <Field
+        label="Canva 頁面 id（逗號分隔，需真實 /design/{id} 後才填）"
+        value={(form.canva_page_ids ?? []).join(", ")}
+        onChange={(value) =>
+          patch(
+            "canva_page_ids",
+            value
+              .split(/[,\s]+/)
+              .map((item) => item.trim())
+              .filter(Boolean),
+          )
+        }
       />
       <button type="submit" className="min-h-11 justify-self-start rounded-full bg-ink px-5 text-sm text-bg">
         儲存 Archive

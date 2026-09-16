@@ -194,9 +194,15 @@ export async function hydratePendingDemos(
     const result = await verifyDemoUrl(row.live_demo_url, { fetchImpl: options.fetchImpl });
     await sql.query(
       `update projects set live_demo_status = $2, live_demo_embed_enabled = $3,
-        live_demo_error = $4, live_demo_last_verified_at = now(), updated_at = now()
+        live_demo_type = $4, live_demo_error = $5, live_demo_last_verified_at = now(), updated_at = now()
        where id = $1`,
-      [row.id, result.status, result.embedEnabled, result.error ?? null],
+      [
+        row.id,
+        result.status,
+        result.embedEnabled,
+        result.embedEnabled ? "iframe" : "link",
+        result.error ?? null,
+      ],
     );
     probed += 1;
   }

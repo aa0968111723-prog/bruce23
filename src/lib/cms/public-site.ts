@@ -33,7 +33,12 @@ export function resolveHomepageCopy(
     nameEn: site?.nameEn ?? fallback.nameEn,
     person: site?.person ?? fallback.person,
     headline: site?.locale?.zh?.headline?.trim() || site?.headline || fallback.headline,
-    subhead: site?.locale?.en?.headline?.trim() || site?.subhead || fallback.subhead,
+    subhead:
+      site?.locale?.en?.subhead?.trim() ||
+      site?.locale?.zh?.subhead?.trim() ||
+      site?.locale?.en?.headline?.trim() ||
+      site?.subhead ||
+      fallback.subhead,
     narrative: site?.locale?.zh?.narrative?.trim() || site?.narrative || fallback.narrative,
     seoTitle:
       site?.locale?.zh?.seoTitle?.trim() ||

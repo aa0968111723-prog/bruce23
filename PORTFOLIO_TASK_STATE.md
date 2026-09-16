@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: section-13 test matrix coverage (not complete)
+Cycle: admin field round-trip (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -25,6 +25,12 @@ Updated: 2026-09-16
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
 - PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
+
+## This cycle (admin field round-trip)
+
+- Distinctive `RT-*` values persist through `createProjectRecord` / `saveProjectRecord` / `persistDemoVerify` / `saveSiteSettings` / `upsertArchive` and are read back from `getAdminProject`, `getPublishedProject`, `toPreviewProject`, and `resolveHomepageCopy`.
+- Drop-on-save fixes: Demo 測試 now writes `live_demo_url|type|status|embed` (`persistDemoVerify`) and returns `AdminProject` so a later 儲存 does not revert iframe; cover/video src rewrite keeps caption/poster; extra gallery images are editable; locale subhead is on Settings and merged into `locale_json`; public archive serializes `pageIds`; GitHub sync without a branch keeps the saved `github_branch`; Experience Demo/Canva/GitHub/廊 notes are always visible.
+- Canva embed test still persists `pending` from allowlist syntax, never `verified`. Test-only DAG ids (`DAGroundTrip1`, `DAGarchiveRt1`) live in unit tests only, not on the eight featured works.
 
 ## This cycle (section 13 test matrix)
 

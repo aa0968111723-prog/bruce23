@@ -8,7 +8,7 @@ import {
   type CanvaPublicSlice,
   type PublicProject,
 } from "./privacy.ts";
-import type { IntegrationStatus, PublicationStatus } from "./status.ts";
+import type { IntegrationStatus, LiveDemoType, PublicationStatus } from "./status.ts";
 import { parseGithubUrl } from "../github/parse.ts";
 import { canvaPersistFromFields, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
 import type { CanvaPersistShape } from "../canva/parse.ts";
@@ -443,6 +443,34 @@ export async function saveProjectRecord(
   return getAdminProject(sql, id);
 }
 
+export function demoTypeFromVerify(embedEnabled: boolean, url: string | null | undefined): LiveDemoType {
+  if (!url?.trim()) return "unavailable";
+  return embedEnabled ? "iframe" : "link";
+}
+
+export async function persistDemoVerify(
+  sql: Sql,
+  id: string,
+  actor: string,
+  input: {
+    url?: string | null;
+    status: IntegrationStatus;
+    embedEnabled: boolean;
+    error?: string | null;
+  },
+): Promise<AdminProject> {
+  const current = await getAdminProject(sql, id);
+  const url = (input.url?.trim() || current.live_demo_url || "").trim() || null;
+  const type = demoTypeFromVerify(input.embedEnabled, url);
+  await sql.query(
+    `update projects set live_demo_url = $2, live_demo_type = $3, live_demo_status = $4,
+      live_demo_embed_enabled = $5, live_demo_error = $6, live_demo_last_verified_at = now(),
+      updated_by = $7, updated_at = now() where id = $1`,
+    [id, url, type, input.status, input.embedEnabled, input.error ?? null, actor],
+  );
+  return getAdminProject(sql, id);
+}
+
 export async function setPublication(
   sql: Sql,
   id: string,
@@ -501,7 +529,7 @@ export function githubIncomingFromFetch(result: GithubFetchResult, currentUrl: s
     github_url: parsed?.url ?? currentUrl,
     github_owner: result.owner ?? parsed?.owner ?? null,
     github_repo: result.repo ?? parsed?.repo ?? null,
-    github_branch: result.branch ?? null,
+    github_branch: result.branch,
     github_sync_status: result.status,
     github_metadata: result.metadata
       ? {
@@ -557,7 +585,7 @@ export async function applyGithubSync(
       incoming.github_url,
       incoming.github_owner,
       incoming.github_repo,
-      incoming.github_branch,
+      incoming.github_branch?.trim() ? incoming.github_branch : current.github_branch,
       incoming.github_sync_status,
       jsonb(incoming.github_metadata),
       keepReadme,
@@ -602,6 +630,7 @@ export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[
       shareUrl: (row.canva_share_url as string | null) ?? null,
       embedUrl: (row.canva_embed_url as string | null) ?? null,
       designId: (row.canva_design_id as string | null) ?? null,
+      pageIds: parseJson<string[] | null>(row.canva_page_ids, null) ?? undefined,
       thumbnailUrl: (row.canva_thumbnail_url as string | null) ?? null,
       status: asStatus(row.canva_status, "not_configured"),
       lastSyncedAt: iso(row.canva_last_synced_at),
@@ -755,6 +784,11 @@ export async function getSiteSettings(sql: Sql): Promise<SiteSettingsRow | null>
 }
 
 export async function saveSiteSettings(sql: Sql, input: SiteSettingsInput, actor: string) {
+  const current = await getSiteSettings(sql);
+  const locale_json = {
+    zh: { ...(current?.locale_json?.zh ?? {}), ...(input.locale_json?.zh ?? {}) },
+    en: { ...(current?.locale_json?.en ?? {}), ...(input.locale_json?.en ?? {}) },
+  };
   await sql.query(
     `insert into site_settings (
       id, name_zh, name_en, person, role, headline, subhead, narrative, email, github, github_handle,
@@ -785,7 +819,7 @@ export async function saveSiteSettings(sql: Sql, input: SiteSettingsInput, actor
       input.seo_title ?? null,
       input.seo_description ?? null,
       jsonb(input.homepage_json ?? {}),
-      jsonb(input.locale_json ?? {}),
+      jsonb(locale_json),
       actor,
     ],
   );

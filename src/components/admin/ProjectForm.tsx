@@ -16,12 +16,13 @@ import {
 } from "@/lib/cms/admin-fn";
 import type { AdminProject } from "@/lib/cms/store";
 import { EXPERIENCE_MODE_LABEL, EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
-import type { ProjectInput } from "@/lib/cms/schema";
+import type { ProjectInput, ProjectMedia } from "@/lib/cms/schema";
 import { experienceConfigSchema } from "@/lib/cms/schema";
 import { parseCanvaDesign, isCanvaShortLink } from "@/lib/canva/parse";
 import { parseCanvaPageIds } from "@/lib/canva/embed";
 import { mergeExperienceConfig } from "@/lib/experiences/defaults";
 import { githubSyncDiff, type GithubDiffRow } from "@/lib/github/diff";
+import { parseGithubUrl } from "@/lib/github/parse";
 import { ExperienceEditor } from "./ExperienceEditor";
 import { GithubSyncDiff } from "./GithubSyncDiff";
 
@@ -31,6 +32,44 @@ function toForm(project: AdminProject): ProjectInput {
     ...rest,
     experience_config: mergeExperienceConfig(rest.slug, rest.experience_config),
   };
+}
+
+function patchMediaItem(
+  media: ProjectMedia[],
+  index: number,
+  patch: Partial<ProjectMedia> | null,
+): ProjectMedia[] {
+  if (patch === null) return media.filter((_, i) => i !== index);
+  const current = media[index];
+  const next: ProjectMedia = {
+    src: patch.src ?? current?.src ?? "",
+    alt: patch.alt ?? current?.alt ?? "",
+    kind: patch.kind ?? current?.kind ?? "image",
+    caption: "caption" in patch ? patch.caption : current?.caption,
+    poster: "poster" in patch ? patch.poster : current?.poster,
+  };
+  if (!next.src) return media.filter((_, i) => i !== index);
+  if (index >= media.length) return [...media, next];
+  return media.map((item, i) => (i === index ? next : item));
+}
+
+function patchVideoMedia(media: ProjectMedia[], patch: Partial<ProjectMedia> | null): ProjectMedia[] {
+  const index = media.findIndex((item) => item.kind === "video");
+  if (patch === null) return media.filter((item) => item.kind !== "video");
+  if (index < 0) {
+    if (!patch.src) return media;
+    return [
+      ...media,
+      {
+        src: patch.src,
+        alt: patch.alt || "影片",
+        kind: "video",
+        caption: patch.caption,
+        poster: patch.poster,
+      },
+    ];
+  }
+  return patchMediaItem(media, index, { ...patch, kind: "video" });
 }
 
 export function ProjectForm({ project }: { project: AdminProject }) {
@@ -210,17 +249,18 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field
           label="封面圖"
           value={form.media[0]?.src ?? ""}
-          onChange={(value) =>
-            patch("media", value
-              ? [{ src: value, alt: form.media[0]?.alt || form.title, kind: form.media[0]?.kind ?? "image" }, ...form.media.slice(1)]
-              : form.media.slice(1))
-          }
+          onChange={(value) => patch("media", patchMediaItem(form.media, 0, value ? { src: value } : null))}
         />
         <Field
           label="封面 alt"
           value={form.media[0]?.alt ?? ""}
+          onChange={(value) => patch("media", patchMediaItem(form.media, 0, { alt: value }))}
+        />
+        <Field
+          label="封面說明"
+          value={form.media[0]?.caption ?? ""}
           onChange={(value) =>
-            patch("media", form.media[0] ? [{ ...form.media[0], alt: value }, ...form.media.slice(1)] : [])
+            patch("media", patchMediaItem(form.media, 0, { caption: value || undefined }))
           }
         />
         <label className="grid gap-1 text-sm">
@@ -231,9 +271,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             onChange={(event) =>
               patch(
                 "media",
-                form.media[0]
-                  ? [{ ...form.media[0], kind: event.target.value as "image" | "video" }, ...form.media.slice(1)]
-                  : [],
+                patchMediaItem(form.media, 0, { kind: event.target.value as "image" | "video" }),
               )
             }
           >
@@ -244,28 +282,88 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field
           label="影片 URL（選填，kind=video 時使用）"
           value={form.media.find((item) => item.kind === "video")?.src ?? ""}
-          onChange={(value) => {
-            const images = form.media.filter((item) => item.kind !== "video");
-            patch(
-              "media",
-              value
-                ? [
-                    ...images,
-                    {
-                      src: value,
-                      alt: form.media.find((item) => item.kind === "video")?.alt || `${form.title} 影片`,
-                      kind: "video" as const,
-                    },
-                  ]
-                : images,
-            );
-          }}
+          onChange={(value) => patch("media", patchVideoMedia(form.media, value ? { src: value } : null))}
         />
+        <Field
+          label="影片 alt"
+          value={form.media.find((item) => item.kind === "video")?.alt ?? ""}
+          onChange={(value) => patch("media", patchVideoMedia(form.media, { alt: value }))}
+        />
+        <Field
+          label="影片說明"
+          value={form.media.find((item) => item.kind === "video")?.caption ?? ""}
+          onChange={(value) =>
+            patch("media", patchVideoMedia(form.media, { caption: value || undefined }))
+          }
+        />
+        <Field
+          label="影片封面（poster）"
+          value={form.media.find((item) => item.kind === "video")?.poster ?? ""}
+          onChange={(value) =>
+            patch("media", patchVideoMedia(form.media, { poster: value || undefined }))
+          }
+        />
+        {(form.media ?? []).map((item, index) => {
+          if (index === 0 || item.kind === "video") return null;
+          return (
+            <div key={`extra-media-${index}`} className="grid gap-2 rounded-xl bg-surface-blue/50 p-3">
+              <Field
+                label="其他圖片"
+                value={item.src}
+                onChange={(value) =>
+                  patch("media", patchMediaItem(form.media, index, value ? { src: value } : null))
+                }
+              />
+              <Field
+                label="其他圖片 alt"
+                value={item.alt}
+                onChange={(value) => patch("media", patchMediaItem(form.media, index, { alt: value }))}
+              />
+              <Field
+                label="其他圖片說明"
+                value={item.caption ?? ""}
+                onChange={(value) =>
+                  patch("media", patchMediaItem(form.media, index, { caption: value || undefined }))
+                }
+              />
+              <button
+                type="button"
+                className="min-h-11 justify-self-start rounded-full px-3 text-sm text-alert"
+                onClick={() => patch("media", patchMediaItem(form.media, index, null))}
+              >
+                移除圖片
+              </button>
+            </div>
+          );
+        })}
+        <button
+          type="button"
+          className="min-h-11 justify-self-start rounded-full bg-surface-mint px-4 text-sm"
+          onClick={() =>
+            patch("media", [
+              ...form.media,
+              { src: "/media/", alt: "其他圖片", kind: "image" as const },
+            ])
+          }
+        >
+          新增圖片
+        </button>
       </fieldset>
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">GitHub</legend>
         <Field label="GitHub URL" value={form.github_url ?? ""} onChange={(value) => patch("github_url", value)} />
+        <Field
+          label="GitHub branch"
+          value={form.github_branch ?? ""}
+          onChange={(value) => patch("github_branch", value || null)}
+        />
+        <p className="text-xs text-muted">
+          owner/repo{" "}
+          {parseGithubUrl(form.github_url)?.owner ?? form.github_owner ?? "—"}/
+          {parseGithubUrl(form.github_url)?.repo ?? form.github_repo ?? "—"}
+          （存檔時由網址寫入，不同步覆蓋敘事）
+        </p>
         <label className="flex min-h-11 items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -360,6 +458,11 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         </p>
         <Field label="Demo URL" value={form.live_demo_url ?? ""} onChange={(value) => patch("live_demo_url", value)} />
         <Field label="Demo 標籤" value={form.live_demo_label ?? ""} onChange={(value) => patch("live_demo_label", value)} />
+        <p className="text-xs text-muted">
+          Demo 類型 {form.live_demo_type ?? "尚未"} · 嵌入 {form.live_demo_embed_enabled ? "可" : "否"} · 狀態{" "}
+          {form.live_demo_status}
+          {form.live_demo_error ? ` · ${form.live_demo_error}` : ""}
+        </p>
         <label className="grid gap-1 text-sm">
           互動展示模式
           <select

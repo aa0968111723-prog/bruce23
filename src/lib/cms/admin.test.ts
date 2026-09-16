@@ -107,6 +107,7 @@ describe("admin allowlist", () => {
     assert.match(source, /handleSaveDraft/);
     assert.match(source, /handlePreviewDraft/);
     assert.match(source, /handleSetPublication/);
+    assert.match(source, /persistDemoVerify/);
     const handlers = readFileSync(new URL("./admin-handlers.server.ts", import.meta.url), "utf8");
     assert.match(handlers, /runAdminSql/);
     assert.match(handlers, /persistCanvaEmbedTest/);
@@ -122,6 +123,8 @@ describe("admin allowlist", () => {
     const store = readFileSync(new URL("./store.ts", import.meta.url), "utf8");
     assert.match(store, /canvaPersistFromFields/);
     assert.match(store, /canvaStatusForPersist/);
+    assert.match(store, /persistDemoVerify/);
+    assert.match(store, /demoTypeFromVerify/);
     assert.doesNotMatch(source, /假裝已經連上/);
     assert.doesNotMatch(handlers, /notion: \{\s*connected:\s*true/);
   });
