@@ -121,7 +121,6 @@ async function attachSession(context, page, session) {
         httpOnly: true,
         secure: true,
         sameSite: "Lax",
-        path: "/",
       },
     ]);
   } catch (err) {
@@ -222,7 +221,7 @@ async function proveLiveAdmin(page, request) {
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
-  await page.getByRole("button", { name: "發布" }).click();
+  await page.getByRole("button", { name: "發布", exact: true }).click();
   await page.getByText("發布成功").first().waitFor({ timeout: 20000 });
 
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
@@ -240,7 +239,7 @@ async function proveLiveAdmin(page, request) {
 
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await page.getByText(SLUG, { exact: true }).first().click();
-  await page.getByRole("button", { name: "取消發布" }).click();
+  await page.getByRole("button", { name: "取消發布", exact: true }).click();
   await page.getByText("取消發布成功").first().waitFor({ timeout: 20000 });
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
   assert(!(await page.content()).includes(MARKER), "unpublish left the marker on the public page");
