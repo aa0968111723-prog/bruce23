@@ -188,7 +188,7 @@ async function proveLiveAdmin(page, request) {
   await page.screenshot({ path: resolve(SHOTS, "admin-live-home.png"), fullPage: true });
 
   await openOrCreateWork(page);
-  await page.getByLabel("摘要", { exact: true }).fill(MARKER);
+  await page.locator("fieldset").filter({ hasText: "敘事" }).locator("textarea").first().fill(MARKER);
   await page.getByRole("button", { name: "存成草稿" }).click();
   await page.getByText("存成草稿成功").first().waitFor({ timeout: 20000 });
   await page.screenshot({ path: resolve(SHOTS, "admin-live-draft-saved.png"), fullPage: true });
