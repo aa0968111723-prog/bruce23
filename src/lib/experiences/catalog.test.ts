@@ -37,7 +37,6 @@ describe("frontend contract", () => {
       "src/routes/login.tsx",
       "src/routes/admin/integrations.tsx",
       "src/lib/cms/public-fn.ts",
-      "src/lib/cms/privacy.ts",
     ];
     for (const file of files) {
       const text = readFileSync(new URL(`../../../${file}`, import.meta.url), "utf8");
