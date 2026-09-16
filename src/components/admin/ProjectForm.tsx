@@ -138,7 +138,7 @@ export function ProjectForm({
   useEffect(() => {
     setValue(initial ? fromProject(initial) : empty);
     setDirty(false);
-  }, [initial?.id, snapshot]);
+  }, [initial, snapshot]);
 
   useEffect(() => {
     const onLeave = (event: BeforeUnloadEvent) => {

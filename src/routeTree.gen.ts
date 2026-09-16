@@ -15,12 +15,12 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminArchiveRouteImport } from './routes/admin/archive'
 import { Route as AdminIntegrationsRouteImport } from './routes/admin/integrations'
 import { Route as AdminPreviewRouteImport } from './routes/admin/preview'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
-import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as WorkIndexRouteImport } from './routes/work/index'
 import { Route as WorkSlugRouteImport } from './routes/work/$slug'
 import { Route as AdminProjectsIndexRouteImport } from './routes/admin/projects/index'
@@ -58,6 +58,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -82,11 +87,6 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AdminRoute,
-} as any)
-const SitemapXmlRoute = SitemapXmlRouteImport.update({
-  id: '/sitemap/xml',
-  path: '/sitemap/xml',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const WorkIndexRoute = WorkIndexRouteImport.update({
   id: '/work/',
@@ -126,11 +126,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
   '/admin/preview': typeof AdminPreviewRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/work/$slug': typeof WorkSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
@@ -145,11 +145,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
   '/admin/preview': typeof AdminPreviewRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/work/$slug': typeof WorkSlugRoute
   '/admin': typeof AdminIndexRoute
   '/work': typeof WorkIndexRoute
@@ -166,11 +166,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
   '/admin/preview': typeof AdminPreviewRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
   '/work/$slug': typeof WorkSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
@@ -188,11 +188,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/archive'
     | '/login'
+    | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
     | '/admin/preview'
     | '/admin/settings'
-    | '/sitemap/xml'
     | '/work/$slug'
     | '/admin/'
     | '/work/'
@@ -207,11 +207,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/archive'
     | '/login'
+    | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
     | '/admin/preview'
     | '/admin/settings'
-    | '/sitemap/xml'
     | '/work/$slug'
     | '/admin'
     | '/work'
@@ -227,11 +227,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/archive'
     | '/login'
+    | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
     | '/admin/preview'
     | '/admin/settings'
-    | '/sitemap/xml'
     | '/work/$slug'
     | '/admin/'
     | '/work/'
@@ -248,7 +248,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ArchiveRoute: typeof ArchiveRoute
   LoginRoute: typeof LoginRoute
-  SitemapXmlRoute: typeof SitemapXmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WorkSlugRoute: typeof WorkSlugRoute
   WorkIndexRoute: typeof WorkIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -298,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -332,13 +339,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/sitemap/xml': {
-      id: '/sitemap/xml'
-      path: '/sitemap/xml'
-      fullPath: '/sitemap/xml'
-      preLoaderRoute: typeof SitemapXmlRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/work/': {
       id: '/work/'
@@ -416,7 +416,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ArchiveRoute: ArchiveRoute,
   LoginRoute: LoginRoute,
-  SitemapXmlRoute: SitemapXmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   WorkSlugRoute: WorkSlugRoute,
   WorkIndexRoute: WorkIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

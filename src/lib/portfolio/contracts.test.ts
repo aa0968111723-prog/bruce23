@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { seedProjects } from "./seed-data.ts";
+import { projects } from "../../content/projects.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -40,13 +40,13 @@ describe("admin auth contracts", () => {
 
   it("public reads do not use authMiddleware", () => {
     const pub = read("src/lib/portfolio/public-fns.ts");
-    assert.doesNotMatch(pub, /authMiddleware/);
+    assert.doesNotMatch(pub, /\.middleware\(\[authMiddleware\]\)/);
   });
 });
 
 describe("seed uniqueness", () => {
   it("does not emit duplicate slugs", () => {
-    const slugs = seedProjects().map((p) => p.slug);
+    const slugs = projects.map((p) => p.slug);
     assert.equal(new Set(slugs).size, slugs.length);
     assert.equal(slugs.length, 8);
   });

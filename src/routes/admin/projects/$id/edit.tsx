@@ -36,6 +36,7 @@ function EditProject() {
 
   useEffect(() => {
     void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload when the route id changes
   }, [id]);
 
   if (!project) return <p className="text-sm text-muted">載入中…</p>;
