@@ -51,7 +51,7 @@ export function ExperiencePanel({
   }, [onClose]);
 
   const body = (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-6">
         <div>
           <p className="text-xs font-medium tracking-wide text-muted">
@@ -76,7 +76,7 @@ export function ExperiencePanel({
       </div>
 
       <div
-        className="flex gap-1 overflow-x-auto px-3 pt-3"
+        className="flex min-w-0 max-w-full gap-1 overflow-x-auto px-3 pt-3"
         role="tablist"
         aria-label={ex.tabsAria}
         onKeyDown={tabs.onKeyDown}
@@ -180,12 +180,12 @@ export function ExperiencePanel({
   );
 
   if (variant === "page") {
-    return <section className="overflow-hidden rounded-3xl bg-surface shadow-float">{body}</section>;
+    return <section className="min-w-0 max-w-full overflow-hidden rounded-3xl bg-surface shadow-float">{body}</section>;
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/30 p-0 sm:items-center sm:p-6">
-      <div className="flex h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-bg shadow-float sm:h-[86dvh] sm:rounded-3xl">
+      <div className="flex h-[92dvh] w-full min-w-0 max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-bg shadow-float sm:h-[86dvh] sm:rounded-3xl">
         {body}
       </div>
     </div>

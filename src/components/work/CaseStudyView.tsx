@@ -28,7 +28,7 @@ export function CaseStudyView({
     view.seoDescription || view.summary,
   );
   return (
-    <article className="mx-auto w-full max-w-4xl scroll-mt-20 px-4 py-12 sm:px-6">
+    <article className="mx-auto w-full min-w-0 max-w-4xl scroll-mt-20 px-4 py-12 sm:px-6">
       {includeJsonLd ? (
         <script
           type="application/ld+json"
@@ -111,7 +111,7 @@ export function CaseStudyView({
               <p className="font-medium">{item.label}</p>
               <p className="text-muted">{item.note}</p>
               {sanitizePublicHref(item.href) ? (
-                <a href={sanitizePublicHref(item.href)} className="mt-1 inline-flex min-h-11 items-center text-mint-deep" rel="noreferrer" target="_blank">
+                <a href={sanitizePublicHref(item.href)} className="mt-1 flex min-h-11 max-w-full items-center break-all text-mint-deep" rel="noreferrer" target="_blank">
                   {item.href}
                 </a>
               ) : null}

@@ -45,7 +45,7 @@ function WorkIndex() {
       <h1 className="font-display text-4xl font-semibold">{ui.workTitle}</h1>
       <p className="mt-3 max-w-2xl text-muted">{ui.workLead}</p>
       <div
-        className="mt-8 flex gap-2 overflow-x-auto pb-2"
+        className="mt-8 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-2"
         role="tablist"
         aria-label={ui.workCats}
         onKeyDown={tabs.onKeyDown}

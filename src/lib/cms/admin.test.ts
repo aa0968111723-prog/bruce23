@@ -174,6 +174,11 @@ describe("admin allowlist", () => {
     assert.match(live, /測試 Canva 嵌入/);
     assert.match(live, /狀態 verified/);
     assert.match(live, /FEATURED_SLUGS/);
+    assert.match(live, /proveIntegrationsDesk/);
+    assert.match(live, /\/admin\/integrations/);
+    assert.match(live, /有未儲存的修改/);
+    assert.match(live, /中文敘事保留/);
+    assert.match(live, /儲存這件作品/);
     assert.doesNotMatch(live, /\/api\/test-login/);
     const db = readFileSync(new URL("../db.ts", import.meta.url), "utf8");
     assert.match(db, /PGLITE_DATA_DIR/);

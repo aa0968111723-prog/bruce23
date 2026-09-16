@@ -2,7 +2,7 @@ import type { GithubDiffRow } from "@/lib/github/diff";
 
 export function GithubSyncDiff({ rows }: { rows: GithubDiffRow[] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-line">
+    <div className="min-w-0 max-w-full overflow-x-auto rounded-xl border border-line">
       <p className="px-3 py-2 text-xs text-muted">
         只比對 GitHub 中繼資料。中文敘事、SEO、體驗設定不會被同步覆寫。
       </p>

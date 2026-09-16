@@ -560,6 +560,42 @@ describe("cms persistence", () => {
     assert.equal(rejected.canva_status, "failed");
   });
 
+  it("keeps Chinese narrative when an integrations save clears Canva", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        title: "中文標題",
+        summary: "中文摘要不可被清空",
+        locale_json: {
+          zh: { title: "中文標題", summary: "中文摘要不可被清空" },
+          en: { title: "English title" },
+        },
+      }),
+      "admin-1",
+    );
+    const cleared = await saveProjectRecord(
+      sql,
+      created.id,
+      {
+        canva_share_url: null,
+        canva_embed_url: null,
+        canva_design_id: null,
+        live_demo_url: null,
+        experience_mode: created.experience_mode,
+      },
+      "admin-1",
+      "integrations",
+    );
+    assert.equal(cleared.title, "中文標題");
+    assert.equal(cleared.summary, "中文摘要不可被清空");
+    assert.equal(cleared.locale_json.zh?.title, "中文標題");
+    assert.equal(cleared.locale_json.zh?.summary, "中文摘要不可被清空");
+    assert.equal(cleared.locale_json.en?.title, "English title");
+    assert.equal(cleared.canva_share_url, null);
+  });
+
   it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(

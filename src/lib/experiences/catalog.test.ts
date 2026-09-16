@@ -115,6 +115,7 @@ describe("frontend contract", () => {
     const shell = readFileSync(new URL("../../../src/components/site/SiteShell.tsx", import.meta.url), "utf8");
     assert.match(shell, /ui\.skip/);
     assert.match(shell, /LocaleProvider/);
+    assert.match(shell, /min-w-0 flex-1/);
     const localeView = readFileSync(new URL("../../../src/lib/locale/view.ts", import.meta.url), "utf8");
     assert.match(localeView, /跳到內容/);
     const toggle = readFileSync(new URL("../../../src/components/site/LocaleToggle.tsx", import.meta.url), "utf8");
@@ -131,6 +132,7 @@ describe("frontend contract", () => {
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
+    assert.match(panel, /min-w-0 max-w-full overflow-x-auto/);
     const experienceLocale = readFileSync(
       new URL("../../../src/lib/locale/experience.ts", import.meta.url),
       "utf8",
@@ -215,6 +217,7 @@ describe("frontend contract", () => {
     assert.match(processMap, /ArrowRight|useRovingTabs/);
     assert.match(processMap, /node.githubPath/);
     assert.match(processMap, /ex\.processDefaultIntro|useExperienceView/);
+    assert.match(processMap, /min-w-0 max-w-full overflow-x-auto/);
     assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
@@ -280,6 +283,8 @@ describe("frontend contract", () => {
     assert.match(publicFn, /locale:/);
     const jsonldView = readFileSync(new URL("../../../src/components/work/CaseStudyView.tsx", import.meta.url), "utf8");
     assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
+    assert.match(jsonldView, /min-w-0 max-w-4xl/);
+    assert.match(jsonldView, /break-all/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
     assert.match(form, /GithubSyncDiff/);
     assert.match(form, /ExperienceEditor/);
@@ -436,6 +441,7 @@ describe("frontend contract", () => {
     assert.match(integrationsCard, /experience_mode/);
     assert.match(integrationsCard, /測試嵌入/);
     assert.match(integrationsCard, /開啟原稿/);
+    assert.match(integrationsCard, /min-w-0 max-w-full/);
     assert.doesNotMatch(integrationsCard, /status:\s*"verified"/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);

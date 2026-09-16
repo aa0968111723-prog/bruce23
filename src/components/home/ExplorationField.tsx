@@ -48,7 +48,7 @@ export function ExplorationField({
       <p className="mt-2 max-w-2xl text-sm text-muted">{ui.explorationBody}</p>
 
       <div
-        className="mt-6 flex gap-2 overflow-x-auto pb-2"
+        className="mt-6 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-2"
         role="tablist"
         aria-label={ui.explorationAria}
         onKeyDown={tabs.onKeyDown}
@@ -141,7 +141,7 @@ export function ExplorationField({
       </div>
 
       <div className="mt-6 grid gap-3">
-        <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label={ui.workNodes}>
+        <div className="flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1 lg:hidden" aria-label={ui.workNodes}>
           {visible.map((project) => (
             <button
               key={`node-${project.slug}`}

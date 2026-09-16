@@ -48,7 +48,7 @@ function AdminLayout() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg">
+    <div className="min-h-dvh min-w-0 bg-bg">
       <header className="border-b border-line bg-surface/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <p className="font-display text-lg">後台</p>
@@ -72,7 +72,7 @@ function AdminLayout() {
           <UserButton />
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto min-w-0 max-w-6xl px-4 py-8">
         <Outlet />
       </div>
     </div>

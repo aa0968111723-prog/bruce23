@@ -28,7 +28,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
         {joinSentences(config.intro ?? ex.processDefaultIntro, ex.processKeyboard)}
       </p>
       <div
-        className="mt-4 flex gap-2 overflow-x-auto md:flex"
+        className="mt-4 flex min-w-0 max-w-full gap-2 overflow-x-auto md:flex"
         role="tablist"
         aria-label={ex.nodesAria}
         onKeyDown={tabs.onKeyDown}

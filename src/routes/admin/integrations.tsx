@@ -164,7 +164,7 @@ function IntegrationsPage() {
           <div className="mt-5 grid gap-3">
             <div className="flex flex-wrap gap-2">
               <input
-                className="min-h-11 min-w-56 flex-1 rounded-xl border border-line px-3 text-sm"
+                className="min-h-11 min-w-0 flex-1 rounded-xl border border-line px-3 text-sm"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="搜尋設計標題"

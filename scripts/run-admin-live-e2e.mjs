@@ -35,7 +35,7 @@ if (!process.env.PORTFOLIO_ADMIN_EMAILS?.trim()) {
 const ORIGIN = "http://127.0.0.1:8080";
 const SLUG = "live-e2e-work";
 const TITLE = "Live E2E";
-const MARKER = `LIVE-E2E ${new Date().toISOString()}`;
+const MARKER = `LIVE-E2E ${new Date().toISOString()} 中文敘事保留`;
 const SHOTS = resolve(root, "screenshots");
 /** Existing embed-test fixture. Live E2E only — never seeded onto the eight featured works. */
 const CANVA_FIXTURE_SHARE_URL = "https://www.canva.com/design/DAGfixtureEmbedShape/view?utm_source=share";
@@ -187,6 +187,55 @@ async function gotoReady(page, url) {
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 }
 
+async function proveIntegrationsDesk(page) {
+  await gotoReady(page, `${ORIGIN}/admin/integrations`);
+  await page.getByRole("heading", { name: "已發布作品" }).waitFor({ timeout: 20000 });
+  await page.getByText("整合列載入中。").waitFor({ state: "detached", timeout: 20000 }).catch(() => {});
+  const card = page.locator("form").filter({ has: page.getByRole("heading", { name: TITLE, exact: true }) });
+  await card.first().waitFor({ timeout: 20000 });
+  await page.setViewportSize({ width: 390, height: 844 });
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+  );
+  assert(!overflow, "integrations desks overflow at 390");
+  const shortTargets = await card.locator("button, a, input, select").evaluateAll((els) =>
+    els
+      .map((el) => ({
+        tag: el.tagName,
+        text: (el.textContent ?? "").trim().slice(0, 40),
+        h: Math.round(el.getBoundingClientRect().height),
+      }))
+      .filter((item) => item.h > 0 && item.h < 44),
+  );
+  assert(
+    shortTargets.length === 0,
+    `integrations desk targets shorter than 44px: ${JSON.stringify(shortTargets)}`,
+  );
+  const canva = card.getByLabel("分享網址");
+  await canva.fill("https://example.invalid/not-saved");
+  await page.getByText("有未儲存的修改。").first().waitFor({ timeout: 8000 });
+  await canva.fill("");
+  await card.getByRole("button", { name: "儲存這件作品" }).click();
+  await page.getByText("已儲存整合").first().waitFor({ timeout: 20000 });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  mkdirSync(SHOTS, { recursive: true });
+  await page.screenshot({ path: resolve(SHOTS, "admin-live-integrations.png"), fullPage: true });
+
+  await gotoReady(page, `${ORIGIN}/admin/projects`);
+  await waitForProjectList(page);
+  await page.getByText(SLUG, { exact: true }).first().click();
+  await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+  const summary = page
+    .locator("fieldset")
+    .filter({ has: page.locator("legend", { hasText: /^敘事$/ }) })
+    .locator("textarea")
+    .first();
+  const kept = await summary.inputValue();
+  assert(kept.includes("LIVE-E2E"), `integrations empty Canva save dropped the live marker (got ${kept})`);
+  assert(kept.includes("中文敘事保留"), `integrations empty Canva save dropped Chinese (got ${kept})`);
+  console.log("ok - /admin/integrations desk: no overflow, 44px, unsaved warning, empty Canva keeps Chinese");
+}
+
 async function proveLiveAdmin(page, request) {
   const session = readAdminSessionFile();
   const sessionRes = await request.get(`${ORIGIN}/api/auth/get-session`, {
@@ -261,6 +310,8 @@ async function proveLiveAdmin(page, request) {
     `admin draft preview missing the saved marker (${MARKER})`,
   );
   await page.screenshot({ path: resolve(SHOTS, "admin-live-preview.png"), fullPage: true });
+
+  await proveIntegrationsDesk(page);
 
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await waitForProjectList(page);

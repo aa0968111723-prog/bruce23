@@ -113,7 +113,7 @@ export function IntegrationWorkCard({
 
   return (
     <form
-      className="rounded-2xl bg-surface p-5 shadow-card"
+      className="min-w-0 max-w-full rounded-2xl bg-surface p-5 shadow-card"
       onSubmit={(event) => {
         event.preventDefault();
         const canva = canvaSaveFields(canvaUrl);
