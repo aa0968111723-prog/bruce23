@@ -17,6 +17,7 @@ import {
   overlayProject,
   parseViewerLang,
   pickLocaleField,
+  pickLocaleList,
   VIEWER_LANG_STORAGE_KEY,
 } from "./view.ts";
 
@@ -283,13 +284,56 @@ describe("viewer locale", () => {
       assert.equal(pickLocaleField("en", locale, "title", row.title), en.title);
       assert.equal(pickLocaleField("en", locale, "summary", row.summary), en.summary);
       assert.equal(pickLocaleField("zh", locale, "title", row.title), zh.title);
-      const view = overlayProject(project(locale, { title: row.title, summary: row.summary, slug }), "en");
+      const view = overlayProject(
+        project(locale, {
+          title: row.title,
+          summary: row.summary,
+          slug,
+          decisions: row.decisions,
+          process: row.process,
+          outputs: row.outputs,
+          limitations: row.limitations,
+        }),
+        "en",
+      );
       assert.equal(view.title, en.title);
       assert.equal(view.summary, en.summary);
       assert.equal(view.problem, en.problem);
       assert.equal(view.role, en.role);
       assert.equal(view.seoTitle, en.seoTitle);
       assert.equal(view.seoDescription, en.seoDescription);
+      assert.deepEqual(view.decisions, en.decisions);
+      assert.deepEqual(view.process, en.process);
+      assert.deepEqual(view.outputs, en.outputs);
+      assert.deepEqual(view.limitations, en.limitations);
+      assert.equal(pickLocaleList("en", locale, "decisions", row.decisions)[0], en.decisions?.[0]);
+      assert.equal(pickLocaleList("zh", locale, "decisions", row.decisions)[0], row.decisions[0]);
+    }
+  });
+
+  it("returns English decisions and limitations for at least two works when lang=en", () => {
+    const slugs = ["framelab", "ai-director-os"] as const;
+    for (const slug of slugs) {
+      const row = projects.find((item) => item.slug === slug);
+      const en = featuredProjectLocaleEn[slug];
+      const zh = localeZhFromProject(slug);
+      assert.ok(row && en.decisions?.length && en.limitations?.length && zh);
+      assert.notEqual(en.decisions.join("\n"), row.decisions.join("\n"), `${slug} decisions`);
+      assert.notEqual(en.limitations.join("\n"), row.limitations.join("\n"), `${slug} limitations`);
+      assert.notEqual(en.decisions.join("\n"), (zh.decisions ?? []).join("\n"), `${slug} overlay decisions`);
+      assert.notEqual(en.limitations.join("\n"), (zh.limitations ?? []).join("\n"), `${slug} overlay limitations`);
+      const locale = { zh, en };
+      assert.deepEqual(pickLocaleList("en", locale, "decisions", row.decisions), en.decisions);
+      assert.deepEqual(pickLocaleList("en", locale, "limitations", row.limitations), en.limitations);
+      assert.deepEqual(pickLocaleList("zh", locale, "decisions", row.decisions), zh.decisions);
+      const view = overlayProject(
+        project(locale, { slug, decisions: row.decisions, limitations: row.limitations }),
+        "en",
+      );
+      assert.deepEqual(view.decisions, en.decisions);
+      assert.deepEqual(view.limitations, en.limitations);
+      assert.ok(view.decisions.some((item) => /[A-Za-z]/.test(item)));
+      assert.ok(!view.decisions[0]?.includes("每個 frame") && !view.decisions[0]?.includes("可行實用"));
     }
   });
 
@@ -302,5 +346,21 @@ describe("viewer locale", () => {
     );
     assert.equal(merged.title, "Admin EN title");
     assert.equal(merged.summary, "Not an NLE");
+    const mergedLists = mergeSeedEnglish(
+      { decisions: ["Admin EN decision"], limitations: ["每個 frame 是圖節點：類型、鄰居、角色、運動、修訂。"] },
+      {
+        decisions: ["每個 frame 是圖節點：類型、鄰居、角色、運動、修訂。"],
+        limitations: ["SAM 2、RTMPose、SEA-RAFT、RIFE、Wan 僅適配器，模型未註冊時不可用。"],
+      },
+      {
+        decisions: ["Each frame is a graph node: type, neighbors, character, motion, revision."],
+        limitations: ["SAM 2, RTMPose, SEA-RAFT, RIFE, and Wan are adapters only — unavailable until a model is registered."],
+      },
+      ["每個 frame 是圖節點：類型、鄰居、角色、運動、修訂。"],
+    );
+    assert.deepEqual(mergedLists.decisions, ["Admin EN decision"]);
+    assert.deepEqual(mergedLists.limitations, [
+      "SAM 2, RTMPose, SEA-RAFT, RIFE, and Wan are adapters only — unavailable until a model is registered.",
+    ]);
   });
 });

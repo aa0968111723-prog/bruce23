@@ -456,6 +456,29 @@ describe("project schema", () => {
     assert.equal(parsed.publication_status, "draft");
   });
 
+  it("accepts locale_json list overlays for case-study sections", () => {
+    const parsed = projectInputSchema.parse({
+      slug: "demo-work",
+      title: "Demo",
+      category: "AI Product",
+      year: "2026",
+      product_status: "prototype",
+      publication_status: "draft",
+      locale_json: {
+        zh: { decisions: ["中文決策"] },
+        en: {
+          decisions: ["English decision"],
+          limitations: ["English limit"],
+          process: ["English process"],
+          outputs: ["English output"],
+        },
+      },
+    });
+    assert.deepEqual(parsed.locale_json.en?.decisions, ["English decision"]);
+    assert.deepEqual(parsed.locale_json.en?.limitations, ["English limit"]);
+    assert.deepEqual(parsed.locale_json.zh?.decisions, ["中文決策"]);
+  });
+
   it("rejects invalid nested experience_config", () => {
     assert.throws(() =>
       projectInputSchema.parse({

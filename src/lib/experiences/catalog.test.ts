@@ -277,6 +277,10 @@ describe("frontend contract", () => {
     assert.match(form, /localeKey/);
     assert.match(form, /中文 SEO 標題/);
     assert.match(form, /英文 SEO 描述/);
+    assert.match(form, /英文決策（一行一項）/);
+    assert.match(form, /英文限制（一行一項）/);
+    assert.match(form, /英文流程（一行一項）/);
+    assert.match(form, /英文產出（一行一項）/);
     assert.match(form, /封面說明/);
     assert.match(form, /影片封面/);
     assert.match(form, /其他圖片/);
@@ -286,9 +290,14 @@ describe("frontend contract", () => {
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
     assert.match(seedSource, /fillSiteLocaleGaps/);
+    const schemaSource = readFileSync(new URL("../../../src/lib/cms/schema.ts", import.meta.url), "utf8");
+    assert.match(schemaSource, /localeListSchema/);
+    assert.match(schemaSource, /decisions: localeListSchema/);
     const localeEn = readFileSync(new URL("../../../src/content/locale-en.ts", import.meta.url), "utf8");
     assert.match(localeEn, /featuredProjectLocaleEn/);
     assert.match(localeEn, /siteLocaleEn/);
+    assert.match(localeEn, /Each frame is a graph node/);
+    assert.match(localeEn, /Fal\.ai is the only vendor/);
     assert.doesNotMatch(localeEn, /DAGx/);
     const archiveForm = readFileSync(
       new URL("../../../src/components/admin/ArchiveForm.tsx", import.meta.url),

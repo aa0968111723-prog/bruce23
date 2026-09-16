@@ -29,6 +29,8 @@ export const sourceEvidenceSchema = z.object({
   kind: z.enum(["github", "canva", "demo", "narrative", "other"]).optional(),
 });
 
+const localeListSchema = z.array(z.string()).optional();
+
 export const localeCopySchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
@@ -37,6 +39,10 @@ export const localeCopySchema = z.object({
   role: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
+  decisions: localeListSchema,
+  process: localeListSchema,
+  outputs: localeListSchema,
+  limitations: localeListSchema,
 });
 
 export const githubCommitSchema = z.object({

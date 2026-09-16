@@ -29,15 +29,22 @@ export function writeStoredViewerLang(lang: ViewerLang): void {
   }
 }
 
-function trimCopy(copy: LocaleCopy | Record<string, string> | undefined, key: string): string {
-  const value = copy ? (copy as Record<string, string>)[key] : undefined;
+type LocaleBag = { zh?: Record<string, unknown>; en?: Record<string, unknown> };
+
+function trimCopy(copy: LocaleCopy | Record<string, unknown> | undefined, key: string): string {
+  const value = copy ? (copy as Record<string, unknown>)[key] : undefined;
   return typeof value === "string" ? value.trim() : "";
+}
+
+export function localeStringList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => (typeof item === "string" ? item.trim() : "")).filter(Boolean);
 }
 
 /** en uses saved overlay then zh; zh stays on zh/row and does not pull en. */
 export function pickLocaleField(
   lang: ViewerLang,
-  locale: { zh?: Record<string, string>; en?: Record<string, string> } | PublicProject["locale"] | undefined,
+  locale: LocaleBag | PublicProject["locale"] | undefined,
   key: string,
   row: string | null | undefined,
   fallback = "",
@@ -47,6 +54,20 @@ export function pickLocaleField(
   const base = typeof row === "string" ? row.trim() : "";
   if (lang === "en") return en || zh || base || fallback;
   return zh || base || fallback;
+}
+
+/** en uses saved list overlay then zh; zh stays on zh/row and does not pull en. */
+export function pickLocaleList(
+  lang: ViewerLang,
+  locale: LocaleBag | PublicProject["locale"] | undefined,
+  key: string,
+  row: string[] | null | undefined,
+): string[] {
+  const zh = localeStringList(locale?.zh ? (locale.zh as Record<string, unknown>)[key] : undefined);
+  const en = localeStringList(locale?.en ? (locale.en as Record<string, unknown>)[key] : undefined);
+  const base = localeStringList(row);
+  if (lang === "en") return en.length ? en : zh.length ? zh : base;
+  return zh.length ? zh : base;
 }
 
 export function overlayProject(project: PublicProject, lang: ViewerLang): PublicProject {
@@ -64,6 +85,10 @@ export function overlayProject(project: PublicProject, lang: ViewerLang): Public
     seoTitle: pickLocaleField(lang, locale, "seoTitle", project.seoTitle ?? "") || project.seoTitle,
     seoDescription:
       pickLocaleField(lang, locale, "seoDescription", project.seoDescription ?? "") || project.seoDescription,
+    decisions: pickLocaleList(lang, locale, "decisions", project.decisions),
+    process: pickLocaleList(lang, locale, "process", project.process),
+    outputs: pickLocaleList(lang, locale, "outputs", project.outputs),
+    limitations: pickLocaleList(lang, locale, "limitations", project.limitations),
   };
 }
 

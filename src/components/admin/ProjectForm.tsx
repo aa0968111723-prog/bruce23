@@ -145,7 +145,41 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           },
         };
       }
+      if (
+        (key === "decisions" || key === "process" || key === "outputs" || key === "limitations") &&
+        Array.isArray(value)
+      ) {
+        const localeKey: "decisions" | "process" | "outputs" | "limitations" = key;
+        const prev = current[localeKey] ?? [];
+        const zh = current.locale_json?.zh ?? {};
+        const zhVal = zh[localeKey];
+        const syncZh = !zhVal?.length || sameLines(zhVal, prev);
+        return {
+          ...current,
+          [key]: value,
+          locale_json: {
+            ...current.locale_json,
+            zh: syncZh ? { ...zh, [localeKey]: value } : zh,
+          },
+        };
+      }
       return { ...current, [key]: value };
+    });
+  }
+
+  function localeListValue(lang: "zh" | "en", key: "decisions" | "process" | "outputs" | "limitations"): string {
+    const list = form.locale_json?.[lang]?.[key];
+    return Array.isArray(list) ? list.join("\n") : "";
+  }
+
+  function patchLocaleList(
+    lang: "zh" | "en",
+    key: "decisions" | "process" | "outputs" | "limitations",
+    value: string,
+  ) {
+    patch("locale_json", {
+      ...form.locale_json,
+      [lang]: { ...form.locale_json?.[lang], [key]: splitLines(value) },
     });
   }
 
@@ -675,6 +709,26 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             })
           }
         />
+        <Area
+          label="中文決策（一行一項）"
+          value={localeListValue("zh", "decisions")}
+          onChange={(value) => patchLocaleList("zh", "decisions", value)}
+        />
+        <Area
+          label="中文流程（一行一項）"
+          value={localeListValue("zh", "process")}
+          onChange={(value) => patchLocaleList("zh", "process", value)}
+        />
+        <Area
+          label="中文產出（一行一項）"
+          value={localeListValue("zh", "outputs")}
+          onChange={(value) => patchLocaleList("zh", "outputs", value)}
+        />
+        <Area
+          label="中文限制（一行一項）"
+          value={localeListValue("zh", "limitations")}
+          onChange={(value) => patchLocaleList("zh", "limitations", value)}
+        />
         <Field
           label="中文 SEO 標題"
           value={String(form.locale_json?.zh?.seoTitle ?? "")}
@@ -744,6 +798,26 @@ export function ProjectForm({ project }: { project: AdminProject }) {
               en: { ...form.locale_json?.en, role: value },
             })
           }
+        />
+        <Area
+          label="英文決策（一行一項）"
+          value={localeListValue("en", "decisions")}
+          onChange={(value) => patchLocaleList("en", "decisions", value)}
+        />
+        <Area
+          label="英文流程（一行一項）"
+          value={localeListValue("en", "process")}
+          onChange={(value) => patchLocaleList("en", "process", value)}
+        />
+        <Area
+          label="英文產出（一行一項）"
+          value={localeListValue("en", "outputs")}
+          onChange={(value) => patchLocaleList("en", "outputs", value)}
+        />
+        <Area
+          label="英文限制（一行一項）"
+          value={localeListValue("en", "limitations")}
+          onChange={(value) => patchLocaleList("en", "limitations", value)}
         />
         <Field
           label="英文 SEO 標題"
@@ -838,6 +912,12 @@ export function ProjectForm({ project }: { project: AdminProject }) {
 
 function splitLines(value: string) {
   return value.split("\n").map((item) => item.trim()).filter(Boolean);
+}
+
+function sameLines(a: string[] | undefined, b: string[] | undefined) {
+  const left = a ?? [];
+  const right = b ?? [];
+  return left.length === right.length && left.every((item, i) => item === right[i]);
 }
 
 function Field({

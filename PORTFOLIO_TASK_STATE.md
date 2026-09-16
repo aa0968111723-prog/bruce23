@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: real English overlays (not complete)
+Cycle: remaining 中英文 case-study lists (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -28,14 +28,20 @@ Updated: 2026-09-16
 
 ## This cycle (real English overlays)
 
-- Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
-- `fillLocaleJsonGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English wins. Chinese row `headline` / `narrative` and GitHub/Canva/publication fields are not rewritten. Archive items have no locale columns — chrome already switches; titles stay zh.
-- Decisions / limitations stay zh-only (not on `localeCopySchema`).
+- Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription, **decisions, process, outputs, limitations**). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
+- `fillLocaleJsonGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English fills empty or zh-duplicate fields only. Chinese row `headline` / `narrative` and GitHub/Canva/publication fields are not rewritten. Archive items have no locale columns — chrome already switches; titles stay zh (no 0003 migration).
+- Public `en` toggle overlays case-study lists via `pickLocaleList` / `overlayProject`. Admin ProjectForm edits zh/en list overlays in SEO / 語系. ExperienceEditor has no locale_json fields.
+
+## This cycle (remaining 中英文 lists)
+
+- `localeCopySchema` now includes optional string arrays: decisions, process, outputs, limitations on project `locale_json` (already jsonb — no new migration).
+- Seed English lists for all 8 works. Public helper returns en lists when `lang=en`, zh row when `lang=zh`.
+- Still zh-only: archive item titles/summaries (no locale_json on `archive_items`), modalities, stack, GitHub/Canva technical fields, JSON-LD (canonical zh), experience playable internals.
 
 ## This cycle (public 中英文 switcher)
 
 - Public shell header (desktop nav + mobile cluster next to the menu) has a light-studio `zh | en` radiogroup, ≥44px, keyboard arrows/Home/End. Preference key `luminous-studio-lang` in localStorage only. CMS copy stays in Postgres.
-- Homepage, about, work list, case study (title/summary/problem/role/SEO document title), archive chrome/filters, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` / `seoTitle` / `seoDescription` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
+- Homepage, about, work list, case study (title/summary/problem/role/decisions/process/outputs/limitations/SEO document title), archive chrome/filters, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` / `seoTitle` / `seoDescription` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
 - Archive item titles/summaries have no `locale_json`, so only chrome/filters switch. Experience playable internals stay zh.
 
 ## This cycle (admin field round-trip)

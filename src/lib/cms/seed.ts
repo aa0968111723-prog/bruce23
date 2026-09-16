@@ -477,12 +477,12 @@ async function fillProjectMediaGaps(sql: Sql): Promise<void> {
   }
 }
 
-function asLocaleBag(value: unknown): { zh?: Record<string, string>; en?: Record<string, string> } {
+function asLocaleBag(value: unknown): { zh?: Record<string, unknown>; en?: Record<string, unknown> } {
   if (!value || typeof value !== "object") return {};
-  const bag = value as { zh?: Record<string, string>; en?: Record<string, string> };
+  const bag = value as { zh?: Record<string, unknown>; en?: Record<string, unknown> };
   return {
-    zh: bag.zh && typeof bag.zh === "object" ? bag.zh : undefined,
-    en: bag.en && typeof bag.en === "object" ? bag.en : undefined,
+    zh: bag.zh && typeof bag.zh === "object" && !Array.isArray(bag.zh) ? bag.zh : undefined,
+    en: bag.en && typeof bag.en === "object" && !Array.isArray(bag.en) ? bag.en : undefined,
   };
 }
 
@@ -497,12 +497,16 @@ async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
     if (!rows[0]) continue;
     const current = asLocaleBag(rows[0].locale_json);
     const zh = { ...(localeZhFromProject(project.slug) ?? {}), ...(current.zh ?? {}) };
-    const en = mergeSeedEnglish(current.en, zh, seedEn as Record<string, string>, [
+    const en = mergeSeedEnglish(current.en, zh, seedEn, [
       project.title,
       project.subtitle,
       project.summary,
       project.problem,
       project.role,
+      project.decisions.join("\n"),
+      project.process.join("\n"),
+      project.outputs.join("\n"),
+      project.limitations.join("\n"),
     ]);
     await sql.query(`update projects set locale_json = $2::jsonb, updated_at = now() where slug = $1`, [
       project.slug,

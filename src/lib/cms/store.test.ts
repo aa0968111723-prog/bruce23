@@ -329,6 +329,12 @@ describe("cms persistence", () => {
       assert.equal(admin.locale_json.en?.summary, en.summary);
       assert.equal(admin.locale_json.en?.problem, en.problem);
       assert.equal(admin.locale_json.en?.role, en.role);
+      assert.notDeepEqual(admin.locale_json.en?.decisions, admin.decisions, slug);
+      assert.notDeepEqual(admin.locale_json.en?.limitations, admin.limitations, slug);
+      assert.deepEqual(admin.locale_json.en?.decisions, en.decisions);
+      assert.deepEqual(admin.locale_json.en?.limitations, en.limitations);
+      assert.deepEqual(admin.locale_json.en?.process, en.process);
+      assert.deepEqual(admin.locale_json.en?.outputs, en.outputs);
       const live = serializePublicProject(admin);
       assert.equal(live.locale.en?.title, en.title);
       assert.equal(live.locale.en?.summary, en.summary);
