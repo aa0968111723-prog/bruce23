@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Luminous Studio · 柏能",
+      "hasCanvas": false,
+      "bodyTextLen": 1952,
+      "bodyTextHash": "09924b333cb296157835ba4ece8eb9c4923fdea6961b4ece89e11f593e7385b9",
+      "bodyTextPrefix": "跳到內容 柏能 · 光域工作室 首頁 作品 Archive 關於 GitHub Luminous Studio · 陳柏能 / ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Luminous Studio · 柏能",
+      "hasCanvas": false,
+      "bodyTextLen": 1933,
+      "bodyTextHash": "2e9f3724d754544e906d8e1121e9d0a2b21cd8344e34e3de0f684a6eec1029c0",
+      "bodyTextPrefix": "跳到內容 柏能 · 光域工作室 開啟選單 Luminous Studio · 陳柏能 / Bruce Chen 把 AI、設計與",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

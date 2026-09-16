@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f7fbff;
+  --color-surface: #ffffff;
+  --color-surface-blue: #eaf6ff;
+  --color-surface-mint: #effff7;
+  --color-mint: #63e6be;
+  --color-mint-deep: #2bb894;
+  --color-sky: #72b7ff;
+  --color-sun: #ffd166;
+  --color-ink: #17324d;
+  --color-muted: #59748a;
+  --color-line: #d9eaf2;
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-ink);
+  --color-primary: var(--color-mint-deep);
+  --color-primary-foreground: #073528;
+  --color-secondary: var(--color-surface-blue);
+  --color-secondary-foreground: var(--color-ink);
+  --color-accent: var(--color-sky);
+  --color-accent-foreground: #07233f;
+  --color-border: var(--color-line);
+  --color-ring: var(--color-sky);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-muted-foreground: var(--color-muted);
+
+  --font-display: "Fraunces", "Noto Serif TC", Georgia, serif;
+  --font-sans: "Figtree", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2.25rem;
+
+  --shadow-card:
+    0 0 0 1px color-mix(in oklab, var(--color-ink) 6%, transparent),
+    0 1px 2px color-mix(in oklab, var(--color-ink) 5%, transparent),
+    0 18px 40px -24px color-mix(in oklab, var(--color-ink) 28%, transparent);
+  --shadow-float:
+    0 0 0 1px color-mix(in oklab, var(--color-ink) 7%, transparent),
+    0 24px 50px -28px color-mix(in oklab, var(--color-sky) 55%, transparent),
+    0 40px 80px -40px color-mix(in oklab, var(--color-ink) 22%, transparent);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    min-height: 100dvh;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  p {
+    text-wrap: pretty;
+    line-height: 1.6;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sky);
+    outline-offset: 3px;
+  }
+
+  img {
+    outline: 1px solid color-mix(in oklab, var(--color-ink) 10%, transparent);
+    outline-offset: -1px;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: color-mix(in oklab, var(--color-surface) 78%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-line) 80%, white);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(16px);
+  }
+
+  .float-card {
+    transform: perspective(1400px) rotateX(5deg) rotateY(-8deg);
+    box-shadow: var(--shadow-float);
+  }
+
+  .drift {
+    animation: drift 14s ease-in-out alternate infinite;
+  }
+
+  .orbit {
+    animation: orbit 60s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orbit,
+  .drift {
+    animation: none !important;
+  }
+
+  .float-card {
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(12px, -18px, 0);
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
