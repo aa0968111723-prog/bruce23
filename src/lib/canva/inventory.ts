@@ -19,23 +19,23 @@ export type CanvaSeedFields = {
 const LOCAL_THUMBS: Record<string, { src: string; alt: string; caption: string }> = {
   "tku-zen-ai": {
     src: "/media/archive/tku-zen-poster.svg",
-    alt: "淡大禪學社文宣原作縮圖",
-    caption: "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+    alt: "淡大禪學社文宣的本地 SVG 轉譯，不是公開嵌入",
+    caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
   },
   "tku-zen-poster": {
     src: "/media/archive/tku-zen-poster.svg",
-    alt: "淡大禪學社文宣原作縮圖",
-    caption: "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+    alt: "淡大禪學社文宣的本地 SVG 轉譯，不是公開嵌入",
+    caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
   },
   "tku-zen-brand-deck": {
     src: "/media/archive/tku-zen-brand.svg",
-    alt: "淡大禪學社 TKU Zen 簡報首頁",
-    caption: "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+    alt: "淡大禪學社 TKU Zen 簡報首頁的本地 SVG 轉譯",
+    caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
   },
   "tku-zen-page2": {
     src: "/media/archive/tku-zen-page2.svg",
-    alt: "禪學社活動簡報內頁",
-    caption: "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+    alt: "禪學社活動簡報內頁的本地 SVG 轉譯",
+    caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
   },
 };
 
@@ -112,7 +112,7 @@ export function canvaFieldsForArchive(item: (typeof archiveItems)[number]): Canv
       ? {
           src: item.media.src.replace(/\.jpg$/i, ".svg"),
           alt: item.media.alt,
-          caption: "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+          caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
         }
       : undefined);
   return fieldsFromParsed(parsed, local);

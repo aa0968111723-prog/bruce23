@@ -4,6 +4,7 @@ import { MediaFrame } from "@/components/site/MediaFrame";
 import { CanvaStage } from "@/components/experience/CanvaStage";
 import { listPublishedArchiveFn } from "@/lib/cms/public-fn";
 import { archiveKinds } from "@/content/archive";
+import { parseCanvaDesign } from "@/lib/canva/parse";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
 import type { PublicArchiveItem } from "@/lib/cms/store";
@@ -13,6 +14,10 @@ export const Route = createFileRoute("/archive")({
   loader: async (): Promise<PublicArchiveItem[]> => listPublishedArchiveFn(),
   component: Archive,
 });
+
+function hasPublicCanvaEmbed(item: PublicArchiveItem): boolean {
+  return Boolean(parseCanvaDesign(item.canva.embedUrl || item.canva.shareUrl));
+}
 
 function Archive() {
   const items = Route.useLoaderData() as PublicArchiveItem[];
@@ -31,7 +36,8 @@ function Archive() {
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">Archive</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        攝影、平面、活動、社團文宣與招生活動互動。私人 Drive 不公開；有 Canva 嵌入的會直接可翻頁。
+        攝影、平面、活動、社團文宣與招生活動互動。私人 Drive 不公開。目前沒有公開的 Canva
+        分享網址，所以沒有嵌入、也不能翻頁；有圖的是本地轉譯或匯出縮圖。
       </p>
       <div
         className="mt-8 flex gap-2 overflow-x-auto pb-2"
@@ -63,7 +69,7 @@ function Archive() {
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((item) => (
           <article key={item.id} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-            {item.canva.embedUrl || item.canva.shareUrl || item.canva.thumbnailUrl ? (
+            {hasPublicCanvaEmbed(item) ? (
               <CanvaStage
                 project={
                   {
@@ -82,14 +88,8 @@ function Archive() {
                   } as unknown as PublicProject
                 }
               />
-            ) : item.media ? (
-              <div className="aspect-[4/3] overflow-hidden bg-surface-blue">
-                <MediaFrame media={item.media} />
-              </div>
             ) : (
-              <div className="flex aspect-[4/3] items-center justify-center bg-surface-mint px-6 text-center text-sm text-muted">
-                原件在私人來源，尚未放入公開媒體層
-              </div>
+              <ArchiveLocalCover item={item} />
             )}
             <div className="p-5">
               <p className="text-xs font-medium tracking-wide text-muted">{item.year}</p>
@@ -110,6 +110,24 @@ function Archive() {
           </article>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ArchiveLocalCover({ item }: { item: PublicArchiveItem }) {
+  const cover = item.media;
+  return (
+    <div>
+      {cover ? (
+        <div className="aspect-[4/3] overflow-hidden bg-surface-blue">
+          <MediaFrame media={cover} />
+        </div>
+      ) : (
+        <div className="flex aspect-[4/3] items-center justify-center bg-surface-mint px-6 text-center text-sm text-muted">
+          原件在私人來源，尚未放入公開媒體層
+        </div>
+      )}
+      <p className="px-5 pt-3 text-xs text-muted">公開嵌入模式 · 尚未提供分享連結</p>
     </div>
   );
 }

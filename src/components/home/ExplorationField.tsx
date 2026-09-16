@@ -40,7 +40,7 @@ export function ExplorationField({
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
       <h2 className="font-display text-3xl font-semibold">可操作的能力地圖</h2>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        節點位置依作品真正接到的模態與年份，不是裝飾散點。點模態看連線，點作品進入體驗。
+        約兩成畫面用來畫作品真正接到的模態。其餘八成是可讀的列表與卡片，不是裝飾粒子，也不用拖曳才能找到作品。
       </p>
 
       <div className="mt-6 flex gap-2 overflow-x-auto pb-2" role="list">
@@ -59,12 +59,13 @@ export function ExplorationField({
         ))}
       </div>
 
-      <div className="constellation mt-8 overflow-hidden rounded-[2rem] bg-surface-blue/70 p-3 shadow-card">
+      <div className="constellation mt-8 hidden overflow-visible rounded-[2rem] bg-surface-blue/70 p-3 shadow-card lg:block">
         <svg
           viewBox={`0 0 ${CONSTELLATION_WIDTH} ${CONSTELLATION_HEIGHT}`}
           role="group"
           aria-label="作品與模態的空間關係"
-          className="h-auto w-full"
+          className="mx-auto h-auto w-full"
+          preserveAspectRatio="xMidYMid meet"
         >
           <title>作品與模態星圖</title>
           {map.edges.map((edge) => {
@@ -85,7 +86,7 @@ export function ExplorationField({
           })}
           {map.hubs.map((hub) => (
             <g key={hub.id}>
-              <circle cx={hub.x} cy={hub.y} r={28} className="fill-surface-mint stroke-mint/70" strokeWidth={2} />
+              <circle cx={hub.x} cy={hub.y} r={24} className="fill-surface-mint stroke-mint/70" strokeWidth={2} />
               <text x={hub.x} y={hub.y + 4} textAnchor="middle" className="fill-ink text-[13px] font-medium">
                 {hub.label}
               </text>
@@ -93,17 +94,17 @@ export function ExplorationField({
           ))}
           {map.nodes.map((node) => (
             <g key={node.slug}>
-              <circle cx={node.x} cy={node.y} r={34} className="fill-surface stroke-line" strokeWidth={1.5} />
-              <foreignObject x={node.x - 70} y={node.y - 22} width={140} height={56}>
+              <circle cx={node.x} cy={node.y} r={28} className="fill-surface stroke-line" strokeWidth={1.5} />
+              <foreignObject x={node.x - 94} y={node.y - 36} width={188} height={72}>
                 <button
                   type="button"
-                  className="flex h-full w-full flex-col items-center justify-center rounded-2xl px-2 text-center"
+                  className="flex min-h-11 h-full w-full flex-col items-center justify-center rounded-2xl px-2 text-center"
                   onClick={() => {
                     const project = bySlug.get(node.slug);
                     if (project) onOpen(project);
                   }}
                 >
-                  <span className="font-display text-[13px] font-semibold leading-tight text-ink">{node.title}</span>
+                  <span className="font-display text-[12px] font-semibold leading-tight text-ink">{node.title}</span>
                   <span className="text-[10px] text-muted">{node.year}</span>
                 </button>
               </foreignObject>
@@ -112,8 +113,8 @@ export function ExplorationField({
         </svg>
       </div>
 
-      <div className="mt-6 grid gap-3 lg:hidden">
-        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="作品節點">
+      <div className="mt-6 grid gap-3">
+        <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="作品節點">
           {visible.map((project) => (
             <button
               key={`node-${project.slug}`}

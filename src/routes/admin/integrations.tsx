@@ -311,6 +311,16 @@ function IntegrationsPage() {
         ) : null}
       </div>
 
+      <div className="mt-6 rounded-2xl bg-surface p-5 shadow-card">
+        <h2 className="font-display text-xl">Notion</h2>
+        <p className="mt-2 text-sm">{data?.notion.message ?? "Notion 未連接。不會假裝已同步任何頁面。"}</p>
+        <p className="mt-1 text-xs text-muted">
+          狀態 {data?.notion.status ?? "not_configured"}
+          {data?.notion.connected ? "" : " · 未連接"}
+        </p>
+        <p className="mt-3 text-xs text-muted">沒有 OAuth 憑證，不會列出頁面，也不提供同步按鈕。</p>
+      </div>
+
       <p className="mt-4 text-xs text-muted">
         GitHub token：{data?.githubTokenConfigured ? "伺服器已設定（不會送到前端）" : "未設定，只讀公開 repo"}
       </p>

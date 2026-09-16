@@ -147,7 +147,23 @@ describe("frontend contract", () => {
     );
     assert.match(field, /constellationLayout/);
     assert.match(field, /作品與模態/);
-    assert.doesNotMatch(field, /hidden lg:block/);
+    assert.match(field, /hidden /);
+    assert.match(field, /lg:block/);
+    assert.match(field, /overflow-visible/);
+    assert.match(field, /availableFilters/);
+    assert.doesNotMatch(field, /particle/);
+    assert.match(archive, /尚未提供分享連結/);
+    assert.match(archive, /parseCanvaDesign/);
+    assert.match(archive, /ArchiveLocalCover/);
+    assert.doesNotMatch(archive, /直接可翻頁/);
+    assert.doesNotMatch(archive, /有 Canva 嵌入的會/);
+    const integrations = readFileSync(
+      new URL("../../../src/routes/admin/integrations.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(integrations, /Notion/);
+    assert.match(integrations, /not_configured/);
+    assert.doesNotMatch(integrations, /Notion 已連線/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);
     assert.match(preview, /includeJsonLd=\{false\}/);

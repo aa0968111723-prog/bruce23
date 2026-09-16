@@ -123,13 +123,8 @@
   }
 
   .constellation {
-    min-height: 20vh;
-  }
-
-  @media (min-width: 768px) {
-    .constellation {
-      min-height: min(42vh, 36rem);
-    }
+    max-height: none;
+    overflow: visible;
   }
 }
 

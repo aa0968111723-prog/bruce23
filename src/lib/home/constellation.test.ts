@@ -1,13 +1,20 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { constellationLayout } from "./constellation.ts";
+import {
+  CONSTELLATION_HEIGHT,
+  CONSTELLATION_WIDTH,
+  NODE_HALF_H,
+  NODE_HALF_W,
+  constellationCollisions,
+  constellationLayout,
+} from "./constellation.ts";
 import type { PublicProject } from "../cms/privacy.ts";
 
-function project(slug: string, year: string): PublicProject {
+function project(slug: string, year: string, title = slug): PublicProject {
   return {
     id: slug,
     slug,
-    title: slug,
+    title,
     subtitle: "",
     category: "AI Product",
     year,
@@ -35,6 +42,17 @@ function project(slug: string, year: string): PublicProject {
   };
 }
 
+const featured = [
+  project("ai-director-os", "2026", "AI Director OS"),
+  project("framelab", "2026", "FrameLab"),
+  project("poster-vision-ai", "2026", "Poster Vision AI"),
+  project("planform", "2026", "PLANFORM"),
+  project("duigao", "2026", "對稿"),
+  project("folio", "2026", "Folio"),
+  project("hermes-console", "2026", "Hermes Console"),
+  project("tku-zen-ai", "2026", "TKU Zen AI"),
+];
+
 describe("homepage constellation", () => {
   it("places works using real modality membership and year, not random scatter", () => {
     const map = constellationLayout([
@@ -51,11 +69,25 @@ describe("homepage constellation", () => {
     assert.ok(map.edges.some((edge) => edge.to === "framelab" && edge.from === "video"));
     const spaceOnly = constellationLayout([project("planform", "2025")]);
     assert.ok(spaceOnly.hubs.every((hub) => hub.id === "space" || hub.id === "interactive"));
-    assert.equal(
-      spaceOnly.hubs.some((hub) => hub.id === "image"),
-      false,
-    );
-    const unique = new Set(map.nodes.map((node) => `${node.x.toFixed(2)}:${node.y.toFixed(2)}`));
-    assert.equal(unique.size, map.nodes.length);
+    assert.equal(spaceOnly.hubs.some((hub) => hub.id === "image"), false);
+  });
+
+  it("keeps the eight featured works from sitting on hubs or on each other", () => {
+    const map = constellationLayout(featured);
+    assert.equal(map.nodes.length, 8);
+    const collisions = constellationCollisions(map);
+    assert.deepEqual(collisions.nodePairs, [], `node overlap ${JSON.stringify(collisions.nodePairs)}`);
+    assert.deepEqual(collisions.hubPairs, [], `hub overlap ${JSON.stringify(collisions.hubPairs)}`);
+    const folio = map.nodes.find((item) => item.slug === "folio");
+    const interactive = map.hubs.find((item) => item.id === "interactive");
+    assert.ok(folio && interactive);
+    const dist = Math.hypot(folio.x - interactive.x, folio.y - interactive.y);
+    assert.ok(dist > 120, `folio too close to interactive hub (${dist})`);
+    for (const node of map.nodes) {
+      assert.ok(node.x - NODE_HALF_W >= 0, `${node.slug} clips left`);
+      assert.ok(node.x + NODE_HALF_W <= CONSTELLATION_WIDTH, `${node.slug} clips right`);
+      assert.ok(node.y - NODE_HALF_H >= 0, `${node.slug} clips top`);
+      assert.ok(node.y + NODE_HALF_H <= CONSTELLATION_HEIGHT, `${node.slug} clips bottom`);
+    }
   });
 });

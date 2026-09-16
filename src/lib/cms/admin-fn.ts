@@ -313,11 +313,18 @@ export const listIntegrationsFn = createServerFn({ method: "GET" })
     const { sql } = await adminSql(asAuthed(context));
     const { listAdminProjects } = await import("./store");
     const { canvaConnectMode, loadCanvaConnectionStatus } = await import("@/lib/canva/oauth.server");
+    const { notionAdapter } = await import("@/content/adapters/notion");
     const projects = await listAdminProjects(sql);
     return {
       canva: await loadCanvaConnectionStatus(sql),
       canvaMode: canvaConnectMode(),
       githubTokenConfigured: Boolean(process.env.GITHUB_READ_TOKEN?.trim()),
+      notion: {
+        connected: notionAdapter.isConnected(),
+        status: "not_configured" as const,
+        message: "Notion 未連接。不會假裝已同步任何頁面。",
+        pages: [] as const,
+      },
       items: projects.map((project) => ({
         id: project.id,
         slug: project.slug,

@@ -99,6 +99,9 @@ describe("admin allowlist", () => {
     assert.match(source, /語法通過 Canva 允許清單/);
     assert.doesNotMatch(source, /canva_status = 'verified'/);
     assert.doesNotMatch(source, /假裝已經連上/);
+    assert.match(source, /notionAdapter/);
+    assert.match(source, /Notion 未連接/);
+    assert.doesNotMatch(source, /notion: \{\s*connected:\s*true/);
   });
 
   it("builds sitemap from published projects only", () => {

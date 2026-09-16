@@ -21,9 +21,9 @@ Updated: 2026-09-16
 - Settings persist homepage highlight slugs and locale JSON
 - Canva public-embed paste path + fixture embed test
 - Official Canva Connect/OAuth shape: PKCE start + callback, AES-GCM tokens in `integration_secrets`, search/metadata/pages/export/apply/disconnect. Export poll allows Canva `e:uuid` job ids. Search continuation. Select fetches design metadata. Fail-closed without `CANVA_CLIENT_ID`/`CANVA_CLIENT_SECRET`/`CANVA_TOKEN_KEY`. Connect button does not toast success when unconfigured. Refresh failure marks disconnected. Stored covers refuse expiring CDN thumbs. Admin Canva paste drops non-allowlisted URLs.
-- Homepage constellation on all viewports, ≥20vh, hubs/chips only for modalities the visible works use
-- Admin `/admin/preview` is a viewer chrome around CaseStudyView without JSON-LD
-- Archive graphic + stroop have honest local translations (not Drive originals)
+- Homepage constellation: desktop SVG uses AABB collision so node labels do not sit on hubs; mobile uses a 2D list as primary (`hidden lg:block` on the SVG). Filter chips only for modalities the visible works use. No decorative particles.
+- Archive: no public Canva share URLs, so no embed and no paging. Items without an embed URL show local cover + 公開嵌入模式 / 尚未提供分享連結. Photo/event/graphic/stroop/zen copy names SVG translations and does not claim original photos, scans, live Canva, or score screenshots.
+- Notion: adapter `isConnected()` is false; admin integrations panel is `not_configured` and lists no pages.
 
 ## Not done / blocked
 
