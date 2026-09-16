@@ -37,13 +37,19 @@ export function constellationLayout(projects: PublicProject[]): {
   nodes: ConstellationNode[];
   edges: ConstellationEdge[];
 } {
-  const hubs: ConstellationHub[] = modalityFilters.map((item, index) => {
-    const angle = (Math.PI * 2 * index) / modalityFilters.length - Math.PI / 2;
+  const activeFilters = modalityFilters.filter((item) =>
+    projects.some((project) => item.slugs.includes(project.slug)),
+  );
+  const hubs: ConstellationHub[] = activeFilters.map((item, index) => {
+    const count = Math.max(activeFilters.length, 1);
+    const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
+    const radiusX = count <= 2 ? 160 : 210;
+    const radiusY = count <= 2 ? 120 : 170;
     return {
       id: item.id,
       label: item.label,
-      x: 500 + Math.cos(angle) * 210,
-      y: 280 + Math.sin(angle) * 170,
+      x: 500 + Math.cos(angle) * radiusX,
+      y: 280 + Math.sin(angle) * radiusY,
     };
   });
   const hubById = new Map(hubs.map((item) => [item.id, item]));
@@ -51,7 +57,7 @@ export function constellationLayout(projects: PublicProject[]): {
   const minY = Math.min(...years, 2020);
   const maxY = Math.max(...years, 2026);
   const nodes = projects.map((project, index) => {
-    const linked = modalityFilters.filter((item) => item.slugs.includes(project.slug));
+    const linked = modalityFilters.filter((item) => item.slugs.includes(project.slug) && hubById.has(item.id));
     const points = linked
       .map((item) => hubById.get(item.id))
       .filter((item): item is ConstellationHub => Boolean(item));

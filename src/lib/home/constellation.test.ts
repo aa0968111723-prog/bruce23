@@ -49,5 +49,11 @@ describe("homepage constellation", () => {
     assert.notEqual(planform.x, zen.x);
     assert.ok(map.edges.some((edge) => edge.to === "planform" && edge.from === "space"));
     assert.ok(map.edges.some((edge) => edge.to === "framelab" && edge.from === "video"));
+    const spaceOnly = constellationLayout([project("planform", "2025")]);
+    assert.ok(spaceOnly.hubs.every((hub) => hub.id === "space" || hub.id === "interactive"));
+    assert.equal(
+      spaceOnly.hubs.some((hub) => hub.id === "image"),
+      false,
+    );
   });
 });
