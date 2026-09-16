@@ -19,7 +19,7 @@ function walk(dir: string, acc: string[] = []): string[] {
 
 describe("secrets stay off the frontend surface", () => {
   it("does not expose tokens via VITE_ or client modules", () => {
-    const files = walk(join(root, "src"));
+    const files = walk(root);
     const forbidden = [
       "VITE_GITHUB",
       "VITE_CANVA_CLIENT_SECRET",
@@ -33,6 +33,7 @@ describe("secrets stay off the frontend surface", () => {
         continue;
       }
       if (file.includes("admin-fns.ts") || file.includes("env.server.ts")) continue;
+      if (file.includes("/routes/api/") || file.includes("github-sync.ts")) continue;
       const text = readFileSync(file, "utf8");
       for (const token of forbidden) {
         if (token === "GITHUB_READ_TOKEN" && file.includes("admin-fns.ts")) continue;

@@ -1,5 +1,5 @@
 import type { Sql } from "../db";
-import { asBoolean, asNumber, parseJson, summarizeReadme, toIso } from "./json";
+import { asBoolean, asNumber, parseJson, summarizeReadme, toIso } from "./json.ts";
 import type { ExperienceMode, IntegrationStatus, PublicationStatus } from "./schema";
 import type {
   AdminProject,

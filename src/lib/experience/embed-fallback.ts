@@ -1,4 +1,4 @@
-import { canvaEmbedAllowed } from "@/lib/canva/urls";
+import { canvaEmbedAllowed } from "../canva/urls.ts";
 
 export function canvaViewMode(
   embedUrl: string | null | undefined,

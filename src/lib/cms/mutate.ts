@@ -1,9 +1,9 @@
 import type { Sql } from "../db";
-import { parseJson } from "./json";
-import { projectMutationSchema, type ProjectMutation } from "./schema";
-import { parseGithubRepoUrl } from "../github/parse";
-import { parseCanvaShareUrl, parseCanvaEmbedSnippet } from "../canva/urls";
-import { getAdminProject } from "./queries";
+import { parseJson } from "./json.ts";
+import { projectMutationSchema, type ProjectMutation } from "./schema.ts";
+import { parseGithubRepoUrl } from "../github/parse.ts";
+import { parseCanvaShareUrl, parseCanvaEmbedSnippet } from "../canva/urls.ts";
+import { getAdminProject } from "./queries.ts";
 import { randomUUID } from "node:crypto";
 
 const UPDATE_COLUMNS: Array<keyof ProjectMutation | "github_owner" | "github_repo"> = [

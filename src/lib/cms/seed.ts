@@ -1,5 +1,5 @@
 import type { Sql } from "../db";
-import { SEED_NAME, seedArchive, seedProjectValues, seedProjects, seedSite } from "./seed-data";
+import { SEED_NAME, seedArchive, seedProjectValues, seedProjects, seedSite } from "./seed-data.ts";
 
 async function insertJson(sql: Sql, text: string, params: unknown[]) {
   await sql.query(text, params);

@@ -1,9 +1,9 @@
 import type { Project } from "../../content/types";
-import { archiveItems } from "../../content/archive";
-import { projects } from "../../content/projects";
-import { site } from "../../content/site";
+import { archiveItems } from "../../content/archive.ts";
+import { projects } from "../../content/projects.ts";
+import { site } from "../../content/site.ts";
 import type { ExperienceMode } from "./schema";
-import { parseGithubRepoUrl } from "../github/parse";
+import { parseGithubRepoUrl } from "../github/parse.ts";
 
 export const SEED_NAME = "portfolio-cms-v1";
 

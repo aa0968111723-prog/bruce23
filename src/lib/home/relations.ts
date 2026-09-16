@@ -1,4 +1,4 @@
-import type { PublicProject } from "@/lib/cms/public-types";
+import type { PublicProject } from "../cms/public-types.ts";
 
 export const RELATION_NODES = [
   { id: "圖像", match: ["圖像", "海報", "熱圖", "畫布"] },
