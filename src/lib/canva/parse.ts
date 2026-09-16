@@ -158,6 +158,26 @@ export function canvaPersistShape(shareOrEmbed: string | null | undefined): Canv
   return { shareUrl: null, embedUrl: null, designId: null, statusHint: "not_configured" };
 }
 
+/**
+ * Prefer a parsed /design/{id} from either field so saving a leftover /d/ share
+ * cannot wipe an embed the server already resolved.
+ */
+export function canvaPersistFromFields(
+  share?: string | null,
+  embed?: string | null,
+): CanvaPersistShape {
+  const parsed = parseCanvaDesign(embed) ?? parseCanvaDesign(share);
+  if (parsed) {
+    return {
+      shareUrl: parsed.shareUrl,
+      embedUrl: parsed.embedUrl,
+      designId: parsed.designId,
+      statusHint: "pending",
+    };
+  }
+  return canvaPersistShape(share || embed);
+}
+
 export function toCanvaEmbedUrl(shareOrEmbed: string | null | undefined): string | null {
   const parsed = parseCanvaDesign(shareOrEmbed);
   return parsed?.embedUrl ?? null;

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProjectRecord, getAdminProject, listPublishedProjects } from "./store.ts";
-import { hydratePendingGithub, hydratePendingDemos } from "./hydrate.ts";
+import { hydratePendingGithub, hydratePendingDemos, GITHUB_HYDRATE_KEY } from "./hydrate.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 
@@ -161,6 +161,80 @@ describe("github hydrate", () => {
     await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     const second = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     assert.equal(second.skipped, true);
+  });
+
+  it("does not stampede while a hydrate is already marked pending", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "pending-lock",
+        title: "Pending lock",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    await sql.query(`insert into cms_meta (key, value) values ($1, 'pending')`, [GITHUB_HYDRATE_KEY]);
+    let fetches = 0;
+    const result = await hydratePendingGithub(sql, {
+      fetchImpl: async () => {
+        fetches += 1;
+        return new Response("nope", { status: 500 });
+      },
+    });
+    assert.equal(result.skipped, true);
+    assert.equal(fetches, 0);
+  });
+
+  it("shares one in-flight hydrate across concurrent callers", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "inflight",
+        title: "Inflight",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    let repoCalls = 0;
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const fetchImpl = async (input: RequestInfo | URL) => {
+      const url = String(input).split("?")[0];
+      if (/\/repos\/[^/]+\/[^/]+$/.test(url)) {
+        repoCalls += 1;
+        await gate;
+      }
+      return githubFetchImpl(input);
+    };
+    const first = hydratePendingGithub(sql, { fetchImpl });
+    const second = hydratePendingGithub(sql, { fetchImpl });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    release();
+    const [a, b] = await Promise.all([first, second]);
+    assert.equal(a.skipped, false);
+    assert.equal(b.skipped, false);
+    assert.equal(a.verified, b.verified);
+    assert.equal(repoCalls, 1);
   });
 
   it("does not skip version 1 while a public repo is still pending", async () => {

@@ -99,4 +99,46 @@ describe("github client honesty", () => {
     assert.ok(result.fileTree?.some((item) => item.path === "README.md"));
     assert.ok(result.fileTree?.some((item) => item.path.startsWith("src/")));
   });
+
+  it("does not treat a failed tree fetch as an empty verified tree", async () => {
+    const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", {
+      fetchImpl: async (input) => {
+        const url = String(input);
+        if (url.includes("/readme")) return new Response("# FrameLab", { status: 200 });
+        if (url.includes("/languages")) return new Response("{}", { status: 200 });
+        if (url.includes("/commits")) {
+          return new Response(
+            JSON.stringify([
+              {
+                sha: "abc",
+                html_url: "https://github.com/aa0968111723-prog/FrameLab/commit/abc",
+                commit: {
+                  message: "docs",
+                  author: { date: "2026-09-01T00:00:00Z" },
+                  tree: { sha: "treesha123" },
+                },
+              },
+            ]),
+            { status: 200 },
+          );
+        }
+        if (url.includes("/git/trees")) return new Response("missing", { status: 404 });
+        return new Response(
+          JSON.stringify({
+            name: "FrameLab",
+            description: "demo",
+            private: false,
+            default_branch: "main",
+            html_url: "https://github.com/aa0968111723-prog/FrameLab",
+            topics: [],
+          }),
+          { status: 200 },
+        );
+      },
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.status, "stale");
+    assert.equal(result.fileTree, undefined);
+    assert.notEqual(result.status, "verified");
+  });
 });

@@ -24,8 +24,9 @@ Updated: 2026-09-16
 - Admin ProjectForm: narrative, year, SEO, zh/en (incl. subtitles), media/video, Canva fields (`/d/` paste + server resolve + status/error), page ids, structured experience editors, GitHub diff, source_evidence editor, revision list that reloads after save/restore
 - Settings persist homepage highlight slugs and locale JSON
 - Canva public-embed paste path + **server-side short-link resolve** (fixtures: success redirect, relative Location, login-wall, open-redirect to evil.com, HTML body ignored, client modules do not fetch Canva HTML)
+- Save prefers a parsed `/design/{id}` from embed or share so leftover `/d/` cannot wipe a resolved embed; admin save never writes Canva `verified`/`connected`
 - Official Canva Connect/OAuth shape remains fail-closed without credentials. Connect button does not toast success when unconfigured. Connect apply without a public share is `unavailable`, not verified.
-- GitHub file tree: skip `.grok/`, cap `.github` noise, rank README/`src`; tree fetched by commit tree sha; hydrate v3 rescan
+- GitHub file tree: skip `.grok/`, cap `.github` noise, rank README/`src`; tree fetched by commit tree sha; failed tree fetch is `stale` (does not overwrite a good tree with `[]`); hydrate v4 + in-process inflight + skip recent `pending` meta
 - Homepage constellation + archive honesty copy unchanged: no invented Canva embeds
 
 ## Not done / blocked

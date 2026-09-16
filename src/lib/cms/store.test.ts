@@ -312,6 +312,107 @@ describe("cms persistence", () => {
     assert.equal(published.canva.status, "pending");
   });
 
+  it("keeps a resolved Canva embed when share is still a /d/ short URL", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_embed_url: "https://www.canva.com/design/DAGkeepOnSave/view?embed",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.designId, "DAGkeepOnSave");
+    assert.ok(published.canva.embedUrl?.includes("embed"));
+    assert.notEqual(published.canva.status, "verified");
+  });
+
+  it("never persists Canva verified from an admin save", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/design/DAGadminPasted/view",
+        canva_status: "verified",
+      }),
+      "admin-1",
+    );
+    assert.equal(created.canva_status, "pending");
+  });
+
+  it("keeps an existing GitHub tree when a later sync is stale without a tree", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        fileTree: [{ path: "README.md", type: "file", size: 12 }],
+      },
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "stale",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+      },
+      "admin-1",
+    );
+    const after = await getAdminProject(sql, created.id);
+    assert.equal(after.github_file_tree?.[0]?.path, "README.md");
+    assert.equal(after.github_sync_status, "stale");
+  });
+
   it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(

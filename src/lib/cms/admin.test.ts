@@ -118,6 +118,9 @@ describe("admin allowlist", () => {
     const runtime = readFileSync(new URL("./admin-runtime.server.ts", import.meta.url), "utf8");
     assert.match(runtime, /resolveCanvaShareUrl/);
     assert.doesNotMatch(runtime, /canva_status = 'verified'/);
+    const store = readFileSync(new URL("./store.ts", import.meta.url), "utf8");
+    assert.match(store, /canvaPersistFromFields/);
+    assert.match(store, /canvaStatusForPersist/);
     assert.doesNotMatch(source, /假裝已經連上/);
     assert.doesNotMatch(handlers, /notion: \{\s*connected:\s*true/);
   });

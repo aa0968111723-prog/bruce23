@@ -8,7 +8,7 @@ import { CANVA_SHORTLINK_CANDIDATES, collectCanvaShortUrlsFromText } from "../ca
 import { parseCanvaDesign } from "../canva/parse.ts";
 
 export const GITHUB_HYDRATE_KEY = "github_hydrate";
-export const GITHUB_HYDRATE_VERSION = "3";
+export const GITHUB_HYDRATE_VERSION = "4";
 export const CANVA_SHORTLINK_HYDRATE_KEY = "canva_shortlink_hydrate";
 export const CANVA_SHORTLINK_HYDRATE_VERSION = "2";
 
@@ -58,7 +58,24 @@ export function shouldHydrateGithub(options: { skip?: boolean } = {}): boolean {
   return !shouldSkipLifecycle();
 }
 
+let githubHydrateInflight: Promise<HydrateGithubResult> | null = null;
+
 export async function hydratePendingGithub(
+  sql: Sql,
+  options: { fetchImpl?: typeof fetch; force?: boolean } = {},
+): Promise<HydrateGithubResult> {
+  if (!options.force && githubHydrateInflight) return githubHydrateInflight;
+  const run = hydratePendingGithubOnce(sql, options);
+  if (!options.force) {
+    githubHydrateInflight = run.finally(() => {
+      githubHydrateInflight = null;
+    });
+    return githubHydrateInflight;
+  }
+  return run;
+}
+
+async function hydratePendingGithubOnce(
   sql: Sql,
   options: { fetchImpl?: typeof fetch; force?: boolean } = {},
 ): Promise<HydrateGithubResult> {
@@ -72,6 +89,11 @@ export async function hydratePendingGithub(
     if (storedVersion === GITHUB_HYDRATE_VERSION) {
       const leftover = await incompleteGithubRows(sql);
       if (leftover.length === 0) {
+        return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
+      }
+    } else if (storedVersion === "pending" && meta[0]?.updated_at) {
+      const at = new Date(meta[0].updated_at).getTime();
+      if (Number.isFinite(at) && Date.now() - at < 2 * 60 * 1000) {
         return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
       }
     } else if (storedVersion === "retry" && meta[0]?.updated_at) {
@@ -90,10 +112,7 @@ export async function hydratePendingGithub(
 
   const rescanTrees =
     options.force ||
-    (storedVersion !== undefined &&
-      storedVersion !== GITHUB_HYDRATE_VERSION &&
-      storedVersion !== "pending" &&
-      storedVersion !== "retry");
+    (storedVersion !== undefined && storedVersion !== GITHUB_HYDRATE_VERSION);
 
   const rows = await sql.query<{ id: string; github_url: string }>(
     rescanTrees
@@ -192,7 +211,24 @@ export type HydrateCanvaResult = {
   skipped: boolean;
 };
 
+let canvaHydrateInflight: Promise<HydrateCanvaResult> | null = null;
+
 export async function hydratePendingCanvaShortLinks(
+  sql: Sql,
+  options: { fetchImpl?: typeof fetch; force?: boolean } = {},
+): Promise<HydrateCanvaResult> {
+  if (!options.force && canvaHydrateInflight) return canvaHydrateInflight;
+  const run = hydratePendingCanvaShortLinksOnce(sql, options);
+  if (!options.force) {
+    canvaHydrateInflight = run.finally(() => {
+      canvaHydrateInflight = null;
+    });
+    return canvaHydrateInflight;
+  }
+  return run;
+}
+
+async function hydratePendingCanvaShortLinksOnce(
   sql: Sql,
   options: { fetchImpl?: typeof fetch; force?: boolean } = {},
 ): Promise<HydrateCanvaResult> {

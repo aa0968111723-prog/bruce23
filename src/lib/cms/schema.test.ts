@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
-import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, isCanvaShortLink } from "../canva/parse.ts";
+import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink } from "../canva/parse.ts";
 import { verifyDemoUrl } from "../demo/verify.ts";
 import { projectInputSchema } from "./schema.ts";
 import { toPublicProject } from "./store.ts";
@@ -100,6 +100,16 @@ describe("canva allowlist", () => {
     assert.equal(stored.embedUrl, null);
     assert.equal(stored.designId, null);
     assert.equal(stored.statusHint, "pending");
+  });
+
+  it("keeps a resolved embed when the share field is still a /d/ short URL", () => {
+    const stored = canvaPersistFromFields(
+      "https://www.canva.com/d/ysK5sYZisVEjZFe",
+      "https://www.canva.com/design/DAGkeepOnSave/view?embed",
+    );
+    assert.equal(stored.designId, "DAGkeepOnSave");
+    assert.ok(stored.embedUrl?.includes("embed"));
+    assert.equal(stored.shareUrl, "https://www.canva.com/design/DAGkeepOnSave/view");
   });
 
   it("parses view/edit/watch share shapes", () => {

@@ -236,19 +236,17 @@ export async function fetchPublicRepo(
   if (treeRes.errorCode === "rate_limited") {
     return { ok: false, status: "failed", error: treeRes.error, errorCode: "rate_limited", owner, repo, metadata };
   }
-  if (treeRes.json && typeof treeRes.json === "object") {
+  const treeOk = treeRes.status >= 200 && treeRes.status < 300 && treeRes.json && typeof treeRes.json === "object";
+  if (treeOk) {
     const tree = (treeRes.json as { tree?: Array<{ path: string; type: string; size?: number }> }).tree;
-    if (Array.isArray(tree)) {
-      fileTree = limitGithubTree(tree, { maxEntries: 80, maxDepth: 4 });
-    }
+    fileTree = Array.isArray(tree) ? limitGithubTree(tree, { maxEntries: 80, maxDepth: 4 }) : [];
   }
-  if (!fileTree) fileTree = [];
 
   const topics = Array.isArray(data.topics) ? data.topics.filter((t): t is string => typeof t === "string") : [];
 
   return {
     ok: true,
-    status: "verified",
+    status: fileTree !== undefined ? "verified" : "stale",
     owner,
     repo,
     branch: defaultBranch,

@@ -10,7 +10,8 @@ import {
 } from "./privacy.ts";
 import type { IntegrationStatus, PublicationStatus } from "./status.ts";
 import { parseGithubUrl } from "../github/parse.ts";
-import { canvaPersistShape, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
+import { canvaPersistFromFields, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
+import type { CanvaPersistShape } from "../canva/parse.ts";
 import type { GithubFetchResult } from "../github/client.server.ts";
 
 export function jsonb(value: unknown): string {
@@ -285,19 +286,24 @@ async function insertRevision(
   );
 }
 
+function canvaStatusForPersist(
+  shape: CanvaPersistShape,
+  requested: IntegrationStatus | undefined,
+): IntegrationStatus {
+  if (requested === "verified" || requested === "connected") {
+    if (shape.designId || shape.shareUrl) return "pending";
+    return shape.statusHint === "failed" ? "failed" : "not_configured";
+  }
+  if (shape.designId) return requested === "unavailable" || requested === "failed" ? requested : "pending";
+  if (shape.shareUrl) return requested === "unavailable" || requested === "failed" ? requested : "pending";
+  if (shape.statusHint === "failed") return "failed";
+  return requested ?? "not_configured";
+}
+
 function insertParams(input: ProjectInput, id: string, actor: string | null): unknown[] {
   const parsedGh = parseGithubUrl(input.github_url ?? undefined);
-  const canvaShape = canvaPersistShape(input.canva_share_url || input.canva_embed_url || undefined);
-  const canvaStatus =
-    canvaShape.designId
-      ? input.canva_status
-      : canvaShape.shareUrl
-        ? input.canva_status === "unavailable" || input.canva_status === "failed"
-          ? input.canva_status
-          : "pending"
-        : canvaShape.statusHint === "failed"
-          ? "failed"
-          : "not_configured";
+  const canvaShape = canvaPersistFromFields(input.canva_share_url, input.canva_embed_url);
+  const canvaStatus = canvaStatusForPersist(canvaShape, input.canva_status);
   return [
     id,
     input.slug,
@@ -511,7 +517,7 @@ export function githubIncomingFromFetch(result: GithubFetchResult, currentUrl: s
         }
       : { syncError: result.error, errorCode: result.errorCode },
     github_readme: result.ok ? (result.readme ?? null) : undefined,
-    github_file_tree: result.ok ? (result.fileTree ?? null) : undefined,
+    github_file_tree: result.ok && result.fileTree !== undefined ? result.fileTree : undefined,
     github_languages: result.ok ? (result.languages ?? null) : undefined,
     github_topics: result.ok ? (result.topics ?? null) : undefined,
     github_latest_commit: result.ok ? (result.latestCommit ?? null) : undefined,
@@ -652,17 +658,8 @@ export async function listAdminArchive(sql: Sql): Promise<AdminArchiveItem[]> {
 
 export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: string }, actor: string) {
   const id = input.id ?? crypto.randomUUID();
-  const canvaShape = canvaPersistShape(input.canva_share_url || input.canva_embed_url || undefined);
-  const canvaStatus =
-    canvaShape.designId
-      ? input.canva_status
-      : canvaShape.shareUrl
-        ? input.canva_status === "unavailable" || input.canva_status === "failed"
-          ? input.canva_status
-          : "pending"
-        : canvaShape.statusHint === "failed"
-          ? "failed"
-          : input.canva_status;
+  const canvaShape = canvaPersistFromFields(input.canva_share_url, input.canva_embed_url);
+  const canvaStatus = canvaStatusForPersist(canvaShape, input.canva_status);
   await sql.query(
     `insert into archive_items (
       id, slug, title, kind, year, summary, media, href, origin_note, publication_status, sort_order,
