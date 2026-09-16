@@ -316,11 +316,44 @@ export async function fetchPublicGithubSnapshot(
   }
 }
 
+export type GithubFieldChange = {
+  field: string;
+  from: string;
+  to: string;
+};
+
+export type GithubSyncCurrent = {
+  github_branch?: string | null;
+  github_metadata?: {
+    description?: string | null;
+    homepage?: string | null;
+    updated_at?: string | null;
+    html_url?: string | null;
+    archived?: boolean;
+  } | null;
+  github_languages?: { [language: string]: number } | null;
+  github_topics?: string[] | null;
+  github_latest_commit?: GithubSnapshot["latestCommit"];
+  github_readme?: string | null;
+  github_is_private?: boolean;
+};
+
+function encodeDiffValue(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return "";
+  }
+}
+
 export function diffGithubFields(
-  current: Record<string, unknown>,
+  current: GithubSyncCurrent,
   snapshot: GithubSnapshot,
-): Array<{ field: string; from: unknown; to: unknown }> {
-  const next = {
+): GithubFieldChange[] {
+  const next: GithubSyncCurrent = {
     github_branch: snapshot.defaultBranch,
     github_metadata: {
       description: snapshot.description,
@@ -335,11 +368,12 @@ export function diffGithubFields(
     github_readme: snapshot.readme,
     github_is_private: snapshot.isPrivate,
   };
-  const changes: Array<{ field: string; from: unknown; to: unknown }> = [];
-  for (const [field, to] of Object.entries(next)) {
+  const changes: GithubFieldChange[] = [];
+  for (const field of Object.keys(next) as Array<keyof GithubSyncCurrent>) {
     const from = current[field];
+    const to = next[field];
     if (JSON.stringify(from ?? null) !== JSON.stringify(to ?? null)) {
-      changes.push({ field, from: from ?? null, to: to ?? null });
+      changes.push({ field, from: encodeDiffValue(from), to: encodeDiffValue(to) });
     }
   }
   return changes;

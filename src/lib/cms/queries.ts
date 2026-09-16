@@ -1,8 +1,17 @@
 import type { Sql } from "../db";
 import { asBoolean, asNumber, parseJson, summarizeReadme, toIso } from "./json.ts";
-import type { ExperienceMode, IntegrationStatus, PublicationStatus } from "./schema";
+import type {
+  CopyLocale,
+  ExperienceConfig,
+  ExperienceMode,
+  FileTreeNode,
+  GithubMetadata,
+  IntegrationStatus,
+  PublicationStatus,
+} from "./schema";
 import type {
   AdminProject,
+  LanguageBytes,
   PublicArchiveItem,
   PublicCanva,
   PublicDemo,
@@ -10,7 +19,6 @@ import type {
   PublicProject,
   PublicSite,
 } from "./public-types";
-import type { FileTreeNode } from "./schema";
 import type { ProjectCategory, ProjectMedia, ProjectStatus } from "../../content/types";
 
 export type ProjectRow = Record<string, unknown>;
@@ -28,7 +36,7 @@ function publicGithub(row: ProjectRow, forAdmin: boolean): PublicGithub | null {
   const owner = typeof row.github_owner === "string" ? row.github_owner : null;
   const repo = typeof row.github_repo === "string" ? row.github_repo : null;
   if (!url || !owner || !repo) return null;
-  const meta = parseJson<Record<string, unknown>>(row.github_metadata, {});
+  const meta = parseJson<GithubMetadata>(row.github_metadata, {});
   return {
     url,
     owner,
@@ -36,7 +44,7 @@ function publicGithub(row: ProjectRow, forAdmin: boolean): PublicGithub | null {
     branch: typeof row.github_branch === "string" ? row.github_branch : null,
     description: typeof meta.description === "string" ? meta.description : null,
     homepage: typeof meta.homepage === "string" ? meta.homepage : null,
-    languages: parseJson<Record<string, number> | null>(row.github_languages, null),
+    languages: parseJson<LanguageBytes | null>(row.github_languages, null),
     topics: parseJson<string[]>(row.github_topics, []),
     updatedAt: typeof meta.updated_at === "string" ? meta.updated_at : null,
     latestCommit: parseJson(row.github_latest_commit, null),
@@ -106,10 +114,10 @@ export function toPublicProject(row: ProjectRow): PublicProject {
     canva: publicCanva(row),
     demo: publicDemo(row),
     experienceMode: (row.experience_mode as ExperienceMode) ?? "media-gallery",
-    experienceConfig: parseJson(row.experience_config, {}),
-    interactionSteps: parseJson(row.interaction_steps, []),
-    sourceEvidence: parseJson(row.source_evidence, []),
-    seo: parseJson(row.seo, {}),
+    experienceConfig: parseJson<ExperienceConfig>(row.experience_config, {}),
+    interactionSteps: parseJson<string[]>(row.interaction_steps, []),
+    sourceEvidence: parseJson<PublicProject["sourceEvidence"]>(row.source_evidence, []),
+    seo: parseJson<PublicProject["seo"]>(row.seo, {}),
     updatedAt: toIso(row.updated_at),
   };
 }
@@ -126,18 +134,18 @@ export function toAdminProject(row: ProjectRow): AdminProject {
     githubSyncEnabled: asBoolean(row.github_sync_enabled),
     githubSyncStatus: (row.github_sync_status as IntegrationStatus) ?? "not_configured",
     githubLastSyncedAt: toIso(row.github_last_synced_at),
-    githubMetadata: parseJson(row.github_metadata, null),
+    githubMetadata: parseJson<GithubMetadata | null>(row.github_metadata, null),
     githubReadme: typeof row.github_readme === "string" ? row.github_readme : null,
-    githubFileTree: parseJson(row.github_file_tree, null),
-    githubLanguages: parseJson(row.github_languages, null),
-    githubTopics: parseJson(row.github_topics, null),
-    githubLatestCommit: parseJson(row.github_latest_commit, null),
+    githubFileTree: parseJson<FileTreeNode[] | null>(row.github_file_tree, null),
+    githubLanguages: parseJson<LanguageBytes | null>(row.github_languages, null),
+    githubTopics: parseJson<string[] | null>(row.github_topics, null),
+    githubLatestCommit: parseJson<PublicGithub["latestCommit"]>(row.github_latest_commit, null),
     githubIsPrivate: asBoolean(row.github_is_private),
     githubPublicApproved: asBoolean(row.github_public_approved),
     liveDemoError: typeof row.live_demo_error === "string" ? row.live_demo_error : null,
     canvaError: typeof row.canva_error === "string" ? row.canva_error : null,
-    copyZh: parseJson(row.copy_zh, {}),
-    copyEn: parseJson(row.copy_en, {}),
+    copyZh: parseJson<CopyLocale>(row.copy_zh, {}),
+    copyEn: parseJson<CopyLocale>(row.copy_en, {}),
     createdAt: toIso(row.created_at),
     updatedBy: typeof row.updated_by === "string" ? row.updated_by : null,
     github: publicGithub(row, true),

@@ -22,7 +22,7 @@ export function CanvaEmbed({
   const [page, setPage] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const trusted = embedUrl && canvaEmbedAllowed(embedUrl);
-  const pages = pageIds?.filter(Boolean) ?? [];
+  const pages = useMemo(() => pageIds?.filter(Boolean) ?? [], [pageIds]);
   const mode = canvaViewMode(embedUrl, failed);
   const src = useMemo(() => {
     if (mode !== "embed" || !trusted || !embedUrl) return null;

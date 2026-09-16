@@ -22,3 +22,13 @@ describe("reduced motion", () => {
     assert.match(css, /\.relation-space/);
   });
 });
+
+describe("mobile layout contract", () => {
+  it("keeps page-level overflow-x hidden", () => {
+    const css = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../../styles.css"),
+      "utf8",
+    );
+    assert.match(css, /overflow-x:\s*hidden/);
+  });
+});

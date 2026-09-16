@@ -43,6 +43,8 @@ export function PosterVisionExperience({ note }: { note?: string }) {
     void run(SAMPLES[0].src);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  return (
     <div>
       <p className="text-sm font-medium text-mint-deep">Poster Vision · 像素推估</p>
       {note ? <p className="mt-1 text-sm text-muted">{note}</p> : null}

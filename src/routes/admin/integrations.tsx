@@ -117,7 +117,7 @@ function Action({
   onClick,
 }: {
   label: string;
-  onClick: () => Promise<{ ok?: boolean; error?: string } | unknown>;
+  onClick: () => Promise<object | null | undefined | void>;
 }) {
   return (
     <button

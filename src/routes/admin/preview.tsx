@@ -6,7 +6,7 @@ import type { AdminProject } from "@/lib/cms/public-types";
 import type { PublicProject } from "@/lib/cms/public-types";
 
 export const Route = createFileRoute("/admin/preview")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: { slug?: string }) => ({
     slug: typeof search.slug === "string" ? search.slug : "",
   }),
   component: AdminPreview,

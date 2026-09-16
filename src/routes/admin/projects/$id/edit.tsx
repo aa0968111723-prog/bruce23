@@ -12,7 +12,7 @@ import {
   testCanvaEmbedFn,
   verifyLiveDemoFn,
 } from "@/lib/cms/admin-fns";
-import { experienceModeSchema, projectCategorySchema, productStatusSchema } from "@/lib/cms/schema";
+import { experienceModeSchema, projectCategorySchema, productStatusSchema, experienceConfigSchema } from "@/lib/cms/schema";
 import type { AdminProject, PublicProject } from "@/lib/cms/public-types";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 
@@ -90,7 +90,12 @@ function ProjectEditor({
     canva_embed_url: project.canva?.embedUrl ?? "",
     canva_alt: project.canva?.alt ?? "",
     canva_caption: project.canva?.caption ?? "",
+    canva_design_id: project.canva?.designId ?? "",
+    canva_page_ids: (project.canva?.pageIds ?? []).join(", "),
+    canva_thumbnail_url: project.canva?.thumbnailUrl ?? "",
     experience_mode: project.experienceMode,
+    experience_config_json: JSON.stringify(project.experienceConfig ?? {}, null, 2),
+    interaction_steps: project.interactionSteps.join("\n"),
     source_evidence: project.sourceEvidence
       .map((s) => [s.label, s.note, s.href ?? "", s.path ?? ""].join(" | "))
       .join("\n"),
@@ -126,7 +131,7 @@ function ProjectEditor({
       outputs: form.outputs.split("\n").map((s) => s.trim()).filter(Boolean),
       stack: form.stack.split("\n").map((s) => s.trim()).filter(Boolean),
       limitations: form.limitations.split("\n").map((s) => s.trim()).filter(Boolean),
-      category: form.category as AdminProject["category"],
+      category: projectCategorySchema.parse(form.category),
       year: form.year,
       product_status: form.product_status,
       featured: form.featured,
@@ -144,11 +149,26 @@ function ProjectEditor({
       live_demo_embed_enabled: form.live_demo_embed_enabled,
       canva_share_url: form.canva_share_url || null,
       canva_embed_url: form.canva_embed_url || null,
+      canva_design_id: form.canva_design_id || null,
+      canva_page_ids: form.canva_page_ids
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      canva_thumbnail_url: form.canva_thumbnail_url || null,
       canva_alt: form.canva_alt || null,
       canva_caption: form.canva_caption || null,
       experience_mode: form.experience_mode,
-      experience_config: project.experienceConfig,
-      interaction_steps: project.interactionSteps,
+      experience_config: (() => {
+        try {
+          return experienceConfigSchema.parse(JSON.parse(form.experience_config_json || "{}"));
+        } catch {
+          return project.experienceConfig;
+        }
+      })(),
+      interaction_steps: form.interaction_steps
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
       source_evidence: form.source_evidence
         .split("\n")
         .map((line) => line.trim())
@@ -162,6 +182,18 @@ function ProjectEditor({
             path: path || undefined,
           };
         }),
+      copy_zh: {
+        title: form.title,
+        subtitle: form.subtitle,
+        summary: form.summary,
+        problem: form.problem,
+        role: form.role,
+      },
+      copy_en: {
+        title: form.title_en,
+        subtitle: form.subtitle_en,
+        summary: form.summary_en,
+      },
       seo: { title: form.seo_title, description: form.seo_description },
     }),
     [form, project],
@@ -170,6 +202,7 @@ function ProjectEditor({
   async function save() {
     setBusy(true);
     try {
+      experienceConfigSchema.parse(JSON.parse(form.experience_config_json || "{}"));
       await saveProjectFn({ data: { id: project.id, patch } });
       setDirty(false);
       toast.success("草稿已儲存");
@@ -276,7 +309,7 @@ function ProjectEditor({
               value={form.category}
               onChange={(e) => {
                 setDirty(true);
-                setForm((f) => ({ ...f, category: e.target.value }));
+                setForm((f) => ({ ...f, category: projectCategorySchema.parse(e.target.value) }));
               }}
               className="mt-1 min-h-11 w-full rounded-xl border border-line bg-surface px-3"
             >
@@ -374,9 +407,7 @@ function ProjectEditor({
                     }
                     setPreviewDiff(
                       preview.changes.length
-                        ? preview.changes
-                            .map((c) => `${c.field}: ${JSON.stringify(c.from)} → ${JSON.stringify(c.to)}`)
-                            .join("\n")
+                        ? preview.changes.map((c) => `${c.field}: ${c.from} → ${c.to}`).join("\n")
                         : "沒有欄位會變更。敘事文案不會被覆蓋。",
                     );
                   } catch (err) {
@@ -435,6 +466,9 @@ function ProjectEditor({
             <h2 className="font-display text-xl">Canva</h2>
             {field("canva_share_url", "分享網址或 embed 片段")}
             {field("canva_embed_url", "嵌入網址")}
+            {field("canva_design_id", "Design ID")}
+            {field("canva_page_ids", "頁面 ID（逗號分隔）")}
+            {field("canva_thumbnail_url", "封面圖")}
             {field("canva_alt", "替代文字")}
             {field("canva_caption", "圖說")}
             <button
@@ -471,6 +505,19 @@ function ProjectEditor({
               ))}
             </select>
           </label>
+          {field("interaction_steps", "互動步驟（一行一步）", true)}
+          <label className="block text-sm">
+            體驗內容（JSON，不含敘事文案）
+            <textarea
+              value={form.experience_config_json}
+              onChange={(e) => {
+                setDirty(true);
+                setForm((f) => ({ ...f, experience_config_json: e.target.value }));
+              }}
+              rows={12}
+              className="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2 font-mono text-xs"
+            />
+          </label>
           <ExperiencePanel
             project={
               {
@@ -480,6 +527,8 @@ function ProjectEditor({
                 subtitle: form.subtitle,
                 summary: form.summary,
                 experienceMode: form.experience_mode,
+                experienceConfig: patch.experience_config,
+                interactionSteps: patch.interaction_steps,
                 github: project.github,
                 canva: {
                   shareUrl: form.canva_share_url || null,

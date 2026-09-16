@@ -66,25 +66,70 @@ export const sourceEvidenceSchema = z.object({
   path: z.string().optional(),
 });
 
-export const fileTreeNodeSchema: z.ZodType<FileTreeNode> = z.lazy(() =>
-  z.object({
-    path: z.string(),
-    type: z.enum(["file", "dir"]),
-    purpose: z.string().optional(),
-    stage: z.string().optional(),
-    githubUrl: z.string().optional(),
-    children: z.array(fileTreeNodeSchema).optional(),
-  }),
-);
+const fileTreeLeafSchema = z.object({
+  path: z.string(),
+  type: z.enum(["file", "dir"]),
+  purpose: z.string().optional(),
+  stage: z.string().optional(),
+  githubUrl: z.string().optional(),
+});
 
-export type FileTreeNode = {
-  path: string;
-  type: "file" | "dir";
-  purpose?: string;
-  stage?: string;
-  githubUrl?: string;
-  children?: FileTreeNode[];
-};
+export const fileTreeNodeSchema = fileTreeLeafSchema.extend({
+  children: z.array(fileTreeLeafSchema).optional(),
+});
+
+export type FileTreeNode = z.infer<typeof fileTreeNodeSchema>;
+
+export const experienceNodeSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  path: z.string().optional(),
+  stage: z.string().optional(),
+});
+
+export const experienceConfigSchema = z.object({
+  label: z.string().optional(),
+  honestNote: z.string().optional(),
+  nodes: z.array(experienceNodeSchema).optional(),
+  frames: z.number().optional(),
+  problemFrames: z.array(z.number()).optional(),
+  demo: z.string().optional(),
+  samples: z.array(z.string()).optional(),
+  room: z
+    .object({
+      w: z.number(),
+      d: z.number(),
+      name: z.string().optional(),
+    })
+    .optional(),
+  versions: z.array(z.string()).optional(),
+  engine: z.string().optional(),
+});
+
+export const copyLocaleSchema = z.object({
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  summary: z.string().optional(),
+  problem: z.string().optional(),
+  role: z.string().optional(),
+  decisions: z.array(z.string()).optional(),
+  modalities: z.array(z.string()).optional(),
+  process: z.array(z.string()).optional(),
+  outputs: z.array(z.string()).optional(),
+  limitations: z.array(z.string()).optional(),
+});
+
+export const githubMetadataSchema = z.object({
+  description: z.string().nullable().optional(),
+  homepage: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+  html_url: z.string().nullable().optional(),
+  archived: z.boolean().optional(),
+});
+
+export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
+export type CopyLocale = z.infer<typeof copyLocaleSchema>;
+export type GithubMetadata = z.infer<typeof githubMetadataSchema>;
 
 export const latestCommitSchema = z
   .object({
@@ -143,8 +188,8 @@ export const projectMutationSchema = z.object({
   canva_alt: z.string().optional().nullable(),
   canva_caption: z.string().optional().nullable(),
   experience_mode: experienceModeSchema,
-  experience_config: z.record(z.string(), z.unknown()).optional().default({}),
-  interaction_steps: z.array(z.unknown()).optional().default([]),
+  experience_config: experienceConfigSchema.optional().default({}),
+  interaction_steps: z.array(z.string()).optional().default([]),
   source_evidence: z.array(sourceEvidenceSchema).optional().default([]),
   seo: z
     .object({
@@ -153,8 +198,8 @@ export const projectMutationSchema = z.object({
     })
     .optional()
     .default({}),
-  copy_zh: z.record(z.string(), z.unknown()).optional().default({}),
-  copy_en: z.record(z.string(), z.unknown()).optional().default({}),
+  copy_zh: copyLocaleSchema.optional().default({}),
+  copy_en: copyLocaleSchema.optional().default({}),
 });
 
 export const siteSettingsSchema = z.object({
@@ -178,7 +223,7 @@ export const siteSettingsSchema = z.object({
     title: z.string().optional().default(""),
     description: z.string().optional().default(""),
   }),
-  i18n: z.record(z.string(), z.unknown()).optional().default({}),
+  i18n: z.record(z.string(), z.string()).optional().default({}),
 });
 
 export type ProductStatus = z.infer<typeof productStatusSchema>;

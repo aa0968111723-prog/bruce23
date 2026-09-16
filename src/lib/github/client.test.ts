@@ -104,7 +104,7 @@ describe("fetchPublicGithubSnapshot", () => {
 describe("diffGithubFields", () => {
   it("does not include narrative copy fields", () => {
     const changes = diffGithubFields(
-      { title: "舊標題", github_branch: "main" },
+      { github_branch: "main" },
       {
         owner: "o",
         repo: "r",

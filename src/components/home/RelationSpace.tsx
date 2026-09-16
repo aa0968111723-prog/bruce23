@@ -109,5 +109,3 @@ function ProjectChip({
   );
 }
 
-export const modalityNodes = RELATION_NODES;
-export { relatedProjects };

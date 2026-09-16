@@ -93,10 +93,7 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
         ) : null}
         {tab === "how" ? (
           <ol className="grid gap-2">
-            {(project.interactionSteps.length
-              ? project.interactionSteps.map(String)
-              : project.process
-            ).map((step, idx) => (
+            {(project.interactionSteps.length ? project.interactionSteps : project.process).map((step, idx) => (
               <li key={step} className="rounded-xl bg-surface-blue/80 px-4 py-3 text-sm">
                 <span className="mr-2 text-mint-deep">{String(idx + 1).padStart(2, "0")}</span>
                 {step}
@@ -127,12 +124,12 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
 }
 
 function PlayTab({ project }: { project: PublicProject }) {
-  const cfg = project.experienceConfig as Record<string, unknown>;
-  const note = typeof cfg.honestNote === "string" ? cfg.honestNote : undefined;
-  const label = typeof cfg.label === "string" ? cfg.label : undefined;
+  const cfg = project.experienceConfig;
+  const note = cfg.honestNote;
+  const label = cfg.label;
 
   if (project.experienceMode === "process-map") {
-    const nodes = Array.isArray(cfg.nodes) ? (cfg.nodes as Array<{ id: string; label: string; path: string; stage: string }>) : [];
+    const nodes = cfg.nodes ?? [];
     return (
       <ProcessMapExperience
         nodes={nodes}
@@ -146,7 +143,7 @@ function PlayTab({ project }: { project: PublicProject }) {
     return (
       <TimelineExperience
         frames={typeof cfg.frames === "number" ? cfg.frames : 24}
-        problemFrames={Array.isArray(cfg.problemFrames) ? (cfg.problemFrames as number[]) : [12, 13]}
+        problemFrames={cfg.problemFrames ?? [12, 13]}
         note={note}
       />
     );

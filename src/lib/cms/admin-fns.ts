@@ -234,9 +234,20 @@ export const previewGithubSyncFn = createServerFn({ method: "POST" })
     const sql = await boot();
     const { previewGithubForProject } = await import("./github-sync");
     const preview = await previewGithubForProject(sql, data.id);
-    if (!preview.ok) return preview;
+    if (!preview.ok) {
+      return {
+        ok: false as const,
+        error: preview.error,
+        rateLimited: preview.rateLimited,
+        lastSync: preview.lastSync,
+        changes: preview.changes,
+      };
+    }
     return {
-      ...preview,
+      ok: true as const,
+      lastSync: preview.lastSync,
+      narrativeUntouched: true as const,
+      changes: preview.changes,
       snapshot: {
         description: preview.snapshot.description,
         updatedAt: preview.snapshot.updatedAt,

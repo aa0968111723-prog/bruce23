@@ -1,6 +1,15 @@
+import type {
+  CopyLocale,
+  ExperienceConfig,
+  ExperienceMode,
+  FileTreeNode,
+  GithubMetadata,
+  IntegrationStatus,
+  PublicationStatus,
+} from "./schema";
 import type { ProjectCategory, ProjectMedia, ProjectStatus } from "../../content/types";
-import type { ExperienceMode, IntegrationStatus, PublicationStatus } from "./schema";
-import type { FileTreeNode } from "./schema";
+
+export type LanguageBytes = { [language: string]: number };
 
 export type PublicGithub = {
   url: string;
@@ -9,7 +18,7 @@ export type PublicGithub = {
   branch: string | null;
   description: string | null;
   homepage: string | null;
-  languages: Record<string, number> | null;
+  languages: LanguageBytes | null;
   topics: string[];
   updatedAt: string | null;
   latestCommit: {
@@ -71,8 +80,8 @@ export type PublicProject = {
   canva: PublicCanva | null;
   demo: PublicDemo | null;
   experienceMode: ExperienceMode;
-  experienceConfig: Record<string, unknown>;
-  interactionSteps: unknown[];
+  experienceConfig: ExperienceConfig;
+  interactionSteps: string[];
   sourceEvidence: Array<{
     label: string;
     href?: string;
@@ -129,18 +138,18 @@ export type AdminProject = Omit<PublicProject, "publicationStatus" | "github"> &
   githubSyncEnabled: boolean;
   githubSyncStatus: IntegrationStatus;
   githubLastSyncedAt: string | null;
-  githubMetadata: Record<string, unknown> | null;
+  githubMetadata: GithubMetadata | null;
   githubReadme: string | null;
   githubFileTree: FileTreeNode[] | null;
-  githubLanguages: Record<string, number> | null;
+  githubLanguages: LanguageBytes | null;
   githubTopics: string[] | null;
   githubLatestCommit: PublicGithub["latestCommit"];
   githubIsPrivate: boolean;
   githubPublicApproved: boolean;
   liveDemoError: string | null;
   canvaError: string | null;
-  copyZh: Record<string, unknown>;
-  copyEn: Record<string, unknown>;
+  copyZh: CopyLocale;
+  copyEn: CopyLocale;
   createdAt: string | null;
   updatedBy: string | null;
   github: PublicGithub | null;

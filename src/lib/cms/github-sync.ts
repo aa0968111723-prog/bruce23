@@ -1,3 +1,4 @@
+import type { GithubFieldChange } from "@/lib/github/client";
 import type { Sql } from "../db";
 import { parseGithubRepoUrl } from "@/lib/github/parse";
 import { diffGithubFields, fetchPublicGithubSnapshot } from "@/lib/github/client";
@@ -17,7 +18,7 @@ export async function previewGithubForProject(sql: Sql, id: string) {
       error: result.error,
       rateLimited: result.rateLimited,
       lastSync: project.githubLastSyncedAt,
-      changes: [] as Array<{ field: string; from: unknown; to: unknown }>,
+      changes: [] as GithubFieldChange[],
     };
   }
   const changes = diffGithubFields(

@@ -2,15 +2,15 @@ import type { Project } from "../../content/types";
 import { archiveItems } from "../../content/archive.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
-import type { ExperienceMode } from "./schema";
+import type { ExperienceConfig, ExperienceMode } from "./schema";
 import { parseGithubRepoUrl } from "../github/parse.ts";
 
 export const SEED_NAME = "portfolio-cms-v1";
 
 export type ExperienceSeed = {
   mode: ExperienceMode;
-  config: Record<string, unknown>;
-  steps: unknown[];
+  config: ExperienceConfig;
+  steps: string[];
 };
 
 export const EXPERIENCE_BY_SLUG: Record<string, ExperienceSeed> = {
