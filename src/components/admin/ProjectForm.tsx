@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   applyGithubFn,
@@ -62,17 +62,17 @@ export function ProjectForm({ project }: { project: AdminProject }) {
     return () => window.removeEventListener("beforeunload", onLeave);
   }, [dirty]);
 
-  useEffect(() => {
-    void loadRevisions();
-  }, [project.id]);
-
-  function loadRevisions() {
+  const loadRevisions = useCallback(() => {
     return listRevisionsFn({ data: { id: project.id } })
       .then(setRevisions)
       .catch((err: unknown) => {
         setStatus(err instanceof Error ? err.message : "修訂紀錄讀取失敗");
       });
-  }
+  }, [project.id]);
+
+  useEffect(() => {
+    void loadRevisions();
+  }, [loadRevisions]);
 
   function applyServerProject(result: unknown, fallback: ProjectInput) {
     if (result && typeof result === "object" && "id" in result && "slug" in result && "title" in result) {

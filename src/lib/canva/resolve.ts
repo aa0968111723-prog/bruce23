@@ -145,7 +145,7 @@ export async function resolveCanvaShareUrl(
     }
 
     if (response.status === 401 || response.status === 403 || response.status === 404) {
-      if (!usedGet && (response.status === 403 || response.status === 404 || response.status === 405)) {
+      if (!usedGet && response.status !== 401) {
         usedGet = true;
         continue;
       }

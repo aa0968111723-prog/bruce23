@@ -49,7 +49,7 @@ async function incompleteGithubRows(sql: Sql) {
 
 function shouldSkipLifecycle(): boolean {
   const event = typeof process === "undefined" ? "" : (process.env.npm_lifecycle_event ?? "");
-  return event === "build" || event === "typecheck" || event === "lint" || event === "test";
+  return event === "build" || event === "typecheck" || event === "lint";
 }
 
 export function shouldHydrateGithub(options: { skip?: boolean } = {}): boolean {
@@ -155,7 +155,7 @@ export async function hydratePendingDemos(
   sql: Sql,
   options: { fetchImpl?: typeof fetch } = {},
 ): Promise<HydrateDemoResult> {
-  if (!shouldHydrateGithub()) {
+  if (!options.fetchImpl && !shouldHydrateGithub()) {
     return { attempted: 0, probed: 0, skipped: true };
   }
 
