@@ -1,8 +1,8 @@
 import { getRequest } from "@tanstack/react-start/server";
-import { getSessionUser } from "@/lib/auth/verify.server";
-import { assertSameSiteRequest } from "@/lib/auth/isolation.server";
-import { assertAdminAccess, isAllowedAdminOrigin } from "./admin";
-import { ForbiddenError } from "./errors";
+import { getSessionUser } from "../auth/verify.server.ts";
+import { assertSameSiteRequest } from "../auth/isolation.server.ts";
+import { assertAdminAccess, isAllowedAdminOrigin } from "./admin.ts";
+import { ForbiddenError } from "./errors.ts";
 
 export function assertAdminOrigin(): void {
   const request = getRequest();
@@ -17,7 +17,7 @@ export async function requireAdminActor(userId: string, bearerToken?: string) {
   assertAdminOrigin();
   const user = await getSessionUser(bearerToken);
   if (!user || user.id !== userId) {
-    const { UnauthorizedError } = await import("@/lib/auth/verify.server");
+    const { UnauthorizedError } = await import("../auth/verify.server.ts");
     throw new UnauthorizedError();
   }
   const { email } = assertAdminAccess({ userId, email: user.email });

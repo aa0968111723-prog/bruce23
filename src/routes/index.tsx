@@ -7,6 +7,7 @@ import { ProjectCard } from "@/components/site/ProjectCard";
 import { ExplorationField } from "@/components/home/ExplorationField";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { listPublishedProjectsFn, getPublicSiteFn } from "@/lib/cms/public-fn";
+import { resolveHomepageCopy } from "@/lib/cms/public-site";
 import { processSteps, site as fallbackSite } from "@/content/site";
 import type { PublicProject } from "@/lib/cms/privacy";
 
@@ -21,6 +22,20 @@ export const Route = createFileRoute("/")({
     ]);
     return { projects, site };
   },
+  head: ({ loaderData }) => {
+    const copy = resolveHomepageCopy(loaderData?.site, fallbackSite);
+    return {
+      meta: [
+        { title: copy.seoTitle || "Luminous Studio · 柏能" },
+        {
+          name: "description",
+          content:
+            copy.seoDescription ||
+            "把 AI、設計與多模態創作，轉化成可使用的體驗。陳柏能的光域 AI 創作實驗室。",
+        },
+      ],
+    };
+  },
   component: Home,
 });
 
@@ -31,11 +46,7 @@ function Home() {
   };
   const [open, setOpen] = useState<PublicProject | null>(null);
   const featured = projects.filter((item) => item.featured);
-  const nameEn = site?.nameEn ?? fallbackSite.nameEn;
-  const person = site?.person ?? fallbackSite.person;
-  const headline = site?.headline ?? fallbackSite.headline;
-  const subhead = site?.subhead ?? fallbackSite.subhead;
-  const narrative = site?.narrative ?? fallbackSite.narrative;
+  const { nameEn, person, headline, subhead, narrative } = resolveHomepageCopy(site, fallbackSite);
 
   return (
     <div>

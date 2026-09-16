@@ -6,6 +6,7 @@ import {
   CANVA_FIXTURE_PAGE_IDS,
   CANVA_FIXTURE_SHARE_URL,
   canvaEmbedSrc,
+  evaluateCanvaEmbedTest,
   parseCanvaPageIds,
 } from "./embed.ts";
 import { parseCanvaDesign } from "./parse.ts";
@@ -24,5 +25,16 @@ describe("canva embed fixtures", () => {
     assert.equal(cover, CANVA_FIXTURE_EMBED_URL);
     assert.ok(page2.includes("page=page-2"));
     assert.deepEqual(parseCanvaPageIds("cover, page-2"), CANVA_FIXTURE_PAGE_IDS);
+  });
+
+  it("does not mark a syntactically valid share URL as verified", () => {
+    const result = evaluateCanvaEmbedTest(CANVA_FIXTURE_SHARE_URL);
+    assert.equal(result.status, "pending");
+    assert.equal(result.status === "pending" && result.liveProbe, false);
+    assert.equal(result.status === "pending" && result.parsed, true);
+    const html = evaluateCanvaEmbedTest(`<iframe src="${CANVA_FIXTURE_EMBED_URL}"></iframe>`);
+    assert.equal(html.status, "pending");
+    const denied = evaluateCanvaEmbedTest("https://evil.example/design/DAGfake/view");
+    assert.equal(denied.status, "failed");
   });
 });

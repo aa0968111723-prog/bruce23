@@ -327,7 +327,21 @@ function IntegrationsPage() {
       <button
         type="button"
         className="mt-3 min-h-11 rounded-full bg-ink px-4 text-sm text-bg"
-        onClick={() => void act("已嘗試同步待處理 GitHub", () => hydrateGithubFn())}
+        onClick={() =>
+          void (async () => {
+            try {
+              const result = await hydrateGithubFn();
+              if (result.rateLimited) {
+                toast.error("GitHub API 速率限制。稍後再同步，不會標記為成功。");
+              } else {
+                toast.success("已嘗試同步待處理 GitHub");
+              }
+              reload();
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "同步失敗");
+            }
+          })()
+        }
       >
         同步所有待處理 GitHub
       </button>
@@ -349,6 +363,9 @@ function IntegrationsPage() {
               {item.demo.lastVerifiedAt ? ` · 上次探測 ${item.demo.lastVerifiedAt.slice(0, 16)}` : " · 尚未探測"}
             </p>
             {item.github.error ? <p className="text-xs text-alert">{item.github.error}</p> : null}
+            {item.github.errorCode === "rate_limited" ? (
+              <p className="text-xs text-alert">GitHub API 速率限制。稍後再同步，不會標記為成功。</p>
+            ) : null}
             {item.canva.error ? <p className="text-xs text-alert">{item.canva.error}</p> : null}
             <div className="mt-3 flex flex-wrap gap-2">
               <button

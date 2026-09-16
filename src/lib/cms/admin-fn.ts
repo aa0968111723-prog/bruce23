@@ -2,42 +2,33 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { archiveInputSchema, projectInputSchema, projectPatchSchema, siteSettingsSchema } from "./schema";
-import { AdminConfigError, ForbiddenError, ValidationError } from "./errors";
+import { ValidationError } from "./errors";
 import { parseGithubUrl } from "@/lib/github/parse";
-import { parseCanvaDesign, isAllowedCanvaUrl, extractCanvaUrl } from "@/lib/canva/parse";
+import { runAdminSql, type AuthedAdmin } from "./admin-runtime.server";
+import {
+  handleCreateProject,
+  handleGetAdminSession,
+  handleGetSettings,
+  handleListIntegrations,
+  handlePreviewDraft,
+  handleSaveDraft,
+  handleSaveProject,
+  handleSaveSettings,
+  handleSetPublication,
+  handleTestCanvaEmbed,
+} from "./admin-handlers.server";
 
-type Authed = { userId: string; bearerToken?: string };
-
-async function adminSql(context: Authed) {
-  const { requireAdminActor } = await import("./guard.server");
-  const actor = await requireAdminActor(context.userId, context.bearerToken);
-  const { getSql } = await import("@/lib/db");
-  const { ensureSeed } = await import("./seed");
-  const sql = await getSql();
-  await ensureSeed(sql);
-  return { sql, actor };
+async function adminSql(context: AuthedAdmin) {
+  return runAdminSql(context);
 }
 
-function asAuthed(context: { userId: string }): Authed {
-  return context as Authed;
+function asAuthed(context: { userId: string }): AuthedAdmin {
+  return context as AuthedAdmin;
 }
 
 export const getAdminSessionFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    try {
-      const { actor } = await adminSql(asAuthed(context));
-      return { ok: true as const, email: actor.email, userId: actor.userId };
-    } catch (err) {
-      if (err instanceof AdminConfigError) {
-        return { ok: false as const, reason: "config" as const, message: err.message };
-      }
-      if (err instanceof ForbiddenError) {
-        return { ok: false as const, reason: "forbidden" as const, message: err.message };
-      }
-      throw err;
-    }
-  });
+  .handler(async ({ context }) => handleGetAdminSession(asAuthed(context)));
 
 export const listAdminProjectsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
@@ -59,75 +50,39 @@ export const getAdminProjectFn = createServerFn({ method: "GET" })
 export const createProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => projectInputSchema.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { createProjectRecord } = await import("./store");
-    return createProjectRecord(sql, data, actor.userId);
-  });
+  .handler(async ({ context, data }) => handleCreateProject(asAuthed(context), data));
 
 export const saveProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => projectPatchSchema.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { saveProjectRecord } = await import("./store");
-    const { id, ...patch } = data;
-    return saveProjectRecord(sql, id, patch, actor.userId, "save");
-  });
+  .handler(async ({ context, data }) => handleSaveProject(asAuthed(context), data));
 
 export const saveDraftFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => projectPatchSchema.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { saveProjectRecord } = await import("./store");
-    const { id, ...patch } = data;
-    return saveProjectRecord(
-      sql,
-      id,
-      { ...patch, publication_status: "draft" },
-      actor.userId,
-      "draft",
-    );
-  });
+  .handler(async ({ context, data }) => handleSaveDraft(asAuthed(context), data));
 
 const idInput = z.object({ id: z.string().min(1) });
 
 export const publishProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => idInput.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { setPublication } = await import("./store");
-    return setPublication(sql, data.id, "published", actor.userId);
-  });
+  .handler(async ({ context, data }) => handleSetPublication(asAuthed(context), data.id, "published"));
 
 export const unpublishProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => idInput.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { setPublication } = await import("./store");
-    return setPublication(sql, data.id, "draft", actor.userId);
-  });
+  .handler(async ({ context, data }) => handleSetPublication(asAuthed(context), data.id, "draft"));
 
 export const archiveProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => idInput.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { setPublication } = await import("./store");
-    return setPublication(sql, data.id, "archived", actor.userId);
-  });
+  .handler(async ({ context, data }) => handleSetPublication(asAuthed(context), data.id, "archived"));
 
 export const restoreProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => idInput.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { setPublication } = await import("./store");
-    return setPublication(sql, data.id, "draft", actor.userId);
-  });
+  .handler(async ({ context, data }) => handleSetPublication(asAuthed(context), data.id, "draft"));
 
 export const listRevisionsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
@@ -245,134 +200,20 @@ export const testCanvaEmbedFn = createServerFn({ method: "POST" })
   .validator((input: unknown) =>
     z.object({ id: z.string().optional(), url: z.string().optional() }).parse(input),
   )
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    let raw = data.url ?? "";
-    if (data.id && !raw) {
-      const { getAdminProject } = await import("./store");
-      const project = await getAdminProject(sql, data.id);
-      raw = project.canva_embed_url || project.canva_share_url || "";
-    }
-    const extracted = extractCanvaUrl(raw);
-    if (!extracted || !isAllowedCanvaUrl(extracted)) {
-      const payload = {
-        status: "failed" as const,
-        error: "只接受 Canva 允許網域的分享／嵌入網址，不會執行後台貼上的 HTML。",
-      };
-      if (data.id) {
-        await sql.query(
-          `update projects set canva_status = 'failed', canva_error = $2, updated_by = $3, updated_at = now() where id = $1`,
-          [data.id, payload.error, actor.userId],
-        );
-      }
-      return payload;
-    }
-    const parsed = parseCanvaDesign(extracted);
-    const payload = parsed
-      ? {
-          status: "pending" as const,
-          parsed: true,
-          liveProbe: false,
-          shareUrl: parsed.shareUrl,
-          embedUrl: parsed.embedUrl,
-          designId: parsed.designId,
-          error: "語法通過 Canva 允許清單。沒有對該設計做公開嵌入探測，不會標成已驗證。",
-        }
-      : {
-          status: "failed" as const,
-          parsed: false,
-          liveProbe: false,
-          shareUrl: extracted,
-          embedUrl: null as string | null,
-          designId: null as string | null,
-          error: "網域通過允許清單，但不是 /design/{id} 分享或嵌入網址（短網址 /d/ 不會當成公開嵌入）。",
-        };
-    if (data.id) {
-      await sql.query(
-        `update projects set canva_share_url = coalesce($2, canva_share_url),
-          canva_embed_url = coalesce($3, canva_embed_url), canva_design_id = coalesce($4, canva_design_id),
-          canva_status = $5, canva_error = $6, canva_last_synced_at = now(),
-          updated_by = $7, updated_at = now() where id = $1`,
-        [
-          data.id,
-          parsed?.shareUrl ?? null,
-          parsed?.embedUrl ?? null,
-          parsed?.designId ?? null,
-          payload.status,
-          payload.error,
-          actor.userId,
-        ],
-      );
-    }
-    return payload;
-  });
+  .handler(async ({ context, data }) => handleTestCanvaEmbed(asAuthed(context), data));
 
 export const listIntegrationsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    const { sql } = await adminSql(asAuthed(context));
-    const { listAdminProjects } = await import("./store");
-    const { canvaConnectMode, loadCanvaConnectionStatus } = await import("@/lib/canva/oauth.server");
-    const { notionAdapter } = await import("@/content/adapters/notion");
-    const projects = await listAdminProjects(sql);
-    return {
-      canva: await loadCanvaConnectionStatus(sql),
-      canvaMode: canvaConnectMode(),
-      githubTokenConfigured: Boolean(process.env.GITHUB_READ_TOKEN?.trim()),
-      notion: {
-        connected: notionAdapter.isConnected(),
-        status: "not_configured" as const,
-        message: "Notion 未連接。不會假裝已同步任何頁面。",
-        pages: [] as const,
-      },
-      items: projects.map((project) => ({
-        id: project.id,
-        slug: project.slug,
-        title: project.title,
-        publicationStatus: project.publication_status,
-        featured: project.featured,
-        github: {
-          url: project.github_url,
-          status: project.github_sync_status,
-          lastSyncedAt: project.github_last_synced_at,
-          error: project.github_metadata?.syncError,
-        },
-        canva: {
-          url: project.canva_share_url,
-          status: project.canva_status,
-          lastSyncedAt: project.canva_last_synced_at,
-          error: project.canva_error,
-        },
-        demo: {
-          url: project.live_demo_url,
-          status: project.live_demo_status,
-          lastVerifiedAt: project.live_demo_last_verified_at,
-          error: project.live_demo_error,
-          embedEnabled: project.live_demo_embed_enabled,
-        },
-        experienceMode: project.experience_mode,
-        public: project.publication_status === "published",
-        showExperience: Boolean(project.experience_mode),
-      })),
-    };
-  });
+  .handler(async ({ context }) => handleListIntegrations(asAuthed(context)));
 
 export const getSettingsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    const { sql } = await adminSql(asAuthed(context));
-    const { getSiteSettings } = await import("./store");
-    return getSiteSettings(sql);
-  });
+  .handler(async ({ context }) => handleGetSettings(asAuthed(context)));
 
 export const saveSettingsFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => siteSettingsSchema.parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql, actor } = await adminSql(asAuthed(context));
-    const { saveSiteSettings } = await import("./store");
-    return saveSiteSettings(sql, data, actor.userId);
-  });
+  .handler(async ({ context, data }) => handleSaveSettings(asAuthed(context), data));
 
 export const listAdminArchiveFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
@@ -494,15 +335,7 @@ export const hydrateGithubFn = createServerFn({ method: "POST" })
 export const previewDraftFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .validator((input: unknown) => z.object({ slug: z.string().min(1) }).parse(input))
-  .handler(async ({ context, data }) => {
-    const { sql } = await adminSql(asAuthed(context));
-    const { getAdminProjectBySlug, toPreviewProject } = await import("./store");
-    const admin = await getAdminProjectBySlug(sql, data.slug);
-    return {
-      publicationStatus: admin.publication_status,
-      project: toPreviewProject(admin),
-    };
-  });
+  .handler(async ({ context, data }) => handlePreviewDraft(asAuthed(context), data.slug));
 
 async function fetchGithub(sql: import("@/lib/db").Sql, url: string) {
   const { fetchPublicRepo } = await import("@/lib/github/client.server");

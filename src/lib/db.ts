@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
 
 /** Which database backend is active. */
@@ -105,6 +108,36 @@ function createNeonSql(): Promise<Sql> {
   return globalRef.__pgSqlPromise__;
 }
 
+/**
+ * Vite inlines `import.meta.glob` at build time. Node tests/scripts have no
+ * transform, so fall back to the same `migrations/*.sql` files on disk.
+ */
+function loadMigrationSourcesFromFs(): Record<string, string> {
+  const dir = fileURLToPath(new URL("../../migrations", import.meta.url));
+  const out: Record<string, string> = {};
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith(".sql")) continue;
+    out[`/migrations/${name}`] = readFileSync(join(dir, name), "utf8");
+  }
+  return out;
+}
+
+function loadMigrationSources(): Record<string, string> {
+  try {
+    const loaded = import.meta.glob("/migrations/*.sql", {
+      query: "?raw",
+      import: "default",
+      eager: true,
+    }) as Record<string, string>;
+    if (loaded && typeof loaded === "object" && Object.keys(loaded).length > 0) {
+      return loaded;
+    }
+  } catch {
+    // Node: `import.meta.glob` is not a function until Vite rewrites this call.
+  }
+  return loadMigrationSourcesFromFs();
+}
+
 async function createPgliteSql(): Promise<Sql> {
   // Embedded Postgres, imported on demand so it never loads on the Neon path.
   // One in-memory instance per process, shared across HMR module instances, so
@@ -137,11 +170,7 @@ async function createPgliteSql(): Promise<Sql> {
   // passes serialized on a global chain so concurrent callers never
   // double-apply.
   const migrate = async (): Promise<void> => {
-    const migrations = import.meta.glob("/migrations/*.sql", {
-      query: "?raw",
-      import: "default",
-      eager: true,
-    }) as Record<string, string>;
+    const migrations = loadMigrationSources();
     const doneRows = await pg.query<{ name: string }>(
       "select name from _migrations",
     );

@@ -3,6 +3,7 @@ import type { PublicProject } from "@/lib/cms/privacy";
 import { modalityFilters } from "@/lib/experiences/catalog";
 import { CONSTELLATION_HEIGHT, CONSTELLATION_WIDTH, constellationLayout } from "@/lib/home/constellation";
 import { cn } from "@/lib/cn";
+import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 export function ExplorationField({
   projects,
@@ -35,6 +36,8 @@ export function ExplorationField({
   }, [availableFilters, filter, ordered]);
   const map = useMemo(() => constellationLayout(visible), [visible]);
   const bySlug = useMemo(() => new Map(visible.map((item) => [item.slug, item])), [visible]);
+  const filterIds = useMemo(() => ["all", ...availableFilters.map((item) => item.id)], [availableFilters]);
+  const tabs = useRovingTabs(filterIds, filter ?? "all", (next) => setFilter(next === "all" ? null : next));
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
@@ -43,11 +46,34 @@ export function ExplorationField({
         約兩成畫面用來畫作品真正接到的模態。其餘八成是可讀的列表與卡片，不是裝飾粒子，也不用拖曳才能找到作品。
       </p>
 
-      <div className="mt-6 flex gap-2 overflow-x-auto pb-2" role="list">
+      <div
+        className="mt-6 flex gap-2 overflow-x-auto pb-2"
+        role="tablist"
+        aria-label="作品與模態"
+        onKeyDown={tabs.onKeyDown}
+      >
+        <button
+          type="button"
+          ref={tabs.setRef("all")}
+          role="tab"
+          aria-selected={!filter}
+          tabIndex={tabs.tabIndex("all")}
+          className={cn(
+            "node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 text-sm font-medium shadow-card",
+            !filter ? "bg-mint text-primary-foreground" : "bg-surface",
+          )}
+          onClick={() => setFilter(null)}
+        >
+          全部
+        </button>
         {availableFilters.map((item) => (
           <button
             key={item.id}
             type="button"
+            ref={tabs.setRef(item.id)}
+            role="tab"
+            aria-selected={filter === item.id}
+            tabIndex={tabs.tabIndex(item.id)}
             className={cn(
               "node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 text-sm font-medium shadow-card",
               filter === item.id ? "bg-mint text-primary-foreground" : "bg-surface",

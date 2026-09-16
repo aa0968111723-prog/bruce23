@@ -1,8 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Github, Mail } from "lucide-react";
-import { site } from "@/content/site";
+import { site as fallbackSite } from "@/content/site";
+import { getPublicSiteFn } from "@/lib/cms/public-fn";
+import { resolveHomepageCopy } from "@/lib/cms/public-site";
 
-export const Route = createFileRoute("/about")({ component: About });
+export const Route = createFileRoute("/about")({
+  loader: async () => ({ site: await getPublicSiteFn() }),
+  head: ({ loaderData }) => {
+    const copy = resolveHomepageCopy(loaderData?.site, fallbackSite);
+    return {
+      meta: [
+        { title: copy.seoTitle ? `${copy.seoTitle} · 關於` : "關於 · 柏能" },
+        {
+          name: "description",
+          content: copy.seoDescription || copy.narrative,
+        },
+      ],
+    };
+  },
+  component: About,
+});
 
 const beliefs = [
   "人的意圖是起點，AI 是可驗證的加速器，不是自動完成的導演。",
@@ -21,16 +38,21 @@ const publicWork = [
 ];
 
 function About() {
+  const { site: cms } = Route.useLoaderData() as { site: Awaited<ReturnType<typeof getPublicSiteFn>> };
+  const copy = resolveHomepageCopy(cms, fallbackSite);
+  const email = cms?.email ?? fallbackSite.email;
+  const github = cms?.github ?? fallbackSite.github;
+  const role = cms?.role ?? fallbackSite.role;
   return (
     <div>
       <section className="bg-surface-blue/50">
         <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
-          <p className="text-sm font-medium text-mint-deep">{site.nameEn}</p>
+          <p className="text-sm font-medium text-mint-deep">{copy.nameEn}</p>
           <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">
             關於我
           </h1>
           <p className="mt-4 text-lg text-muted">
-            我是{site.person}，{site.role}。
+            我是{copy.person}，{role}。
           </p>
         </div>
       </section>
@@ -38,7 +60,7 @@ function About() {
       <section className="mx-auto w-full max-w-3xl space-y-10 px-4 py-14 sm:px-6">
         <div>
           <h2 className="font-display text-2xl font-semibold">公開定位</h2>
-          <p className="mt-3 leading-relaxed text-ink/85">{site.narrative}</p>
+          <p className="mt-3 leading-relaxed text-ink/85">{copy.narrative}</p>
           <p className="mt-3 leading-relaxed text-muted">
             目標觀眾是 AI 產品團隊、設計主管、多模態創作者與合作夥伴。這個網站要讓人快速看出我正在做什麼、解決什麼、AI 扮演什麼角色，以及作品能不能被使用。
           </p>
@@ -86,14 +108,14 @@ function About() {
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a
-              href={`mailto:${site.email}`}
+              href={`mailto:${email}`}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-5 text-sm font-semibold text-primary-foreground"
             >
               <Mail className="size-4" />
               寄信
             </a>
             <a
-              href={site.github}
+              href={github}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg"
               rel="noreferrer"
               target="_blank"

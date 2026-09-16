@@ -142,6 +142,16 @@ describe("frontend contract", () => {
     const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
     assert.doesNotMatch(settings, /homepage_json: \{\}/);
     assert.match(settings, /highlightSlugs/);
+    const index = readFileSync(new URL("../../../src/routes/index.tsx", import.meta.url), "utf8");
+    assert.match(index, /resolveHomepageCopy/);
+    assert.match(index, /seoTitle/);
+    const about = readFileSync(new URL("../../../src/routes/about.tsx", import.meta.url), "utf8");
+    assert.match(about, /getPublicSiteFn/);
+    assert.match(about, /resolveHomepageCopy/);
+    const publicFn = readFileSync(new URL("../../../src/lib/cms/public-fn.ts", import.meta.url), "utf8");
+    assert.match(publicFn, /locale:/);
+    const jsonldView = readFileSync(new URL("../../../src/components/work/CaseStudyView.tsx", import.meta.url), "utf8");
+    assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
     assert.match(form, /GithubSyncDiff/);
     assert.match(form, /ExperienceEditor/);
@@ -162,6 +172,7 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(field, /constellationLayout/);
+    assert.match(field, /useRovingTabs/);
     assert.match(field, /作品與模態/);
     assert.match(field, /hidden /);
     assert.match(field, /lg:block/);
@@ -179,6 +190,8 @@ describe("frontend contract", () => {
     );
     assert.match(integrations, /Notion/);
     assert.match(integrations, /not_configured/);
+    assert.match(integrations, /rate_limited/);
+    assert.match(integrations, /不會標記為成功/);
     assert.doesNotMatch(integrations, /Notion 已連線/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);

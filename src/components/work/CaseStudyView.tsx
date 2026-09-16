@@ -3,6 +3,7 @@ import { ArrowLeft, Github, Globe } from "lucide-react";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import type { PublicProject } from "@/lib/cms/privacy";
+import { publishedCreativeWorkJsonLd } from "@/lib/cms/jsonld";
 
 export function CaseStudyView({
   project,
@@ -15,25 +16,13 @@ export function CaseStudyView({
   backTo?: "work" | "none";
   includeJsonLd?: boolean;
 }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.title,
-    description: project.summary,
-    url: `/work/${project.slug}`,
-  };
-
   return (
     <article className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       {includeJsonLd ? (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              ...jsonLd,
-              inLanguage: "zh-Hant",
-              image: project.media[0]?.src?.startsWith("/media/") ? project.media[0].src : undefined,
-            }),
+            __html: JSON.stringify(publishedCreativeWorkJsonLd(project)),
           }}
         />
       ) : null}

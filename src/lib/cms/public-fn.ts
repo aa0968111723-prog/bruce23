@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { PublicSite } from "./public-site";
 
 const slugInput = z.object({ slug: z.string().min(1) });
 
@@ -39,7 +40,7 @@ export const getPublicSiteFn = createServerFn({ method: "GET" }).handler(async (
     const { getSiteSettings } = await import("./store");
     const row = await getSiteSettings(sql);
     if (!row) return null;
-    return {
+    const site: PublicSite = {
       nameZh: row.name_zh,
       nameEn: row.name_en,
       person: row.person,
@@ -54,6 +55,11 @@ export const getPublicSiteFn = createServerFn({ method: "GET" }).handler(async (
       seoTitle: row.seo_title,
       seoDescription: row.seo_description,
       homepageHighlightSlugs: row.homepage_json?.highlightSlugs ?? [],
+      locale: {
+        zh: row.locale_json?.zh,
+        en: row.locale_json?.en,
+      },
     };
+    return site;
   });
 });
