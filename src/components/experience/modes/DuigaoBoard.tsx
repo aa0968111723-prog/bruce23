@@ -1,31 +1,33 @@
 import { useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 type Pin = { id: string; x: number; y: number; note: string };
 type Version = { id: string; label: string; filter: string };
 
-const VERSIONS: Version[] = [
-  { id: "v1", label: "v1 彩色", filter: "none" },
-  { id: "v2", label: "v2 對比", filter: "contrast(1.15) saturate(1.1)" },
-  { id: "bw", label: "黑白", filter: "grayscale(1)" },
-];
-
 export function DuigaoBoard({ project }: { project: PublicProject }) {
+  const config = resolveExperienceConfig(project);
+  const versions: Version[] = config.comparison?.versions ?? [];
   const poster = project.media[0]?.src ?? "/media/covers/duigao.svg";
-  const [version, setVersion] = useState("v1");
-  const [pins, setPins] = useState<Pin[]>([{ id: "p1", x: 32, y: 28, note: "主標再大一點" }]);
+  const [version, setVersion] = useState(versions[0]?.id ?? "");
+  const [pins, setPins] = useState<Pin[]>(config.comparison?.seedPins ?? []);
   const [compare, setCompare] = useState(false);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState<{ x: number; y: number } | null>(null);
-  const current = VERSIONS.find((item) => item.id === version) ?? VERSIONS[0];
+  const current = versions.find((item) => item.id === version) ?? versions[0];
+  const prompt = config.comparison?.prompt ?? "這位置要改什麼？";
+
+  if (!current) {
+    return <p className="text-sm text-muted">尚未設定對稿版本。</p>;
+  }
 
   return (
     <div>
       <p className="text-sm text-muted">
-        作品集對稿示意：點位置留言、切版本、比較。這裡不連真實房間、不放邀請連結或私人討論。
+        {config.intro ?? "作品集對稿示意：點位置留言、切版本、比較。"}這裡不連真實房間、不放邀請連結或私人討論。
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
-        {VERSIONS.map((item) => (
+        {versions.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -40,7 +42,7 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
         <button
           type="button"
           className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
-          onClick={() => setCompare((v) => !v)}
+          onClick={() => setCompare((value) => !value)}
         >
           比較 {compare ? "開" : "關"}
         </button>
@@ -53,8 +55,13 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
           pins={pins}
           onPick={(point) => setPending(point)}
         />
-        {compare ? (
-          <PosterLayer src={poster} label="黑白比較" filter="grayscale(1)" pins={pins} />
+        {compare && versions[1] ? (
+          <PosterLayer
+            src={poster}
+            label={versions[versions.length - 1]?.label ?? "比較"}
+            filter={versions[versions.length - 1]?.filter ?? "grayscale(1)"}
+            pins={pins}
+          />
         ) : null}
       </div>
       {pending ? (
@@ -73,7 +80,7 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             className="min-h-11 flex-1 rounded-full border border-line bg-surface px-4 text-sm"
-            placeholder={`在 ${pending.x.toFixed(0)}%, ${pending.y.toFixed(0)}% 寫註記`}
+            placeholder={prompt}
             autoFocus
           />
           <button

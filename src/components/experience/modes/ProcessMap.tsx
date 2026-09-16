@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 import type { PublicProject } from "@/lib/cms/privacy";
-import type { ProcessNode } from "@/lib/experiences/catalog";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 export function ProcessMap({ project }: { project: PublicProject }) {
-  const nodes = (project.experienceConfig.processNodes as ProcessNode[] | undefined) ?? [];
+  const config = resolveExperienceConfig(project);
+  const nodes = config.processNodes ?? [];
   const ids = nodes.map((node) => node.id);
   const [active, setActive] = useState(nodes[0]?.id ?? "");
   const current = nodes.find((node) => node.id === active) ?? nodes[0];
@@ -14,12 +15,17 @@ export function ProcessMap({ project }: { project: PublicProject }) {
   const repo = project.github.repo;
   const branch = project.github.branch ?? "main";
   const reduced = usePrefersReducedMotion();
-  const tabs = useRovingTabs(ids, (active || ids[0]) as string, setActive);
+  const tabs = useRovingTabs(ids, (active || ids[0] || "") as string, setActive);
+
+  if (!nodes.length) {
+    return <p className="text-sm text-muted">尚未設定流程節點。</p>;
+  }
 
   return (
     <div>
       <p className="text-sm text-muted">
-        這是作品集互動展示，把公開 repo 的流程串成可點的節點。不是線上產品控制台。鍵盤左右鍵可換節點。
+        {config.intro ?? "這是作品集互動展示，把公開 repo 的流程串成可點的節點。不是線上產品控制台。"}
+        鍵盤左右鍵可換節點。
       </p>
       <div
         className="mt-4 hidden gap-2 md:flex"

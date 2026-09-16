@@ -15,17 +15,22 @@ import {
   verifyDemoFn,
 } from "@/lib/cms/admin-fn";
 import type { AdminProject } from "@/lib/cms/store";
-import { EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
+import { EXPERIENCE_MODE_LABEL, EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
 import type { ProjectInput } from "@/lib/cms/schema";
 import { experienceConfigSchema } from "@/lib/cms/schema";
 import { parseCanvaDesign } from "@/lib/canva/parse";
 import { parseCanvaPageIds } from "@/lib/canva/embed";
+import { mergeExperienceConfig } from "@/lib/experiences/defaults";
 import { githubSyncDiff, type GithubDiffRow } from "@/lib/github/diff";
+import { ExperienceEditor } from "./ExperienceEditor";
 import { GithubSyncDiff } from "./GithubSyncDiff";
 
 function toForm(project: AdminProject): ProjectInput {
   const { id: _id, created_at: _c, updated_at: _u, updated_by: _b, published_at: _p, ...rest } = project;
-  return rest;
+  return {
+    ...rest,
+    experience_config: mergeExperienceConfig(rest.slug, rest.experience_config),
+  };
 }
 
 export function ProjectForm({ project }: { project: AdminProject }) {
@@ -35,16 +40,12 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   const [revisions, setRevisions] = useState<Array<{ id: string; note: string | null; created_at: string }>>([]);
   const [githubDiff, setGithubDiff] = useState<GithubDiffRow[] | null>(null);
   const [githubFetch, setGithubFetch] = useState<string | null>(null);
-  const [configText, setConfigText] = useState(() => JSON.stringify(form.experience_config ?? {}, null, 2));
-  const [configError, setConfigError] = useState<string | null>(null);
 
   const initial = useMemo(() => JSON.stringify(toForm(project)), [project]);
 
   useEffect(() => {
     setForm(toForm(project));
     setDirty(false);
-    setConfigText(JSON.stringify(toForm(project).experience_config ?? {}, null, 2));
-    setConfigError(null);
   }, [project]);
 
   useEffect(() => {
@@ -69,9 +70,23 @@ export function ProjectForm({ project }: { project: AdminProject }) {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  async function run(label: string, fn: () => Promise<unknown>) {
+  function validatedForm(): ProjectInput | null {
+    const parsed = experienceConfigSchema.safeParse(form.experience_config);
+    if (!parsed.success) {
+      const message = "體驗內容尚未通過檢查，請補齊必填欄位。";
+      setStatus(message);
+      toast.error(message);
+      return null;
+    }
+    return { ...form, experience_config: parsed.data };
+  }
+
+  async function run(label: string, fn: (payload: ProjectInput) => Promise<unknown>) {
+    const payload = validatedForm();
+    if (!payload) return;
     try {
-      await fn();
+      await fn(payload);
+      setForm(payload);
       setStatus(`${label}成功`);
       toast.success(`${label}成功`);
       setDirty(false);
@@ -87,7 +102,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
       className="grid gap-6"
       onSubmit={(event) => {
         event.preventDefault();
-        void run("儲存", () => saveProjectFn({ data: { id: project.id, ...form } }));
+        void run("儲存", (payload) => saveProjectFn({ data: { id: project.id, ...payload } }));
       }}
     >
       {status ? <p className="rounded-xl bg-surface-mint px-4 py-3 text-sm">{status}</p> : null}
@@ -149,7 +164,6 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Area label="流程" value={form.process.join("\n")} onChange={(value) => patch("process", splitLines(value))} />
         <Area label="產出" value={form.outputs.join("\n")} onChange={(value) => patch("outputs", splitLines(value))} />
         <Area label="技術" value={form.stack.join("\n")} onChange={(value) => patch("stack", splitLines(value))} />
-        <Area label="互動步驟" value={form.interaction_steps.join("\n")} onChange={(value) => patch("interaction_steps", splitLines(value))} />
         <Area label="限制" value={form.limitations.join("\n")} onChange={(value) => patch("limitations", splitLines(value))} />
         <Field
           label="封面圖"
@@ -242,8 +256,8 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-ink px-4 text-sm text-bg"
             onClick={() =>
-              void run("同步 GitHub", () =>
-                applyGithubFn({ data: { id: project.id, url: form.github_url ?? undefined } }),
+              void run("同步 GitHub", (payload) =>
+                applyGithubFn({ data: { id: project.id, url: payload.github_url ?? undefined } }),
               )
             }
           >
@@ -280,7 +294,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field label="Demo URL" value={form.live_demo_url ?? ""} onChange={(value) => patch("live_demo_url", value)} />
         <Field label="Demo 標籤" value={form.live_demo_label ?? ""} onChange={(value) => patch("live_demo_label", value)} />
         <label className="grid gap-1 text-sm">
-          體驗模式
+          互動展示模式
           <select
             className="min-h-11 rounded-xl border border-line px-3"
             value={form.experience_mode ?? ""}
@@ -290,36 +304,21 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           >
             <option value="">（未選）</option>
             {EXPERIENCE_MODES.map((item) => (
-              <option key={item}>{item}</option>
+              <option key={item} value={item}>
+                {EXPERIENCE_MODE_LABEL[item]}
+              </option>
             ))}
           </select>
-        </label>
-        <label className="grid gap-1 text-sm">
-          experience_config JSON
-          <textarea
-            className="min-h-40 rounded-xl border border-line px-3 py-2 font-mono text-xs"
-            value={configText}
-            onChange={(event) => {
-              const value = event.target.value;
-              setConfigText(value);
-              try {
-                const parsed = experienceConfigSchema.parse(JSON.parse(value || "{}"));
-                patch("experience_config", parsed);
-                setConfigError(null);
-              } catch {
-                setConfigError("JSON 尚未通過，儲存前請修正。");
-              }
-            }}
-          />
-          {configError ? <span className="text-xs text-alert">{configError}</span> : null}
         </label>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() =>
-              void run("Canva 測試", () =>
-                testCanvaEmbedFn({ data: { id: project.id, url: form.canva_share_url || form.canva_embed_url || undefined } }),
+              void run("Canva 測試", (payload) =>
+                testCanvaEmbedFn({
+                  data: { id: project.id, url: payload.canva_share_url || payload.canva_embed_url || undefined },
+                }),
               )
             }
           >
@@ -329,13 +328,23 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() =>
-              void run("Demo 測試", () => verifyDemoFn({ data: { id: project.id, url: form.live_demo_url ?? undefined } }))
+              void run("Demo 測試", (payload) =>
+                verifyDemoFn({ data: { id: project.id, url: payload.live_demo_url ?? undefined } }),
+              )
             }
           >
             測試 Demo
           </button>
         </div>
       </fieldset>
+
+      <ExperienceEditor
+        mode={form.experience_mode}
+        config={form.experience_config ?? {}}
+        steps={form.interaction_steps}
+        onConfig={(next) => patch("experience_config", next)}
+        onSteps={(next) => patch("interaction_steps", next)}
+      />
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">SEO / 語系</legend>
@@ -390,7 +399,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <button
           type="button"
           className="min-h-11 rounded-full bg-surface px-5 text-sm shadow-card"
-          onClick={() => void run("存成草稿", () => saveDraftFn({ data: { id: project.id, ...form } }))}
+          onClick={() => void run("存成草稿", (payload) => saveDraftFn({ data: { id: project.id, ...payload } }))}
         >
           存成草稿
         </button>

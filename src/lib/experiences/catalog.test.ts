@@ -45,6 +45,7 @@ describe("frontend contract", () => {
       "src/components/experience/CanvaStage.tsx",
       "src/components/home/ExplorationField.tsx",
       "src/components/admin/ProjectForm.tsx",
+      "src/components/admin/ExperienceEditor.tsx",
       "src/routes/index.tsx",
       "src/routes/login.tsx",
       "src/routes/admin/integrations.tsx",
@@ -124,7 +125,18 @@ describe("frontend contract", () => {
     assert.match(settings, /highlightSlugs/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
     assert.match(form, /GithubSyncDiff/);
-    assert.match(form, /experience_config/);
+    assert.match(form, /ExperienceEditor/);
+    assert.match(form, /互動展示模式/);
+    assert.doesNotMatch(form, /experience_config JSON/);
     assert.match(form, /canva_page_ids/);
+    const editor = readFileSync(
+      new URL("../../../src/components/admin/ExperienceEditor.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(editor, /互動展示內容/);
+    assert.match(editor, /進階 JSON/);
+    assert.match(editor, /FrameLab 時間軸/);
+    assert.match(editor, /PLANFORM 物件與動線/);
+    assert.doesNotMatch(editor, /GITHUB_READ_TOKEN/);
   });
 });

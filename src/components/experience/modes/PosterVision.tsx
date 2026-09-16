@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import type { PublicProject } from "@/lib/cms/privacy";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 type Region = { id: string; label: string; x: number; y: number; w: number; h: number };
 
@@ -71,11 +73,14 @@ function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
   };
 }
 
-export function PosterVision() {
+export function PosterVision({ project }: { project?: PublicProject }) {
+  const config = project ? resolveExperienceConfig(project) : {};
+  const sampleSrc = config.comparison?.sampleSrc || "/media/samples/poster.svg";
+  const disclaimer = config.comparison?.estimateDisclaimer ?? "熱圖與區域是像素對比推估，不是眼動追蹤。";
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heatRef = useRef<HTMLCanvasElement>(null);
-  const [src, setSrc] = useState("/media/samples/poster.svg");
+  const [src, setSrc] = useState(sampleSrc);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   function run() {
@@ -84,6 +89,7 @@ export function PosterVision() {
     const heat = heatRef.current;
     if (!image || !canvas) return;
     const result = analyze(image, canvas);
+    result.note = disclaimer;
     setAnalysis(result);
     if (heat) {
       const ctx = heat.getContext("2d");
@@ -111,7 +117,8 @@ export function PosterVision() {
   return (
     <div>
       <p className="text-sm text-muted">
-        上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。熱圖與框選區域是顯著性推估，不是眼動儀。
+        {config.intro ?? "上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。"}
+        {disclaimer}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <label className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
@@ -132,7 +139,7 @@ export function PosterVision() {
           type="button"
           className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
           onClick={() => {
-            setSrc("/media/samples/poster.svg");
+            setSrc(sampleSrc);
             setAnalysis(null);
           }}
         >

@@ -343,4 +343,64 @@ describe("cms persistence", () => {
     assert.equal(saved?.locale_json.en?.headline, "EN");
     assert.equal(saved?.headline, current.headline);
   });
+
+  it("publishes structured experience_config so the public page can read it", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        experience_mode: "timeline",
+        interaction_steps: ["看幀", "開 onion-skin"],
+        experience_config: {
+          honestyLabel: "saved-timeline",
+          intro: "後台存下來的時間軸",
+          processNodes: [
+            {
+              id: "engine",
+              label: "引擎",
+              summary: "時間軸引擎",
+              githubPath: "src/lib/domain/timeline-engine.ts",
+              purpose: "時間軸",
+              stage: "時間軸",
+            },
+          ],
+          timeline: {
+            frames: [
+              { i: 3, kind: "key", x: 12, y: 40 },
+              { i: 4, kind: "generated", x: 90, y: 20, problem: true },
+            ],
+            onionDefault: false,
+            demoDisclaimer: "示範，不是 GPU。",
+          },
+        },
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.experienceMode, "timeline");
+    assert.equal(published.experienceConfig.honestyLabel, "saved-timeline");
+    assert.equal(published.experienceConfig.intro, "後台存下來的時間軸");
+    assert.equal(published.experienceConfig.processNodes?.[0]?.githubPath, "src/lib/domain/timeline-engine.ts");
+    assert.equal(published.experienceConfig.timeline?.frames[1]?.kind, "generated");
+    assert.equal(published.experienceConfig.timeline?.frames[1]?.problem, true);
+    assert.equal(published.experienceConfig.timeline?.onionDefault, false);
+    assert.deepEqual(published.interactionSteps, ["看幀", "開 onion-skin"]);
+  });
+
+  it("fills missing nested experience keys on seed complement without overwriting saved copy", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set experience_config = $2::jsonb where slug = $1`, [
+      "framelab",
+      JSON.stringify({ honestyLabel: "kept-label" }),
+    ]);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const framelab = await getPublishedProject(sql, "framelab");
+    assert.equal(framelab.experienceConfig.honestyLabel, "kept-label");
+    assert.ok((framelab.experienceConfig.timeline?.frames.length ?? 0) >= 3);
+    const director = await getPublishedProject(sql, "ai-director-os");
+    assert.ok(director.experienceConfig.processNodes?.some((node) => node.id === "project"));
+  });
 });

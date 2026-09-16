@@ -4,8 +4,9 @@ import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
 import { experienceForSlug } from "../experiences/catalog.ts";
+import { defaultExperienceConfig, mergeExperienceConfig } from "../experiences/defaults.ts";
 import { parseGithubUrl } from "../github/parse.ts";
-import { projectInputSchema } from "./schema.ts";
+import { projectInputSchema, type ExperienceConfig } from "./schema.ts";
 import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive } from "./store.ts";
 
 export const SEED_VERSION = "portfolio-cms-1";
@@ -72,6 +73,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
       ],
     );
   }
+  await fillExperienceConfigGaps(sql);
 }
 
 export async function ensureSeed(
@@ -194,14 +196,7 @@ export async function ensureSeed(
       canva_caption: canva.caption,
       canva_status: canva.status,
       experience_mode: catalog?.mode ?? "github-explorer",
-      experience_config: catalog
-        ? {
-            honestyLabel: catalog.honestyLabel,
-            processNodes: catalog.processNodes ?? [],
-            walkthrough: catalog.walkthrough ?? [],
-            fileHints: catalog.fileHints ?? [],
-          }
-        : {},
+      experience_config: defaultExperienceConfig(project.slug),
       interaction_steps: project.process,
       source_evidence: project.sourceReferences.map((ref) => ({
         label: ref.label,
@@ -266,4 +261,31 @@ export async function ensureSeed(
     }
   }
   return { seeded: true, skipped: false };
+}
+
+function asStoredConfig(value: unknown): ExperienceConfig {
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value) as ExperienceConfig;
+    } catch {
+      return {};
+    }
+  }
+  if (value && typeof value === "object") return value as ExperienceConfig;
+  return {};
+}
+
+async function fillExperienceConfigGaps(sql: Sql): Promise<void> {
+  const rows = await sql.query<{ id: string; slug: string; experience_config: unknown }>(
+    `select id, slug, experience_config from projects`,
+  );
+  for (const row of rows) {
+    const stored = asStoredConfig(row.experience_config);
+    const merged = mergeExperienceConfig(row.slug, stored);
+    if (JSON.stringify(stored) === JSON.stringify(merged)) continue;
+    await sql.query(`update projects set experience_config = $2::jsonb where id = $1`, [
+      row.id,
+      JSON.stringify(merged),
+    ]);
+  }
 }

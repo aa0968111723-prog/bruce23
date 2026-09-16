@@ -2,9 +2,11 @@ import { useRef, useState } from "react";
 import { Expand, ExternalLink } from "lucide-react";
 import { canvaViewerState, type PublicProject } from "@/lib/cms/privacy";
 import { canvaEmbedSrc, canvaOpenOriginalUrl } from "@/lib/canva/embed";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 export function CanvaStage({ project }: { project: PublicProject }) {
   const canva = project.canva;
+  const config = resolveExperienceConfig(project);
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const frameRef = useRef<HTMLIFrameElement>(null);
@@ -21,8 +23,8 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
-        這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect
-        憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。後台貼上 canva.com/design 分享網址後即可嵌入。
+        {config.canvaNote ??
+          "這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect 憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。後台貼上 canva.com/design 分享網址後即可嵌入。"}
       </div>
     );
   }
@@ -87,7 +89,10 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {pages.map((item, index) => (
+        {pages.map((item, index) => {
+          const label =
+            config.canvaPageLabels?.find((page) => page.id === item)?.label ?? `第 ${index + 1} 頁`;
+          return (
           <button
             key={item}
             type="button"
@@ -96,9 +101,10 @@ export function CanvaStage({ project }: { project: PublicProject }) {
             }`}
             onClick={() => setPageIndex(index)}
           >
-            第 {index + 1} 頁
+            {label}
           </button>
-        ))}
+          );
+        })}
         <button
           type="button"
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface-mint px-4 text-sm"
@@ -129,6 +135,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         ) : null}
       </div>
       <p className="text-xs text-muted">來源標記：Canva 公開嵌入 · 狀態 {canva.status} · 未宣稱 Connect 已連線</p>
+      {config.canvaNote ? <p className="text-sm text-muted">{config.canvaNote}</p> : null}
       {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
     </div>
   );

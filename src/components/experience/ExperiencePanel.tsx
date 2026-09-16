@@ -7,6 +7,7 @@ import { CanvaStage } from "./CanvaStage";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 const TABS = [
   { id: "play", label: "立即體驗" },
@@ -35,9 +36,9 @@ export function ExperiencePanel({
     (next) => setTab(next),
   );
   const honesty = useMemo(() => {
-    const label = project.experienceConfig.honestyLabel;
-    return typeof label === "string" ? label : null;
-  }, [project.experienceConfig]);
+    const config = resolveExperienceConfig(project);
+    return config.honestyLabel || null;
+  }, [project]);
 
   useEffect(() => {
     if (!onClose) return;

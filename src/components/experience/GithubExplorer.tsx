@@ -2,7 +2,7 @@ import { ChevronDown, ChevronRight, ExternalLink, FileText, Folder } from "lucid
 import { useMemo, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
-import { experienceForSlug } from "@/lib/experiences/catalog";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 type Node = { path: string; type: "file" | "dir"; size?: number };
 
@@ -35,8 +35,8 @@ function nest(nodes: Node[]) {
 
 export function GithubExplorer({ project }: { project: PublicProject }) {
   const github = project.github;
-  const catalog = experienceForSlug(project.slug);
-  const hints = catalog?.fileHints ?? [];
+  const config = resolveExperienceConfig(project);
+  const hints = config.fileHints ?? [];
   const hintMap = new Map(hints.map((item) => [item.path, item]));
   const tree = useMemo(() => github.fileTree ?? [], [github.fileTree]);
   const nested = useMemo(() => nest(tree), [tree]);
@@ -57,6 +57,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+      {config.githubIntro ? <p className="text-sm text-muted lg:col-span-2">{config.githubIntro}</p> : null}
       <div className="rounded-2xl bg-surface p-4 shadow-card">
         <p className="font-display text-lg font-semibold">{github.name ?? repo}</p>
         <p className="mt-1 text-sm text-muted">{github.description || "尚無公開 description。"}</p>

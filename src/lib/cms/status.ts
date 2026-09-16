@@ -36,6 +36,19 @@ export const EXPERIENCE_MODES = [
 ] as const;
 export type ExperienceMode = (typeof EXPERIENCE_MODES)[number];
 
+export const EXPERIENCE_MODE_LABEL: Record<ExperienceMode, string> = {
+  "live-demo": "即時 Demo",
+  "github-explorer": "GitHub 檔案樹",
+  "canva-embed": "Canva 嵌入",
+  "interactive-walkthrough": "逐步走查",
+  "image-comparison": "圖像比較／對稿",
+  timeline: "時間軸",
+  "process-map": "流程地圖",
+  "spatial-preview": "空間預覽",
+  "conversation-preview": "對話預覽",
+  "media-gallery": "媒體廊",
+};
+
 export const PROJECT_CATEGORIES = [
   "AI Product",
   "Multimodal",

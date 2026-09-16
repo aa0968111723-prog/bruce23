@@ -62,32 +62,116 @@ export const githubMetadataSchema = z.object({
 });
 
 export const processNodeSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  summary: z.string(),
-  githubPath: z.string(),
-  purpose: z.string(),
-  stage: z.string(),
+  id: z.string().min(1).max(80),
+  label: z.string().min(1).max(80),
+  summary: z.string().max(400),
+  githubPath: z.string().max(240),
+  purpose: z.string().max(240),
+  stage: z.string().max(80),
 });
 
 export const walkthroughStepSchema = z.object({
-  title: z.string(),
-  body: z.string(),
-  path: z.string().optional(),
+  title: z.string().min(1).max(120),
+  body: z.string().max(600),
+  path: z.string().max(240).optional(),
 });
 
 export const fileHintSchema = z.object({
-  path: z.string(),
-  purpose: z.string(),
-  stage: z.string(),
+  path: z.string().min(1).max(240),
+  purpose: z.string().max(240),
+  stage: z.string().max(80),
+});
+
+export const timelineFrameKindSchema = z.enum(["key", "breakdown", "generated"]);
+
+export const timelineFrameSchema = z.object({
+  i: z.number().int().min(0).max(240),
+  kind: timelineFrameKindSchema,
+  x: z.number().min(0).max(320),
+  y: z.number().min(0).max(180),
+  problem: z.boolean().optional(),
+});
+
+export const timelineConfigSchema = z.object({
+  frames: z.array(timelineFrameSchema).max(48),
+  onionDefault: z.boolean().optional(),
+  compareDefault: z.boolean().optional(),
+  demoDisclaimer: z.string().max(400).optional(),
+});
+
+export const spatialObjectSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().min(1).max(80),
+  use: z.string().max(160),
+  size: z.string().max(80),
+  x: z.number().min(0).max(100),
+  y: z.number().min(0).max(100),
+});
+
+export const spatialConfigSchema = z.object({
+  objects: z.array(spatialObjectSchema).max(24),
+  circulationNote: z.string().max(240).optional(),
+  complianceDisclaimer: z.string().max(240).optional(),
+  tiltDefault: z.number().min(-40).max(50).optional(),
+});
+
+export const comparisonVersionSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().min(1).max(80),
+  filter: z.string().max(160),
+});
+
+export const comparisonPinSchema = z.object({
+  id: z.string().min(1).max(80),
+  x: z.number().min(0).max(100),
+  y: z.number().min(0).max(100),
+  note: z.string().max(240),
+});
+
+export const comparisonConfigSchema = z.object({
+  variant: z.enum(["annotate", "poster-analysis"]).optional(),
+  versions: z.array(comparisonVersionSchema).max(8).optional(),
+  seedPins: z.array(comparisonPinSchema).max(24).optional(),
+  prompt: z.string().max(160).optional(),
+  sampleSrc: z.string().max(240).optional(),
+  estimateDisclaimer: z.string().max(240).optional(),
+});
+
+export const conversationReplySchema = z.object({
+  match: z.string().min(1).max(80),
+  reply: z.string().min(1).max(400),
+});
+
+export const conversationConfigSchema = z.object({
+  engine: z.enum(["zen-local", "hermes-preview"]).optional(),
+  disclaimer: z.string().max(400).optional(),
+  starter: z.string().max(400).optional(),
+  placeholder: z.string().max(80).optional(),
+  sourceNote: z.string().max(240).optional(),
+  replies: z.array(conversationReplySchema).max(24).optional(),
+});
+
+export const canvaPageLabelSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().min(1).max(80),
 });
 
 export const experienceConfigSchema = z
   .object({
-    honestyLabel: z.string().optional(),
-    processNodes: z.array(processNodeSchema).optional(),
-    walkthrough: z.array(walkthroughStepSchema).optional(),
-    fileHints: z.array(fileHintSchema).optional(),
+    honestyLabel: z.string().max(160).optional(),
+    intro: z.string().max(400).optional(),
+    processNodes: z.array(processNodeSchema).max(16).optional(),
+    walkthrough: z.array(walkthroughStepSchema).max(16).optional(),
+    fileHints: z.array(fileHintSchema).max(24).optional(),
+    demoNote: z.string().max(400).optional(),
+    githubIntro: z.string().max(400).optional(),
+    canvaNote: z.string().max(400).optional(),
+    canvaPageLabels: z.array(canvaPageLabelSchema).max(12).optional(),
+    galleryNote: z.string().max(400).optional(),
+    timeline: timelineConfigSchema.optional(),
+    spatial: spatialConfigSchema.optional(),
+    comparison: comparisonConfigSchema.optional(),
+    conversation: conversationConfigSchema.optional(),
   })
   .default({});
 
@@ -224,3 +308,20 @@ export type ProjectMedia = z.infer<typeof mediaSchema>;
 export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
 export type LocaleCopy = z.infer<typeof localeCopySchema>;
 export type GithubMetadata = z.infer<typeof githubMetadataSchema>;
+export type ProcessNode = z.infer<typeof processNodeSchema>;
+export type WalkthroughStep = z.infer<typeof walkthroughStepSchema>;
+export type FileHint = z.infer<typeof fileHintSchema>;
+export type TimelineFrame = z.infer<typeof timelineFrameSchema>;
+export type SpatialObject = z.infer<typeof spatialObjectSchema>;
+export type ComparisonVersion = z.infer<typeof comparisonVersionSchema>;
+export type ComparisonPin = z.infer<typeof comparisonPinSchema>;
+export type ConversationReply = z.infer<typeof conversationReplySchema>;
+
+export function parseExperienceConfig(value: unknown): ExperienceConfig {
+  return experienceConfigSchema.parse(value);
+}
+
+export function roundTripExperienceConfig(value: unknown): ExperienceConfig {
+  const parsed = experienceConfigSchema.parse(value);
+  return experienceConfigSchema.parse(JSON.parse(JSON.stringify(parsed)));
+}

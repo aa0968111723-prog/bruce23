@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 
@@ -12,23 +13,18 @@ type Prop = {
   y: number;
 };
 
-const INITIAL: Prop[] = [
-  { id: "desk", label: "報到桌", use: "報到／資料", size: "180×60 cm", x: 18, y: 42 },
-  { id: "mats", label: "地墊區", use: "席地而坐", size: "360×360 cm", x: 48, y: 38 },
-  { id: "path", label: "走道", use: "進出動線", size: "90 cm 寬（示意）", x: 78, y: 55 },
-  { id: "poster", label: "海報架", use: "文宣展示", size: "60×160 cm", x: 32, y: 22 },
-  { id: "power", label: "電源點", use: "設備用電", size: "示意點位", x: 64, y: 68 },
-];
-
 export function PlanformSpace({ project }: { project?: PublicProject }) {
-  const [props, setProps] = useState(INITIAL);
-  const [selected, setSelected] = useState<string>("desk");
-  const [tilt, setTilt] = useState(18);
+  const config = project ? resolveExperienceConfig(project) : {};
+  const initial = (config.spatial?.objects ?? []) as Prop[];
+  const [props, setProps] = useState<Prop[]>(initial);
+  const [selected, setSelected] = useState<string>(initial[0]?.id ?? "");
+  const [tilt, setTilt] = useState(config.spatial?.tiltDefault ?? 18);
   const current = props.find((item) => item.id === selected);
   const reduced = usePrefersReducedMotion();
   const owner = project?.github.owner;
   const repo = project?.github.repo;
   const branch = project?.github.branch ?? "main";
+  const sources = config.fileHints?.slice(0, 2) ?? [];
 
   function onDrag(id: string, event: PointerEvent<HTMLButtonElement>) {
     const parent = event.currentTarget.parentElement;
@@ -48,10 +44,10 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
   function onKey(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === "[" || event.key === "ArrowDown") {
       event.preventDefault();
-      setTilt((value) => Math.max(-24, value - 4));
+      setTilt((value) => Math.max(-40, value - 4));
     } else if (event.key === "]" || event.key === "ArrowUp") {
       event.preventDefault();
-      setTilt((value) => Math.min(36, value + 4));
+      setTilt((value) => Math.min(50, value + 4));
     } else if (["ArrowLeft", "ArrowRight"].includes(event.key) && (event.shiftKey || event.altKey)) {
       event.preventDefault();
       const dx = event.key === "ArrowRight" ? 3 : -3;
@@ -65,17 +61,23 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
 
   const tiltValue = reduced ? 0 : tilt;
 
+  if (!props.length) {
+    return <p className="text-sm text-muted">尚未設定空間物件。</p>;
+  }
+
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label="PLANFORM 場佈">
       <p className="text-sm text-muted">
-        等角場佈示意：旋轉、拖動物件、看用途與尺寸。這是作品集空間預覽，不做容留或消防法規符合計算。上下鍵旋轉，Shift＋左右移動選取物件。
+        {config.intro ?? "等角場佈示意：旋轉、拖動物件、看用途與尺寸。"}
+        {config.spatial?.complianceDisclaimer ?? "這是作品集空間預覽，不做容留或消防法規符合計算。"}
+        上下鍵旋轉，Shift＋左右移動選取物件。
       </p>
       <label className="mt-3 flex items-center gap-3 text-sm">
         旋轉
         <input
           type="range"
-          min={-24}
-          max={36}
+          min={-40}
+          max={50}
           value={tiltValue}
           onChange={(event) => setTilt(Number(event.target.value))}
           className="min-h-11 w-40"
@@ -128,27 +130,25 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
           <p className="font-display text-lg">{current.label}</p>
           <p className="mt-1">用途：{current.use}</p>
           <p>尺寸：{current.size}</p>
-          <p className="mt-2 text-muted">薄荷色曲線是示意動線，不是法定避難寬度，也不做規範符合計算。</p>
-          {owner && repo ? (
+          <p className="mt-2 text-muted">
+            {config.spatial?.circulationNote ?? "薄荷色曲線是示意動線，不是法定避難寬度，也不做規範符合計算。"}
+          </p>
+          {owner && repo && sources.length ? (
             <p className="mt-2 text-xs text-muted">
               來源{" "}
-              <a
-                className="text-mint-deep"
-                href={githubBlobUrl(owner, repo, branch, "src/core/placement.ts")}
-                rel="noreferrer"
-                target="_blank"
-              >
-                src/core/placement.ts
-              </a>
-              {" · "}
-              <a
-                className="text-mint-deep"
-                href={githubBlobUrl(owner, repo, branch, "src/core/simulation.ts")}
-                rel="noreferrer"
-                target="_blank"
-              >
-                src/core/simulation.ts
-              </a>
+              {sources.map((item, index) => (
+                <span key={item.path}>
+                  {index > 0 ? " · " : null}
+                  <a
+                    className="text-mint-deep"
+                    href={githubBlobUrl(owner, repo, branch, item.path)}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    {item.path}
+                  </a>
+                </span>
+              ))}
             </p>
           ) : null}
         </div>

@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { demoViewerState, type PublicProject } from "@/lib/cms/privacy";
+import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 export function LiveDemoStage({ project }: { project: PublicProject }) {
   const demo = project.demo;
+  const config = resolveExperienceConfig(project);
   const [failed, setFailed] = useState(false);
   const state = demoViewerState(demo, failed);
 
   if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
-        沒有已驗證的公開 Demo。GitHub 仍可展開，但這裡不會放假的產品畫面。
+        {config.demoNote ?? "沒有已驗證的公開 Demo。GitHub 仍可展開，但這裡不會放假的產品畫面。"}
       </div>
     );
   }
@@ -36,6 +38,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
             <ExternalLink className="size-4" />
           </a>
         ) : null}
+        {config.demoNote ? <p className="mt-3 text-xs text-muted">{config.demoNote}</p> : null}
       </div>
     );
   }
@@ -57,6 +60,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
           </a>
         ) : null}
       </div>
+      {config.demoNote ? <p className="px-4 pb-3 text-xs text-muted">{config.demoNote}</p> : null}
     </div>
   );
 }

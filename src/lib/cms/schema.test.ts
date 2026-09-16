@@ -241,5 +241,20 @@ describe("project schema", () => {
     assert.equal(parsed.product_status, "prototype");
     assert.equal(parsed.publication_status, "draft");
   });
+
+  it("rejects invalid nested experience_config", () => {
+    assert.throws(() =>
+      projectInputSchema.parse({
+        slug: "demo-work",
+        title: "Demo",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        experience_config: {
+          timeline: { frames: [{ i: 0, kind: "invalid", x: 0, y: 0 }] },
+        },
+      }),
+    );
+  });
 });
 
