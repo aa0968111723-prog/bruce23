@@ -10,7 +10,7 @@ import { sanitizePublicHref } from "@/lib/safe-href";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
 import type { PublicArchiveItem } from "@/lib/cms/store";
-import { chromeArchiveKind } from "@/lib/locale/view";
+import { chromeArchiveKind, overlayArchive } from "@/lib/locale/view";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 export const Route = createFileRoute("/archive")({
@@ -38,7 +38,7 @@ function hasPublicCanvaSurface(item: PublicArchiveItem): boolean {
 
 function Archive() {
   const items = Route.useLoaderData() as PublicArchiveItem[];
-  const { ui } = useViewerLocale();
+  const { lang, ui } = useViewerLocale();
   const [kind, setKind] = useState<(typeof archiveKinds)[number]["id"]>("all");
   const kindIds = archiveKinds.map((item) => item.id) as Array<(typeof archiveKinds)[number]["id"]>;
   const tabs = useRovingTabs(kindIds, kind, (next) => setKind(next));
@@ -83,14 +83,16 @@ function Archive() {
         })}
       </div>
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((item) => (
+        {visible.map((item) => {
+          const view = overlayArchive(item, lang);
+          return (
           <article key={item.id} className="overflow-hidden rounded-2xl bg-surface shadow-card">
             {hasPublicCanvaSurface(item) ? (
               <CanvaStage
                 project={
                   {
                     slug: item.id,
-                    title: item.title,
+                    title: view.title,
                     experienceConfig: {},
                     canva: {
                       shareUrl: item.canva.shareUrl,
@@ -100,21 +102,21 @@ function Archive() {
                       thumbnailUrl: item.canva.thumbnailUrl,
                       status: item.canva.status,
                       lastSyncedAt: item.canva.lastSyncedAt,
-                      alt: item.canva.alt,
-                      caption: item.canva.caption,
+                      alt: view.canva.alt,
+                      caption: view.canva.caption,
                     },
-                    media: item.media ? [item.media] : [],
+                    media: view.media ? [view.media] : [],
                   } as unknown as PublicProject
                 }
               />
             ) : (
-              <ArchiveLocalCover item={item} emptyMedia={ui.archiveEmptyMedia} embedNote={ui.archiveEmbedNote} />
+              <ArchiveLocalCover item={view} emptyMedia={ui.archiveEmptyMedia} embedNote={ui.archiveEmbedNote} />
             )}
             <div className="p-5">
-              <p className="text-xs font-medium tracking-wide text-muted">{item.year}</p>
-              <h2 className="mt-1 font-display text-xl font-semibold">{item.title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{item.summary}</p>
-              <p className="mt-3 text-xs text-muted">{item.originNote}</p>
+              <p className="text-xs font-medium tracking-wide text-muted">{view.year}</p>
+              <h2 className="mt-1 font-display text-xl font-semibold">{view.title}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{view.summary}</p>
+              <p className="mt-3 text-xs text-muted">{view.originNote}</p>
               {sanitizePublicHref(item.href) ? (
                 <a
                   href={sanitizePublicHref(item.href)}
@@ -127,7 +129,8 @@ function Archive() {
               ) : null}
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

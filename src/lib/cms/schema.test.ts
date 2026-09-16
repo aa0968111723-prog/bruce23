@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
 import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
 import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
-import { projectInputSchema, sourceEvidenceSchema } from "./schema.ts";
+import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema } from "./schema.ts";
 import { serializeJsonLd } from "./jsonld.ts";
 import { toPublicProject } from "./store.ts";
 import { canvaViewerState, demoViewerState, stripSecrets } from "./privacy.ts";
@@ -477,6 +477,21 @@ describe("project schema", () => {
     assert.deepEqual(parsed.locale_json.en?.decisions, ["English decision"]);
     assert.deepEqual(parsed.locale_json.en?.limitations, ["English limit"]);
     assert.deepEqual(parsed.locale_json.zh?.decisions, ["中文決策"]);
+  });
+
+  it("accepts archive locale_json title and summary overlays", () => {
+    const parsed = archiveInputSchema.parse({
+      slug: "demo-archive",
+      title: "風景",
+      kind: "photography",
+      year: "2026",
+      locale_json: {
+        zh: { title: "風景與日出" },
+        en: { title: "Landscapes and sunrise", summary: "SVG translation, not a Canva embed." },
+      },
+    });
+    assert.equal(parsed.locale_json.en?.title, "Landscapes and sunrise");
+    assert.equal(parsed.title, "風景");
   });
 
   it("rejects invalid nested experience_config", () => {

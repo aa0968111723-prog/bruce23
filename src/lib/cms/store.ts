@@ -1,6 +1,6 @@
 import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
-import type { ArchiveInput, ExperienceConfig, LocaleCopy, ProjectInput, SiteSettingsInput } from "./schema.ts";
+import type { ArchiveInput, ArchiveLocaleCopy, ExperienceConfig, LocaleCopy, ProjectInput, SiteSettingsInput } from "./schema.ts";
 import {
   asRecord,
   asStringArray,
@@ -609,6 +609,7 @@ export type PublicArchiveItem = {
   media: PublicProject["media"][number] | null;
   href: string | null;
   originNote: string;
+  locale: { zh?: ArchiveLocaleCopy; en?: ArchiveLocaleCopy };
   canva: CanvaPublicSlice;
 };
 
@@ -626,6 +627,7 @@ export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[
     media: parseJson<PublicProject["media"][number] | null>(row.media, null),
     href: sanitizePublicHref(row.href as string | null) ?? null,
     originNote: String(row.origin_note ?? ""),
+    locale: parseJson<PublicArchiveItem["locale"]>(row.locale_json, {}),
     canva: {
       shareUrl: (row.canva_share_url as string | null) ?? null,
       embedUrl: (row.canva_embed_url as string | null) ?? null,
@@ -652,6 +654,7 @@ export type AdminArchiveItem = {
   origin_note: string;
   publication_status: PublicationStatus;
   sort_order: number;
+  locale_json: { zh?: ArchiveLocaleCopy; en?: ArchiveLocaleCopy };
   canva_share_url: string | null;
   canva_embed_url: string | null;
   canva_design_id: string | null;
@@ -677,6 +680,7 @@ export async function listAdminArchive(sql: Sql): Promise<AdminArchiveItem[]> {
     publication_status:
       row.publication_status === "draft" || row.publication_status === "archived" ? row.publication_status : "published",
     sort_order: Number(row.sort_order ?? 0),
+    locale_json: parseJson<AdminArchiveItem["locale_json"]>(row.locale_json, {}),
     canva_share_url: (row.canva_share_url as string | null) ?? null,
     canva_embed_url: (row.canva_embed_url as string | null) ?? null,
     canva_design_id: (row.canva_design_id as string | null) ?? null,
@@ -696,10 +700,10 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
     `insert into archive_items (
       id, slug, title, kind, year, summary, media, href, origin_note, publication_status, sort_order,
       canva_share_url, canva_embed_url, canva_design_id, canva_page_ids, canva_thumbnail_url,
-      canva_status, canva_alt, canva_caption, updated_by
+      canva_status, canva_alt, canva_caption, locale_json, updated_by
     ) values (
       $1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10,$11,
-      $12,$13,$14,$15::jsonb,$16,$17,$18,$19,$20
+      $12,$13,$14,$15::jsonb,$16,$17,$18,$19,$20::jsonb,$21
     )
     on conflict (id) do update set
       slug = excluded.slug, title = excluded.title, kind = excluded.kind, year = excluded.year,
@@ -709,7 +713,8 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
       canva_embed_url = excluded.canva_embed_url, canva_design_id = excluded.canva_design_id,
       canva_page_ids = excluded.canva_page_ids, canva_thumbnail_url = excluded.canva_thumbnail_url,
       canva_status = excluded.canva_status, canva_alt = excluded.canva_alt,
-      canva_caption = excluded.canva_caption, updated_at = now(), updated_by = excluded.updated_by`,
+      canva_caption = excluded.canva_caption, locale_json = excluded.locale_json,
+      updated_at = now(), updated_by = excluded.updated_by`,
     [
       id,
       input.slug,
@@ -730,6 +735,7 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
       canvaStatus,
       input.canva_alt ?? null,
       input.canva_caption ?? null,
+      jsonb(input.locale_json ?? {}),
       actor,
     ],
   );

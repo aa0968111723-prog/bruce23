@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { archiveItems } from "./archive.ts";
+import { ARCHIVE_ITEM_IDS, archiveLocaleEn } from "./locale-en.ts";
 import { notionAdapter } from "./adapters/notion.ts";
 
 describe("archive honesty", () => {
@@ -24,6 +25,19 @@ describe("archive honesty", () => {
     assert.match(stroop?.summary ?? "", /不是現場成績截圖/);
     assert.match(zen?.summary ?? "", /不是 Canva 嵌入/);
     assert.match(zen?.summary ?? "", /也不能翻頁/);
+  });
+
+  it("English archive overlays stay honest about SVG translations and no Canva paging", () => {
+    const combined = ARCHIVE_ITEM_IDS.map((id) => {
+      const en = archiveLocaleEn[id];
+      return [en.summary, en.originNote, en.caption, en.alt].join("\n");
+    }).join("\n");
+    assert.doesNotMatch(combined, /directly pageable/i);
+    assert.doesNotMatch(combined, /original photo embed/i);
+    assert.match(archiveLocaleEn["landscape-series"].summary, /not the original photo/i);
+    assert.match(archiveLocaleEn["tku-zen-poster"].summary, /cannot page/);
+    assert.match(archiveLocaleEn["graphic-portfolio"].summary, /not a scan/i);
+    assert.match(archiveLocaleEn["stroop-challenge"].summary, /not a live-score screenshot/i);
   });
 
   it("keeps archive SVG labels readable instead of garbled bytes", () => {

@@ -3,17 +3,22 @@ import { describe, it } from "node:test";
 import { resolveHomepageCopy } from "../cms/public-site.ts";
 import type { PublicProject } from "../cms/privacy.ts";
 import {
+  ARCHIVE_ITEM_IDS,
+  archiveLocaleEn,
   featuredProjectLocaleEn,
   FEATURED_WORK_SLUGS,
+  localeZhFromArchive,
   localeZhFromProject,
   mergeSeedEnglish,
   siteLocaleEn,
   siteLocaleZh,
 } from "../../content/locale-en.ts";
+import { archiveItems } from "../../content/archive.ts";
 import { projects } from "../../content/projects.ts";
 import { site as siteCopy } from "../../content/site.ts";
 import {
   chromeFor,
+  overlayArchive,
   overlayProject,
   parseViewerLang,
   pickLocaleField,
@@ -293,6 +298,8 @@ describe("viewer locale", () => {
           process: row.process,
           outputs: row.outputs,
           limitations: row.limitations,
+          modalities: row.modalities,
+          stack: row.stack,
         }),
         "en",
       );
@@ -306,6 +313,8 @@ describe("viewer locale", () => {
       assert.deepEqual(view.process, en.process);
       assert.deepEqual(view.outputs, en.outputs);
       assert.deepEqual(view.limitations, en.limitations);
+      assert.deepEqual(view.modalities, en.modalities);
+      assert.deepEqual(view.stack, en.stack);
       assert.equal(pickLocaleList("en", locale, "decisions", row.decisions)[0], en.decisions?.[0]);
       assert.equal(pickLocaleList("zh", locale, "decisions", row.decisions)[0], row.decisions[0]);
     }
@@ -335,6 +344,48 @@ describe("viewer locale", () => {
       assert.ok(view.decisions.some((item) => /[A-Za-z]/.test(item)));
       assert.ok(!view.decisions[0]?.includes("每個 frame") && !view.decisions[0]?.includes("可行實用"));
     }
+  });
+
+  it("returns English archive titles when lang=en and keeps zh on the row", () => {
+    for (const id of ARCHIVE_ITEM_IDS) {
+      const row = archiveItems.find((item) => item.id === id);
+      const en = archiveLocaleEn[id];
+      const zh = localeZhFromArchive(id);
+      assert.ok(row && en.title && en.summary && zh);
+      assert.notEqual(en.title, row.title, id);
+      assert.notEqual(en.summary, row.summary, id);
+      const item = {
+        title: row.title,
+        summary: row.summary,
+        originNote: row.originNote,
+        media: row.media ? { ...row.media } : null,
+        canva: { alt: null, caption: null },
+        locale: { zh, en },
+      };
+      const viewEn = overlayArchive(item, "en");
+      const viewZh = overlayArchive(item, "zh");
+      assert.equal(pickLocaleField("en", item.locale, "title", row.title), en.title);
+      assert.equal(viewEn.title, en.title);
+      assert.equal(viewEn.summary, en.summary);
+      assert.equal(viewZh.title, row.title);
+      assert.equal(viewZh.summary, row.summary);
+    }
+  });
+
+  it("keeps no-Canva-paging honesty in both archive languages", () => {
+    assert.match(chromeFor("zh").archiveLead, /不能翻頁/);
+    assert.match(chromeFor("zh").archiveEmbedNote, /尚未提供分享連結/);
+    assert.match(chromeFor("en").archiveLead, /no public Canva share URL/i);
+    assert.match(chromeFor("en").archiveLead, /pages/);
+    assert.match(chromeFor("en").archiveEmbedNote, /no share URL yet/i);
+    const combinedEn = ARCHIVE_ITEM_IDS.map((id) => {
+      const en = archiveLocaleEn[id];
+      return [en.title, en.summary, en.caption, en.originNote].join("\n");
+    }).join("\n");
+    assert.doesNotMatch(combinedEn, /directly pageable/i);
+    assert.doesNotMatch(combinedEn, /live Canva paging/i);
+    assert.match(archiveLocaleEn["tku-zen-poster"].summary ?? "", /cannot page/);
+    assert.match(archiveLocaleEn["tku-zen-poster"].originNote ?? "", /no public share URL/i);
   });
 
   it("does not clobber distinct admin English when merging seed overlays", () => {

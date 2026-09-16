@@ -146,10 +146,15 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         };
       }
       if (
-        (key === "decisions" || key === "process" || key === "outputs" || key === "limitations") &&
+        (key === "decisions" ||
+          key === "process" ||
+          key === "outputs" ||
+          key === "limitations" ||
+          key === "modalities" ||
+          key === "stack") &&
         Array.isArray(value)
       ) {
-        const localeKey: "decisions" | "process" | "outputs" | "limitations" = key;
+        const localeKey: "decisions" | "process" | "outputs" | "limitations" | "modalities" | "stack" = key;
         const prev = current[localeKey] ?? [];
         const zh = current.locale_json?.zh ?? {};
         const zhVal = zh[localeKey];
@@ -167,14 +172,17 @@ export function ProjectForm({ project }: { project: AdminProject }) {
     });
   }
 
-  function localeListValue(lang: "zh" | "en", key: "decisions" | "process" | "outputs" | "limitations"): string {
+  function localeListValue(
+    lang: "zh" | "en",
+    key: "decisions" | "process" | "outputs" | "limitations" | "modalities" | "stack",
+  ): string {
     const list = form.locale_json?.[lang]?.[key];
     return Array.isArray(list) ? list.join("\n") : "";
   }
 
   function patchLocaleList(
     lang: "zh" | "en",
-    key: "decisions" | "process" | "outputs" | "limitations",
+    key: "decisions" | "process" | "outputs" | "limitations" | "modalities" | "stack",
     value: string,
   ) {
     patch("locale_json", {
@@ -729,6 +737,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           value={localeListValue("zh", "limitations")}
           onChange={(value) => patchLocaleList("zh", "limitations", value)}
         />
+        <Area
+          label="中文多模態（一行一項）"
+          value={localeListValue("zh", "modalities")}
+          onChange={(value) => patchLocaleList("zh", "modalities", value)}
+        />
+        <Area
+          label="中文技術（一行一項）"
+          value={localeListValue("zh", "stack")}
+          onChange={(value) => patchLocaleList("zh", "stack", value)}
+        />
         <Field
           label="中文 SEO 標題"
           value={String(form.locale_json?.zh?.seoTitle ?? "")}
@@ -818,6 +836,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           label="英文限制（一行一項）"
           value={localeListValue("en", "limitations")}
           onChange={(value) => patchLocaleList("en", "limitations", value)}
+        />
+        <Area
+          label="英文多模態（一行一項）"
+          value={localeListValue("en", "modalities")}
+          onChange={(value) => patchLocaleList("en", "modalities", value)}
+        />
+        <Area
+          label="英文技術（一行一項）"
+          value={localeListValue("en", "stack")}
+          onChange={(value) => patchLocaleList("en", "stack", value)}
         />
         <Field
           label="英文 SEO 標題"

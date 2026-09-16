@@ -280,7 +280,8 @@ describe("frontend contract", () => {
     assert.match(form, /英文決策（一行一項）/);
     assert.match(form, /英文限制（一行一項）/);
     assert.match(form, /英文流程（一行一項）/);
-    assert.match(form, /英文產出（一行一項）/);
+    assert.match(form, /英文多模態（一行一項）/);
+    assert.match(form, /英文技術（一行一項）/);
     assert.match(form, /封面說明/);
     assert.match(form, /影片封面/);
     assert.match(form, /其他圖片/);
@@ -289,6 +290,7 @@ describe("frontend contract", () => {
     assert.match(form, /persistDemoVerify|verifyDemoFn/);
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
+    assert.match(seedSource, /fillArchiveLocaleGaps/);
     assert.match(seedSource, /fillSiteLocaleGaps/);
     const schemaSource = readFileSync(new URL("../../../src/lib/cms/schema.ts", import.meta.url), "utf8");
     assert.match(schemaSource, /localeListSchema/);
@@ -298,6 +300,9 @@ describe("frontend contract", () => {
     assert.match(localeEn, /siteLocaleEn/);
     assert.match(localeEn, /Each frame is a graph node/);
     assert.match(localeEn, /Fal\.ai is the only vendor/);
+    assert.match(localeEn, /archiveLocaleEn/);
+    assert.match(localeEn, /Landscapes and sunrise/);
+    assert.match(localeEn, /Image sequence/);
     assert.doesNotMatch(localeEn, /DAGx/);
     const archiveForm = readFileSync(
       new URL("../../../src/components/admin/ArchiveForm.tsx", import.meta.url),
@@ -309,6 +314,10 @@ describe("frontend contract", () => {
     assert.match(archiveForm, /媒體路徑/);
     assert.match(archiveForm, /canva.com\/design\/\{id\}/);
     assert.match(archiveForm, /目前沒有 Canva 分享連結/);
+    assert.match(archiveForm, /英文標題/);
+    assert.match(archiveForm, /英文摘要/);
+    assert.match(archiveForm, /英文媒體說明/);
+    assert.match(archiveForm, /locale_json/);
     assert.match(archiveForm, /canva_page_ids/);
     assert.match(archiveForm, /媒體類型/);
     assert.match(archiveForm, /canva_thumbnail_url/);
@@ -344,6 +353,7 @@ describe("frontend contract", () => {
     assert.match(field, /overflow-visible/);
     assert.match(field, /availableFilters/);
     assert.doesNotMatch(field, /particle/);
+    assert.match(archive, /overlayArchive/);
     assert.match(archive, /archiveEmbedNote/);
     assert.match(localeView, /尚未提供分享連結/);
     assert.match(archive, /parseCanvaDesign/);
@@ -351,6 +361,11 @@ describe("frontend contract", () => {
     assert.match(archive, /pageIds: item.canva.pageIds/);
     assert.doesNotMatch(archive, /直接可翻頁/);
     assert.doesNotMatch(archive, /有 Canva 嵌入的會/);
+    const migration3 = readFileSync(new URL("../../../migrations/0003_archive_locale.sql", import.meta.url), "utf8");
+    assert.match(migration3, /alter table archive_items/);
+    assert.match(migration3, /locale_json/);
+    const migration2 = readFileSync(new URL("../../../migrations/0002_portfolio_cms.sql", import.meta.url), "utf8");
+    assert.doesNotMatch(migration2, /archive_items[\s\S]*locale_json jsonb not null default/);
     const integrations = readFileSync(
       new URL("../../../src/routes/admin/integrations.tsx", import.meta.url),
       "utf8",

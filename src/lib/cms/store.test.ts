@@ -33,7 +33,7 @@ import { howItWorksSteps } from "../experiences/resolve.ts";
 import { publicSitemapPaths } from "./sitemap.ts";
 import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
 import { resolveHomepageCopy } from "./public-site.ts";
-import { FEATURED_WORK_SLUGS, featuredProjectLocaleEn, siteLocaleEn } from "../../content/locale-en.ts";
+import { ARCHIVE_ITEM_IDS, archiveLocaleEn, FEATURED_WORK_SLUGS, featuredProjectLocaleEn, siteLocaleEn } from "../../content/locale-en.ts";
 
 function sqlFrom(pg: PGlite): Sql {
   const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
@@ -49,6 +49,7 @@ async function setup() {
   const pg = new PGlite();
   await pg.waitReady;
   await pg.exec(readFileSync(new URL("../../../migrations/0002_portfolio_cms.sql", import.meta.url), "utf8"));
+  await pg.exec(readFileSync(new URL("../../../migrations/0003_archive_locale.sql", import.meta.url), "utf8"));
   return { pg, sql: sqlFrom(pg) };
 }
 
@@ -335,10 +336,23 @@ describe("cms persistence", () => {
       assert.deepEqual(admin.locale_json.en?.limitations, en.limitations);
       assert.deepEqual(admin.locale_json.en?.process, en.process);
       assert.deepEqual(admin.locale_json.en?.outputs, en.outputs);
+      assert.notDeepEqual(admin.locale_json.en?.modalities, admin.modalities, slug);
+      assert.deepEqual(admin.locale_json.en?.modalities, en.modalities);
       const live = serializePublicProject(admin);
       assert.equal(live.locale.en?.title, en.title);
       assert.equal(live.locale.en?.summary, en.summary);
       assert.equal(admin.publication_status, "published");
+    }
+    for (const id of ARCHIVE_ITEM_IDS) {
+      const row = (await listAdminArchive(sql)).find((item) => item.id === id || item.slug === id);
+      const en = archiveLocaleEn[id];
+      assert.ok(row, id);
+      assert.notEqual(row.locale_json.en?.title, row.title, id);
+      assert.notEqual(row.locale_json.en?.summary, row.summary, id);
+      assert.equal(row.locale_json.en?.title, en.title);
+      assert.equal(row.locale_json.en?.summary, en.summary);
+      const live = (await listPublishedArchive(sql)).find((item) => item.id === id);
+      assert.equal(live?.locale.en?.title, en.title);
     }
   });
 
@@ -1061,6 +1075,10 @@ describe("cms persistence", () => {
         canva_alt: "RT-ARCH-CANVA-ALT",
         canva_caption: "RT-ARCH-CANVA-CAPTION",
         canva_status: "pending",
+        locale_json: {
+          zh: { title: "RT-ZH-ARCH-TITLE", summary: "RT-ZH-ARCH-SUM", caption: "RT-ZH-ARCH-CAP" },
+          en: { title: "RT-EN-ARCH-TITLE", summary: "RT-EN-ARCH-SUM", caption: "RT-EN-ARCH-CAP" },
+        },
       },
       "admin-rt",
     );
@@ -1069,6 +1087,7 @@ describe("cms persistence", () => {
     assert.equal(adminArchive?.media?.caption, "RT-ARCHIVE-CAPTION");
     assert.deepEqual(adminArchive?.canva_page_ids, ["RT-ARCH-PAGE"]);
     assert.equal(adminArchive?.canva_thumbnail_url, "/media/archive/tku-zen-poster.svg");
+    assert.equal(adminArchive?.locale_json.en?.title, "RT-EN-ARCH-TITLE");
     const publicArchive = (await listPublishedArchive(sql)).find((item) => item.slug === "round-trip-poster");
     assert.equal(publicArchive?.originNote, "RT-ORIGIN-NOTE");
     assert.equal(publicArchive?.media?.caption, "RT-ARCHIVE-CAPTION");
@@ -1076,5 +1095,7 @@ describe("cms persistence", () => {
     assert.equal(publicArchive?.canva.caption, "RT-ARCH-CANVA-CAPTION");
     assert.equal(publicArchive?.canva.thumbnailUrl, "/media/archive/tku-zen-poster.svg");
     assert.deepEqual(publicArchive?.canva.pageIds, ["RT-ARCH-PAGE"]);
+    assert.equal(publicArchive?.locale.en?.title, "RT-EN-ARCH-TITLE");
+    assert.equal(publicArchive?.title, "RT-ARCHIVE-TITLE");
   });
 });

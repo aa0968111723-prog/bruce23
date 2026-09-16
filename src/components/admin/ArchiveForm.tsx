@@ -30,6 +30,7 @@ function toForm(item: AdminArchiveItem): ArchiveInput & { id: string } {
     canva_status: item.canva_status,
     canva_alt: item.canva_alt,
     canva_caption: item.canva_caption,
+    locale_json: item.locale_json ?? {},
   };
 }
 
@@ -122,6 +123,89 @@ export function ArchiveForm({
       <Field label="年份" value={form.year} onChange={(value) => patch("year", value)} />
       <Area label="摘要" value={form.summary} onChange={(value) => patch("summary", value)} />
       <Area label="來源說明" value={form.origin_note} onChange={(value) => patch("origin_note", value)} />
+      <fieldset className="grid gap-3 rounded-xl border border-line p-4">
+        <legend className="font-display text-base">語系</legend>
+        <Area
+          label="中文標題"
+          value={String(form.locale_json?.zh?.title ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, title: value },
+            })
+          }
+        />
+        <Area
+          label="中文摘要"
+          value={String(form.locale_json?.zh?.summary ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, summary: value },
+            })
+          }
+        />
+        <Area
+          label="中文來源說明"
+          value={String(form.locale_json?.zh?.originNote ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, originNote: value },
+            })
+          }
+        />
+        <Area
+          label="中文媒體說明"
+          value={String(form.locale_json?.zh?.caption ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, caption: value },
+            })
+          }
+        />
+        <Area
+          label="英文標題"
+          value={String(form.locale_json?.en?.title ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, title: value },
+            })
+          }
+        />
+        <Area
+          label="英文摘要"
+          value={String(form.locale_json?.en?.summary ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, summary: value },
+            })
+          }
+        />
+        <Area
+          label="英文來源說明"
+          value={String(form.locale_json?.en?.originNote ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, originNote: value },
+            })
+          }
+        />
+        <Area
+          label="英文媒體說明"
+          value={String(form.locale_json?.en?.caption ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, caption: value },
+            })
+          }
+        />
+      </fieldset>
       <Field
         label="媒體路徑"
         value={form.media?.src ?? ""}

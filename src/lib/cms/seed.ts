@@ -1,6 +1,6 @@
 import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
-import { localeEnForSlug, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
+import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
@@ -121,6 +121,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
   await fillLocaleJsonGaps(sql);
+  await fillArchiveLocaleGaps(sql);
   await fillSiteLocaleGaps(sql);
   await fillProjectMediaGaps(sql);
   await clearUncustomizedHowSteps(sql);
@@ -280,6 +281,10 @@ export async function ensureSeed(
         origin_note: item.originNote,
         publication_status: "published",
         sort_order: index,
+        locale_json: {
+          zh: localeZhFromArchive(item.id),
+          en: archiveLocaleEnForId(item.id),
+        },
         canva_share_url: canva.shareUrl,
         canva_embed_url: canva.embedUrl,
         canva_design_id: canva.designId,
@@ -507,11 +512,38 @@ async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
       project.process.join("\n"),
       project.outputs.join("\n"),
       project.limitations.join("\n"),
+      project.modalities.join("\n"),
+      project.stack.join("\n"),
     ]);
     await sql.query(`update projects set locale_json = $2::jsonb, updated_at = now() where slug = $1`, [
       project.slug,
       JSON.stringify({ zh, en }),
     ]);
+  }
+}
+
+async function fillArchiveLocaleGaps(sql: Sql): Promise<void> {
+  for (const item of archiveItems) {
+    const seedEn = archiveLocaleEnForId(item.id);
+    if (!seedEn) continue;
+    const rows = await sql.query<{ locale_json: unknown }>(
+      `select locale_json from archive_items where slug = $1 or id = $1 limit 1`,
+      [item.id],
+    );
+    if (!rows[0]) continue;
+    const current = asLocaleBag(rows[0].locale_json);
+    const zh = { ...(localeZhFromArchive(item.id) ?? {}), ...(current.zh ?? {}) };
+    const en = mergeSeedEnglish(current.en, zh, seedEn, [
+      item.title,
+      item.summary,
+      item.originNote,
+      item.media?.caption ?? "",
+      item.media?.alt ?? "",
+    ]);
+    await sql.query(
+      `update archive_items set locale_json = $2::jsonb, updated_at = now() where slug = $1 or id = $1`,
+      [item.id, JSON.stringify({ zh, en })],
+    );
   }
 }
 

@@ -43,6 +43,16 @@ export const localeCopySchema = z.object({
   process: localeListSchema,
   outputs: localeListSchema,
   limitations: localeListSchema,
+  modalities: localeListSchema,
+  stack: localeListSchema,
+});
+
+export const archiveLocaleCopySchema = z.object({
+  title: z.string().optional(),
+  summary: z.string().optional(),
+  caption: z.string().optional(),
+  originNote: z.string().optional(),
+  alt: z.string().optional(),
 });
 
 export const githubCommitSchema = z.object({
@@ -291,6 +301,12 @@ export const archiveInputSchema = z.object({
   canva_status: z.enum(INTEGRATION_STATUSES).default("not_configured"),
   canva_alt: z.string().optional().nullable(),
   canva_caption: z.string().optional().nullable(),
+  locale_json: z
+    .object({
+      zh: archiveLocaleCopySchema.optional(),
+      en: archiveLocaleCopySchema.optional(),
+    })
+    .default({}),
 });
 
 export const siteSettingsSchema = z.object({
@@ -314,6 +330,7 @@ export const siteSettingsSchema = z.object({
 export type ProjectInput = z.infer<typeof projectInputSchema>;
 export type ProjectPatch = z.infer<typeof projectPatchSchema>;
 export type ArchiveInput = z.infer<typeof archiveInputSchema>;
+export type ArchiveLocaleCopy = z.infer<typeof archiveLocaleCopySchema>;
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
 export type SourceEvidence = z.infer<typeof sourceEvidenceSchema>;
 export type ProjectMedia = z.infer<typeof mediaSchema>;

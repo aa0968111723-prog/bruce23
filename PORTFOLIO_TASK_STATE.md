@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: remaining 中英文 case-study lists (not complete)
+Cycle: archive 中英文 (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -28,21 +28,21 @@ Updated: 2026-09-16
 
 ## This cycle (real English overlays)
 
-- Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription, **decisions, process, outputs, limitations**). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
-- `fillLocaleJsonGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English fills empty or zh-duplicate fields only. Chinese row `headline` / `narrative` and GitHub/Canva/publication fields are not rewritten. Archive items have no locale columns — chrome already switches; titles stay zh (no 0003 migration).
+- Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription, decisions, process, outputs, limitations, modalities, stack). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
+- `fillLocaleJsonGaps` / `fillArchiveLocaleGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English fills empty or zh-duplicate fields only. Chinese row copy and GitHub/Canva/publication fields are not rewritten.
 - Public `en` toggle overlays case-study lists via `pickLocaleList` / `overlayProject`. Admin ProjectForm edits zh/en list overlays in SEO / 語系. ExperienceEditor has no locale_json fields.
 
-## This cycle (remaining 中英文 lists)
+## This cycle (archive 中英文)
 
-- `localeCopySchema` now includes optional string arrays: decisions, process, outputs, limitations on project `locale_json` (already jsonb — no new migration).
-- Seed English lists for all 8 works. Public helper returns en lists when `lang=en`, zh row when `lang=zh`.
-- Still zh-only: archive item titles/summaries (no locale_json on `archive_items`), modalities, stack, GitHub/Canva technical fields, JSON-LD (canonical zh), experience playable internals.
+- `migrations/0003_archive_locale.sql` adds `archive_items.locale_json` (0002 untouched). Overlays: title, summary, caption, alt, originNote.
+- Seed English for all eight archive cards. Public `overlayArchive` switches cards; Admin ArchiveForm edits zh/en overlays. Honesty copy (no public Canva share URL / cannot page) stays accurate in chrome and English item copy.
+- Still zh-only: GitHub/Canva technical fields, JSON-LD (canonical zh), experience playable internals.
 
 ## This cycle (public 中英文 switcher)
 
 - Public shell header (desktop nav + mobile cluster next to the menu) has a light-studio `zh | en` radiogroup, ≥44px, keyboard arrows/Home/End. Preference key `luminous-studio-lang` in localStorage only. CMS copy stays in Postgres.
-- Homepage, about, work list, case study (title/summary/problem/role/decisions/process/outputs/limitations/SEO document title), archive chrome/filters, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` / `seoTitle` / `seoDescription` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
-- Archive item titles/summaries have no `locale_json`, so only chrome/filters switch. Experience playable internals stay zh.
+- Homepage, about, work list, case study (title/summary/problem/role/decisions/process/outputs/limitations/modalities/stack/SEO document title), archive chrome/filters **and archive card titles/summaries/captions**, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
+- Experience playable internals stay zh.
 
 ## This cycle (admin field round-trip)
 
@@ -90,7 +90,7 @@ Updated: 2026-09-16
 - Google login as `aa0968111723@gmail.com` to browser-prove admin as a human
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
-- Public language switcher ships with real English overlays for site + eight works; archive item titles stay zh (no locale fields). Experience-playable internals stay zh.
+- Public language switcher ships with real English overlays for site, eight works, and archive cards. Experience-playable internals stay zh.
 - Folio still has no public editor-operation screenshot (only og.jpg share card)
 - tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)
 - Platform PWA apple-touch / `__grok` install icon remains Grok chrome (not overwritten)

@@ -89,6 +89,51 @@ export function overlayProject(project: PublicProject, lang: ViewerLang): Public
     process: pickLocaleList(lang, locale, "process", project.process),
     outputs: pickLocaleList(lang, locale, "outputs", project.outputs),
     limitations: pickLocaleList(lang, locale, "limitations", project.limitations),
+    modalities: pickLocaleList(lang, locale, "modalities", project.modalities),
+    stack: pickLocaleList(lang, locale, "stack", project.stack),
+  };
+}
+
+export function overlayArchive<T extends {
+  title: string;
+  summary: string;
+  originNote: string;
+  media: { alt: string; caption?: string; src: string; kind: "image" | "video"; poster?: string } | null;
+  canva: { alt?: string | null; caption?: string | null };
+  locale?: { zh?: Record<string, unknown>; en?: Record<string, unknown> };
+}>(item: T, lang: ViewerLang): T {
+  if (lang === "zh") return item;
+  const locale = item.locale ?? {};
+  const title = pickLocaleField(lang, locale, "title", item.title, item.title);
+  const summary = pickLocaleField(lang, locale, "summary", item.summary, item.summary);
+  const originNote = pickLocaleField(lang, locale, "originNote", item.originNote, item.originNote);
+  const caption = pickLocaleField(
+    lang,
+    locale,
+    "caption",
+    item.media?.caption ?? item.canva.caption ?? "",
+    item.media?.caption ?? item.canva.caption ?? "",
+  );
+  const alt = pickLocaleField(
+    lang,
+    locale,
+    "alt",
+    item.media?.alt ?? item.canva.alt ?? "",
+    item.media?.alt ?? item.canva.alt ?? "",
+  );
+  return {
+    ...item,
+    title,
+    summary,
+    originNote,
+    media: item.media
+      ? { ...item.media, caption: caption || item.media.caption, alt: alt || item.media.alt }
+      : item.media,
+    canva: {
+      ...item.canva,
+      caption: caption || item.canva.caption,
+      alt: alt || item.canva.alt,
+    },
   };
 }
 

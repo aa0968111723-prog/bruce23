@@ -1,4 +1,5 @@
-import type { LocaleCopy } from "../lib/cms/schema.ts";
+import type { ArchiveLocaleCopy, LocaleCopy } from "../lib/cms/schema.ts";
+import { archiveItems } from "./archive.ts";
 import { projects } from "./projects.ts";
 import { site } from "./site.ts";
 
@@ -53,6 +54,41 @@ function lists(
   return { decisions, process, outputs, limitations };
 }
 
+const featuredListExtras: Record<FeaturedWorkSlug, Pick<LocaleCopy, "modalities" | "stack">> = {
+  "ai-director-os": {
+    modalities: ["Text", "Image", "Video", "Audio", "Review flow"],
+    stack: ["React", "Express", "tRPC", "Drizzle", "Postgres", "Fal.ai", "MCP"],
+  },
+  framelab: {
+    modalities: ["Image sequence", "Timeline", "Pose ghost", "Chat", "MCP"],
+    stack: ["TanStack Start", "TypeScript", "Postgres / PGLite", "FFmpeg", "MCP"],
+  },
+  "poster-vision-ai": {
+    modalities: ["Image", "Heatmap", "OCR", "Edit advice"],
+    stack: ["TanStack Start", "Python OpenCV", "YuNet", "Grok Vision", "SQLite"],
+  },
+  planform: {
+    modalities: ["3D", "Floor plan", "Circulation", "Supply list", "Natural language"],
+    stack: ["Vite", "TypeScript", "Three.js", "PWA", "localStorage / IndexedDB"],
+  },
+  duigao: {
+    modalities: ["Image", "Video timestamps", "Annotations", "LINE share"],
+    stack: ["Vite", "React", "TypeScript", "Supabase", "PWA"],
+  },
+  folio: {
+    modalities: ["Canvas", "Design tokens", "Embed", "MCP"],
+    stack: ["TypeScript", "MCP", "IndexedDB", "PGLite / Postgres"],
+  },
+  "hermes-console": {
+    modalities: ["Chat", "Tasks", "MCP tools"],
+    stack: ["TypeScript", "Node", "SQLite / Postgres", "MCP"],
+  },
+  "tku-zen-ai": {
+    modalities: ["Text", "Breathing cue"],
+    stack: ["Next.js", "React", "TypeScript", "Tailwind", "Vitest"],
+  },
+};
+
 export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
   "ai-director-os": {
     title: "AI Director OS: a team creation operating system",
@@ -88,6 +124,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Dev-time fake identities and seed accounts do not appear on this site.",
       ],
     ),
+    ...featuredListExtras["ai-director-os"],
     ...seo(
       "AI Director OS: a team creation operating system",
       "Projects, assets, generation, storyboards, review, and delivery live in one operating system, so worldview and character cards enter generation automatically instead of being pasted as prompts.",
@@ -126,6 +163,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Grok vision needs XAI_API_KEY and only frames the user sends.",
       ],
     ),
+    ...featuredListExtras.framelab,
     ...seo(
       "FrameLab: a visual-first frame-by-frame workstation",
       "Not an NLE, and not a generic video-analysis site. The core is a Frame Graph, timeline, Context Engine, chat, and MCP, so a bad frame is repaired as a bad frame.",
@@ -164,6 +202,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Vercel without Python falls back to a JS saliency engine.",
       ],
     ),
+    ...featuredListExtras["poster-vision-ai"],
     ...seo(
       "Poster Vision AI: print visual QA",
       "After a poster is uploaded, real pixel math plus optional Grok Vision estimates figure and title weight, then returns numbered edit advice. Gaze and heatmaps are always labeled as AI estimates.",
@@ -202,6 +241,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "This is pre-event rehearsal, not a live command system.",
       ],
     ),
+    ...featuredListExtras.planform,
     ...seo(
       "PLANFORM: 3D isometric event rehearsal",
       "Lay it out before you walk in. Rehearse the room, props, flow, and interaction, then hand partners a run-of-show graphic. Installable as a PWA; not listed in an app store.",
@@ -240,6 +280,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "This portfolio never reads Duigao private tables or tokens.",
       ],
     ),
+    ...featuredListExtras.duigao,
     ...seo(
       "Duigao: club poster review",
       "A finished poster becomes a link. Partners do not edit the original; they point at the surface. The poster is the main view, and talking is faster than editing.",
@@ -277,6 +318,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "External MCP connections live in one Node process memory and are not shared across instances.",
       ],
     ),
+    ...featuredListExtras.folio,
     ...seo(
       "Folio: an embeddable design editor",
       "Canvas, shortcuts, an external-site bridge, and MCP server and client share one typed command layer. There is no second document model.",
@@ -310,6 +352,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "This page shows no keys, invite codes, or secrets from internal console screenshots.",
       ],
     ),
+    ...featuredListExtras["hermes-console"],
     ...seo(
       "Hermes Console: a bright creation desk",
       "Open and use it — no sign-in, no email. Hermes runs tools; the Console keeps sessions, tasks, activity, and copy versions, and can attach Lumen, FrameLab, and Duigao MCP.",
@@ -336,6 +379,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Not tku-zen-agent (the private club document agent). This page only shows public tku-zen-ai.",
       ],
     ),
+    ...featuredListExtras["tku-zen-ai"],
     ...seo(
       "TKU Zen AI: a local companion for a busy mind",
       "A small chat surface. Replies carry intent, a message, and a breathing cue. The so-called AI is a local, reproducible response engine: no API key, and no cloud model dressed up as wired.",
@@ -345,6 +389,109 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
 
 export function localeEnForSlug(slug: string): LocaleCopy | undefined {
   return featuredProjectLocaleEn[slug as FeaturedWorkSlug];
+}
+
+export const ARCHIVE_ITEM_IDS = [
+  "landscape-series",
+  "flashmob-813",
+  "tku-zen-poster",
+  "tku-zen-brand-deck",
+  "tku-zen-page2",
+  "leader-quiz",
+  "stroop-challenge",
+  "graphic-portfolio",
+] as const;
+
+export type ArchiveItemId = (typeof ARCHIVE_ITEM_IDS)[number];
+
+export const archiveLocaleEn: Record<ArchiveItemId, ArchiveLocaleCopy> = {
+  "landscape-series": {
+    title: "Landscapes and sunrise",
+    summary:
+      "Landscapes, sunrise, and river light. This is an SVG translation of light direction — not the original photo, and not a Canva embed.",
+    caption: "SVG translation · not the original photo",
+    alt: "A light translation of a misty river landscape — not the original photo, and not a Canva embed",
+    originNote:
+      "Originals come from the existing portfolio photography category (landscape / sunrise). This pass does not host large original files, and there is no public embed.",
+  },
+  "flashmob-813": {
+    title: "813 Positive Light · old-street flash mob",
+    summary:
+      "Street-music flash mob: venue and performer coordination through on-site execution. The image is an SVG translation of the event atmosphere — not the original photo, and not a Canva embed.",
+    caption: "SVG translation · not the original photo",
+    alt: "A bright translation of an old-street flash mob — not the original photo",
+    originNote:
+      "Event name and role come from the existing portfolio Events page. No unauthorized portraits, and no public embed.",
+  },
+  "tku-zen-poster": {
+    title: "TKU Zen club print",
+    summary:
+      "Club identity and event visuals. This site uses a local SVG translation — not a Canva embed, and it cannot page.",
+    caption: "Local SVG translation · no share URL yet",
+    alt: "A local SVG translation of TKU Zen club print — not a public embed",
+    originNote:
+      "Original is the Canva design “淡大禪學社”. There is no public share URL, so nothing embeds and nothing pages.",
+  },
+  "tku-zen-brand-deck": {
+    title: "TKU Zen",
+    summary:
+      "Cover visual for club narrative and event notes. This site uses a local SVG translation. There is no public share URL, so it cannot page.",
+    caption: "Local SVG translation · no share URL yet",
+    alt: "A local SVG translation of the TKU Zen deck cover",
+    originNote:
+      "Original is the Canva deck “淡大禪學社 TKU Zen”. There is no public share URL, so nothing embeds and nothing pages.",
+  },
+  "tku-zen-page2": {
+    title: "TKU Zen event page",
+    summary:
+      "An inner page of the same deck. This site uses a local SVG translation. There is no public share URL, so it cannot page.",
+    caption: "Local SVG translation · no share URL yet",
+    alt: "A local SVG translation of an inner TKU Zen event slide",
+    originNote:
+      "Original is page 2 of the same Canva deck. There is no public share URL, so nothing embeds and nothing pages.",
+  },
+  "leader-quiz": {
+    title: "Explore your leadership traits",
+    summary:
+      "Ten on-site booth scenarios that map vision / empathy / decision / adaptability tendencies. This is an exploratory interaction, not a formal psychological test. The image is an SVG translation, not a Canva embed.",
+    caption: "SVG translation · on-site atmosphere",
+    alt: "A translation of a booth tablet and four-axis radar — not a Canva embed",
+    originNote:
+      "Public repo urban-green-rose-pixel. This site does not collect or display phone numbers or raffle personal data.",
+  },
+  "stroop-challenge": {
+    title: "60-second focus challenge",
+    summary:
+      "Booth stroop challenge: scan, play, see a title. The leaderboard shows name / department / score only. The image here is not a live-score screenshot, and not Canva.",
+    caption: "SVG translation · not a live-score screenshot",
+    alt: "A light translation of the booth stroop challenge — not a live-score screenshot, and not Canva",
+    originNote: "Public repo ever-marble-flora-clover. This site publishes no score data.",
+  },
+  "graphic-portfolio": {
+    title: "Graphic design portfolio",
+    summary:
+      "Graphic work collected as a Google Slides deck. This is an SVG translation — not a scan of the original, and not a Canva embed.",
+    caption: "SVG translation · not a scan of the original",
+    alt: "A paper-and-swatch translation of the graphic portfolio — not a scan of the original, and not a Canva embed",
+    originNote:
+      "Drive file “平面設計作品集” is source index only; the inner folder is not public, and there is no public embed.",
+  },
+};
+
+export function archiveLocaleEnForId(id: string): ArchiveLocaleCopy | undefined {
+  return archiveLocaleEn[id as ArchiveItemId];
+}
+
+export function localeZhFromArchive(id: string): ArchiveLocaleCopy | undefined {
+  const item = archiveItems.find((entry) => entry.id === id);
+  if (!item) return undefined;
+  return {
+    title: item.title,
+    summary: item.summary,
+    caption: item.media?.caption,
+    alt: item.media?.alt,
+    originNote: item.originNote,
+  };
 }
 
 export function localeZhFromProject(slug: string): LocaleCopy | undefined {
@@ -362,6 +509,8 @@ export function localeZhFromProject(slug: string): LocaleCopy | undefined {
     process: project.process,
     outputs: project.outputs,
     limitations: project.limitations,
+    modalities: project.modalities,
+    stack: project.stack,
   };
 }
 
