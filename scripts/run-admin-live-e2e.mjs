@@ -37,6 +37,20 @@ const SLUG = "live-e2e-work";
 const TITLE = "Live E2E";
 const MARKER = `LIVE-E2E ${new Date().toISOString()}`;
 const SHOTS = resolve(root, "screenshots");
+/** Existing embed-test fixture. Live E2E only — never seeded onto the eight featured works. */
+const CANVA_FIXTURE_SHARE_URL = "https://www.canva.com/design/DAGfixtureEmbedShape/view?utm_source=share";
+const CANVA_FIXTURE_EMBED_URL = "https://www.canva.com/design/DAGfixtureEmbedShape/view?embed";
+const CANVA_FIXTURE_DESIGN_ID = "DAGfixtureEmbedShape";
+const FEATURED_SLUGS = [
+  "ai-director-os",
+  "framelab",
+  "poster-vision-ai",
+  "planform",
+  "duigao",
+  "folio",
+  "hermes-console",
+  "tku-zen-ai",
+];
 
 function runNode(script) {
   return new Promise((resolvePromise, reject) => {
@@ -252,6 +266,20 @@ async function proveLiveAdmin(page, request) {
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+
+  const share = page.getByLabel(/Canva 分享/);
+  await share.waitFor({ timeout: 15000 });
+  await share.fill(CANVA_FIXTURE_SHARE_URL);
+  await page.getByRole("button", { name: "測試 Canva 嵌入" }).click();
+  await page.getByText("Canva 測試完成：可嵌入，未驗證 Connect").first().waitFor({ timeout: 20000 });
+  const afterTest = await page.locator("body").innerText();
+  assert(/狀態 pending/.test(afterTest), "Canva embed test did not stay pending after a valid /design/{id} paste");
+  assert(!/狀態 verified/.test(afterTest), "Canva embed test marked verified from URL shape");
+  assert(!/狀態 connected/.test(afterTest), "Canva embed test claimed Connect connected");
+  await page.screenshot({ path: resolve(SHOTS, "admin-live-canva-test.png"), fullPage: true });
+  await page.getByRole("button", { name: "存成草稿" }).click();
+  await page.getByText("存成草稿成功").first().waitFor({ timeout: 20000 });
+
   await page.getByRole("button", { name: "發布", exact: true }).click();
   await page.getByText("發布成功").first().waitFor({ timeout: 20000 });
 
@@ -275,6 +303,52 @@ async function proveLiveAdmin(page, request) {
   const liveSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
+  await page.getByRole("tab", { name: "Canva 原作" }).click();
+  const canvaHtml = await (await request.get(`${ORIGIN}/work/${SLUG}`)).text();
+  const iframeSrcs = [...canvaHtml.matchAll(/<iframe[^>]+src="([^"]+)"/gi)].map((row) => row[1]);
+  const canvaIframes = iframeSrcs.filter((src) =>
+    /^https:\/\/www\.canva\.com\/design\/[A-Za-z0-9_-]+\/view\?embed/.test(src),
+  );
+  const iframe = page.locator(`iframe[src*="canva.com/design/${CANVA_FIXTURE_DESIGN_ID}"]`);
+  const fallbackCopy = page.getByText(/不會嵌入空白 iframe|Canva 嵌入無法顯示|Canva 原作目前無法公開嵌入/);
+  try {
+    await Promise.race([
+      iframe.first().waitFor({ timeout: 12000 }),
+      fallbackCopy.first().waitFor({ timeout: 12000 }),
+    ]);
+  } catch {
+    throw new Error("Canva tab showed neither an allowlisted iframe nor an honest fallback");
+  }
+  const panel = await page.locator('[role="tabpanel"]').innerText();
+  const honestFallback = (await fallbackCopy.count()) > 0;
+  let liveCanva = "unreachable";
+  try {
+    const probe = await fetch(CANVA_FIXTURE_EMBED_URL, {
+      method: "GET",
+      redirect: "manual",
+      signal: AbortSignal.timeout(8000),
+    });
+    liveCanva = String(probe.status);
+  } catch (err) {
+    liveCanva = err instanceof Error ? err.name : "error";
+  }
+  assert(
+    canvaIframes.length > 0 || honestFallback || (await iframe.count()) > 0,
+    `published test work has neither an allowlisted Canva iframe nor an honest fallback (live HTTP ${liveCanva})`,
+  );
+  for (const src of canvaIframes) {
+    assert(
+      src.includes(CANVA_FIXTURE_DESIGN_ID) && src.startsWith("https://www.canva.com/design/"),
+      `public Canva iframe src is not the fixture allowlist: ${src}`,
+    );
+  }
+  assert(!/狀態 verified/.test(panel), "public Canva tab marked verified from paste syntax");
+  assert(panel.includes("未宣稱 Connect 已連線"), "public Canva tab missing fail-closed Connect copy");
+  await page.screenshot({ path: resolve(SHOTS, "public-canva-paste.png"), fullPage: true });
+  console.log(
+    `ok - Canva paste on ${SLUG}: parse=ok status=pending liveHttp=${liveCanva} public=${canvaIframes.length || (await iframe.count()) ? "iframe" : "fallback"}`,
+  );
+
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
@@ -282,6 +356,17 @@ async function proveLiveAdmin(page, request) {
   await page.getByText("取消發布成功").first().waitFor({ timeout: 20000 });
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
   assert(!(await page.content()).includes(MARKER), "unpublish left the marker on the public page");
+  const unpublishedSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
+  assert(!unpublishedSitemap.includes(`/work/${SLUG}`), "unpublished test slug remained in sitemap.xml");
+  const unpublishedWorkList = await (await request.get(`${ORIGIN}/work`)).text();
+  assert(!unpublishedWorkList.includes(SLUG), "unpublished test slug remained in the public work list");
+  for (const featured of FEATURED_SLUGS) {
+    const html = await (await request.get(`${ORIGIN}/work/${featured}`)).text();
+    assert(
+      !html.includes(CANVA_FIXTURE_DESIGN_ID),
+      `fixture Canva design leaked onto featured work ${featured}`,
+    );
+  }
 
   const a11y = await page.context().newPage();
   try {

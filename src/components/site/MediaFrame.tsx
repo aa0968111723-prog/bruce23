@@ -3,6 +3,10 @@ import { ImageOff } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { ProjectMedia } from "@/content/types";
 
+export function isGithubExportSrc(src: string) {
+  return src.startsWith("/media/github-exports/");
+}
+
 export function MediaFrame({
   media,
   className,
@@ -13,12 +17,14 @@ export function MediaFrame({
   priority?: boolean;
 }) {
   const [errored, setErrored] = useState(false);
+  const exportShot = isGithubExportSrc(media.src);
 
   if (errored) {
     return (
       <div
         className={cn(
-          "flex aspect-[4/3] flex-col items-center justify-center gap-2 bg-surface-blue text-muted",
+          "flex aspect-[4/3] flex-col items-center justify-center gap-2 text-muted",
+          exportShot ? "bg-mat" : "bg-surface-blue",
           className,
         )}
       >
@@ -44,7 +50,28 @@ export function MediaFrame({
     );
   }
 
-  const contain = media.src.startsWith("/media/github-exports/");
+  if (exportShot) {
+    return (
+      <div
+        data-github-export=""
+        className={cn("flex h-full w-full flex-col bg-mat", className)}
+      >
+        <div className="flex min-h-0 flex-1 items-center justify-center p-3">
+          <img
+            src={media.src}
+            alt={media.alt}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            className="max-h-full max-w-full rounded-lg object-contain shadow-card outline-none ring-1 ring-line/80"
+            onError={() => setErrored(true)}
+          />
+        </div>
+        <p className="px-3 pb-2.5 text-center text-xs font-medium tracking-wide text-muted">
+          GitHub 匯出
+        </p>
+      </div>
+    );
+  }
 
   return (
     <img
@@ -52,7 +79,7 @@ export function MediaFrame({
       alt={media.alt}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
-      className={cn("h-full w-full", contain ? "object-contain bg-surface-blue" : "object-cover", className)}
+      className={cn("h-full w-full object-cover", className)}
       onError={() => setErrored(true)}
     />
   );

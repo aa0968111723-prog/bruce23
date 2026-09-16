@@ -166,6 +166,11 @@ describe("admin allowlist", () => {
     assert.match(live, /mint-admin-session\.mjs/);
     assert.match(live, /__Host-grok-auth\.session_token|SESSION_TOKEN_COOKIE/);
     assert.match(live, /href\*="\/admin\/projects\/"\]\[href\*="\/edit"\]/);
+    assert.match(live, /DAGfixtureEmbedShape/);
+    assert.match(live, /live-e2e-work/);
+    assert.match(live, /測試 Canva 嵌入/);
+    assert.match(live, /狀態 verified/);
+    assert.match(live, /FEATURED_SLUGS/);
     assert.doesNotMatch(live, /\/api\/test-login/);
     const db = readFileSync(new URL("../db.ts", import.meta.url), "utf8");
     assert.match(db, /PGLITE_DATA_DIR/);

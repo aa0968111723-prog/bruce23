@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: Folio/TKU Zen public GitHub visuals (not complete)
+Cycle: light export frames + live Canva paste on test work (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -34,7 +34,8 @@ Updated: 2026-09-16
 - Hint-tree keyboard actually moves DOM focus.
 - Admin home/archive/preview/integrations show loading instead of a false empty list.
 - Empty stored `timeline.frames` / `processNodes` / spatial objects now restore catalog defaults so FrameLab play is not a blank strip.
-- Seed appends missing GitHub-export media by `src` without replacing admin covers.
+- GitHub-export shots (including Folio og.jpg dark desk) sit in warm matte `bg-mat` gallery chrome with a GitHub 匯出 label. Not dark mode.
+- Live admin E2E pastes the existing `DAGfixtureEmbedShape` fixture onto `live-e2e-work` only, asserts pending not verified, publishes, checks public iframe or honest fallback, then unpublishes. Fixture is not seeded onto the eight featured works.
 
 ## Not done / blocked
 

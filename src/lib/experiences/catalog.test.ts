@@ -136,9 +136,16 @@ describe("frontend contract", () => {
     assert.match(explorer, /role="tree"/);
     assert.match(explorer, /來源路徑/);
     assert.match(css, /animation:\s*none/);
+    assert.match(css, /--color-mat/);
     assert.match(panel, /howItWorksSteps/);
     assert.match(panel, /galleryNote/);
     assert.match(panel, /MediaFrame/);
+    assert.match(panel, /isGithubExportSrc/);
+    const mediaFrame = readFileSync(new URL("../../../src/components/site/MediaFrame.tsx", import.meta.url), "utf8");
+    assert.match(mediaFrame, /bg-mat/);
+    assert.match(mediaFrame, /GitHub 匯出/);
+    assert.match(mediaFrame, /data-github-export/);
+    assert.doesNotMatch(mediaFrame, /dark:|bg-black|className="[^"]*bg-ink/);
     assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
     const roving = readFileSync(
