@@ -9,7 +9,6 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/site/SiteShell";
 import { Toaster } from "sonner";
 import { NotFoundView } from "@/components/site/NotFoundView";
-import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Luminous Studio · 柏能";

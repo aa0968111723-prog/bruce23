@@ -5,7 +5,6 @@ import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/Local
 import { listPublishedProjectsFn } from "@/lib/cms/public-fn";
 import { workCategories } from "@/content/projects";
 import type { ProjectCategory } from "@/content/types";
-import { fetchPublishedProjects } from "@/lib/cms/public-fns";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { overlayProject } from "@/lib/locale/view";

@@ -305,11 +305,9 @@ test("vercel Host without a public hostname emits no og:image", () => {
 });
 
 test("emits og:image for a public host and prefers a custom card", () => {
-  const isolated = mkdtempSync(join(tmpdir(), "grok-og-placeholder-"));
   const placeholder = injectGrokPwaHead("<html><head></head></html>", {
     appName: "Wild Race",
     host: "wild-race.grok.me",
-    cwd: isolated,
     site: { title: "Wild Race" },
     cwd: EMPTY_CWD,
   });
@@ -322,7 +320,6 @@ test("emits og:image for a public host and prefers a custom card", () => {
   const custom = injectGrokPwaHead("<html><head></head></html>", {
     appName: "Wild Race",
     host: "wild-race.grok.me",
-    cwd: isolated,
     site: { title: "Wild Race", card: "custom", type: "x:game" },
     cwd: EMPTY_CWD,
   });
@@ -331,10 +328,8 @@ test("emits og:image for a public host and prefers a custom card", () => {
 });
 
 test("placeholder og:image appends site.color when it is 6-digit hex", () => {
-  const isolated = mkdtempSync(join(tmpdir(), "grok-og-color-"));
   const themed = injectGrokPwaHead("<html><head></head></html>", {
     host: "wild-race.grok.me",
-    cwd: isolated,
     site: { title: "Wild Race", color: "#FF4D2E" },
     cwd: EMPTY_CWD,
   });
@@ -345,7 +340,6 @@ test("placeholder og:image appends site.color when it is 6-digit hex", () => {
 
   const invalid = injectGrokPwaHead("<html><head></head></html>", {
     host: "wild-race.grok.me",
-    cwd: isolated,
     site: { title: "Wild Race", color: "red" },
     cwd: EMPTY_CWD,
   });
@@ -353,7 +347,6 @@ test("placeholder og:image appends site.color when it is 6-digit hex", () => {
 
   const custom = injectGrokPwaHead("<html><head></head></html>", {
     host: "wild-race.grok.me",
-    cwd: isolated,
     site: { title: "Wild Race", card: "custom", color: "FF4D2E" },
     cwd: EMPTY_CWD,
   });

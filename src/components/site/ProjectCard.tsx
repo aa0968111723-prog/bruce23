@@ -6,17 +6,6 @@ import { MediaFrame } from "./MediaFrame";
 import { StatusBadge } from "./StatusBadge";
 import { useViewerLocale } from "./LocaleProvider";
 
-export type CardProject = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  summary: string;
-  media: ProjectMedia[];
-  productStatus?: ProjectStatus;
-  status?: ProjectStatus;
-};
-
 export function ProjectCard({
   project,
   featured = false,
