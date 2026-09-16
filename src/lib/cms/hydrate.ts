@@ -38,7 +38,11 @@ const INCOMPLETE_GITHUB_SQL = `
     )
     or (
       github_sync_status = 'verified'
-      and github_file_tree is null
+      and (
+        github_file_tree is null
+        or jsonb_typeof(github_file_tree) <> 'array'
+        or jsonb_array_length(github_file_tree) = 0
+      )
     )
   )
 `;

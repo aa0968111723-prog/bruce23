@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { experienceCatalog } from "./catalog.ts";
+import { experienceCatalog, projectHubIds } from "./catalog.ts";
 
 describe("experience catalog", () => {
   it("covers all eight works with distinct modes", () => {
@@ -46,6 +46,16 @@ describe("experience catalog", () => {
     assert.ok(frameHints.some((item) => item.path === "src/lib/domain/timeline-engine.ts"));
     assert.ok(frameHints.some((item) => item.path === "src/lib/domain/sample-ball.ts"));
     assert.ok((experienceCatalog.planform.fileHints ?? []).some((item) => item.path === "src/core/placement.ts"));
+  });
+
+  it("maps CMS modalities onto hubs instead of guessing from slug", () => {
+    assert.deepEqual(projectHubIds({ slug: "unknown-work", modalities: ["3D", "動線"] }).sort(), ["space"]);
+    assert.ok(projectHubIds({ slug: "planform", modalities: [] }).includes("space"));
+    assert.deepEqual(
+      projectHubIds({ slug: "planform", modalities: ["3D", "平面圖", "動線"] }).sort(),
+      ["space"],
+    );
+    assert.equal(projectHubIds({ slug: "planform", modalities: ["3D", "平面圖"] }).includes("poster"), false);
   });
 });
 
@@ -104,11 +114,15 @@ describe("frontend contract", () => {
     );
     assert.match(explorer, /ArrowRight/);
     assert.match(explorer, /ArrowLeft/);
+    assert.match(explorer, /ArrowDown/);
+    assert.match(explorer, /ArrowUp/);
+    assert.match(explorer, /keyboardNav/);
     assert.match(explorer, /aria-expanded/);
     assert.match(explorer, /role="tree"/);
     assert.match(explorer, /來源路徑/);
     assert.match(css, /animation:\s*none/);
     assert.match(panel, /howItWorksSteps/);
+    assert.match(panel, /galleryNote/);
     assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
     const roving = readFileSync(
@@ -118,8 +132,10 @@ describe("frontend contract", () => {
     assert.match(roving, /ArrowRight/);
     const work = readFileSync(new URL("../../../src/routes/work/index.tsx", import.meta.url), "utf8");
     assert.match(work, /useRovingTabs/);
+    assert.match(work, /name: "description"/);
     const archive = readFileSync(new URL("../../../src/routes/archive.tsx", import.meta.url), "utf8");
     assert.match(archive, /useRovingTabs/);
+    assert.match(archive, /name: "description"/);
     const stage = readFileSync(
       new URL("../../../src/components/experience/CanvaStage.tsx", import.meta.url),
       "utf8",
@@ -128,6 +144,7 @@ describe("frontend contract", () => {
     assert.match(stage, /空白 iframe/);
     assert.match(stage, /全螢幕/);
     assert.match(stage, /在 Canva 開啟原作/);
+    assert.match(stage, /publicCanvaEmbedUrl/);
     const processMap = readFileSync(
       new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
       "utf8",
@@ -174,6 +191,22 @@ describe("frontend contract", () => {
     assert.match(form, /年份/);
     assert.match(form, /listRevisionsFn/);
     assert.match(form, /\/d\/ 短網址/);
+    assert.match(form, /localeKey/);
+    const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
+    assert.match(seedSource, /fillLocaleJsonGaps/);
+    const archiveForm = readFileSync(
+      new URL("../../../src/components/admin/ArchiveForm.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(archiveForm, /beforeunload/);
+    assert.match(archiveForm, /publication_status/);
+    assert.match(archiveForm, /origin_note/);
+    assert.match(archiveForm, /媒體路徑/);
+    const privacy = readFileSync(new URL("../../../src/routes/privacy.tsx", import.meta.url), "utf8");
+    assert.match(privacy, /不會公開的/);
+    assert.match(privacy, /電話/);
+    const siteNav = readFileSync(new URL("../../../src/content/site.ts", import.meta.url), "utf8");
+    assert.match(siteNav, /\/privacy/);
     const editor = readFileSync(
       new URL("../../../src/components/admin/ExperienceEditor.tsx", import.meta.url),
       "utf8",

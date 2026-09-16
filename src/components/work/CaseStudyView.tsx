@@ -4,6 +4,7 @@ import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { publishedCreativeWorkJsonLd, serializeJsonLd } from "@/lib/cms/jsonld";
+import { englishTitle } from "@/lib/cms/locale";
 import { sanitizePublicHref } from "@/lib/safe-href";
 
 export function CaseStudyView({
@@ -17,6 +18,7 @@ export function CaseStudyView({
   backTo?: "work" | "none";
   includeJsonLd?: boolean;
 }) {
+  const enTitle = englishTitle(project.locale, project.title);
   return (
     <article className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       {includeJsonLd ? (
@@ -42,6 +44,11 @@ export function CaseStudyView({
           <StatusBadge status={project.productStatus} />
         </div>
         <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{project.title}</h1>
+        {enTitle ? (
+          <p lang="en" className="mt-1 text-sm text-muted">
+            {enTitle}
+          </p>
+        ) : null}
         <p className="mt-3 text-lg text-muted">{project.subtitle}</p>
       </header>
 

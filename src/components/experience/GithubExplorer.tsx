@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight, ExternalLink, FileText, Folder } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { resolveExperienceConfig } from "@/lib/experiences/resolve";
@@ -31,6 +31,28 @@ function nest(nodes: Node[]) {
     }
   }
   return root;
+}
+
+type VisibleItem = { path: string; type: "file" | "dir"; depth: number; size?: number };
+
+function flattenVisible(
+  nested: ReturnType<typeof nest>,
+  open: Record<string, boolean>,
+): VisibleItem[] {
+  const out: VisibleItem[] = [];
+  const walk = (dir: string, depth: number) => {
+    const bucket = nested[dir];
+    if (!bucket) return;
+    for (const path of Object.keys(bucket.dirs).sort()) {
+      out.push({ path, type: "dir", depth });
+      if (open[path]) walk(path, depth + 1);
+    }
+    for (const file of bucket.files) {
+      out.push({ path: file.path, type: "file", depth, size: file.size });
+    }
+  };
+  walk("", 0);
+  return out;
 }
 
 export function GithubExplorer({ project }: { project: PublicProject }) {
@@ -124,8 +146,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
                 : "這次沒有讀到可公開的檔案樹。不會顯示虛構路徑。"}
           </p>
         ) : (
-          <TreeDir
-            dir=""
+          <KeyboardTree
             nested={nested}
             open={open}
             setOpen={setOpen}
@@ -181,84 +202,117 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
   );
 }
 
-function TreeDir({
-  dir,
+function KeyboardTree({
   nested,
   open,
   setOpen,
   onSelect,
   selected,
 }: {
-  dir: string;
   nested: ReturnType<typeof nest>;
   open: Record<string, boolean>;
   setOpen: (value: Record<string, boolean>) => void;
   onSelect: (node: Node) => void;
   selected?: string;
 }) {
-  const bucket = nested[dir];
-  if (!bucket) return null;
-  const dirs = Object.keys(bucket.dirs).sort();
+  const visible = useMemo(() => flattenVisible(nested, open), [nested, open]);
+  const [focusPath, setFocusPath] = useState(visible[0]?.path ?? "");
+  const itemRefs = useRef(new Map<string, HTMLButtonElement>());
+  const keyboardNav = useRef(false);
+
+  useEffect(() => {
+    if (!visible.length) return;
+    if (!visible.some((item) => item.path === focusPath)) {
+      setFocusPath(visible[0].path);
+    }
+  }, [focusPath, visible]);
+
+  useEffect(() => {
+    if (!keyboardNav.current) return;
+    itemRefs.current.get(focusPath)?.focus();
+  }, [focusPath]);
+
+  function onKeyDown(event: KeyboardEvent<HTMLUListElement>) {
+    if (!visible.length) return;
+    keyboardNav.current = true;
+    const idx = Math.max(0, visible.findIndex((item) => item.path === focusPath));
+    const current = visible[idx];
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setFocusPath(visible[(idx + 1) % visible.length].path);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setFocusPath(visible[(idx - 1 + visible.length) % visible.length].path);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      setFocusPath(visible[0].path);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      setFocusPath(visible[visible.length - 1].path);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      if (current.type === "dir") setOpen({ ...open, [current.path]: true });
+      else onSelect({ path: current.path, type: "file", size: current.size });
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      if (current.type === "dir" && open[current.path]) {
+        setOpen({ ...open, [current.path]: false });
+        return;
+      }
+      const parent = current.path.split("/").slice(0, -1).join("/");
+      if (parent) setFocusPath(parent);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      if (current.type === "dir") {
+        setOpen({ ...open, [current.path]: !open[current.path] });
+      } else {
+        onSelect({ path: current.path, type: "file", size: current.size });
+      }
+    }
+  }
+
   return (
-    <ul
-      className={dir ? "ml-3 border-l border-line pl-2" : "mt-3 grid gap-1"}
-      role={dir ? "group" : "tree"}
-      aria-label={dir ? undefined : "有限檔案樹"}
-    >
-      {dirs.map((path) => {
-        const name = path.split("/").pop() ?? path;
-        const expanded = Boolean(open[path]);
+    <ul className="mt-3 grid gap-1" role="tree" aria-label="有限檔案樹" onKeyDown={onKeyDown}>
+      {visible.map((item) => {
+        const name = item.path.split("/").pop() ?? item.path;
+        const expanded = item.type === "dir" ? Boolean(open[item.path]) : undefined;
+        const isSelected = selected === item.path;
         return (
-          <li key={path} role="none">
+          <li key={item.path} role="none" className={["", "pl-3", "pl-6", "pl-9", "pl-12"][Math.min(item.depth, 4)]}>
             <button
               type="button"
               role="treeitem"
               aria-expanded={expanded}
-              className="inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue"
-              onClick={() => setOpen({ ...open, [path]: !expanded })}
-              onKeyDown={(event) => {
-                if (event.key === "ArrowRight") {
-                  event.preventDefault();
-                  setOpen({ ...open, [path]: true });
-                } else if (event.key === "ArrowLeft") {
-                  event.preventDefault();
-                  setOpen({ ...open, [path]: false });
-                }
+              aria-selected={isSelected}
+              tabIndex={focusPath === item.path ? 0 : -1}
+              ref={(el) => {
+                if (el) itemRefs.current.set(item.path, el);
+                else itemRefs.current.delete(item.path);
+              }}
+              className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
+                isSelected ? "bg-surface-mint" : ""
+              }`}
+              onClick={() => {
+                setFocusPath(item.path);
+                if (item.type === "dir") setOpen({ ...open, [item.path]: !open[item.path] });
+                else onSelect({ path: item.path, type: "file", size: item.size });
               }}
             >
-              {expanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
-              <Folder className="size-4 text-sky" />
+              {item.type === "dir" ? (
+                expanded ? (
+                  <ChevronDown className="size-4" />
+                ) : (
+                  <ChevronRight className="size-4" />
+                )
+              ) : (
+                <FileText className="size-4 text-muted" />
+              )}
+              {item.type === "dir" ? <Folder className="size-4 text-sky" /> : null}
               {name}
             </button>
-            {expanded ? (
-              <TreeDir
-                dir={path}
-                nested={nested}
-                open={open}
-                setOpen={setOpen}
-                onSelect={onSelect}
-                selected={selected}
-              />
-            ) : null}
           </li>
         );
       })}
-      {bucket.files.map((file) => (
-        <li key={file.path} role="none">
-          <button
-            type="button"
-            role="treeitem"
-            aria-selected={selected === file.path}
-            className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
-              selected === file.path ? "bg-surface-mint" : ""
-            }`}
-            onClick={() => onSelect(file)}
-          >
-            <FileText className="size-4 text-muted" />
-            {file.path.split("/").pop()}
-          </button>
-        </li>
-      ))}
     </ul>
   );
 }
@@ -272,20 +326,42 @@ function HintTree({
   selected?: string;
   onSelect: (path: string) => void;
 }) {
+  const [focusPath, setFocusPath] = useState(hints[0]?.path ?? "");
   return (
     <div className="mt-3">
       <p className="text-xs text-muted">來源路徑提示，不是即時 repo 內容。</p>
-      <ul className="mt-2 grid gap-1" role="tree" aria-label="來源路徑">
+      <ul
+        className="mt-2 grid gap-1"
+        role="tree"
+        aria-label="來源路徑"
+        onKeyDown={(event) => {
+          const idx = Math.max(0, hints.findIndex((item) => item.path === focusPath));
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setFocusPath(hints[(idx + 1) % hints.length].path);
+          } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setFocusPath(hints[(idx - 1 + hints.length) % hints.length].path);
+          } else if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onSelect(hints[idx].path);
+          }
+        }}
+      >
         {hints.map((item) => (
           <li key={item.path} role="none">
             <button
               type="button"
               role="treeitem"
               aria-selected={selected === item.path}
+              tabIndex={focusPath === item.path ? 0 : -1}
               className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
                 selected === item.path ? "bg-surface-mint" : ""
               }`}
-              onClick={() => onSelect(item.path)}
+              onClick={() => {
+                setFocusPath(item.path);
+                onSelect(item.path);
+              }}
             >
               <FileText className="size-4 text-muted" />
               {item.path}

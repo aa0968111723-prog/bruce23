@@ -51,4 +51,5 @@ export const nav = [
   { to: "/work", label: "作品" },
   { to: "/archive", label: "Archive" },
   { to: "/about", label: "關於" },
+  { to: "/privacy", label: "隱私" },
 ] as const;

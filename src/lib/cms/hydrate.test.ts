@@ -248,6 +248,40 @@ describe("github hydrate", () => {
     assert.equal(again.verified, 1);
   });
 
+  it("rehydrates a verified row that stored an empty file tree", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "empty-tree",
+        title: "Empty tree",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "verified",
+      }),
+      "seed",
+    );
+    await sql.query(`update projects set github_file_tree = '[]'::jsonb, github_sync_status = 'verified' where id = $1`, [
+      created.id,
+    ]);
+    await sql.query(
+      `insert into cms_meta (key, value) values ('github_hydrate', '4')
+       on conflict (key) do update set value = excluded.value`,
+    );
+    const result = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    assert.equal(result.skipped, false);
+    assert.equal(result.verified, 1);
+    const admin = await getAdminProject(sql, created.id);
+    assert.ok((admin.github_file_tree?.length ?? 0) > 0);
+    assert.ok(admin.github_file_tree?.some((item) => item.path === "README.md"));
+  });
+
   it("probes pending demo URLs without marking a JS bundle verified", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(

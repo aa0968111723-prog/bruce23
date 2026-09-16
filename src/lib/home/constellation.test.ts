@@ -9,6 +9,7 @@ import {
   constellationLayout,
 } from "./constellation.ts";
 import type { PublicProject } from "../cms/privacy.ts";
+import { projects as seedProjects } from "../../content/projects.ts";
 
 function project(slug: string, year: string, title = slug): PublicProject {
   return {
@@ -51,7 +52,10 @@ const featured = [
   project("folio", "2026", "Folio"),
   project("hermes-console", "2026", "Hermes Console"),
   project("tku-zen-ai", "2026", "TKU Zen AI"),
-];
+].map((item) => {
+  const seed = seedProjects.find((row) => row.slug === item.slug);
+  return { ...item, modalities: seed?.modalities ?? item.modalities };
+});
 
 describe("homepage constellation", () => {
   it("places works using real modality membership and year, not random scatter", () => {
@@ -89,5 +93,14 @@ describe("homepage constellation", () => {
       assert.ok(node.y - NODE_HALF_H >= 0, `${node.slug} clips top`);
       assert.ok(node.y + NODE_HALF_H <= CONSTELLATION_HEIGHT, `${node.slug} clips bottom`);
     }
+  });
+
+  it("places an unknown slug from CMS modalities, not a hardcoded slug list", () => {
+    const spatial = project("new-iso-tool", "2026", "ISO");
+    spatial.modalities = ["3D", "動線"];
+    const map = constellationLayout([spatial]);
+    assert.ok(map.hubs.some((hub) => hub.id === "space"));
+    assert.equal(map.hubs.some((hub) => hub.id === "image"), false);
+    assert.ok(map.edges.some((edge) => edge.to === "new-iso-tool" && edge.from === "space"));
   });
 });

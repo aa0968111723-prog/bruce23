@@ -1,3 +1,4 @@
+import { parseCanvaDesign } from "../canva/parse.ts";
 import type { ExperienceConfig, LocaleCopy, ProjectMedia, SourceEvidence } from "./schema.ts";
 import type { IntegrationStatus } from "./status.ts";
 
@@ -78,8 +79,13 @@ export type PublicProject = {
   demo: DemoPublicSlice;
 };
 
+export function publicCanvaEmbedUrl(embedUrl: string | null | undefined): string | null {
+  return parseCanvaDesign(embedUrl)?.embedUrl ?? null;
+}
+
 export function canvaViewerState(canva: CanvaPublicSlice, failed: boolean) {
-  if (canva.embedUrl && !failed && canva.status !== "unavailable" && canva.status !== "failed") {
+  const embeddable = publicCanvaEmbedUrl(canva.embedUrl);
+  if (embeddable && !failed && canva.status !== "unavailable" && canva.status !== "failed") {
     return "embed" as const;
   }
   if (canva.status === "unavailable" || canva.status === "failed") {

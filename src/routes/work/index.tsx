@@ -10,6 +10,15 @@ import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 export const Route = createFileRoute("/work/")({
   loader: async (): Promise<PublicProject[]> => listPublishedProjectsFn(),
+  head: () => ({
+    meta: [
+      { title: "作品總覽 · 柏能" },
+      {
+        name: "description",
+        content: "只列出已發布作品。分類可篩選，狀態沒有寫成已完成的，就還不是已完成。",
+      },
+    ],
+  }),
   component: WorkIndex,
 });
 

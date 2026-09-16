@@ -312,10 +312,10 @@ describe("privacy", () => {
       canvaViewerState(
         {
           shareUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe",
-          embedUrl: null,
+          embedUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe",
           designId: null,
           thumbnailUrl: "/media/covers/ai-director-os.svg",
-          status: "unavailable",
+          status: "pending",
           lastSyncedAt: null,
         },
         false,

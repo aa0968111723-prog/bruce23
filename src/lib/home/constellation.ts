@@ -1,5 +1,5 @@
 import type { PublicProject } from "../cms/privacy.ts";
-import { modalityFilters } from "../experiences/catalog.ts";
+import { modalityFilters, projectHubIds } from "../experiences/catalog.ts";
 
 export type ConstellationNode = {
   slug: string;
@@ -158,7 +158,7 @@ export function constellationLayout(projects: PublicProject[]): {
   edges: ConstellationEdge[];
 } {
   const activeFilters = modalityFilters.filter((item) =>
-    projects.some((project) => item.slugs.includes(project.slug)),
+    projects.some((project) => projectHubIds(project).includes(item.id)),
   );
   const cx0 = CONSTELLATION_WIDTH / 2;
   const cy0 = CONSTELLATION_HEIGHT / 2;
@@ -180,7 +180,7 @@ export function constellationLayout(projects: PublicProject[]): {
   const maxYear = Math.max(...years, 2026);
   const groups = new Map<string, number[]>();
   const membership = projects.map((project, index) => {
-    const linked = modalityFilters.filter((item) => item.slugs.includes(project.slug) && hubById.has(item.id));
+    const linked = modalityFilters.filter((item) => projectHubIds(project).includes(item.id) && hubById.has(item.id));
     const key = linked.map((item) => item.id).sort().join("|") || "_";
     const list = groups.get(key) ?? [];
     list.push(index);

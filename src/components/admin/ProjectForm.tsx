@@ -83,7 +83,31 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   }
 
   function patch<K extends keyof ProjectInput>(key: K, value: ProjectInput[K]) {
-    setForm((current) => ({ ...current, [key]: value }));
+    setForm((current) => {
+      if (
+        (key === "title" ||
+          key === "subtitle" ||
+          key === "summary" ||
+          key === "problem" ||
+          key === "role") &&
+        typeof value === "string"
+      ) {
+        const localeKey = key;
+        const prev = String(current[key] ?? "");
+        const zh = current.locale_json?.zh ?? {};
+        const zhVal = zh[localeKey];
+        const syncZh = !zhVal || zhVal === prev;
+        return {
+          ...current,
+          [key]: value,
+          locale_json: {
+            ...current.locale_json,
+            zh: syncZh ? { ...zh, [localeKey]: value } : zh,
+          },
+        };
+      }
+      return { ...current, [key]: value };
+    });
   }
 
   function validatedForm(): ProjectInput | null {
@@ -125,7 +149,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
       {status ? <p className="rounded-xl bg-surface-mint px-4 py-3 text-sm">{status}</p> : null}
       {dirty ? <p className="text-sm text-muted">有未儲存的修改。</p> : null}
       <p className="text-sm">
-        <a href={`/admin/draft/${form.slug}`} className="text-mint-deep">
+        <a href={`/admin/draft/${form.slug}`} className="inline-flex min-h-11 items-center text-mint-deep">
           後台預覽這件作品
         </a>
         <span className="text-muted"> · 不會發布到前台</span>
@@ -598,7 +622,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
               </span>
               <button
                 type="button"
-                className="text-mint-deep"
+                className="inline-flex min-h-11 items-center text-mint-deep"
                 onClick={() =>
                   void run("還原修訂", () => restoreRevisionFn({ data: { id: project.id, revisionId: item.id } }))
                 }

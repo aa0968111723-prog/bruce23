@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Expand, ExternalLink } from "lucide-react";
-import { canvaViewerState, type PublicProject } from "@/lib/cms/privacy";
+import { canvaViewerState, publicCanvaEmbedUrl, type PublicProject } from "@/lib/cms/privacy";
 import { canvaEmbedSrc, canvaOpenOriginalUrl } from "@/lib/canva/embed";
 import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
@@ -12,7 +12,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const pages = canva.pageIds?.length ? canva.pageIds : ["cover"];
   const state = canvaViewerState(canva, failed);
-  const embed = canva.embedUrl;
+  const embed = publicCanvaEmbedUrl(canva.embedUrl);
   const original = canvaOpenOriginalUrl(canva.shareUrl ?? canva.embedUrl) ?? canva.shareUrl;
   const thumb = canva.thumbnailUrl ? (
     <img src={canva.thumbnailUrl} alt={canva.alt ?? project.title} className="w-full object-cover" />

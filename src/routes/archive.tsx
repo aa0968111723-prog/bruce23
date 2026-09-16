@@ -13,6 +13,15 @@ import { useRovingTabs } from "@/components/site/useRovingTabs";
 
 export const Route = createFileRoute("/archive")({
   loader: async (): Promise<PublicArchiveItem[]> => listPublishedArchiveFn(),
+  head: () => ({
+    meta: [
+      { title: "Archive · 柏能" },
+      {
+        name: "description",
+        content: "攝影、平面、活動與社團文宣。私人 Drive 不公開。沒有公開 Canva /design/{id} 就不嵌入。",
+      },
+    ],
+  }),
   component: Archive,
 });
 

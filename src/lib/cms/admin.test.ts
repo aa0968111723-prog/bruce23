@@ -5,6 +5,7 @@ import { assertAdminAccess, isAllowedAdminOrigin, parseAdminEmails } from "./adm
 import { AdminConfigError, ForbiddenError } from "./errors.ts";
 import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
 import { resolveHomepageCopy } from "./public-site.ts";
+import { applyPublicLocale, englishTitle } from "./locale.ts";
 import type { PublicProject } from "./privacy.ts";
 
 describe("admin allowlist", () => {
@@ -130,6 +131,9 @@ describe("admin allowlist", () => {
     assert.match(source, /listPublishedProjectsFn/);
     assert.match(source, /publicSitemapPaths/);
     assert.doesNotMatch(source, /listAdminProjectsFn/);
+    const sitemap = readFileSync(new URL("./sitemap.ts", import.meta.url), "utf8");
+    assert.match(sitemap, /\/privacy/);
+    assert.doesNotMatch(source, /listAdminArchiveFn/);
   });
 
   it("does not expose admin session helpers on public CMS functions", () => {
@@ -207,5 +211,25 @@ describe("public json-ld and homepage copy", () => {
     assert.equal(copy.narrative, "敘事");
     assert.equal(copy.subhead, "EN");
     assert.equal(copy.seoTitle, "SEO");
+  });
+
+  it("applies zh copy and keeps a distinct English title", () => {
+    const localized = applyPublicLocale({
+      title: "row",
+      subtitle: "sub",
+      summary: "sum",
+      problem: "p",
+      role: "r",
+      seoTitle: "row seo",
+      seoDescription: "row desc",
+      locale: {
+        zh: { title: "中文", summary: "摘要", seoTitle: "中 SEO" },
+        en: { title: "EN title" },
+      },
+    });
+    assert.equal(localized.title, "中文");
+    assert.equal(localized.summary, "摘要");
+    assert.equal(localized.seoTitle, "中 SEO");
+    assert.equal(englishTitle(localized.locale, localized.title), "EN title");
   });
 });

@@ -13,6 +13,7 @@ import {
   listRevisions,
   restoreRevision,
   saveProjectRecord,
+  serializePublicProject,
   setPublication,
   toPreviewProject,
   upsertArchive,
@@ -236,6 +237,31 @@ describe("cms persistence", () => {
     assert.ok(beforeChange);
     const restored = await restoreRevision(sql, created.id, beforeChange.id, "admin-1");
     assert.equal(restored.title, "Test Work");
+  });
+
+  it("reads zh/en locale onto the public project payload", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        title: "Row title",
+        summary: "row summary",
+        locale_json: {
+          zh: { title: "中文標題", summary: "中文摘要", seoTitle: "SEO 中" },
+          en: { title: "English title", seoTitle: "SEO EN" },
+        },
+      }),
+      "admin-1",
+    );
+    const live = serializePublicProject(created);
+    assert.equal(live.title, "中文標題");
+    assert.equal(live.summary, "中文摘要");
+    assert.equal(live.seoTitle, "SEO 中");
+    assert.equal(live.locale.en?.title, "English title");
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.title, "中文標題");
   });
 
   it("excludes draft archive items from the public archive", async () => {

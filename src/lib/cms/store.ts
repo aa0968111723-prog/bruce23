@@ -14,6 +14,7 @@ import { canvaPersistFromFields, sanitizeStoredCanvaThumbnail } from "../canva/p
 import type { CanvaPersistShape } from "../canva/parse.ts";
 import type { GithubFetchResult } from "../github/client.server.ts";
 import { sanitizePublicHref } from "../safe-href.ts";
+import { applyPublicLocale } from "./locale.ts";
 
 export function jsonb(value: unknown): string {
   return JSON.stringify(value ?? null);
@@ -148,7 +149,8 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
   const meta = asRecord(admin.github_metadata);
   const isPrivate = meta.private === true;
   const githubOk = !isPrivate;
-  return stripSecrets({
+  const locale = (admin.locale_json ?? {}) as { zh?: LocaleCopy; en?: LocaleCopy };
+  return stripSecrets(applyPublicLocale({
     id: admin.id,
     slug: admin.slug,
     title: admin.title,
@@ -168,7 +170,7 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
     stack: admin.stack,
     limitations: admin.limitations,
     media: admin.media,
-    locale: (admin.locale_json ?? {}) as { zh?: LocaleCopy; en?: LocaleCopy },
+    locale,
     seoTitle: admin.seo_title,
     seoDescription: admin.seo_description,
     experienceMode: admin.experience_mode ?? null,
@@ -217,7 +219,7 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
       lastVerifiedAt: admin.live_demo_last_verified_at ?? null,
       error: admin.live_demo_error ?? null,
     },
-  });
+  }));
 }
 
 export function toPublicProject(row: ProjectRow): PublicProject | null {

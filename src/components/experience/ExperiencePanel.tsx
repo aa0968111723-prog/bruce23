@@ -40,6 +40,7 @@ export function ExperiencePanel({
     const config = resolveExperienceConfig(project);
     return config.honestyLabel || null;
   }, [project]);
+  const galleryNote = useMemo(() => resolveExperienceConfig(project).galleryNote, [project]);
 
   useEffect(() => {
     if (!onClose) return;
@@ -107,25 +108,45 @@ export function ExperiencePanel({
         {tab === "play" ? <ExperienceCanvas project={project} /> : null}
         {tab === "visual" ? (
           <div className="grid gap-4">
-            {project.media[0] ? (
-              project.media[0].kind === "video" ? (
-                <video
-                  className="w-full rounded-2xl bg-surface-blue object-cover"
-                  controls
-                  playsInline
-                  preload="metadata"
-                  poster={project.media[0].poster}
-                >
-                  <source src={project.media[0].src} />
-                </video>
-              ) : (
-                <img
-                  src={project.media[0].src}
-                  alt={project.media[0].alt}
-                  className="w-full rounded-2xl bg-surface-blue object-cover"
-                />
-              )
-            ) : null}
+            {galleryNote ? <p className="text-sm text-muted">{galleryNote}</p> : null}
+            {project.media.length ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {project.media.map((item) =>
+                  item.kind === "video" ? (
+                    <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface-blue">
+                      <video
+                        className="aspect-video w-full object-cover"
+                        controls
+                        playsInline
+                        preload="metadata"
+                        poster={item.poster}
+                      >
+                        <source src={item.src} />
+                      </video>
+                      {item.caption ? (
+                        <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption>
+                      ) : null}
+                    </figure>
+                  ) : (
+                    <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface-blue">
+                      <img
+                        src={item.src}
+                        alt={item.alt}
+                        className="aspect-[4/3] w-full object-cover"
+                        loading="lazy"
+                      />
+                      {item.caption ? (
+                        <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption>
+                      ) : null}
+                    </figure>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
+                這件作品還沒有已發布的媒體。不會放空白畫面。
+              </p>
+            )}
             <LiveDemoStage project={project} />
             <p className="text-sm leading-relaxed text-ink/85">{project.summary}</p>
           </div>

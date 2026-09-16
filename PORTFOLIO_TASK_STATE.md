@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: CODE punch-list vs 10 deliverables (not complete)
+Cycle: independent CODE audit vs original spec (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -18,11 +18,12 @@ Updated: 2026-09-16
 
 - Combined status: CodeRabbit **SUCCESS** (review skipped for OSS).
 - Check runs: none (no `.github/workflows` in repo).
-- Copilot Code Review run `35116439973`: **failure** is environment-only `SessionModelError` monthly quota **402**. Comments were stored internally, not posted. Not a code failure. Codex review also quota.
+- Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
+- Review threads: none.
 
 ## Viewer navigation of healing-studio `/d/` links (Playwright Chromium)
 
-All four public short URLs were opened in Chromium. Classification used `page.url()` after load (plus `page.title()` only to tell challenge / 404). HTML was not scraped for design ids. Raw fetch (studio UA and Chrome UA) stayed **403** with no Location.
+All four public short URLs were opened in Chromium. Classification used `page.url()` after load. HTML was not scraped for design ids.
 
 | Short URL | Final `page.url()` class | Outcome |
 |---|---|---|
@@ -37,22 +38,22 @@ No allowlisted `canva.com/design/{id}` landing. Public AI Director OS item keeps
 
 - Light-only luminous site + CMS 0002 + auth fail-closed
 - 8 GitHub-backed case studies with distinct ExperiencePanel modes
-- Admin ProjectForm + settings + GitHub hydrate v4 + stampede lock
-- Canva: Location follow + Chrome UA retry + optional viewer `navigateImpl` (`page.url()`). Never `verified` from URL shape. HTML unread.
-- Save prefers a parsed `/design/{id}` so leftover `/d/` cannot wipe a resolved embed
+- Admin ProjectForm + ArchiveForm + settings + GitHub hydrate v4 + stampede lock
+- Canva: Location follow + Chrome UA retry + optional viewer `navigateImpl` (`page.url()`). Never `verified` from URL shape. HTML unread. Iframe only after parsed `/design/{id}` (length ≥ 6).
 - Connect/OAuth fail-closed without credentials
 - Unavailable + share URL shows thumbnail + Open original (no blank iframe)
-- GitHub HTTP 304 with ETag cache now treated as success (cached body), not HTTP failure
-- ProcessMap: one tablist with aria-selected / tabIndex (no hidden duplicate tabs)
-- JSON-LD script-escaped; source evidence href allowlist; demo iframe only when verified + http(s)
-- Archive stroop / graphic SVG labels no longer garbled
+- GitHub HTTP 304 with ETag cache treated as success; verified empty trees rehydrate
+- Public locale overlay + SEO heads; `/privacy`; sitemap published-only including privacy
+- Homepage hubs from CMS modalities (no reverse token matching, no `平面` → poster)
+- File tree keyboard without stealing tab focus on mount
 
 ## Not done / blocked
 
 - Original photography and event photos (Drive originals not on a public CDN)
 - Original AI video files (too large for git; old Manus URLs are dead)
-- Real public Canva share/embed URLs for the 8 works — healing-studio `/d/` links did not land on `/design/{id}` (404 or Cloudflare); hunt found none
+- Real public Canva share/embed URLs for the 8 works
 - Canva Connect credentials + CANVA_TOKEN_KEY (OAuth cannot be live-proved)
 - Google login as `aa0968111723@gmail.com` to browser-prove admin
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
+- Full bilingual UI toggle (zh/en fields are stored and read; no language switcher)

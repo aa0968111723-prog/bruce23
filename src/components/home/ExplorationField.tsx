@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { modalityFilters } from "@/lib/experiences/catalog";
+import { modalityFilters, projectHubIds } from "@/lib/experiences/catalog";
 import { CONSTELLATION_HEIGHT, CONSTELLATION_WIDTH, constellationLayout } from "@/lib/home/constellation";
 import { cn } from "@/lib/cn";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
@@ -25,14 +25,14 @@ export function ExplorationField({
     return [...picked, ...rest];
   }, [highlightSlugs, projects]);
   const availableFilters = useMemo(
-    () => modalityFilters.filter((item) => ordered.some((project) => item.slugs.includes(project.slug))),
+    () => modalityFilters.filter((item) => ordered.some((project) => projectHubIds(project).includes(item.id))),
     [ordered],
   );
   const visible = useMemo(() => {
     if (!filter) return ordered;
     const spec = availableFilters.find((item) => item.id === filter);
     if (!spec) return ordered;
-    return ordered.filter((project) => spec.slugs.includes(project.slug));
+    return ordered.filter((project) => spec && projectHubIds(project).includes(spec.id));
   }, [availableFilters, filter, ordered]);
   const map = useMemo(() => constellationLayout(visible), [visible]);
   const bySlug = useMemo(() => new Map(visible.map((item) => [item.slug, item])), [visible]);

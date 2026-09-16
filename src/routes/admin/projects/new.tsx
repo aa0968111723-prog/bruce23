@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createProjectFn } from "@/lib/cms/admin-fn";
 
 export const Route = createFileRoute("/admin/projects/new")({
@@ -11,6 +11,17 @@ function NewProject() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const dirty = Boolean(title.trim() || slug.trim());
+
+  useEffect(() => {
+    const onLeave = (event: BeforeUnloadEvent) => {
+      if (!dirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onLeave);
+    return () => window.removeEventListener("beforeunload", onLeave);
+  }, [dirty]);
 
   return (
     <form
@@ -56,6 +67,7 @@ function NewProject() {
       }}
     >
       <h1 className="font-display text-3xl">新增作品</h1>
+      {dirty ? <p className="text-sm text-muted">有未儲存的修改。</p> : null}
       {error ? <p className="text-sm text-alert">{error}</p> : null}
       <label className="grid gap-1 text-sm">
         標題

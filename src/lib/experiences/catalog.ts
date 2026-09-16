@@ -231,3 +231,20 @@ export const modalityFilters: Array<{ id: string; label: string; slugs: string[]
   { id: "poster", label: "文宣", slugs: ["poster-vision-ai", "duigao", "tku-zen-ai", "folio"] },
   { id: "interactive", label: "互動", slugs: ["duigao", "tku-zen-ai", "hermes-console", "planform"] },
 ];
+
+/** Map CMS modality strings onto homepage hubs. Slug lists are only a fallback. */
+export const MODALITY_HUB_TOKENS: Array<{ id: string; label: string; tokens: string[] }> = [
+  { id: "image", label: "圖像", tokens: ["圖像", "畫布", "熱圖", "OCR", "嵌入"] },
+  { id: "video", label: "影片", tokens: ["影片", "影像序列", "時間軸", "姿勢殘影"] },
+  { id: "space", label: "空間", tokens: ["3D", "平面圖", "動線", "物資", "空間"] },
+  { id: "poster", label: "文宣", tokens: ["文宣", "海報", "設計 token"] },
+  { id: "interactive", label: "互動", tokens: ["互動", "對話", "MCP", "註記", "任務", "審批", "自然語言", "LINE", "呼吸"] },
+];
+
+export function projectHubIds(project: { slug: string; modalities: string[] }): string[] {
+  const fromModalities = MODALITY_HUB_TOKENS.filter((hub) =>
+    project.modalities.some((mod) => hub.tokens.some((token) => mod.includes(token))),
+  ).map((hub) => hub.id);
+  if (fromModalities.length) return fromModalities;
+  return modalityFilters.filter((item) => item.slugs.includes(project.slug)).map((item) => item.id);
+}

@@ -119,6 +119,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshArchiveHonesty(sql);
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
+  await fillLocaleJsonGaps(sql);
   await clearUncustomizedHowSteps(sql);
 }
 
@@ -211,6 +212,13 @@ export async function ensureSeed(
         src: item.src.replace(/\.jpg$/i, ".svg"),
       })),
       locale_json: {
+        zh: {
+          title: project.title,
+          subtitle: project.subtitle,
+          summary: project.summary,
+          problem: project.problem,
+          role: project.role,
+        },
         en: { title: project.title, subtitle: project.subtitle, summary: project.summary },
       },
       seo_title: `${project.title} · ${site.nameZh}`,
@@ -428,5 +436,30 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
         JSON.stringify(next),
       ]);
     }
+  }
+}
+
+async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const zh = {
+      title: project.title,
+      subtitle: project.subtitle,
+      summary: project.summary,
+      problem: project.problem,
+      role: project.role,
+    };
+    const en = { title: project.title, subtitle: project.subtitle, summary: project.summary };
+    await sql.query(
+      `update projects
+       set locale_json = jsonb_set(
+         jsonb_set(coalesce(locale_json, '{}'::jsonb), '{zh}', coalesce(locale_json->'zh', '{}'::jsonb) || $2::jsonb, true),
+         '{en}',
+         coalesce(locale_json->'en', '{}'::jsonb) || $3::jsonb,
+         true
+       )
+       where slug = $1
+         and (locale_json is null or locale_json = '{}'::jsonb)`,
+      [project.slug, JSON.stringify(zh), JSON.stringify(en)],
+    );
   }
 }
