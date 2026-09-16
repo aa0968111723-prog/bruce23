@@ -15,7 +15,8 @@ Updated: 2026-09-16
 - Public work/case/archive/home read published data
 - ExperiencePanel + per-project operable exhibits
 - Admin CMS: projects, archive, settings, preview, integrations
-- Server-side GitHub / Canva embed test / Demo verify
+- Server-side GitHub / Canva embed test / Demo verify / README verify
+- Nested GitHub file tree, homepage exploration nodes, custom share card
 - Tests for privacy, allowlist, github/canva/demo, seed, publish round-trip
 
 ## Not done / honest gaps
