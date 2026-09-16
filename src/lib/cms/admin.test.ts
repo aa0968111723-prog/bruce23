@@ -154,6 +154,14 @@ describe("admin allowlist", () => {
     assert.match(runner, /ssrLoadModule/);
     assert.match(runner, /admin-e2e.runner/);
     assert.doesNotMatch(runner, /emailAndPasswordEnabled = true/);
+    const live = readFileSync(new URL("../../../scripts/run-admin-live-e2e.mjs", import.meta.url), "utf8");
+    assert.match(live, /mint-admin-session\.mjs/);
+    assert.match(live, /__Host-grok-auth\.session_token|SESSION_TOKEN_COOKIE/);
+    assert.doesNotMatch(live, /\/api\/test-login/);
+    const db = readFileSync(new URL("../db.ts", import.meta.url), "utf8");
+    assert.match(db, /PGLITE_DATA_DIR/);
+    assert.match(db, /VERCEL/);
+    assert.match(db, /closePglite/);
   });
 });
 

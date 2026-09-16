@@ -6,6 +6,8 @@ import { mkdirSync } from "node:fs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 process.chdir(root);
+// Isolated handler E2E must stay in-memory so it never takes the preview PGLite file lock.
+delete process.env.PGLITE_DATA_DIR;
 process.env.CMS_SKIP_GITHUB_HYDRATE ??= "1";
 if (!process.env.PORTFOLIO_ADMIN_EMAILS?.trim()) {
   process.env.PORTFOLIO_ADMIN_EMAILS = "aa0968111723@gmail.com";

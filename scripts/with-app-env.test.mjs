@@ -138,6 +138,19 @@ test("a signal-killed command is never reported as success", async () => {
   );
 });
 
+test("wrapper does not set a PGLite file dir for non-vite-dev commands", async () => {
+  const env = { ...process.env };
+  delete env.PGLITE_DATA_DIR;
+  delete env.DATABASE_URL;
+  delete env.VERCEL;
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [WRAPPER, process.execPath, "-e", "process.stdout.write(process.env.PGLITE_DATA_DIR || 'unset')"],
+    { env },
+  );
+  assert.equal(stdout, "unset");
+});
+
 test("the CLI still runs when invoked through a symlinked path", async () => {
   // node realpaths import.meta.url but not process.argv[1], so a raw comparison
   // turns the wrapper into a no-op that exits 0 without starting anything.

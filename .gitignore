@@ -3,3 +3,8 @@ node_modules/
 .github_repo
 .env
 .env.*
+.grok/pglite/
+.grok/preview-auth-secret
+.grok/admin-e2e-session.json
+.grok/preview.log
+.grok/preview.pid

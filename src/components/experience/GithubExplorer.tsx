@@ -133,6 +133,13 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             selected={selected?.path}
           />
         )}
+        {tree.length === 0 && hints.length > 0 ? (
+          <HintTree
+            hints={hints}
+            selected={selected?.path}
+            onSelect={(path) => setSelected({ path, type: "file" })}
+          />
+        ) : null}
         {selected ? (
           <div className="mt-4 rounded-xl bg-surface-blue/80 p-3 text-sm">
             <p className="font-medium">{selected.path}</p>
@@ -193,16 +200,31 @@ function TreeDir({
   if (!bucket) return null;
   const dirs = Object.keys(bucket.dirs).sort();
   return (
-    <ul className={dir ? "ml-3 border-l border-line pl-2" : "mt-3 grid gap-1"}>
+    <ul
+      className={dir ? "ml-3 border-l border-line pl-2" : "mt-3 grid gap-1"}
+      role={dir ? "group" : "tree"}
+      aria-label={dir ? undefined : "有限檔案樹"}
+    >
       {dirs.map((path) => {
         const name = path.split("/").pop() ?? path;
-        const expanded = open[path];
+        const expanded = Boolean(open[path]);
         return (
-          <li key={path}>
+          <li key={path} role="none">
             <button
               type="button"
+              role="treeitem"
+              aria-expanded={expanded}
               className="inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue"
               onClick={() => setOpen({ ...open, [path]: !expanded })}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowRight") {
+                  event.preventDefault();
+                  setOpen({ ...open, [path]: true });
+                } else if (event.key === "ArrowLeft") {
+                  event.preventDefault();
+                  setOpen({ ...open, [path]: false });
+                }
+              }}
             >
               {expanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
               <Folder className="size-4 text-sky" />
@@ -222,9 +244,11 @@ function TreeDir({
         );
       })}
       {bucket.files.map((file) => (
-        <li key={file.path}>
+        <li key={file.path} role="none">
           <button
             type="button"
+            role="treeitem"
+            aria-selected={selected === file.path}
             className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
               selected === file.path ? "bg-surface-mint" : ""
             }`}
@@ -236,5 +260,39 @@ function TreeDir({
         </li>
       ))}
     </ul>
+  );
+}
+
+function HintTree({
+  hints,
+  selected,
+  onSelect,
+}: {
+  hints: Array<{ path: string; purpose: string; stage: string }>;
+  selected?: string;
+  onSelect: (path: string) => void;
+}) {
+  return (
+    <div className="mt-3">
+      <p className="text-xs text-muted">來源路徑提示，不是即時 repo 內容。</p>
+      <ul className="mt-2 grid gap-1" role="tree" aria-label="來源路徑">
+        {hints.map((item) => (
+          <li key={item.path} role="none">
+            <button
+              type="button"
+              role="treeitem"
+              aria-selected={selected === item.path}
+              className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
+                selected === item.path ? "bg-surface-mint" : ""
+              }`}
+              onClick={() => onSelect(item.path)}
+            >
+              <FileText className="size-4 text-muted" />
+              {item.path}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

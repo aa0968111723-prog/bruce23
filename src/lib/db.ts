@@ -14,6 +14,23 @@ const databaseUrl =
   rawDatabaseUrl && rawDatabaseUrl.trim() ? rawDatabaseUrl : undefined;
 
 /**
+ * Durable PGLite directory for local `npm run dev` / test mint only.
+ * Never used when `DATABASE_URL` is set (Neon) or when `VERCEL` is set
+ * (read-only serverless FS). Two processes cannot open the same PGLite
+ * dataDir; mint scripts must `close()` and exit before Vite boots.
+ */
+function resolvePgliteDataDir(): string | undefined {
+  if (databaseUrl) return undefined;
+  if (typeof process !== "undefined" && String(process.env.VERCEL ?? "").trim()) {
+    return undefined;
+  }
+  const dir = typeof process !== "undefined" ? process.env.PGLITE_DATA_DIR?.trim() : "";
+  return dir || undefined;
+}
+
+export const pgliteDataDir = resolvePgliteDataDir();
+
+/**
  * Active backend: real **Neon** when `DATABASE_URL` is set (deployed / configured
  * sandbox), otherwise a local embedded **PGLite** (Postgres compiled to WASM) so
  * the app has a working database even with nothing configured — the live preview
@@ -144,7 +161,13 @@ async function createPgliteSql(): Promise<Sql> {
   // data survives source edits (it resets on dev-server restart).
   globalRef.__pgliteInstance__ ??= (async () => {
     const { PGlite } = await import("@electric-sql/pglite");
+    const dataDir = resolvePgliteDataDir();
+    if (dataDir) {
+      const { mkdirSync } = await import("node:fs");
+      mkdirSync(dataDir, { recursive: true });
+    }
     const pg = new PGlite({
+      ...(dataDir ? { dataDir } : {}),
       parsers: {
         [OID_INT8]: Number,
         [OID_DATE]: identity,
@@ -236,6 +259,23 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
   const pg = await globalRef.__pgliteInstance__;
   if (!pg) throw new Error("PGLite instance failed to initialize");
   return pg;
+}
+
+/** Release a file-backed PGLite so another process can open the same dataDir. */
+export async function closePglite(): Promise<void> {
+  let pg: import("@electric-sql/pglite").PGlite | undefined;
+  try {
+    pg = await globalRef.__pgliteInstance__;
+  } catch {
+    pg = undefined;
+  }
+  globalRef.__pgliteInstance__ = undefined;
+  globalRef.__pgliteMigrateChain__ = undefined;
+  globalRef.__pgSqlPromise__ = undefined;
+  (globalThis as typeof globalThis & { __pgBootstrapPromise__?: Promise<void> }).__pgBootstrapPromise__ =
+    undefined;
+  sqlPromise = null;
+  if (pg && !pg.closed) await pg.close();
 }
 
 /**

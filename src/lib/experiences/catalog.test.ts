@@ -98,6 +98,16 @@ describe("frontend contract", () => {
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
+    const explorer = readFileSync(
+      new URL("../../../src/components/experience/GithubExplorer.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(explorer, /ArrowRight/);
+    assert.match(explorer, /ArrowLeft/);
+    assert.match(explorer, /aria-expanded/);
+    assert.match(explorer, /role="tree"/);
+    assert.match(explorer, /來源路徑/);
+    assert.match(css, /animation:\s*none/);
     assert.match(panel, /howItWorksSteps/);
     assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
