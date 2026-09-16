@@ -91,11 +91,6 @@ async function hydratePendingGithubOnce(
       if (leftover.length === 0) {
         return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
       }
-    } else if (storedVersion === "pending" && meta[0]?.updated_at) {
-      const at = new Date(meta[0].updated_at).getTime();
-      if (Number.isFinite(at) && Date.now() - at < 2 * 60 * 1000) {
-        return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
-      }
     } else if (storedVersion === "retry" && meta[0]?.updated_at) {
       const at = new Date(meta[0].updated_at).getTime();
       if (Number.isFinite(at) && Date.now() - at < 10 * 60 * 1000) {

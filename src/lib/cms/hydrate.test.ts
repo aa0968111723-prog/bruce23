@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProjectRecord, getAdminProject, listPublishedProjects } from "./store.ts";
-import { hydratePendingGithub, hydratePendingDemos, GITHUB_HYDRATE_KEY } from "./hydrate.ts";
+import { hydratePendingGithub, hydratePendingDemos } from "./hydrate.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 
@@ -161,37 +161,6 @@ describe("github hydrate", () => {
     await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     const second = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     assert.equal(second.skipped, true);
-  });
-
-  it("does not stampede while a hydrate is already marked pending", async () => {
-    const { sql } = await setup();
-    await createProjectRecord(
-      sql,
-      projectInputSchema.parse({
-        slug: "pending-lock",
-        title: "Pending lock",
-        category: "AI Product",
-        year: "2026",
-        product_status: "prototype",
-        publication_status: "published",
-        featured: false,
-        sort_order: 0,
-        github_url: "https://github.com/aa0968111723-prog/FrameLab",
-        github_sync_enabled: true,
-        github_sync_status: "pending",
-      }),
-      "seed",
-    );
-    await sql.query(`insert into cms_meta (key, value) values ($1, 'pending')`, [GITHUB_HYDRATE_KEY]);
-    let fetches = 0;
-    const result = await hydratePendingGithub(sql, {
-      fetchImpl: async () => {
-        fetches += 1;
-        return new Response("nope", { status: 500 });
-      },
-    });
-    assert.equal(result.skipped, true);
-    assert.equal(fetches, 0);
   });
 
   it("shares one in-flight hydrate across concurrent callers", async () => {
