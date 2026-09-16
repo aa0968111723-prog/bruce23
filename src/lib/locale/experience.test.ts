@@ -18,6 +18,8 @@ describe("experience playable chrome", () => {
     const en = experienceChromeFor("en");
     assert.equal(zh.tabPlay, "立即體驗");
     assert.equal(en.tabPlay, "Play");
+    assert.equal(zh.folioDocumentLayer, "文件層");
+    assert.equal(en.folioDocumentLayer, "document layer");
     assert.equal(zh.tabVisual, "視覺展示");
     assert.equal(en.tabVisual, "Visual");
     assert.notEqual(zh.tabGithub, en.tabGithub);

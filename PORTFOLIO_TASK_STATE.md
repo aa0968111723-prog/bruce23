@@ -1,8 +1,8 @@
 # Portfolio Task State
 
-Cycle: source-aligned Folio/Zen reconstructions + playable experience quality (not complete)
+Cycle: HermesPreview typecheck + process-map numbers + studio heatmap + Folio document i18n (not complete)
 Updated: 2026-09-16
-HEAD: dc4adcd8a872181586b5d01a49a4d190c81aca80
+HEAD: pending-this-commit
 
 ## Source of truth
 
@@ -79,6 +79,15 @@ HEAD: dc4adcd8a872181586b5d01a49a4d190c81aca80
 - Poster Vision auto-runs heatmap + region estimates when the sample loads; still labeled as pixel estimate, not eye-tracking.
 - AI Director OS nodes show GitHub source paths on the chips, plus process summary in the panel.
 - Planform / 對稿 live demos stay iframe-only when hydrate marks them verified+embeddable (Zeabur HTML, no frame-bust). AI Director OS and Hermes remain open-in-new-tab (`frame-ancestors none`).
+
+## This cycle (typecheck + process map + studio heatmap)
+
+- `HermesPreview` locale starter effect depends on `starter` only. `lang` is not referenced after it was removed from the hook destructure (typecheck).
+- AI Director OS process pipeline SVG now numbers stages 1–n and labels them with `node.stage` (overlaid zh|en). Full names stay on the keyboard tabs.
+- Poster Vision heatmap uses mint/sky studio tokens (`data-heatmap-palette="studio"`), not a fire-orange overlay. Still a pixel estimate, not eye-tracking.
+- Folio document walkthrough stage aria-label uses `ex.folioDocumentLayer` (zh 文件層 / en document layer).
+- Experience images (Canva thumbs, Poster Vision sample, 對稿 posters) lazy-load. Hero remains eager. Video fallback copy is bilingual.
+- No public `canva.com/design/{id}` invented. Canva Connect still fail-closed.
 
 ## This cycle (honest visual evidence + playable quality)
 

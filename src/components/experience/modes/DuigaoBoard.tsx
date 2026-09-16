@@ -137,7 +137,14 @@ function PosterLayer({
           onPick({ x, y });
         }}
       >
-        <img src={src} alt={alt} className="aspect-[4/3] w-full object-cover" style={{ filter }} />
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className="aspect-[4/3] w-full object-cover"
+          style={{ filter }}
+        />
         {pins.map((pin, index) => (
           <span
             key={pin.id}

@@ -45,7 +45,7 @@ export function MediaFrame({
         onError={() => setErrored(true)}
       >
         <source src={media.src} />
-        你的瀏覽器無法播放這段影片。
+        Your browser cannot play this video. 你的瀏覽器無法播放這段影片。
       </video>
     );
   }

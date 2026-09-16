@@ -206,6 +206,7 @@ describe("frontend contract", () => {
     assert.match(stage, /ex\.noShareTitle|ex\.unavailableTitle/);
     assert.match(stage, /publicCanvaEmbedUrl/);
     assert.match(stage, /pages.length > 1/);
+    assert.match(stage, /loading="lazy"/);
     assert.doesNotMatch(stage, /\["cover"\]/);
     assert.ok(stage.indexOf('if (state === "fallback" || !embed)') < stage.indexOf("<iframe"));
     const demoStage = readFileSync(
@@ -222,6 +223,7 @@ describe("frontend contract", () => {
     assert.match(processMap, /ex\.processDefaultIntro|useExperienceView/);
     assert.match(processMap, /min-w-0 max-w-full gap-2 overflow-x-auto/);
     assert.match(processMap, /data-process-pipeline/);
+    assert.match(processMap, /data-process-index/);
     assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
@@ -245,6 +247,8 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /CanvasStage/);
     assert.match(folioWalk, /data-folio-shell/);
     assert.match(folioWalk, /folioInsertText/);
+    assert.match(folioWalk, /folioDocumentLayer/);
+    assert.doesNotMatch(folioWalk, /\$\{title\} 文件層/);
     assert.match(folioWalk, /不是空白計數器|ex\.folioNotCounter/);
     assert.match(experienceLocale, /不是空白計數器/);
     const canvas = readFileSync(
@@ -262,6 +266,8 @@ describe("frontend contract", () => {
     assert.match(poster, /onLoad/);
     assert.match(poster, /posterLoading/);
     assert.match(poster, /heatmapBadge/);
+    assert.match(poster, /data-heatmap-palette="studio"/);
+    assert.doesNotMatch(poster, /out\.data\[i\] = 255;/);
     assert.match(experienceLocale, /不是眼動追蹤/);
     assert.match(experienceLocale, /not eye-tracking/);
     const planform = readFileSync(
@@ -290,6 +296,12 @@ describe("frontend contract", () => {
     );
     assert.match(hermes, /data-hermes-preview/);
     assert.match(hermes, /hermesDisconnected/);
+    const hermesHook = hermes.match(/const \{([^}]+)\} = useExperienceView/);
+    assert.ok(hermesHook);
+    if (/\blang\b/.test(hermes.replace(hermesHook[0], ""))) {
+      assert.match(hermesHook[1], /\blang\b/);
+    }
+    assert.doesNotMatch(hermes, /\[lang, starter\]/);
     const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
     assert.doesNotMatch(settings, /homepage_json: \{\}/);
     assert.match(settings, /highlightSlugs/);

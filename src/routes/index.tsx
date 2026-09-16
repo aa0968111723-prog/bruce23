@@ -97,6 +97,8 @@ function Home() {
                 className="aspect-[16/10] w-full object-cover"
                 width={1280}
                 height={720}
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
             <p className="mt-3 text-center text-xs text-muted">{ui.heroCaption}</p>

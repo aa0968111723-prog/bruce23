@@ -175,6 +175,7 @@ export const experienceChrome = {
     folioInsertText: "插入文字區塊",
     folioAddShape: "加入形狀",
     folioPreview: "預覽",
+    folioDocumentLayer: "文件層",
   },
   en: {
     tabPlay: "Play",
@@ -331,6 +332,7 @@ export const experienceChrome = {
     folioInsertText: "Insert text block",
     folioAddShape: "Add shape",
     folioPreview: "Preview",
+    folioDocumentLayer: "document layer",
   },
 } as const;
 

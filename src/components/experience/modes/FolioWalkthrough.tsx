@@ -128,7 +128,7 @@ function FolioStage({
         {kind === "command" ? <CommandStage file={file} ex={ex} /> : null}
         {kind === "audit" ? <AuditStage file={file} ex={ex} /> : null}
         {kind === "mcp" ? <McpStage file={file} ex={ex} /> : null}
-        {kind === "document" ? <DocumentStage title={step.title} file={file} /> : null}
+        {kind === "document" ? <DocumentStage title={step.title} file={file} ex={ex} /> : null}
       </div>
     </div>
   );
@@ -272,9 +272,9 @@ function McpStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   );
 }
 
-function DocumentStage({ title, file }: { title: string; file: string }) {
+function DocumentStage({ title, file, ex }: { title: string; file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={`${title} 文件層`}>
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={`${title} ${ex.folioDocumentLayer}`}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="54" y="28" width="212" height="144" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="70" y="44" width="180" height="16" rx="3" className="fill-mint" />

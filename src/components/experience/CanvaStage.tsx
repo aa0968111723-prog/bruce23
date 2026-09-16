@@ -19,12 +19,16 @@ export function CanvaStage({ project }: { project: PublicProject }) {
     <img
       src={canva.thumbnailUrl}
       alt={canva.alt ?? project.title}
+      loading="lazy"
+      decoding="async"
       className="mx-auto max-h-80 w-full object-contain bg-surface-blue"
     />
   ) : project.media[0] ? (
     <img
       src={project.media[0].src}
       alt={project.media[0].alt}
+      loading="lazy"
+      decoding="async"
       className="mx-auto max-h-80 w-full object-contain bg-surface-blue"
     />
   ) : null;

@@ -19,7 +19,7 @@ export function HermesPreview({ project }: { project: PublicProject }) {
       if (list.length === 1 && list[0]?.role === "console") return [{ role: "console", text: starter }];
       return list;
     });
-  }, [lang, starter]);
+  }, [starter]);
 
   function send(raw: string) {
     const value = raw.trim();

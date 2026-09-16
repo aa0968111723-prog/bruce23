@@ -110,10 +110,11 @@ export function PosterVision({ project }: { project?: PublicProject }) {
         const cy = Math.floor(i / 4 / canvas.width) / canvas.height - 0.5;
         const center = 1 - Math.min(1, Math.hypot(cx, cy) * 1.6);
         const score = Math.min(255, (255 - l) * 0.45 + center * 140);
-        out.data[i] = 255;
-        out.data[i + 1] = 80 + score * 0.2;
-        out.data[i + 2] = 40;
-        out.data[i + 3] = score * 0.55;
+        const t = score / 255;
+        out.data[i] = Math.round(99 + t * 15);
+        out.data[i + 1] = Math.round(230 - t * 47);
+        out.data[i + 2] = Math.round(190 + t * 65);
+        out.data[i + 3] = Math.round(score * 0.5);
       }
       ctx.putImageData(out, 0, 0);
     }
@@ -165,11 +166,17 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           src={src}
           alt={ex.posterAltPending}
           className="w-full"
+          loading="lazy"
+          decoding="async"
           onLoad={() => {
             run();
           }}
         />
-        <canvas ref={heatRef} className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply" />
+        <canvas
+          ref={heatRef}
+          className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply"
+          data-heatmap-palette="studio"
+        />
         <p
           className="pointer-events-none absolute left-3 top-3 max-w-[80%] rounded-full bg-surface/90 px-3 py-1 text-[11px] text-mint-deep shadow-card"
           data-heatmap-honesty="true"

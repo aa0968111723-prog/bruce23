@@ -53,15 +53,32 @@ export function ProcessMap({ project }: { project: PublicProject }) {
                   opacity={reduced ? 0.4 : 1}
                 />
               ) : null}
-              <circle cx={x} cy="30" r={selected ? 14 : 11} className={selected ? "fill-mint" : "fill-surface"} />
+              <circle
+                cx={x}
+                cy="30"
+                r={selected ? 14 : 11}
+                className={selected ? "fill-mint" : "fill-surface"}
+                data-process-index={index + 1}
+              />
+              <text
+                x={x}
+                y="30"
+                textAnchor="middle"
+                dominantBaseline="central"
+                className={selected ? "fill-primary-foreground" : "fill-ink"}
+                fontSize="11"
+                fontWeight="600"
+              >
+                {index + 1}
+              </text>
               <text
                 x={x}
                 y="58"
                 textAnchor="middle"
                 className={selected ? "fill-ink" : "fill-muted"}
-                fontSize="10"
+                fontSize="8"
               >
-                {node.label}
+                {node.stage}
               </text>
             </g>
           );
