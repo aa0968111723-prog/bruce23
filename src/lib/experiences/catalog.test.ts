@@ -34,7 +34,8 @@ describe("experience catalog", () => {
     assert.match(source, /https:\/\/planform-iso-k7d2\.zeabur\.app/);
     assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
     assert.doesNotMatch(source, /github\.io\/planform/);
-    assert.match(source, /\/media\/github-exports\/ai-director-os\/desktop-dashboard\.png/);
+    assert.match(source, /\/media\/github-exports\/\$\{slug\}\/\$\{file\}/);
+    assert.match(source, /desktop-dashboard\.png/);
     assert.match(source, /公開 GitHub 匯出/);
     assert.doesNotMatch(source, /drive\.google\.com\/file/);
   });

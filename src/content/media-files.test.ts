@@ -15,7 +15,7 @@ describe("github export media", () => {
         if (item.src.startsWith("/media/github-exports/")) {
           exports.push(item.src);
           assert.match(item.caption ?? "", /GitHub 匯出/);
-          assert.doesNotMatch(item.caption ?? "", /Canva 原作嵌入|已連線/);
+          assert.doesNotMatch(item.caption ?? "", /Canva 原作嵌入|Connect 已連線/);
         }
       }
     }
