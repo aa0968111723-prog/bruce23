@@ -1,12 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { nav, site } from "@/content/site";
 import { cn } from "@/lib/cn";
+import { getViewerFlags } from "@/lib/portfolio/server-public";
+import { SignedIn, UserButton } from "@/lib/auth/gates";
 
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const [locale, setLocale] = useState<"zh" | "en">("zh");
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("luminous-locale");
+    if (stored === "en" || stored === "zh") setLocale(stored);
+    getViewerFlags()
+      .then((flags) => setAdmin(flags.isAdmin))
+      .catch(() => setAdmin(false));
+  }, []);
+
+  const setLang = (next: "zh" | "en") => {
+    setLocale(next);
+    window.localStorage.setItem("luminous-locale", next);
+    document.documentElement.lang = next === "zh" ? "zh-Hant" : "en";
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/80 backdrop-blur-md">
@@ -16,7 +34,7 @@ export function SiteHeader() {
             <span className="size-2.5 rounded-full bg-mint" />
           </span>
           <span className="font-display text-base font-semibold tracking-tight text-ink">
-            {site.nameZh}
+            {locale === "en" ? site.nameEn : site.nameZh}
           </span>
         </Link>
 
@@ -49,6 +67,24 @@ export function SiteHeader() {
           >
             GitHub
           </a>
+          {admin ? (
+            <Link
+              to="/admin"
+              className="inline-flex min-h-11 items-center rounded-xl px-3.5 text-sm font-medium text-mint-deep"
+            >
+              後台
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center rounded-xl px-3 text-sm"
+            onClick={() => setLang(locale === "zh" ? "en" : "zh")}
+          >
+            {locale === "zh" ? "EN" : "中文"}
+          </button>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </nav>
 
         <button
@@ -91,6 +127,17 @@ export function SiteHeader() {
                 GitHub
               </a>
             </li>
+            {admin ? (
+              <li>
+                <Link
+                  to="/admin"
+                  className="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium"
+                  onClick={() => setOpen(false)}
+                >
+                  後台
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
       ) : null}

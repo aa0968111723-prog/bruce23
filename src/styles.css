@@ -123,6 +123,10 @@
   .float-card {
     transform: none;
   }
+
+  .iso-space {
+    transform: none !important;
+  }
 }
 
 @keyframes drift {

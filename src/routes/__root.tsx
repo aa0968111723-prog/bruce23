@@ -3,11 +3,13 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/site/SiteShell";
 import { NotFoundView } from "@/components/site/NotFoundView";
+import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Luminous Studio · 柏能";
@@ -30,10 +32,7 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
         href: "https://fonts.gstatic.com",
@@ -49,6 +48,17 @@ export const Route = createRootRoute({
   component: RootDocument,
 });
 
+function AppFrame() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const bare = pathname.startsWith("/admin") || pathname === "/login";
+  if (bare) return <Outlet />;
+  return (
+    <SiteShell>
+      <Outlet />
+    </SiteShell>
+  );
+}
+
 function RootDocument() {
   return (
     <html lang="zh-Hant" className="antialiased" suppressHydrationWarning>
@@ -58,9 +68,8 @@ function RootDocument() {
       <body className="bg-bg text-ink">
         <PreviewHostBridge />
         <AuthProvider>
-          <SiteShell>
-            <Outlet />
-          </SiteShell>
+          <AppFrame />
+          <Toaster position="top-center" richColors />
         </AuthProvider>
         <Scripts />
       </body>
