@@ -92,6 +92,8 @@ describe("admin allowlist", () => {
     assert.doesNotMatch(source, /connected:\s*true/);
     assert.match(source, /authMiddleware/);
     assert.match(source, /previewDraftFn/);
+    assert.match(source, /語法通過 Canva 允許清單/);
+    assert.doesNotMatch(source, /canva_status = 'verified'/);
   });
 
   it("builds sitemap from published projects only", () => {

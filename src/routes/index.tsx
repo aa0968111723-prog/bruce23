@@ -82,7 +82,11 @@ function Home() {
         </div>
       </section>
 
-      <ExplorationField projects={projects} onOpen={setOpen} />
+      <ExplorationField
+        projects={projects}
+        highlightSlugs={site?.homepageHighlightSlugs}
+        onOpen={setOpen}
+      />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">

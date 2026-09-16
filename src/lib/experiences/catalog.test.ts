@@ -23,6 +23,18 @@ describe("experience catalog", () => {
     assert.ok(experienceCatalog["ai-director-os"].honestyLabel.includes("作品集"));
     assert.ok(experienceCatalog["tku-zen-ai"].honestyLabel.includes("不是雲端"));
   });
+
+  it("uses real GitHub source paths for AI Director OS and FrameLab", () => {
+    const nodes = experienceCatalog["ai-director-os"].processNodes ?? [];
+    assert.ok(nodes.some((node) => node.githubPath === "server/services/projectCore.ts"));
+    assert.ok(nodes.some((node) => node.githubPath === "shared/worldview.ts"));
+    assert.ok(nodes.some((node) => node.githubPath === "shared/storyboardScript.ts"));
+    assert.ok(nodes.some((node) => node.githubPath === "server/db/schema/generation.ts"));
+    const frameHints = experienceCatalog.framelab.fileHints ?? [];
+    assert.ok(frameHints.some((item) => item.path === "src/lib/domain/timeline-engine.ts"));
+    assert.ok(frameHints.some((item) => item.path === "src/lib/domain/sample-ball.ts"));
+    assert.ok((experienceCatalog.planform.fileHints ?? []).some((item) => item.path === "src/core/placement.ts"));
+  });
 });
 
 describe("frontend contract", () => {
@@ -36,7 +48,9 @@ describe("frontend contract", () => {
       "src/routes/index.tsx",
       "src/routes/login.tsx",
       "src/routes/admin/integrations.tsx",
+      "src/routes/admin/settings.tsx",
       "src/lib/cms/public-fn.ts",
+      "src/components/admin/GithubSyncDiff.tsx",
     ];
     for (const file of files) {
       const text = readFileSync(new URL(`../../../${file}`, import.meta.url), "utf8");
@@ -82,5 +96,35 @@ describe("frontend contract", () => {
     );
     assert.match(stage, /沒有公開分享連結/);
     assert.match(stage, /空白 iframe/);
+    assert.match(stage, /全螢幕/);
+    assert.match(stage, /在 Canva 開啟原作/);
+    const processMap = readFileSync(
+      new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(processMap, /ArrowRight|useRovingTabs/);
+    const timeline = readFileSync(
+      new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(timeline, /示範/);
+    assert.match(timeline, /不是 GPU/);
+    const poster = readFileSync(
+      new URL("../../../src/components/experience/modes/PosterVision.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(poster, /推估/);
+    const planform = readFileSync(
+      new URL("../../../src/components/experience/modes/PlanformSpace.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(planform, /法規符合|規範符合/);
+    const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
+    assert.doesNotMatch(settings, /homepage_json: \{\}/);
+    assert.match(settings, /highlightSlugs/);
+    const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
+    assert.match(form, /GithubSyncDiff/);
+    assert.match(form, /experience_config/);
+    assert.match(form, /canva_page_ids/);
   });
 });

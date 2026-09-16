@@ -47,9 +47,12 @@ export function parseCanvaDesign(input: string | null | undefined): ParsedCanvaD
   const extracted = extractCanvaUrl(input);
   if (!extracted) return null;
   const url = new URL(extracted);
-  const match = url.pathname.match(/\/design\/([A-Za-z0-9_-]+)/);
+  // Official share/embed/view/edit/watch paths only. Short /d/ links are not
+  // treated as public embeds — they are not proof of a DAG design id.
+  const match = url.pathname.match(/\/design\/([A-Za-z0-9_-]+)(?:\/(?:view|edit|watch|present))?\/?/);
   if (!match) return null;
   const designId = match[1];
+  if (designId.length < 6) return null;
   const shareUrl = `https://www.canva.com/design/${designId}/view`;
   const embedUrl = `https://www.canva.com/design/${designId}/view?embed`;
   return {

@@ -106,11 +106,23 @@ export function ExperiencePanel({
         {tab === "visual" ? (
           <div className="grid gap-4">
             {project.media[0] ? (
-              <img
-                src={project.media[0].src}
-                alt={project.media[0].alt}
-                className="w-full rounded-2xl bg-surface-blue object-cover"
-              />
+              project.media[0].kind === "video" ? (
+                <video
+                  className="w-full rounded-2xl bg-surface-blue object-cover"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster={project.media[0].poster}
+                >
+                  <source src={project.media[0].src} />
+                </video>
+              ) : (
+                <img
+                  src={project.media[0].src}
+                  alt={project.media[0].alt}
+                  className="w-full rounded-2xl bg-surface-blue object-cover"
+                />
+              )
             ) : null}
             <LiveDemoStage project={project} />
             <p className="text-sm leading-relaxed text-ink/85">{project.summary}</p>

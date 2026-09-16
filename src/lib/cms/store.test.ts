@@ -309,4 +309,38 @@ describe("cms persistence", () => {
     assert.equal(zen?.canva.status, "unavailable");
     assert.equal(zen?.canva.shareUrl, null);
   });
+
+  it("saves homepage highlight slugs without wiping locale_json", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const { getSiteSettings, saveSiteSettings } = await import("./store.ts");
+    const current = await getSiteSettings(sql);
+    assert.ok(current);
+    await saveSiteSettings(
+      sql,
+      {
+        name_zh: current.name_zh,
+        name_en: current.name_en,
+        person: current.person,
+        role: current.role,
+        headline: current.headline,
+        subhead: current.subhead,
+        narrative: current.narrative,
+        email: current.email,
+        github: current.github,
+        github_handle: current.github_handle,
+        location: current.location,
+        seo_title: current.seo_title,
+        seo_description: current.seo_description,
+        homepage_json: { highlightSlugs: ["framelab", "planform"] },
+        locale_json: { zh: { headline: "中文" }, en: { headline: "EN" } },
+      },
+      "admin-1",
+    );
+    const saved = await getSiteSettings(sql);
+    assert.deepEqual(saved?.homepage_json.highlightSlugs, ["framelab", "planform"]);
+    assert.equal(saved?.locale_json.zh?.headline, "中文");
+    assert.equal(saved?.locale_json.en?.headline, "EN");
+    assert.equal(saved?.headline, current.headline);
+  });
 });

@@ -17,6 +17,11 @@ import {
 import type { AdminProject } from "@/lib/cms/store";
 import { EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
 import type { ProjectInput } from "@/lib/cms/schema";
+import { experienceConfigSchema } from "@/lib/cms/schema";
+import { parseCanvaDesign } from "@/lib/canva/parse";
+import { parseCanvaPageIds } from "@/lib/canva/embed";
+import { githubSyncDiff, type GithubDiffRow } from "@/lib/github/diff";
+import { GithubSyncDiff } from "./GithubSyncDiff";
 
 function toForm(project: AdminProject): ProjectInput {
   const { id: _id, created_at: _c, updated_at: _u, updated_by: _b, published_at: _p, ...rest } = project;
@@ -28,13 +33,18 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [revisions, setRevisions] = useState<Array<{ id: string; note: string | null; created_at: string }>>([]);
-  const [githubPreview, setGithubPreview] = useState<string | null>(null);
+  const [githubDiff, setGithubDiff] = useState<GithubDiffRow[] | null>(null);
+  const [githubFetch, setGithubFetch] = useState<string | null>(null);
+  const [configText, setConfigText] = useState(() => JSON.stringify(form.experience_config ?? {}, null, 2));
+  const [configError, setConfigError] = useState<string | null>(null);
 
   const initial = useMemo(() => JSON.stringify(toForm(project)), [project]);
 
   useEffect(() => {
     setForm(toForm(project));
     setDirty(false);
+    setConfigText(JSON.stringify(toForm(project).experience_config ?? {}, null, 2));
+    setConfigError(null);
   }, [project]);
 
   useEffect(() => {
@@ -146,16 +156,54 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           value={form.media[0]?.src ?? ""}
           onChange={(value) =>
             patch("media", value
-              ? [{ src: value, alt: form.media[0]?.alt || form.title, kind: form.media[0]?.kind ?? "image" }]
-              : [])
+              ? [{ src: value, alt: form.media[0]?.alt || form.title, kind: form.media[0]?.kind ?? "image" }, ...form.media.slice(1)]
+              : form.media.slice(1))
           }
         />
         <Field
           label="封面 alt"
           value={form.media[0]?.alt ?? ""}
           onChange={(value) =>
-            patch("media", form.media[0] ? [{ ...form.media[0], alt: value }] : [])
+            patch("media", form.media[0] ? [{ ...form.media[0], alt: value }, ...form.media.slice(1)] : [])
           }
+        />
+        <label className="grid gap-1 text-sm">
+          封面類型
+          <select
+            className="min-h-11 rounded-xl border border-line px-3"
+            value={form.media[0]?.kind ?? "image"}
+            onChange={(event) =>
+              patch(
+                "media",
+                form.media[0]
+                  ? [{ ...form.media[0], kind: event.target.value as "image" | "video" }, ...form.media.slice(1)]
+                  : [],
+              )
+            }
+          >
+            <option value="image">image</option>
+            <option value="video">video</option>
+          </select>
+        </label>
+        <Field
+          label="影片 URL（選填，kind=video 時使用）"
+          value={form.media.find((item) => item.kind === "video")?.src ?? ""}
+          onChange={(value) => {
+            const images = form.media.filter((item) => item.kind !== "video");
+            patch(
+              "media",
+              value
+                ? [
+                    ...images,
+                    {
+                      src: value,
+                      alt: form.media.find((item) => item.kind === "video")?.alt || `${form.title} 影片`,
+                      kind: "video" as const,
+                    },
+                  ]
+                : images,
+            );
+          }}
         />
       </fieldset>
 
@@ -177,15 +225,14 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() =>
               void previewGithubFn({ data: { id: project.id, url: form.github_url ?? undefined } })
-                .then((result) =>
-                  setGithubPreview(
-                    JSON.stringify(
-                      { current: result.current, incoming: result.incoming, fetch: result.fetch },
-                      null,
-                      2,
-                    ),
-                  ),
-                )
+                .then((result) => {
+                  setGithubDiff(githubSyncDiff(result.current, result.incoming));
+                  setGithubFetch(
+                    result.fetch.ok
+                      ? `探測成功 · HTTP ${result.fetch.status}`
+                      : `探測失敗 · ${result.fetch.error ?? result.fetch.errorCode ?? result.fetch.status}`,
+                  );
+                })
                 .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "預覽失敗"))
             }
           >
@@ -203,15 +250,30 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             同步 GitHub
           </button>
         </div>
-        {githubPreview ? (
-          <pre className="max-h-64 overflow-auto rounded-xl bg-surface-blue p-3 text-xs">{githubPreview}</pre>
-        ) : null}
+        {githubFetch ? <p className="text-xs text-muted">{githubFetch}</p> : null}
+        {githubDiff ? <GithubSyncDiff rows={githubDiff} /> : null}
       </fieldset>
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">Canva / Demo / 體驗</legend>
-        <Field label="Canva 分享" value={form.canva_share_url ?? ""} onChange={(value) => patch("canva_share_url", value)} />
+        <Field
+          label="Canva 分享"
+          value={form.canva_share_url ?? ""}
+          onChange={(value) => {
+            const parsed = parseCanvaDesign(value);
+            patch("canva_share_url", parsed?.shareUrl ?? value);
+            if (parsed) {
+              patch("canva_embed_url", parsed.embedUrl);
+              patch("canva_design_id", parsed.designId);
+            }
+          }}
+        />
         <Field label="Canva 嵌入" value={form.canva_embed_url ?? ""} onChange={(value) => patch("canva_embed_url", value)} />
+        <Field
+          label="Canva 頁面 ID（逗號分隔，可貼明天的分享連結後再填）"
+          value={(form.canva_page_ids ?? []).join(", ")}
+          onChange={(value) => patch("canva_page_ids", parseCanvaPageIds(value))}
+        />
         <Field label="封面" value={form.canva_thumbnail_url ?? ""} onChange={(value) => patch("canva_thumbnail_url", value)} />
         <Field label="Canva alt" value={form.canva_alt ?? ""} onChange={(value) => patch("canva_alt", value)} />
         <Field label="Canva 說明" value={form.canva_caption ?? ""} onChange={(value) => patch("canva_caption", value)} />
@@ -231,6 +293,25 @@ export function ProjectForm({ project }: { project: AdminProject }) {
               <option key={item}>{item}</option>
             ))}
           </select>
+        </label>
+        <label className="grid gap-1 text-sm">
+          experience_config JSON
+          <textarea
+            className="min-h-40 rounded-xl border border-line px-3 py-2 font-mono text-xs"
+            value={configText}
+            onChange={(event) => {
+              const value = event.target.value;
+              setConfigText(value);
+              try {
+                const parsed = experienceConfigSchema.parse(JSON.parse(value || "{}"));
+                patch("experience_config", parsed);
+                setConfigError(null);
+              } catch {
+                setConfigError("JSON 尚未通過，儲存前請修正。");
+              }
+            }}
+          />
+          {configError ? <span className="text-xs text-alert">{configError}</span> : null}
         </label>
         <div className="flex flex-wrap gap-2">
           <button
@@ -271,12 +352,32 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           }
         />
         <Area
+          label="中文摘要"
+          value={String(form.locale_json?.zh?.summary ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, summary: value },
+            })
+          }
+        />
+        <Area
           label="英文標題"
           value={String(form.locale_json?.en?.title ?? "")}
           onChange={(value) =>
             patch("locale_json", {
               ...form.locale_json,
               en: { ...form.locale_json?.en, title: value },
+            })
+          }
+        />
+        <Area
+          label="英文摘要"
+          value={String(form.locale_json?.en?.summary ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, summary: value },
             })
           }
         />

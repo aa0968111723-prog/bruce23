@@ -1,15 +1,18 @@
 import { useRef, useState } from "react";
 
+type Region = { id: string; label: string; x: number; y: number; w: number; h: number };
+
 type Analysis = {
   areaBright: number;
   contrast: number;
   textRegions: number;
   note: string;
+  regions: Region[];
 };
 
 function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return { areaBright: 0, contrast: 0, textRegions: 0, note: "畫布不可用" };
+  if (!ctx) return { areaBright: 0, contrast: 0, textRegions: 0, note: "畫布不可用", regions: [] };
   const w = 160;
   const h = Math.max(1, Math.round((image.height / image.width) * w));
   canvas.width = w;
@@ -40,12 +43,31 @@ function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
   const mean = sum / n;
   const variance = sumSq / n - mean * mean;
   const contrast = Math.sqrt(Math.max(0, variance));
-  const textRegions = rowEdges.filter((count) => count > w * 0.18).length;
+  const textRows = rowEdges
+    .map((count, y) => ({ y, count }))
+    .filter((row) => row.count > w * 0.18);
+  const regions: Region[] = [
+    { id: "center", label: "中央顯著性（推估）", x: 28, y: 22, w: 44, h: 48 },
+    { id: "bright", label: "高亮面積（推估）", x: 8, y: 8, w: 28, h: 22 },
+  ];
+  if (textRows.length) {
+    const first = textRows[0].y / h;
+    const last = textRows[textRows.length - 1].y / h;
+    regions.push({
+      id: "text",
+      label: "文字帶（推估）",
+      x: 10,
+      y: Math.round(first * 100),
+      w: 80,
+      h: Math.max(8, Math.round((last - first) * 100)),
+    });
+  }
   return {
     areaBright: Math.round((bright / n) * 100),
     contrast: Math.round(contrast),
-    textRegions,
+    textRegions: textRows.length,
     note: "熱圖與區域是像素對比推估，不是眼動追蹤。",
+    regions,
   };
 }
 
@@ -89,7 +111,7 @@ export function PosterVision() {
   return (
     <div>
       <p className="text-sm text-muted">
-        上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。熱圖是 AI／顯著性推估，不是眼動儀。
+        上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。熱圖與框選區域是顯著性推估，不是眼動儀。
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <label className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
@@ -127,13 +149,27 @@ export function PosterVision() {
       <div className="relative mt-4 overflow-hidden rounded-2xl bg-surface shadow-card">
         <img ref={imgRef} src={src} alt="待分析海報" className="w-full" onLoad={() => setAnalysis(null)} />
         <canvas ref={heatRef} className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply" />
+        {analysis?.regions.map((region) => (
+          <div
+            key={region.id}
+            className="pointer-events-none absolute rounded-md border border-mint/80 bg-mint/10 px-1 text-[10px] text-ink"
+            style={{
+              left: `${region.x}%`,
+              top: `${region.y}%`,
+              width: `${region.w}%`,
+              height: `${region.h}%`,
+            }}
+          >
+            {region.label}
+          </div>
+        ))}
       </div>
       <canvas ref={canvasRef} className="hidden" />
       {analysis ? (
         <ul className="mt-4 grid gap-2 text-sm">
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">高亮面積約 {analysis.areaBright}%</li>
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">對比（標準差）{analysis.contrast}</li>
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">疑似文字列 {analysis.textRegions} 帶</li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">高亮面積約 {analysis.areaBright}%（推估）</li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">對比（標準差）{analysis.contrast}（推估）</li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">疑似文字列 {analysis.textRegions} 帶（推估）</li>
           <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted">{analysis.note}</li>
         </ul>
       ) : (

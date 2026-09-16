@@ -55,6 +55,15 @@ describe("canva allowlist", () => {
   it("rejects non-canva hosts", () => {
     assert.equal(isAllowedCanvaUrl("https://example.com/design/x"), false);
   });
+
+  it("does not treat short /d/ links as public design embeds", () => {
+    assert.equal(parseCanvaDesign("https://www.canva.com/d/ysK5sYZisVEjZFe"), null);
+  });
+
+  it("parses view/edit/watch share shapes", () => {
+    assert.equal(parseCanvaDesign("https://www.canva.com/design/DAGabc123/edit")?.designId, "DAGabc123");
+    assert.equal(parseCanvaDesign("https://www.canva.com/design/DAGabc123/watch")?.embedUrl?.includes("embed"), true);
+  });
 });
 
 describe("demo verification", () => {

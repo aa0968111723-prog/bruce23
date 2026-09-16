@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 
@@ -12,11 +12,21 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   const repo = project.github.repo;
   const branch = project.github.branch ?? "main";
 
+  function onKey(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      setIndex((value) => Math.min(steps.length - 1, value + 1));
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      setIndex((value) => Math.max(0, value - 1));
+    }
+  }
+
   if (!step) return <p className="text-sm text-muted">尚未設定走查步驟。</p>;
 
   return (
-    <div>
-      <p className="text-sm text-muted">依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。</p>
+    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label="Folio 走查">
+      <p className="text-sm text-muted">依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。左右鍵換步驟。</p>
       <div className="mt-4 rounded-2xl bg-surface p-5 shadow-card">
         <p className="text-xs text-mint-deep">
           {index + 1} / {steps.length}

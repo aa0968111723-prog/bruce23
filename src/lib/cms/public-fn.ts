@@ -53,6 +53,7 @@ export const getPublicSiteFn = createServerFn({ method: "GET" }).handler(async (
       location: row.location,
       seoTitle: row.seo_title,
       seoDescription: row.seo_description,
+      homepageHighlightSlugs: row.homepage_json?.highlightSlugs ?? [],
     };
   });
 });

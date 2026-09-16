@@ -78,7 +78,14 @@ function IntegrationsPage() {
               <span className="text-xs text-muted">{item.public ? "公開" : "未公開"}</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              GitHub {integrationStatusLabel[item.github.status]} · Canva {integrationStatusLabel[item.canva.status]} · Demo {integrationStatusLabel[item.demo.status]}
+              GitHub {integrationStatusLabel[item.github.status]}
+              {item.github.lastSyncedAt ? ` · 上次探測 ${item.github.lastSyncedAt.slice(0, 16)}` : " · 尚未探測"}
+              {" · "}
+              Canva {integrationStatusLabel[item.canva.status]}
+              {item.canva.lastSyncedAt ? ` · 上次探測 ${item.canva.lastSyncedAt.slice(0, 16)}` : " · 尚未探測"}
+              {" · "}
+              Demo {integrationStatusLabel[item.demo.status]}
+              {item.demo.lastVerifiedAt ? ` · 上次探測 ${item.demo.lastVerifiedAt.slice(0, 16)}` : " · 尚未探測"}
             </p>
             {item.github.error ? <p className="text-xs text-alert">{item.github.error}</p> : null}
             <div className="mt-3 flex flex-wrap gap-2">

@@ -116,7 +116,9 @@ export async function ensureSeed(
         location: site.location,
         seo_title: `${site.nameZh} · ${site.person}`,
         seo_description: site.narrative,
-        homepage_json: {},
+        homepage_json: {
+          highlightSlugs: projects.map((item) => item.slug),
+        },
         locale_json: {
           en: {
             headline: site.subhead,
@@ -125,6 +127,13 @@ export async function ensureSeed(
         },
       },
       actor,
+    );
+  } else if (!(settings.homepage_json.highlightSlugs?.length)) {
+    await sql.query(
+      `update site_settings
+       set homepage_json = jsonb_set(coalesce(homepage_json, '{}'::jsonb), '{highlightSlugs}', $1::jsonb, true)
+       where id = 'default'`,
+      [JSON.stringify(projects.map((item) => item.slug))],
     );
   }
 

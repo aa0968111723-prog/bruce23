@@ -13,10 +13,10 @@ const VERSIONS: Version[] = [
 export function DuigaoBoard({ project }: { project: PublicProject }) {
   const poster = project.media[0]?.src ?? "/media/covers/duigao.svg";
   const [version, setVersion] = useState("v1");
-  const [pins, setPins] = useState<Pin[]>([
-    { id: "p1", x: 32, y: 28, note: "主標再大一點" },
-  ]);
+  const [pins, setPins] = useState<Pin[]>([{ id: "p1", x: 32, y: 28, note: "主標再大一點" }]);
   const [compare, setCompare] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [pending, setPending] = useState<{ x: number; y: number } | null>(null);
   const current = VERSIONS.find((item) => item.id === version) ?? VERSIONS[0];
 
   return (
@@ -48,14 +48,44 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
       <div className={`mt-4 grid gap-3 ${compare ? "md:grid-cols-2" : ""}`}>
         <PosterLayer
           src={poster}
+          label={current.label}
           filter={current.filter}
           pins={pins}
-          onAdd={(pin) => setPins((list) => [...list, pin])}
+          onPick={(point) => setPending(point)}
         />
         {compare ? (
-          <PosterLayer src={poster} filter="grayscale(1)" pins={pins} readOnly />
+          <PosterLayer src={poster} label="黑白比較" filter="grayscale(1)" pins={pins} />
         ) : null}
       </div>
+      {pending ? (
+        <form
+          className="mt-3 flex flex-wrap gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const note = draft.trim();
+            if (!note) return;
+            setPins((list) => [...list, { id: crypto.randomUUID(), x: pending.x, y: pending.y, note }]);
+            setDraft("");
+            setPending(null);
+          }}
+        >
+          <input
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            className="min-h-11 flex-1 rounded-full border border-line bg-surface px-4 text-sm"
+            placeholder={`在 ${pending.x.toFixed(0)}%, ${pending.y.toFixed(0)}% 寫註記`}
+            autoFocus
+          />
+          <button
+            type="submit"
+            className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+          >
+            加上註記
+          </button>
+        </form>
+      ) : (
+        <p className="mt-3 text-sm text-muted">點海報上的位置即可註記，不用跳出對話框。</p>
+      )}
       <ul className="mt-4 grid gap-2">
         {pins.map((pin) => (
           <li key={pin.id} className="rounded-xl bg-surface px-4 py-3 text-sm shadow-card">
@@ -71,37 +101,38 @@ function PosterLayer({
   src,
   filter,
   pins,
-  onAdd,
-  readOnly,
+  onPick,
+  label,
 }: {
   src: string;
   filter: string;
   pins: Pin[];
-  onAdd?: (pin: Pin) => void;
-  readOnly?: boolean;
+  onPick?: (point: { x: number; y: number }) => void;
+  label: string;
 }) {
   return (
-    <button
-      type="button"
-      className="relative block overflow-hidden rounded-2xl bg-surface shadow-card"
-      onClick={(event) => {
-        if (readOnly || !onAdd) return;
-        const rect = event.currentTarget.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
-        const note = window.prompt("這位置要改什麼？");
-        if (!note) return;
-        onAdd({ id: crypto.randomUUID(), x, y, note });
-      }}
-    >
-      <img src={src} alt="對稿海報" className="aspect-[4/3] w-full object-cover" style={{ filter }} />
-      {pins.map((pin) => (
-        <span
-          key={pin.id}
-          className="absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mint ring-2 ring-white"
-          style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
-        />
-      ))}
-    </button>
+    <figure>
+      <button
+        type="button"
+        className="relative block w-full overflow-hidden rounded-2xl bg-surface shadow-card"
+        onClick={(event) => {
+          if (!onPick) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / rect.width) * 100;
+          const y = ((event.clientY - rect.top) / rect.height) * 100;
+          onPick({ x, y });
+        }}
+      >
+        <img src={src} alt={`${label} 對稿海報`} className="aspect-[4/3] w-full object-cover" style={{ filter }} />
+        {pins.map((pin) => (
+          <span
+            key={pin.id}
+            className="absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mint ring-2 ring-white"
+            style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
+          />
+        ))}
+      </button>
+      <figcaption className="mt-2 text-xs text-muted">{label}</figcaption>
+    </figure>
   );
 }

@@ -268,20 +268,43 @@ export const testCanvaEmbedFn = createServerFn({ method: "POST" })
       return payload;
     }
     const parsed = parseCanvaDesign(extracted);
-    if (data.id && parsed) {
+    const payload = parsed
+      ? {
+          status: "pending" as const,
+          parsed: true,
+          liveProbe: false,
+          shareUrl: parsed.shareUrl,
+          embedUrl: parsed.embedUrl,
+          designId: parsed.designId,
+          error: "語法通過 Canva 允許清單。沒有對該設計做公開嵌入探測，不會標成已驗證。",
+        }
+      : {
+          status: "failed" as const,
+          parsed: false,
+          liveProbe: false,
+          shareUrl: extracted,
+          embedUrl: null as string | null,
+          designId: null as string | null,
+          error: "網域通過允許清單，但不是 /design/{id} 分享或嵌入網址（短網址 /d/ 不會當成公開嵌入）。",
+        };
+    if (data.id) {
       await sql.query(
-        `update projects set canva_share_url = $2, canva_embed_url = $3, canva_design_id = $4,
-          canva_status = 'verified', canva_error = null, canva_last_synced_at = now(),
-          updated_by = $5, updated_at = now() where id = $1`,
-        [data.id, parsed.shareUrl, parsed.embedUrl, parsed.designId, actor.userId],
+        `update projects set canva_share_url = coalesce($2, canva_share_url),
+          canva_embed_url = coalesce($3, canva_embed_url), canva_design_id = coalesce($4, canva_design_id),
+          canva_status = $5, canva_error = $6, canva_last_synced_at = now(),
+          updated_by = $7, updated_at = now() where id = $1`,
+        [
+          data.id,
+          parsed?.shareUrl ?? null,
+          parsed?.embedUrl ?? null,
+          parsed?.designId ?? null,
+          payload.status,
+          payload.error,
+          actor.userId,
+        ],
       );
     }
-    return {
-      status: "verified" as const,
-      shareUrl: parsed?.shareUrl ?? extracted,
-      embedUrl: parsed?.embedUrl ?? extracted,
-      designId: parsed?.designId ?? null,
-    };
+    return payload;
   });
 
 export const listIntegrationsFn = createServerFn({ method: "GET" })

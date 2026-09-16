@@ -6,17 +6,28 @@ import { cn } from "@/lib/cn";
 export function ExplorationField({
   projects,
   onOpen,
+  highlightSlugs,
 }: {
   projects: PublicProject[];
   onOpen: (project: PublicProject) => void;
+  highlightSlugs?: string[];
 }) {
   const [filter, setFilter] = useState<string | null>(null);
+  const ordered = useMemo(() => {
+    if (!highlightSlugs?.length) return projects;
+    const bySlug = new Map(projects.map((item) => [item.slug, item]));
+    const picked = highlightSlugs
+      .map((slug) => bySlug.get(slug))
+      .filter((item): item is PublicProject => Boolean(item));
+    const rest = projects.filter((item) => !highlightSlugs.includes(item.slug));
+    return [...picked, ...rest];
+  }, [highlightSlugs, projects]);
   const visible = useMemo(() => {
-    if (!filter) return projects;
+    if (!filter) return ordered;
     const spec = modalityFilters.find((item) => item.id === filter);
-    if (!spec) return projects;
-    return projects.filter((project) => spec.slugs.includes(project.slug));
-  }, [filter, projects]);
+    if (!spec) return ordered;
+    return ordered.filter((project) => spec.slugs.includes(project.slug));
+  }, [filter, ordered]);
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
