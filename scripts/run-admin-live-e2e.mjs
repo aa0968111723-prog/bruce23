@@ -367,9 +367,16 @@ async function proveLiveAdmin(page, request) {
   const liveSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
-  const canvaTab = page.locator('[role="tablist"]').first().getByRole("tab", { name: "Canva 原作" });
-  await canvaTab.scrollIntoViewIfNeeded();
-  await canvaTab.click();
+  await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
+  await page.evaluate(() => {
+    const list = document.querySelector('[role="tablist"][aria-label="作品體驗"]');
+    const tab = [...(list?.querySelectorAll('[role="tab"]') ?? [])].find((el) =>
+      (el.textContent ?? "").includes("Canva"),
+    );
+    if (!(tab instanceof HTMLElement)) throw new Error("Canva experience tab missing");
+    tab.scrollIntoView({ inline: "nearest", block: "nearest" });
+    tab.click();
+  });
   await page.waitForFunction(
     () =>
       [...document.querySelectorAll('[role="tab"]')].some(
