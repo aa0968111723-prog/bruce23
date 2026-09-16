@@ -245,53 +245,59 @@ async function proveLiveAdmin(page, request) {
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
   assert(!(await page.content()).includes(MARKER), "unpublish left the marker on the public page");
 
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await gotoReady(page, `${ORIGIN}/work/framelab`);
-  await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
-  const play = page.getByRole("tab", { name: "立即體驗" });
-  await play.click();
-  await play.focus();
-  await page.keyboard.press("ArrowRight");
-  const visual = page.getByRole("tab", { name: "視覺展示" });
-  await page.waitForFunction(
-    () =>
-      document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes("視覺展示") ??
-      false,
-    null,
-    { timeout: 5000 },
-  );
-  assert((await visual.getAttribute("aria-selected")) === "true", "ArrowRight did not move ExperiencePanel tabs");
-  await page.keyboard.press("ArrowRight");
-  const github = page.getByRole("tab", { name: "GitHub 專案" });
-  await page.waitForFunction(
-    () =>
-      document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes("GitHub") ?? false,
-    null,
-    { timeout: 5000 },
-  );
-  assert((await github.getAttribute("aria-selected")) === "true", "ArrowRight did not reach the GitHub tab");
-  const tree = page.getByRole("tree").first();
-  await tree.waitFor({ timeout: 10000 });
-  const treeItem = page.getByRole("treeitem").first();
-  await treeItem.focus();
-  const folder = page.locator('[role="treeitem"][aria-expanded]').first();
-  if (await folder.count()) {
-    await folder.focus();
-    await page.keyboard.press("ArrowRight");
-    assert((await folder.getAttribute("aria-expanded")) === "true", "ArrowRight did not expand a file-tree folder");
-    await page.keyboard.press("ArrowLeft");
-    assert((await folder.getAttribute("aria-expanded")) === "false", "ArrowLeft did not collapse a file-tree folder");
-  } else {
-    await page.keyboard.press("Enter");
-    await page.getByText("流程階段").waitFor({ timeout: 5000 });
+  const a11y = await page.context().newPage();
+  try {
+    await a11y.goto(`${ORIGIN}/work/framelab`, { waitUntil: "networkidle", timeout: 30000 });
+    await a11y.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
+    const play = a11y.getByRole("tab", { name: "立即體驗" });
+    await play.focus();
+    await a11y.keyboard.press("ArrowRight");
+    const visual = a11y.getByRole("tab", { name: "視覺展示" });
+    await a11y.waitForFunction(
+      () =>
+        [...document.querySelectorAll('[role="tab"]')].some(
+          (el) => el.getAttribute("aria-selected") === "true" && (el.textContent ?? "").includes("視覺展示"),
+        ),
+      null,
+      { timeout: 8000 },
+    );
+    assert((await visual.getAttribute("aria-selected")) === "true", "ArrowRight did not move ExperiencePanel tabs");
+    await a11y.keyboard.press("ArrowRight");
+    const github = a11y.getByRole("tab", { name: "GitHub 專案" });
+    await a11y.waitForFunction(
+      () =>
+        [...document.querySelectorAll('[role="tab"]')].some(
+          (el) => el.getAttribute("aria-selected") === "true" && (el.textContent ?? "").includes("GitHub"),
+        ),
+      null,
+      { timeout: 8000 },
+    );
+    assert((await github.getAttribute("aria-selected")) === "true", "ArrowRight did not reach the GitHub tab");
+    const tree = a11y.getByRole("tree").first();
+    await tree.waitFor({ timeout: 10000 });
+    const folder = a11y.locator('[role="treeitem"][aria-expanded]').first();
+    if (await folder.count()) {
+      await folder.focus();
+      await a11y.keyboard.press("ArrowRight");
+      assert((await folder.getAttribute("aria-expanded")) === "true", "ArrowRight did not expand a file-tree folder");
+      await a11y.keyboard.press("ArrowLeft");
+      assert((await folder.getAttribute("aria-expanded")) === "false", "ArrowLeft did not collapse a file-tree folder");
+    } else {
+      await a11y.getByRole("treeitem").first().focus();
+      await a11y.keyboard.press("Enter");
+      await a11y.getByText("流程階段").waitFor({ timeout: 5000 });
+    }
+    await a11y.emulateMedia({ reducedMotion: "reduce" });
+    await a11y.goto(`${ORIGIN}/`, { waitUntil: "domcontentloaded", timeout: 30000 });
+    const orbitDuration = await a11y.locator(".orbit").first().evaluate((el) => getComputedStyle(el).animationDuration);
+    assert(
+      orbitDuration === "0s" || orbitDuration === "0.01ms" || Number.parseFloat(orbitDuration) < 0.05,
+      `reduced-motion left orbit animation at ${orbitDuration}`,
+    );
+    await a11y.screenshot({ path: resolve(SHOTS, "experience-keyboard-reduced-motion.png"), fullPage: true });
+  } finally {
+    await a11y.close();
   }
-  await gotoReady(page, `${ORIGIN}/`);
-  const orbitDuration = await page.locator(".orbit").first().evaluate((el) => getComputedStyle(el).animationDuration);
-  assert(
-    orbitDuration === "0s" || orbitDuration === "0.01ms" || Number.parseFloat(orbitDuration) < 0.05,
-    `reduced-motion left orbit animation at ${orbitDuration}`,
-  );
-  await page.screenshot({ path: resolve(SHOTS, "experience-keyboard-reduced-motion.png"), fullPage: true });
   console.log("ok - live /admin draft → preview → publish → public → reload → unpublish");
   console.log("ok - ExperiencePanel keyboard + prefers-reduced-motion");
 }
