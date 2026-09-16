@@ -18,7 +18,14 @@ export function ExperienceCanvas({ project }: { project: PublicProject }) {
   const config = resolveExperienceConfig(project);
   if (mode === "process-map") return <ProcessMap project={project} />;
   if (mode === "timeline") return <FrameTimeline project={project} />;
-  if (mode === "spatial-preview") return <PlanformSpace project={project} />;
+  if (mode === "spatial-preview") {
+    return (
+      <div className="grid gap-6">
+        <PlanformSpace project={project} />
+        <LiveDemoStage project={project} />
+      </div>
+    );
+  }
   if (mode === "conversation-preview" && config.conversation?.engine === "zen-local") {
     return <ZenTalk project={project} />;
   }
@@ -27,7 +34,14 @@ export function ExperienceCanvas({ project }: { project: PublicProject }) {
   if (mode === "image-comparison" && config.comparison?.variant === "poster-analysis") {
     return <PosterVision project={project} />;
   }
-  if (mode === "image-comparison") return <DuigaoBoard project={project} />;
+  if (mode === "image-comparison") {
+    return (
+      <div className="grid gap-6">
+        <DuigaoBoard project={project} />
+        <LiveDemoStage project={project} />
+      </div>
+    );
+  }
   if (mode === "live-demo") return <LiveDemoStage project={project} />;
   if (mode === "canva-embed") return <CanvaStage project={project} />;
   if (mode === "github-explorer") return <GithubExplorer project={project} />;

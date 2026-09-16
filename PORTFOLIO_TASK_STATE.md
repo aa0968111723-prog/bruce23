@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: OG/PWA light-studio icons + honest Canva empty states (not complete)
+Cycle: per-work playtest vs original spec (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -25,6 +25,13 @@ Updated: 2026-09-16
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
 - PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
+
+## This cycle (playtest)
+
+- Folio walkthrough now draws a stage from saved `walkthrough` steps (canvas / command / audit / MCP), not a blank 1/4 card.
+- Poster Vision auto-runs heatmap + region estimates when the sample loads; still labeled as pixel estimate, not eye-tracking.
+- AI Director OS nodes show GitHub source paths on the chips, plus process summary in the panel.
+- Planform / 對稿 live demos stay iframe-only when hydrate marks them verified+embeddable (Zeabur HTML, no frame-bust). AI Director OS and Hermes remain open-in-new-tab (`frame-ancestors none`).
 
 ## This cycle (CODE leftovers)
 

@@ -179,17 +179,36 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(processMap, /ArrowRight|useRovingTabs/);
+    assert.match(processMap, /node.githubPath/);
+    assert.match(processMap, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
       "utf8",
     );
     assert.match(timeline, /示範/);
     assert.match(timeline, /不是 GPU/);
+    const folioWalk = readFileSync(
+      new URL("../../../src/components/experience/modes/FolioWalkthrough.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(folioWalk, /data-walkthrough-stage/);
+    assert.match(folioWalk, /walkthroughStageKind/);
+    assert.match(folioWalk, /CanvasStage/);
+    assert.match(folioWalk, /不是空白計數器/);
+    const canvas = readFileSync(
+      new URL("../../../src/components/experience/ExperienceCanvas.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(canvas, /spatial-preview/);
+    assert.match(canvas, /LiveDemoStage/);
+    assert.match(canvas, /DuigaoBoard/);
     const poster = readFileSync(
       new URL("../../../src/components/experience/modes/PosterVision.tsx", import.meta.url),
       "utf8",
     );
     assert.match(poster, /推估/);
+    assert.match(poster, /onLoad/);
+    assert.match(poster, /自動畫熱圖/);
     const planform = readFileSync(
       new URL("../../../src/components/experience/modes/PlanformSpace.tsx", import.meta.url),
       "utf8",

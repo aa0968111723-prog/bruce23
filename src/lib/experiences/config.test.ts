@@ -8,6 +8,7 @@ import {
 } from "../cms/schema.ts";
 import { defaultExperienceConfig, mergeExperienceConfig } from "./defaults.ts";
 import { howItWorksSteps } from "./resolve.ts";
+import { walkthroughStageKind } from "./walkthrough.ts";
 
 const MODE_FIXTURES: Record<(typeof EXPERIENCE_MODES)[number], unknown> = {
   "live-demo": {
@@ -228,5 +229,13 @@ describe("experience config merge", () => {
     });
     assert.ok(uncustomizedSeed.some((step) => step.includes("畫布")));
     assert.ok(uncustomizedSeed[0]?.includes("文件模型") || uncustomizedSeed[0]?.includes("畫布"));
+  });
+
+  it("maps Folio walkthrough steps onto distinct visual stages from config", () => {
+    assert.equal(walkthroughStageKind({ title: "畫布", path: "src/components/editor/canvas-stage.tsx" }), "canvas");
+    assert.equal(walkthroughStageKind({ title: "指令層", path: "src/components/editor/command-palette.tsx" }), "command");
+    assert.equal(walkthroughStageKind({ title: "設計檢查", path: "src/components/editor/audit-panel.tsx" }), "audit");
+    assert.equal(walkthroughStageKind({ title: "MCP 邊界", path: "src/components/editor/mcp-panel.tsx" }), "mcp");
+    assert.equal(walkthroughStageKind({ title: "匯出", path: "src/lib/export.ts" }), "document");
   });
 });

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 
@@ -83,11 +83,11 @@ export function PosterVision({ project }: { project?: PublicProject }) {
   const [src, setSrc] = useState(sampleSrc);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
-  function run() {
+  const run = useCallback(() => {
     const image = imgRef.current;
     const canvas = canvasRef.current;
     const heat = heatRef.current;
-    if (!image || !canvas) return;
+    if (!image || !canvas || !image.naturalWidth) return;
     const result = analyze(image, canvas);
     result.note = disclaimer;
     setAnalysis(result);
@@ -112,7 +112,11 @@ export function PosterVision({ project }: { project?: PublicProject }) {
       }
       ctx.putImageData(out, 0, 0);
     }
-  }
+  }, [disclaimer]);
+
+  useEffect(() => {
+    if (imgRef.current?.complete) run();
+  }, [src, run]);
 
   return (
     <div>
@@ -154,7 +158,15 @@ export function PosterVision({ project }: { project?: PublicProject }) {
         </button>
       </div>
       <div className="relative mt-4 overflow-hidden rounded-2xl bg-surface shadow-card">
-        <img ref={imgRef} src={src} alt="待分析海報" className="w-full" onLoad={() => setAnalysis(null)} />
+        <img
+          ref={imgRef}
+          src={src}
+          alt="待分析海報"
+          className="w-full"
+          onLoad={() => {
+            run();
+          }}
+        />
         <canvas ref={heatRef} className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply" />
         {analysis?.regions.map((region) => (
           <div
@@ -180,7 +192,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted">{analysis.note}</li>
         </ul>
       ) : (
-        <p className="mt-3 text-sm text-muted">按分析後才會畫熱圖。計算有解析度上限，細節會被縮小。</p>
+        <p className="mt-3 text-sm text-muted">樣本載入後會自動畫熱圖。也可再按分析。計算有解析度上限，細節會被縮小。</p>
       )}
     </div>
   );

@@ -42,11 +42,14 @@ export function ProcessMap({ project }: { project: PublicProject }) {
               aria-selected={current?.id === node.id}
               tabIndex={tabs.tabIndex(node.id)}
               onClick={() => setActive(node.id)}
-              className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm md:flex-1 md:rounded-2xl md:px-3 md:py-3 ${
-                current?.id === node.id ? "bg-ink text-bg md:bg-mint md:text-primary-foreground" : "bg-surface shadow-card"
+              className={`inline-flex min-h-11 flex-col items-start justify-center rounded-2xl px-3 py-2 text-left text-sm md:flex-1 ${
+                current?.id === node.id ? "bg-mint text-primary-foreground" : "bg-surface shadow-card"
               }`}
             >
-              {node.label}
+              <span className="font-medium">{node.label}</span>
+              <span className={`mt-0.5 max-w-[11rem] truncate text-[11px] ${current?.id === node.id ? "text-primary-foreground/80" : "text-muted"}`}>
+                {node.githubPath}
+              </span>
             </button>
             {index < nodes.length - 1 ? (
               <span className="hidden px-1 text-muted md:inline" aria-hidden>
