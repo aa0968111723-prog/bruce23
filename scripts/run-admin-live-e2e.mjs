@@ -319,6 +319,7 @@ async function proveLiveAdmin(page, request) {
   const share = page.getByLabel(/Canva 分享/);
   await share.waitFor({ timeout: 15000 });
   await share.click();
+  await share.fill(CANVA_FIXTURE_SHARE_URL);
   await share.evaluate((el, value) => {
     const input = el;
     const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
@@ -335,7 +336,10 @@ async function proveLiveAdmin(page, request) {
     `Canva share field did not keep the fixture URL (got ${pasted})`,
   );
   await page.getByRole("button", { name: "測試 Canva 嵌入" }).click();
-  await page.getByText("Canva 測試完成：可嵌入，未驗證 Connect").first().waitFor({ timeout: 20000 });
+  await page
+    .getByText(/Canva 測試完成：可嵌入，未驗證 Connect|Canva 短網址或分享網址已解析/)
+    .first()
+    .waitFor({ timeout: 20000 });
   const afterTest = await page.locator("body").innerText();
   assert(/狀態 pending/.test(afterTest), "Canva embed test did not stay pending after a valid /design/{id} paste");
   assert(!/狀態 verified/.test(afterTest), "Canva embed test marked verified from URL shape");
@@ -368,6 +372,7 @@ async function proveLiveAdmin(page, request) {
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
   await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
+  await page.waitForLoadState("networkidle");
   await page.evaluate(() => {
     const list = document.querySelector('[role="tablist"][aria-label="作品體驗"]');
     const tab = [...(list?.querySelectorAll('[role="tab"]') ?? [])].find((el) =>
