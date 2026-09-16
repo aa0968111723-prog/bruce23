@@ -4,6 +4,7 @@ import {
   applyGithubFn,
   connectCanvaFn,
   getCanvaConnectFn,
+  hydrateGithubFn,
   listIntegrationsFn,
   publishProjectFn,
   testCanvaEmbedFn,
@@ -62,6 +63,13 @@ function IntegrationsPage() {
       <p className="mt-4 text-xs text-muted">
         GitHub token：{data?.githubTokenConfigured ? "伺服器已設定（不會送到前端）" : "未設定，只讀公開 repo"}
       </p>
+      <button
+        type="button"
+        className="mt-3 min-h-11 rounded-full bg-ink px-4 text-sm text-bg"
+        onClick={() => void act("已嘗試同步待處理 GitHub", () => hydrateGithubFn())}
+      >
+        同步所有待處理 GitHub
+      </button>
       <ul className="mt-6 grid gap-3">
         {data?.items.map((item) => (
           <li key={item.id} className="rounded-2xl bg-surface p-4 shadow-card">

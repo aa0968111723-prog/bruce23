@@ -38,7 +38,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
   const catalog = experienceForSlug(project.slug);
   const hints = catalog?.fileHints ?? [];
   const hintMap = new Map(hints.map((item) => [item.path, item]));
-  const tree = github.fileTree ?? [];
+  const tree = useMemo(() => github.fileTree ?? [], [github.fileTree]);
   const nested = useMemo(() => nest(tree), [tree]);
   const [open, setOpen] = useState<Record<string, boolean>>({ "": true });
   const [selected, setSelected] = useState<Node | null>(null);

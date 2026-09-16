@@ -48,7 +48,7 @@ export function githubTreeUrl(owner: string, repo: string, branch: string, path 
 }
 
 export function summarizeReadme(markdown: string, maxChars = 4000): string {
-  const trimmed = markdown.replace(/\u0000/g, "").trim();
+  const trimmed = markdown.split("\0").join("").trim();
   if (trimmed.length <= maxChars) return trimmed;
   return `${trimmed.slice(0, maxChars).trimEnd()}\n\n…（README 已截斷，完整內容請到 GitHub 查看）`;
 }

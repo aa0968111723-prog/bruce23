@@ -2,7 +2,15 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { PGlite } from "@electric-sql/pglite";
-import { createProjectRecord, listPublishedProjects, saveProjectRecord, setPublication, countProjects } from "./store.ts";
+import {
+  applyGithubSync,
+  countProjects,
+  createProjectRecord,
+  getAdminProject,
+  listPublishedProjects,
+  saveProjectRecord,
+  setPublication,
+} from "./store.ts";
 import { ensureSeed } from "./seed.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
@@ -78,9 +86,9 @@ describe("cms persistence", () => {
 
   it("does not duplicate seed rows", async () => {
     const { sql } = await setup();
-    await ensureSeed(sql);
+    await ensureSeed(sql, { skipGithubHydrate: true });
     const first = await countProjects(sql);
-    await ensureSeed(sql);
+    await ensureSeed(sql, { skipGithubHydrate: true });
     const second = await countProjects(sql);
     assert.equal(first, 8);
     assert.equal(second, 8);
@@ -118,5 +126,63 @@ describe("cms persistence", () => {
     );
     const list = await listPublishedProjects(sql);
     assert.equal(list[0].slug, "featured-one");
+  });
+
+  it("github sync does not overwrite Chinese narrative", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "framed",
+        title: "中文標題",
+        subtitle: "個人觀點",
+        category: "Multimodal",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 1,
+        summary: "這是作者的設計決策，不可以被 README 蓋掉。",
+        problem: "問題敘事",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        languages: { TypeScript: 10 },
+        topics: ["animation"],
+        latestCommit: { sha: "abc1234dead", message: "docs" },
+        fileTree: [{ path: "README.md", type: "file", size: 12 }],
+      },
+      "admin-1",
+    );
+    const after = await getAdminProject(sql, created.id);
+    assert.equal(after.title, "中文標題");
+    assert.equal(after.summary, "這是作者的設計決策，不可以被 README 蓋掉。");
+    assert.equal(after.problem, "問題敘事");
+    assert.equal(after.github_readme, "# FrameLab");
+    assert.equal(after.github_sync_status, "verified");
   });
 });

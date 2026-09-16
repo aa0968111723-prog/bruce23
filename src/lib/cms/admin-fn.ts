@@ -390,30 +390,16 @@ export const connectCanvaFn = createServerFn({ method: "POST" })
     };
   });
 
+export const hydrateGithubFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { hydratePendingGithub } = await import("./hydrate");
+    return hydratePendingGithub(sql, { force: true });
+  });
+
 async function fetchGithub(sql: import("@/lib/db").Sql, url: string) {
   const { fetchPublicRepo } = await import("@/lib/github/client.server");
-  const cache = {
-    async read(key: string) {
-      const rows = await sql.query<{ etag: string | null; last_modified: string | null; body: string | null }>(
-        `select etag, last_modified, body from github_http_cache where cache_key = $1 limit 1`,
-        [key],
-      );
-      const row = rows[0];
-      if (!row?.body) return null;
-      return { etag: row.etag ?? undefined, lastModified: row.last_modified ?? undefined, body: row.body };
-    },
-    async write(key: string, value: { etag?: string; lastModified?: string; body: string; status: number }) {
-      await sql.query(
-        `insert into github_http_cache (cache_key, etag, last_modified, body, status, fetched_at)
-         values ($1,$2,$3,$4,$5, now())
-         on conflict (cache_key) do update set etag = excluded.etag, last_modified = excluded.last_modified,
-           body = excluded.body, status = excluded.status, fetched_at = now()`,
-        [key, value.etag ?? null, value.lastModified ?? null, value.body, value.status],
-      );
-    },
-  };
-  return fetchPublicRepo(url, {
-    token: process.env.GITHUB_READ_TOKEN?.trim(),
-    cache,
-  });
+  const { githubClientOptions } = await import("@/lib/github/sql-cache");
+  return fetchPublicRepo(url, githubClientOptions(sql));
 }

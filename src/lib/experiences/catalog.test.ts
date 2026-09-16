@@ -29,15 +29,24 @@ describe("frontend contract", () => {
   it("does not put integration tokens in client modules", () => {
     const files = [
       "src/components/experience/ExperiencePanel.tsx",
+      "src/components/experience/GithubExplorer.tsx",
+      "src/components/experience/CanvaStage.tsx",
+      "src/components/home/ExplorationField.tsx",
+      "src/components/admin/ProjectForm.tsx",
       "src/routes/index.tsx",
       "src/routes/login.tsx",
+      "src/routes/admin/integrations.tsx",
       "src/lib/cms/public-fn.ts",
+      "src/lib/cms/privacy.ts",
     ];
     for (const file of files) {
       const text = readFileSync(new URL(`../../../${file}`, import.meta.url), "utf8");
       assert.doesNotMatch(text, /GITHUB_READ_TOKEN/);
       assert.doesNotMatch(text, /CANVA_CLIENT_SECRET/);
+      assert.doesNotMatch(text, /CANVA_CLIENT_ID/);
       assert.doesNotMatch(text, /service_role/);
+      assert.doesNotMatch(text, /VITE_GITHUB/);
+      assert.doesNotMatch(text, /VITE_CANVA/);
     }
   });
 
@@ -55,5 +64,6 @@ describe("frontend contract", () => {
     );
     assert.match(panel, /role="tab"/);
     assert.match(panel, /Escape/);
+    assert.match(header, /mobile-nav/);
   });
 });

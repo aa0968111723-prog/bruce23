@@ -9,15 +9,50 @@ import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive }
 
 export const SEED_VERSION = "portfolio-cms-1";
 
+async function ensureSeedComplements(sql: Sql): Promise<void> {
+  await sql.query(
+    `update projects
+     set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $1),
+         canva_alt = coalesce(nullif(canva_alt, ''), $2),
+         canva_caption = coalesce(canva_caption, $3),
+         canva_status = case
+           when canva_share_url is null and canva_embed_url is null then 'unavailable'
+           else canva_status
+         end
+     where slug = 'tku-zen-ai'`,
+    [
+      "/media/archive/tku-zen-poster.svg",
+      "淡大禪學社文宣原作縮圖",
+      "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。",
+    ],
+  );
+  await sql.query(
+    `update archive_items
+     set canva_status = 'unavailable',
+         canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), media->>'src')
+     where origin_note ilike '%Canva%'
+       and canva_share_url is null
+       and canva_embed_url is null
+       and canva_status in ('pending', 'not_configured')`,
+  );
+}
+
 export async function ensureSeed(
   sql: Sql,
-  options: { actor?: string } = {},
+  options: { actor?: string; skipGithubHydrate?: boolean } = {},
 ): Promise<{ seeded: boolean; skipped: boolean }> {
   const actor = options.actor ?? "seed";
   const meta = await sql.query<{ value: string }>(
     `select value from cms_meta where key = 'seed_version' limit 1`,
   );
   if (meta[0]?.value === SEED_VERSION) {
+    await ensureSeedComplements(sql);
+    if (!options.skipGithubHydrate) {
+      const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
+      if (shouldHydrateGithub()) {
+        await hydratePendingGithub(sql).catch(() => undefined);
+      }
+    }
     return { seeded: false, skipped: true };
   }
 
@@ -99,6 +134,13 @@ export async function ensureSeed(
       live_demo_type: demoUrl ? "link" : "unavailable",
       live_demo_embed_enabled: false,
       live_demo_status: demoUrl ? "pending" : "not_configured",
+      canva_thumbnail_url: project.slug === "tku-zen-ai" ? "/media/archive/tku-zen-poster.svg" : null,
+      canva_alt: project.slug === "tku-zen-ai" ? "淡大禪學社文宣原作縮圖" : null,
+      canva_caption:
+        project.slug === "tku-zen-ai"
+          ? "Canva 原作縮圖。沒有公開分享連結，所以不嵌入空白 iframe。"
+          : null,
+      canva_status: project.slug === "tku-zen-ai" ? "unavailable" : "not_configured",
       experience_mode: catalog?.mode ?? "github-explorer",
       experience_config: catalog
         ? {
@@ -141,7 +183,10 @@ export async function ensureSeed(
         origin_note: item.originNote,
         publication_status: "published",
         sort_order: index,
-        canva_status: item.originNote.includes("Canva") ? "pending" : "not_configured",
+        canva_thumbnail_url: item.originNote.includes("Canva")
+          ? (item.media?.src.replace(/\.jpg$/i, ".svg") ?? null)
+          : null,
+        canva_status: item.originNote.includes("Canva") ? "unavailable" : "not_configured",
       },
       actor,
     );
@@ -152,5 +197,12 @@ export async function ensureSeed(
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [SEED_VERSION],
   );
+  await ensureSeedComplements(sql);
+  if (!options.skipGithubHydrate) {
+    const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
+    if (shouldHydrateGithub()) {
+      await hydratePendingGithub(sql).catch(() => undefined);
+    }
+  }
   return { seeded: true, skipped: false };
 }

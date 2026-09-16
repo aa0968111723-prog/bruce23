@@ -103,6 +103,7 @@ export function ExperiencePanel({
                 className="w-full rounded-2xl bg-surface-blue object-cover"
               />
             ) : null}
+            <LiveDemoStage project={project} />
             <p className="text-sm leading-relaxed text-ink/85">{project.summary}</p>
           </div>
         ) : null}
