@@ -129,7 +129,28 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Area label="問題" value={form.problem} onChange={(value) => patch("problem", value)} />
         <Area label="角色" value={form.role} onChange={(value) => patch("role", value)} />
         <Area label="決策（一行一項）" value={form.decisions.join("\n")} onChange={(value) => patch("decisions", splitLines(value))} />
+        <Area label="多模態" value={form.modalities.join("\n")} onChange={(value) => patch("modalities", splitLines(value))} />
+        <Area label="流程" value={form.process.join("\n")} onChange={(value) => patch("process", splitLines(value))} />
+        <Area label="產出" value={form.outputs.join("\n")} onChange={(value) => patch("outputs", splitLines(value))} />
+        <Area label="技術" value={form.stack.join("\n")} onChange={(value) => patch("stack", splitLines(value))} />
+        <Area label="互動步驟" value={form.interaction_steps.join("\n")} onChange={(value) => patch("interaction_steps", splitLines(value))} />
         <Area label="限制" value={form.limitations.join("\n")} onChange={(value) => patch("limitations", splitLines(value))} />
+        <Field
+          label="封面圖"
+          value={form.media[0]?.src ?? ""}
+          onChange={(value) =>
+            patch("media", value
+              ? [{ src: value, alt: form.media[0]?.alt || form.title, kind: form.media[0]?.kind ?? "image" }]
+              : [])
+          }
+        />
+        <Field
+          label="封面 alt"
+          value={form.media[0]?.alt ?? ""}
+          onChange={(value) =>
+            patch("media", form.media[0] ? [{ ...form.media[0], alt: value }] : [])
+          }
+        />
       </fieldset>
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
@@ -186,6 +207,8 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field label="Canva 分享" value={form.canva_share_url ?? ""} onChange={(value) => patch("canva_share_url", value)} />
         <Field label="Canva 嵌入" value={form.canva_embed_url ?? ""} onChange={(value) => patch("canva_embed_url", value)} />
         <Field label="封面" value={form.canva_thumbnail_url ?? ""} onChange={(value) => patch("canva_thumbnail_url", value)} />
+        <Field label="Canva alt" value={form.canva_alt ?? ""} onChange={(value) => patch("canva_alt", value)} />
+        <Field label="Canva 說明" value={form.canva_caption ?? ""} onChange={(value) => patch("canva_caption", value)} />
         <Field label="Demo URL" value={form.live_demo_url ?? ""} onChange={(value) => patch("live_demo_url", value)} />
         <Field label="Demo 標籤" value={form.live_demo_label ?? ""} onChange={(value) => patch("live_demo_label", value)} />
         <label className="grid gap-1 text-sm">
@@ -231,6 +254,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <legend className="font-display text-lg">SEO / 語系</legend>
         <Field label="SEO 標題" value={form.seo_title ?? ""} onChange={(value) => patch("seo_title", value)} />
         <Area label="SEO 描述" value={form.seo_description ?? ""} onChange={(value) => patch("seo_description", value)} />
+        <Area
+          label="中文標題"
+          value={String(form.locale_json?.zh?.title ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, title: value },
+            })
+          }
+        />
         <Area
           label="英文標題"
           value={String(form.locale_json?.en?.title ?? "")}

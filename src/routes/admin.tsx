@@ -9,14 +9,14 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
-const links = [
+const links: Array<{ to: "/admin" | "/admin/projects" | "/admin/archive" | "/admin/integrations" | "/admin/preview" | "/admin/settings"; label: string; exact?: boolean }> = [
   { to: "/admin", label: "總覽", exact: true },
   { to: "/admin/projects", label: "作品" },
   { to: "/admin/archive", label: "Archive" },
   { to: "/admin/integrations", label: "整合" },
   { to: "/admin/preview", label: "預覽" },
   { to: "/admin/settings", label: "設定" },
-] as const;
+];
 
 function AdminLayout() {
   const { user, isPending } = useCurrentUserState();

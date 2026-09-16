@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { listAdminArchiveFn, saveArchiveFn } from "@/lib/cms/admin-fn";
+import type { AdminArchiveItem } from "@/lib/cms/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/archive")({
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/admin/archive")({
 });
 
 function AdminArchive() {
-  const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+  const [items, setItems] = useState<AdminArchiveItem[]>([]);
   useEffect(() => {
     void listAdminArchiveFn().then(setItems);
   }, []);

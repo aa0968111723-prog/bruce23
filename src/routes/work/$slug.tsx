@@ -5,15 +5,18 @@ import { NotFoundView } from "@/components/site/NotFoundView";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import { getPublishedProjectFn, listPublishedProjectsFn } from "@/lib/cms/public-fn";
 import { NotFoundError } from "@/lib/cms/errors";
+import type { PublicProject } from "@/lib/cms/privacy";
 
 export const Route = createFileRoute("/work/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({ params }): Promise<{ project: PublicProject; others: PublicProject[] }> => {
     try {
       const [project, all] = await Promise.all([
         getPublishedProjectFn({ data: { slug: params.slug } }),
         listPublishedProjectsFn(),
       ]);
-      return { project, others: all.filter((item) => item.slug !== project.slug).slice(0, 3) };
+      const published = all as PublicProject[];
+      const current = project as PublicProject;
+      return { project: current, others: published.filter((item) => item.slug !== current.slug).slice(0, 3) };
     } catch (err) {
       if (err instanceof NotFoundError || (err instanceof Error && err.message.includes("找不到"))) {
         throw notFound();
@@ -36,7 +39,10 @@ export const Route = createFileRoute("/work/$slug")({
 });
 
 function CaseStudy() {
-  const { project, others } = Route.useLoaderData();
+  const { project, others } = Route.useLoaderData() as {
+    project: PublicProject;
+    others: PublicProject[];
+  };
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",

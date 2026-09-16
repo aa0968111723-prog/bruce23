@@ -1,3 +1,4 @@
+import type { ExperienceConfig, LocaleCopy, ProjectMedia, SourceEvidence } from "./schema.ts";
 import type { IntegrationStatus } from "./status.ts";
 
 export type GithubPublicSlice = {
@@ -42,6 +43,7 @@ export type DemoPublicSlice = {
   embedEnabled: boolean;
   status: IntegrationStatus;
   lastVerifiedAt: string | null;
+  error?: string | null;
 };
 
 export type PublicProject = {
@@ -63,18 +65,32 @@ export type PublicProject = {
   outputs: string[];
   stack: string[];
   limitations: string[];
-  media: Array<{ src: string; alt: string; kind: "image" | "video"; caption?: string; poster?: string }>;
-  locale: Record<string, unknown>;
+  media: ProjectMedia[];
+  locale: { zh?: LocaleCopy; en?: LocaleCopy };
   seoTitle?: string | null;
   seoDescription?: string | null;
   experienceMode: string | null;
-  experienceConfig: Record<string, unknown>;
+  experienceConfig: ExperienceConfig;
   interactionSteps: string[];
-  sourceEvidence: Array<{ label: string; href?: string; note: string; kind?: string }>;
+  sourceEvidence: SourceEvidence[];
   github: GithubPublicSlice;
   canva: CanvaPublicSlice;
   demo: DemoPublicSlice;
 };
+
+export function canvaViewerState(canva: CanvaPublicSlice, failed: boolean) {
+  if (!canva.embedUrl && !canva.shareUrl && !canva.thumbnailUrl) return "empty" as const;
+  if (failed || !canva.embedUrl) return "fallback" as const;
+  return "embed" as const;
+}
+
+export function demoViewerState(demo: DemoPublicSlice, failed: boolean) {
+  if (!demo.url) return "empty" as const;
+  if (!demo.embedEnabled || failed || demo.status === "unavailable" || demo.status === "failed") {
+    return "fallback" as const;
+  }
+  return "embed" as const;
+}
 
 const SECRET_KEYS = [
   "ciphertext",

@@ -1,4 +1,5 @@
 import { useState, type PointerEvent } from "react";
+import type { PublicProject } from "@/lib/cms/privacy";
 
 type Prop = {
   id: string;
@@ -15,7 +16,7 @@ const INITIAL: Prop[] = [
   { id: "path", label: "走道", use: "進出動線", size: "90 cm 寬（示意）", x: 78, y: 55 },
 ];
 
-export function PlanformSpace() {
+export function PlanformSpace(_props?: { project?: PublicProject }) {
   const [props, setProps] = useState(INITIAL);
   const [selected, setSelected] = useState<string>("desk");
   const [tilt, setTilt] = useState(18);

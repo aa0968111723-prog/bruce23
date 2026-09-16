@@ -201,10 +201,10 @@ export function experienceForSlug(slug: string): ExperienceCatalogEntry | null {
   return experienceCatalog[slug] ?? null;
 }
 
-export const modalityFilters = [
+export const modalityFilters: Array<{ id: string; label: string; slugs: string[] }> = [
   { id: "image", label: "圖像", slugs: ["poster-vision-ai", "folio", "duigao", "ai-director-os"] },
   { id: "video", label: "影片", slugs: ["framelab", "ai-director-os"] },
   { id: "space", label: "空間", slugs: ["planform"] },
   { id: "poster", label: "文宣", slugs: ["poster-vision-ai", "duigao", "tku-zen-ai", "folio"] },
   { id: "interactive", label: "互動", slugs: ["duigao", "tku-zen-ai", "hermes-console", "planform"] },
-] as const;
+];

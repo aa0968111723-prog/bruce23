@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { cn } from "@/lib/cn";
@@ -32,6 +32,15 @@ export function ExperiencePanel({
     const label = project.experienceConfig.honestyLabel;
     return typeof label === "string" ? label : null;
   }, [project.experienceConfig]);
+
+  useEffect(() => {
+    if (!onClose) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   const body = (
     <div className="flex min-h-0 flex-1 flex-col">

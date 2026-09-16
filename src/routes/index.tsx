@@ -11,7 +11,10 @@ import { processSteps, site as fallbackSite } from "@/content/site";
 import type { PublicProject } from "@/lib/cms/privacy";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
+  loader: async (): Promise<{
+    projects: PublicProject[];
+    site: Awaited<ReturnType<typeof getPublicSiteFn>>;
+  }> => {
     const [projects, site] = await Promise.all([
       listPublishedProjectsFn(),
       getPublicSiteFn(),
@@ -22,7 +25,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { projects, site } = Route.useLoaderData();
+  const { projects, site } = Route.useLoaderData() as {
+    projects: PublicProject[];
+    site: Awaited<ReturnType<typeof getPublicSiteFn>>;
+  };
   const [open, setOpen] = useState<PublicProject | null>(null);
   const featured = projects.filter((item) => item.featured);
   const nameEn = site?.nameEn ?? fallbackSite.nameEn;

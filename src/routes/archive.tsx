@@ -6,14 +6,15 @@ import { listPublishedArchiveFn } from "@/lib/cms/public-fn";
 import { archiveKinds } from "@/content/archive";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
+import type { PublicArchiveItem } from "@/lib/cms/store";
 
 export const Route = createFileRoute("/archive")({
-  loader: () => listPublishedArchiveFn(),
+  loader: async (): Promise<PublicArchiveItem[]> => listPublishedArchiveFn(),
   component: Archive,
 });
 
 function Archive() {
-  const items = Route.useLoaderData();
+  const items = Route.useLoaderData() as PublicArchiveItem[];
   const [kind, setKind] = useState<(typeof archiveKinds)[number]["id"]>("all");
   const visible = useMemo(() => {
     if (kind === "all") return items;

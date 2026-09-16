@@ -53,6 +53,7 @@
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-bg);
     color: var(--color-ink);
+    overflow-x: clip;
   }
 
   body {

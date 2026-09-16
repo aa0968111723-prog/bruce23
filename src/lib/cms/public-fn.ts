@@ -40,19 +40,19 @@ export const getPublicSiteFn = createServerFn({ method: "GET" }).handler(async (
     const row = await getSiteSettings(sql);
     if (!row) return null;
     return {
-      nameZh: String(row.name_zh),
-      nameEn: String(row.name_en),
-      person: String(row.person),
-      role: String(row.role),
-      headline: String(row.headline),
-      subhead: String(row.subhead),
-      narrative: String(row.narrative),
-      email: String(row.email),
-      github: String(row.github),
-      githubHandle: String(row.github_handle),
-      location: String(row.location),
-      seoTitle: (row.seo_title as string | null) ?? null,
-      seoDescription: (row.seo_description as string | null) ?? null,
+      nameZh: row.name_zh,
+      nameEn: row.name_en,
+      person: row.person,
+      role: row.role,
+      headline: row.headline,
+      subhead: row.subhead,
+      narrative: row.narrative,
+      email: row.email,
+      github: row.github,
+      githubHandle: row.github_handle,
+      location: row.location,
+      seoTitle: row.seo_title,
+      seoDescription: row.seo_description,
     };
   });
 });

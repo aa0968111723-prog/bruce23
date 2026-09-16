@@ -1,10 +1,11 @@
 import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
-import type { ArchiveInput, ProjectInput, SiteSettingsInput } from "./schema.ts";
+import type { ArchiveInput, ExperienceConfig, LocaleCopy, ProjectInput, SiteSettingsInput } from "./schema.ts";
 import {
   asRecord,
   asStringArray,
   stripSecrets,
+  type CanvaPublicSlice,
   type PublicProject,
 } from "./privacy.ts";
 import type { IntegrationStatus, PublicationStatus } from "./status.ts";
@@ -96,8 +97,8 @@ export function rowToAdminProject(row: ProjectRow): AdminProject {
     outputs: asStringArray(parseJson(row.outputs, [])),
     stack: asStringArray(parseJson(row.stack, [])),
     limitations: asStringArray(parseJson(row.limitations, [])),
-    media: parseJson(row.media, []),
-    locale_json: parseJson(row.locale_json, {}),
+    media: parseJson(row.media, []) as AdminProject["media"],
+    locale_json: parseJson(row.locale_json, {}) as AdminProject["locale_json"],
     seo_title: (row.seo_title as string | null) ?? null,
     seo_description: (row.seo_description as string | null) ?? null,
     github_url: (row.github_url as string | null) ?? null,
@@ -107,12 +108,12 @@ export function rowToAdminProject(row: ProjectRow): AdminProject {
     github_sync_enabled: row.github_sync_enabled !== false,
     github_sync_status: asStatus(row.github_sync_status, "not_configured"),
     github_last_synced_at: iso(row.github_last_synced_at),
-    github_metadata: parseJson(row.github_metadata, null),
+    github_metadata: parseJson(row.github_metadata, null) as AdminProject["github_metadata"],
     github_readme: (row.github_readme as string | null) ?? null,
-    github_file_tree: parseJson(row.github_file_tree, null),
-    github_languages: parseJson(row.github_languages, null),
-    github_topics: parseJson(row.github_topics, null),
-    github_latest_commit: parseJson(row.github_latest_commit, null),
+    github_file_tree: parseJson(row.github_file_tree, null) as AdminProject["github_file_tree"],
+    github_languages: parseJson(row.github_languages, null) as AdminProject["github_languages"],
+    github_topics: parseJson(row.github_topics, null) as AdminProject["github_topics"],
+    github_latest_commit: parseJson(row.github_latest_commit, null) as AdminProject["github_latest_commit"],
     live_demo_url: (row.live_demo_url as string | null) ?? null,
     live_demo_label: (row.live_demo_label as string | null) ?? null,
     live_demo_type: (row.live_demo_type as AdminProject["live_demo_type"]) ?? null,
@@ -123,7 +124,7 @@ export function rowToAdminProject(row: ProjectRow): AdminProject {
     canva_share_url: (row.canva_share_url as string | null) ?? null,
     canva_embed_url: (row.canva_embed_url as string | null) ?? null,
     canva_design_id: (row.canva_design_id as string | null) ?? null,
-    canva_page_ids: parseJson(row.canva_page_ids, null),
+    canva_page_ids: parseJson(row.canva_page_ids, null) as AdminProject["canva_page_ids"],
     canva_thumbnail_url: (row.canva_thumbnail_url as string | null) ?? null,
     canva_status: asStatus(row.canva_status, "not_configured"),
     canva_last_synced_at: iso(row.canva_last_synced_at),
@@ -131,9 +132,9 @@ export function rowToAdminProject(row: ProjectRow): AdminProject {
     canva_caption: (row.canva_caption as string | null) ?? null,
     canva_error: (row.canva_error as string | null) ?? null,
     experience_mode: (row.experience_mode as AdminProject["experience_mode"]) ?? null,
-    experience_config: parseJson(row.experience_config, {}),
+    experience_config: parseJson(row.experience_config, {}) as ExperienceConfig,
     interaction_steps: asStringArray(parseJson(row.interaction_steps, [])),
-    source_evidence: parseJson(row.source_evidence, []),
+    source_evidence: parseJson(row.source_evidence, []) as AdminProject["source_evidence"],
     created_at: iso(row.created_at),
     updated_at: iso(row.updated_at),
     updated_by: (row.updated_by as string | null) ?? null,
@@ -167,7 +168,7 @@ export function toPublicProject(row: ProjectRow): PublicProject | null {
     stack: admin.stack,
     limitations: admin.limitations,
     media: admin.media,
-    locale: admin.locale_json ?? {},
+    locale: (admin.locale_json ?? {}) as { zh?: LocaleCopy; en?: LocaleCopy },
     seoTitle: admin.seo_title,
     seoDescription: admin.seo_description,
     experienceMode: admin.experience_mode ?? null,
@@ -180,40 +181,41 @@ export function toPublicProject(row: ProjectRow): PublicProject | null {
       kind: item.kind,
     })),
     github: {
-      url: githubOk ? admin.github_url : null,
-      owner: githubOk ? admin.github_owner : null,
-      repo: githubOk ? admin.github_repo : null,
-      branch: githubOk ? admin.github_branch : null,
+      url: githubOk ? (admin.github_url ?? null) : null,
+      owner: githubOk ? (admin.github_owner ?? null) : null,
+      repo: githubOk ? (admin.github_repo ?? null) : null,
+      branch: githubOk ? (admin.github_branch ?? null) : null,
       syncStatus: admin.github_sync_status,
-      lastSyncedAt: admin.github_last_synced_at,
+      lastSyncedAt: admin.github_last_synced_at ?? null,
       name: githubOk && typeof meta.name === "string" ? meta.name : undefined,
       description: githubOk ? (typeof meta.description === "string" ? meta.description : null) : undefined,
       languages: githubOk ? (admin.github_languages ?? undefined) : undefined,
       topics: githubOk ? (admin.github_topics ?? undefined) : undefined,
       latestCommit: githubOk ? (admin.github_latest_commit ?? undefined) : undefined,
-      readme: githubOk ? admin.github_readme : null,
+      readme: githubOk ? (admin.github_readme ?? null) : null,
       fileTree: githubOk ? (admin.github_file_tree ?? undefined) : undefined,
       htmlUrl: githubOk && typeof meta.htmlUrl === "string" ? meta.htmlUrl : undefined,
       updatedAt: githubOk && typeof meta.updatedAt === "string" ? meta.updatedAt : undefined,
     },
     canva: {
-      shareUrl: admin.canva_share_url,
-      embedUrl: admin.canva_embed_url,
-      designId: admin.canva_design_id,
+      shareUrl: admin.canva_share_url ?? null,
+      embedUrl: admin.canva_embed_url ?? null,
+      designId: admin.canva_design_id ?? null,
       pageIds: admin.canva_page_ids ?? undefined,
-      thumbnailUrl: admin.canva_thumbnail_url,
+      thumbnailUrl: admin.canva_thumbnail_url ?? null,
       status: admin.canva_status,
-      lastSyncedAt: admin.canva_last_synced_at,
-      alt: admin.canva_alt,
-      caption: admin.canva_caption,
+      lastSyncedAt: admin.canva_last_synced_at ?? null,
+      alt: admin.canva_alt ?? null,
+      caption: admin.canva_caption ?? null,
     },
     demo: {
-      url: admin.live_demo_url,
-      label: admin.live_demo_label,
-      type: admin.live_demo_type,
+      url: admin.live_demo_url ?? null,
+      label: admin.live_demo_label ?? null,
+      type: admin.live_demo_type ?? null,
       embedEnabled: admin.live_demo_embed_enabled,
       status: admin.live_demo_status,
-      lastVerifiedAt: admin.live_demo_last_verified_at,
+      lastVerifiedAt: admin.live_demo_last_verified_at ?? null,
+      error: admin.live_demo_error ?? null,
     },
   });
 }
@@ -433,15 +435,21 @@ export async function setPublication(
 }
 
 export async function listRevisions(sql: Sql, projectId: string) {
-  return sql.query<{
+  const rows = await sql.query<{
     id: string;
     note: string | null;
-    created_at: string;
+    created_at: string | Date;
     created_by: string | null;
   }>(
     `select id, note, created_at, created_by from project_revisions where project_id = $1 order by created_at desc limit 40`,
     [projectId],
   );
+  return rows.map((row) => ({
+    id: String(row.id),
+    note: row.note,
+    created_at: iso(row.created_at) ?? "",
+    created_by: row.created_by,
+  }));
 }
 
 export async function restoreRevision(
@@ -537,8 +545,21 @@ export async function applyGithubSync(
   return getAdminProject(sql, id);
 }
 
-export async function listPublishedArchive(sql: Sql) {
-  const rows = await sql.query<Record<string, unknown>>(
+export type PublicArchiveItem = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: string;
+  year: string;
+  summary: string;
+  media: PublicProject["media"][number] | null;
+  href: string | null;
+  originNote: string;
+  canva: CanvaPublicSlice;
+};
+
+export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[]> {
+  const rows = await sql.query<ProjectRow>(
     `select * from archive_items where publication_status = 'published' order by sort_order asc, title asc`,
   );
   return rows.map((row) => ({
@@ -548,7 +569,7 @@ export async function listPublishedArchive(sql: Sql) {
     kind: String(row.kind),
     year: String(row.year),
     summary: String(row.summary ?? ""),
-    media: parseJson(row.media, null),
+    media: parseJson<PublicProject["media"][number] | null>(row.media, null),
     href: (row.href as string | null) ?? null,
     originNote: String(row.origin_note ?? ""),
     canva: {
@@ -557,16 +578,59 @@ export async function listPublishedArchive(sql: Sql) {
       designId: (row.canva_design_id as string | null) ?? null,
       thumbnailUrl: (row.canva_thumbnail_url as string | null) ?? null,
       status: asStatus(row.canva_status, "not_configured"),
+      lastSyncedAt: iso(row.canva_last_synced_at),
       alt: (row.canva_alt as string | null) ?? null,
       caption: (row.canva_caption as string | null) ?? null,
     },
   }));
 }
 
-export async function listAdminArchive(sql: Sql) {
-  return sql.query<Record<string, unknown>>(
-    `select * from archive_items order by sort_order asc, title asc`,
-  );
+export type AdminArchiveItem = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: string;
+  year: string;
+  summary: string;
+  media: PublicProject["media"][number] | null;
+  href: string | null;
+  origin_note: string;
+  publication_status: PublicationStatus;
+  sort_order: number;
+  canva_share_url: string | null;
+  canva_embed_url: string | null;
+  canva_design_id: string | null;
+  canva_page_ids: string[] | null;
+  canva_thumbnail_url: string | null;
+  canva_status: IntegrationStatus;
+  canva_alt: string | null;
+  canva_caption: string | null;
+};
+
+export async function listAdminArchive(sql: Sql): Promise<AdminArchiveItem[]> {
+  const rows = await sql.query<ProjectRow>(`select * from archive_items order by sort_order asc, title asc`);
+  return rows.map((row) => ({
+    id: String(row.id),
+    slug: String(row.slug),
+    title: String(row.title),
+    kind: String(row.kind),
+    year: String(row.year),
+    summary: String(row.summary ?? ""),
+    media: parseJson<PublicProject["media"][number] | null>(row.media, null),
+    href: (row.href as string | null) ?? null,
+    origin_note: String(row.origin_note ?? ""),
+    publication_status:
+      row.publication_status === "draft" || row.publication_status === "archived" ? row.publication_status : "published",
+    sort_order: Number(row.sort_order ?? 0),
+    canva_share_url: (row.canva_share_url as string | null) ?? null,
+    canva_embed_url: (row.canva_embed_url as string | null) ?? null,
+    canva_design_id: (row.canva_design_id as string | null) ?? null,
+    canva_page_ids: parseJson<string[] | null>(row.canva_page_ids, null),
+    canva_thumbnail_url: (row.canva_thumbnail_url as string | null) ?? null,
+    canva_status: asStatus(row.canva_status, "not_configured"),
+    canva_alt: (row.canva_alt as string | null) ?? null,
+    canva_caption: (row.canva_caption as string | null) ?? null,
+  }));
 }
 
 export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: string }, actor: string) {
@@ -616,11 +680,51 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
   return id;
 }
 
-export async function getSiteSettings(sql: Sql) {
-  const rows = await sql.query<Record<string, unknown>>(
+export type SiteSettingsRow = {
+  name_zh: string;
+  name_en: string;
+  person: string;
+  role: string;
+  headline: string;
+  subhead: string;
+  narrative: string;
+  email: string;
+  github: string;
+  github_handle: string;
+  location: string;
+  seo_title: string | null;
+  seo_description: string | null;
+  homepage_json: SiteSettingsInput["homepage_json"];
+  locale_json: SiteSettingsInput["locale_json"];
+  updated_at: string | null;
+  updated_by: string | null;
+};
+
+export async function getSiteSettings(sql: Sql): Promise<SiteSettingsRow | null> {
+  const rows = await sql.query<ProjectRow>(
     `select * from site_settings where id = 'default' limit 1`,
   );
-  return rows[0] ?? null;
+  const row = rows[0];
+  if (!row) return null;
+  return {
+    name_zh: String(row.name_zh),
+    name_en: String(row.name_en),
+    person: String(row.person),
+    role: String(row.role),
+    headline: String(row.headline),
+    subhead: String(row.subhead),
+    narrative: String(row.narrative),
+    email: String(row.email),
+    github: String(row.github),
+    github_handle: String(row.github_handle),
+    location: String(row.location),
+    seo_title: (row.seo_title as string | null) ?? null,
+    seo_description: (row.seo_description as string | null) ?? null,
+    homepage_json: parseJson<SiteSettingsInput["homepage_json"]>(row.homepage_json, {}),
+    locale_json: parseJson<SiteSettingsInput["locale_json"]>(row.locale_json, {}),
+    updated_at: iso(row.updated_at),
+    updated_by: (row.updated_by as string | null) ?? null,
+  };
 }
 
 export async function saveSiteSettings(sql: Sql, input: SiteSettingsInput, actor: string) {

@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Expand, ExternalLink } from "lucide-react";
-import type { PublicProject } from "@/lib/cms/privacy";
+import { canvaViewerState, type PublicProject } from "@/lib/cms/privacy";
 
 export function CanvaStage({ project }: { project: PublicProject }) {
   const canva = project.canva;
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const pages = canva.pageIds?.length ? canva.pageIds : ["cover"];
+  const state = canvaViewerState(canva, failed);
   const embed = canva.embedUrl;
 
-  if (!embed && !canva.shareUrl && !canva.thumbnailUrl) {
+  if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
         這件作品還沒有公開的 Canva 嵌入。不會顯示空白 iframe，也不會假裝已連上 Canva API。
@@ -17,7 +18,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
     );
   }
 
-  if (failed || !embed) {
+  if (state === "fallback" || !embed) {
     return (
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         {canva.thumbnailUrl ? (
@@ -46,12 +47,19 @@ export function CanvaStage({ project }: { project: PublicProject }) {
     );
   }
 
+  const page = pages[pageIndex];
+  const embedSrc =
+    page && page !== "cover"
+      ? `${embed}${embed.includes("?") ? "&" : "?"}page=${encodeURIComponent(page)}`
+      : embed;
+
   return (
     <div className="grid gap-3">
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         <iframe
+          key={embedSrc}
           title={canva.alt ?? `${project.title} Canva 原作`}
-          src={embed}
+          src={embedSrc}
           className="aspect-[4/3] w-full bg-surface-blue"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
@@ -60,9 +68,9 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {pages.map((page, index) => (
+        {pages.map((item, index) => (
           <button
-            key={page}
+            key={item}
             type="button"
             className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm ${
               pageIndex === index ? "bg-ink text-bg" : "bg-surface shadow-card"

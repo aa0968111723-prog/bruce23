@@ -64,6 +64,18 @@ export function ExplorationField({
       </div>
 
       <div className="mt-6 grid gap-3 lg:hidden">
+        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="作品節點">
+          {visible.map((project) => (
+            <button
+              key={`node-${project.slug}`}
+              type="button"
+              onClick={() => onOpen(project)}
+              className="node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl bg-surface-mint px-4 text-sm shadow-card"
+            >
+              {project.title}
+            </button>
+          ))}
+        </div>
         {visible.map((project) => (
           <button
             key={project.slug}

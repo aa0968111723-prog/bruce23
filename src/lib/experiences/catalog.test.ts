@@ -41,10 +41,19 @@ describe("frontend contract", () => {
     }
   });
 
-  it("keeps reduced-motion and 44px targets in the design system", () => {
+  it("keeps reduced-motion, skip link, and 44px targets", () => {
     const css = readFileSync(new URL("../../../src/styles.css", import.meta.url), "utf8");
     assert.match(css, /prefers-reduced-motion/);
+    assert.match(css, /overflow-x:\s*clip/);
     const header = readFileSync(new URL("../../../src/components/site/SiteHeader.tsx", import.meta.url), "utf8");
     assert.match(header, /min-h-11/);
+    const shell = readFileSync(new URL("../../../src/components/site/SiteShell.tsx", import.meta.url), "utf8");
+    assert.match(shell, /跳到內容/);
+    const panel = readFileSync(
+      new URL("../../../src/components/experience/ExperiencePanel.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(panel, /role="tab"/);
+    assert.match(panel, /Escape/);
   });
 });

@@ -61,7 +61,48 @@ export const githubMetadataSchema = z.object({
   errorCode: z.string().optional(),
 });
 
-export const experienceConfigSchema = z.record(z.string(), z.unknown());
+export const processNodeSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  summary: z.string(),
+  githubPath: z.string(),
+  purpose: z.string(),
+  stage: z.string(),
+});
+
+export const walkthroughStepSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  path: z.string().optional(),
+});
+
+export const fileHintSchema = z.object({
+  path: z.string(),
+  purpose: z.string(),
+  stage: z.string(),
+});
+
+export const experienceConfigSchema = z
+  .object({
+    honestyLabel: z.string().optional(),
+    processNodes: z.array(processNodeSchema).optional(),
+    walkthrough: z.array(walkthroughStepSchema).optional(),
+    fileHints: z.array(fileHintSchema).optional(),
+  })
+  .default({});
+
+export const homepageJsonSchema = z
+  .object({
+    highlightSlugs: z.array(z.string()).optional(),
+  })
+  .default({});
+
+export const siteLocaleSchema = z
+  .object({
+    zh: z.record(z.string(), z.string()).optional(),
+    en: z.record(z.string(), z.string()).optional(),
+  })
+  .default({});
 
 export const projectInputSchema = z.object({
   slug: z
@@ -126,7 +167,7 @@ export const projectInputSchema = z.object({
   canva_caption: z.string().optional().nullable(),
   canva_error: z.string().optional().nullable(),
   experience_mode: z.enum(EXPERIENCE_MODES).optional().nullable(),
-  experience_config: experienceConfigSchema.default({}),
+  experience_config: experienceConfigSchema,
   interaction_steps: z.array(z.string()).default([]),
   source_evidence: z.array(sourceEvidenceSchema).default([]),
 });
@@ -170,8 +211,8 @@ export const siteSettingsSchema = z.object({
   location: z.string().min(1),
   seo_title: z.string().optional().nullable(),
   seo_description: z.string().optional().nullable(),
-  homepage_json: z.record(z.string(), z.unknown()).default({}),
-  locale_json: z.record(z.string(), z.unknown()).default({}),
+  homepage_json: homepageJsonSchema,
+  locale_json: siteLocaleSchema,
 });
 
 export type ProjectInput = z.infer<typeof projectInputSchema>;
@@ -180,3 +221,6 @@ export type ArchiveInput = z.infer<typeof archiveInputSchema>;
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
 export type SourceEvidence = z.infer<typeof sourceEvidenceSchema>;
 export type ProjectMedia = z.infer<typeof mediaSchema>;
+export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
+export type LocaleCopy = z.infer<typeof localeCopySchema>;
+export type GithubMetadata = z.infer<typeof githubMetadataSchema>;

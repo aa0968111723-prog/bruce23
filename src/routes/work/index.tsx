@@ -5,14 +5,15 @@ import { listPublishedProjectsFn } from "@/lib/cms/public-fn";
 import { workCategories } from "@/content/projects";
 import type { ProjectCategory } from "@/content/types";
 import { cn } from "@/lib/cn";
+import type { PublicProject } from "@/lib/cms/privacy";
 
 export const Route = createFileRoute("/work/")({
-  loader: () => listPublishedProjectsFn(),
+  loader: async (): Promise<PublicProject[]> => listPublishedProjectsFn(),
   component: WorkIndex,
 });
 
 function WorkIndex() {
-  const projects = Route.useLoaderData();
+  const projects = Route.useLoaderData() as PublicProject[];
   const [category, setCategory] = useState<"All" | ProjectCategory>("All");
   const visible = useMemo(
     () =>
