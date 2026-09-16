@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: per-work playtest vs original spec (not complete)
+Cycle: section-13 test matrix coverage (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -25,6 +25,14 @@ Updated: 2026-09-16
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
 - PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
+
+## This cycle (section 13 test matrix)
+
+- Handler-level: unauthenticated and signed-in non-admin cannot `handleCreateProject` / `handleSaveDraft` / `handleSetPublication` (no allowlist mock, no production mint).
+- Drafts stay off `publicSitemapPaths` and off `publishedCreativeWorkJsonLd` built from `listPublishedProjects`; public case still 404s.
+- CanvaStage / LiveDemoStage: one iframe, only after empty/local/fallback (or embed) returns.
+- `nextRovingTabIndex` unit + live ExperiencePanel/GitHub tree keyboard E2E.
+- GitHub client parses repo JSON onto metadata (name/description/language/branch).
 
 ## This cycle (playtest)
 

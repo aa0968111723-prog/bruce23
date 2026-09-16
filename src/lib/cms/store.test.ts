@@ -24,6 +24,8 @@ import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
 import { projectCanvaInventory } from "../canva/inventory.ts";
 import { howItWorksSteps } from "../experiences/resolve.ts";
+import { publicSitemapPaths } from "./sitemap.ts";
+import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
 
 function sqlFrom(pg: PGlite): Sql {
   const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
@@ -74,9 +76,28 @@ describe("cms persistence", () => {
     const { sql } = await setup();
     const created = await createProjectRecord(sql, sample(), "admin-1");
     await setPublication(sql, created.id, "published", "admin-1");
-    assert.equal((await listPublishedProjects(sql)).length, 1);
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 1);
+    assert.equal(published[0].slug, "test-work");
+    assert.equal(publishedCreativeWorkJsonLd(published[0]).url, "/work/test-work");
+    assert.equal(
+      publicSitemapPaths(published.map((item) => item.slug)).includes("/work/test-work"),
+      true,
+    );
+    const live = await getPublishedProject(sql, "test-work");
+    assert.equal(publishedCreativeWorkJsonLd(live).name, "Test Work");
     await setPublication(sql, created.id, "draft", "admin-1");
-    assert.equal((await listPublishedProjects(sql)).length, 0);
+    const unpublished = await listPublishedProjects(sql);
+    assert.equal(unpublished.length, 0);
+    assert.equal(
+      publicSitemapPaths(unpublished.map((item) => item.slug)).includes("/work/test-work"),
+      false,
+    );
+    assert.equal(
+      unpublished.map((item) => publishedCreativeWorkJsonLd(item).url).includes("/work/test-work"),
+      false,
+    );
+    await assert.rejects(() => getPublishedProject(sql, "test-work"), NotFoundError);
   });
 
   it("save draft updates copy without publishing", async () => {
@@ -210,7 +231,16 @@ describe("cms persistence", () => {
     const { sql } = await setup();
     await createProjectRecord(sql, sample(), "admin-1");
     await assert.rejects(() => getPublishedProject(sql, "test-work"), NotFoundError);
-    assert.equal((await listPublishedProjects(sql)).length, 0);
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 0);
+    assert.equal(
+      publicSitemapPaths(published.map((item) => item.slug)).includes("/work/test-work"),
+      false,
+    );
+    assert.equal(
+      published.map((item) => publishedCreativeWorkJsonLd(item).url).includes("/work/test-work"),
+      false,
+    );
   });
 
   it("archive then restore updates public visibility", async () => {

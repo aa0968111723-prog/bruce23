@@ -19,6 +19,7 @@ import {
 import {
   applyGithubSync,
   getAdminProject,
+  getAdminProjectBySlug,
   getPublishedProject,
   getSiteSettings,
   listPublishedProjects,
@@ -203,6 +204,67 @@ export async function runAdminE2E() {
         }),
       ForbiddenError,
     );
+  });
+
+  await step("rejects unauthenticated create/save/publish mutations", async () => {
+    const payload = projectInputSchema.parse({
+      ...sample(),
+      slug: "unauth-cannot-create",
+    });
+    await assert.rejects(
+      () =>
+        withStartRequest(adminRequest(), async () => {
+          await handleCreateProject({ userId: "anon" }, payload);
+        }),
+      UnauthorizedError,
+    );
+    await assert.rejects(
+      () =>
+        withStartRequest(adminRequest(), async () => {
+          await handleSaveDraft({ userId: "anon" }, { id: "missing", summary: "nope" });
+        }),
+      UnauthorizedError,
+    );
+    await assert.rejects(
+      () =>
+        withStartRequest(adminRequest(), async () => {
+          await handleSetPublication({ userId: "anon" }, "missing", "published");
+        }),
+      UnauthorizedError,
+    );
+    const sql = await getSql();
+    await assert.rejects(() => getAdminProjectBySlug(sql, "unauth-cannot-create"), NotFoundError);
+  });
+
+  await step("rejects signed-in non-admin create/save/publish mutations", async () => {
+    const visitor = await mintSession({ email: "visitor@example.com", name: "Visitor" });
+    const payload = projectInputSchema.parse({
+      ...sample(),
+      slug: "visitor-cannot-create",
+    });
+    await assert.rejects(
+      () =>
+        withAuthedAdmin(visitor.token, async (ctx) => {
+          await handleCreateProject(ctx, payload);
+        }),
+      ForbiddenError,
+    );
+    await assert.rejects(
+      () =>
+        withAuthedAdmin(visitor.token, async (ctx) => {
+          await handleSaveDraft(ctx, { id: "missing", summary: "hack" });
+        }),
+      ForbiddenError,
+    );
+    await assert.rejects(
+      () =>
+        withAuthedAdmin(visitor.token, async (ctx) => {
+          await handleSetPublication(ctx, "missing", "published");
+        }),
+      ForbiddenError,
+    );
+    const sql = await getSql();
+    await assert.rejects(() => getAdminProjectBySlug(sql, "visitor-cannot-create"), NotFoundError);
   });
 
   await step("fails closed when the allowlist is empty", async () => {

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { experienceCatalog, projectHubIds } from "./catalog.ts";
+import { nextRovingTabIndex } from "../../components/site/useRovingTabs.ts";
 
 describe("experience catalog", () => {
   it("covers all eight works with distinct modes", () => {
@@ -157,6 +158,14 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(roving, /ArrowRight/);
+    assert.match(roving, /nextRovingTabIndex/);
+    assert.equal(nextRovingTabIndex(3, 0, "ArrowRight"), 1);
+    assert.equal(nextRovingTabIndex(3, 2, "ArrowRight"), 0);
+    assert.equal(nextRovingTabIndex(3, 0, "ArrowLeft"), 2);
+    assert.equal(nextRovingTabIndex(4, 2, "Home"), 0);
+    assert.equal(nextRovingTabIndex(4, 0, "End"), 3);
+    assert.equal(nextRovingTabIndex(3, 1, "Tab"), null);
+    assert.equal(nextRovingTabIndex(0, 0, "ArrowRight"), null);
     const work = readFileSync(new URL("../../../src/routes/work/index.tsx", import.meta.url), "utf8");
     assert.match(work, /useRovingTabs/);
     assert.match(work, /name: "description"/);
@@ -174,6 +183,12 @@ describe("frontend contract", () => {
     assert.match(stage, /publicCanvaEmbedUrl/);
     assert.match(stage, /pages.length > 1/);
     assert.doesNotMatch(stage, /\["cover"\]/);
+    assert.ok(stage.indexOf('if (state === "fallback" || !embed)') < stage.indexOf("<iframe"));
+    const demoStage = readFileSync(
+      new URL("../../../src/components/experience/LiveDemoStage.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.ok(demoStage.indexOf('if (state === "embed" && demo.url') < demoStage.indexOf("<iframe"));
     const processMap = readFileSync(
       new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
       "utf8",

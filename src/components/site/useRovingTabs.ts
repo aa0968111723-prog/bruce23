@@ -1,5 +1,15 @@
 import { useRef, type KeyboardEvent } from "react";
 
+/** Pure index math for experience/work/archive tablists. Null = ignore the key. */
+export function nextRovingTabIndex(length: number, idx: number, key: string): number | null {
+  if (length <= 0 || idx < 0) return null;
+  if (key === "ArrowRight" || key === "ArrowDown") return (idx + 1) % length;
+  if (key === "ArrowLeft" || key === "ArrowUp") return (idx - 1 + length) % length;
+  if (key === "Home") return 0;
+  if (key === "End") return length - 1;
+  return null;
+}
+
 export function useRovingTabs<T extends string>(
   items: readonly T[],
   value: T,
@@ -14,19 +24,8 @@ export function useRovingTabs<T extends string>(
 
   const onKeyDown = (event: KeyboardEvent) => {
     const idx = items.indexOf(value);
-    if (idx < 0) return;
-    let next = idx;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      next = (idx + 1) % items.length;
-    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      next = (idx - 1 + items.length) % items.length;
-    } else if (event.key === "Home") {
-      next = 0;
-    } else if (event.key === "End") {
-      next = items.length - 1;
-    } else {
-      return;
-    }
+    const next = nextRovingTabIndex(items.length, idx, event.key);
+    if (next === null) return;
     event.preventDefault();
     const id = items[next];
     onChange(id);

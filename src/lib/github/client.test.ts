@@ -12,6 +12,41 @@ describe("github client honesty", () => {
     assert.equal(result.status, "failed");
   });
 
+  it("parses repository metadata from GitHub JSON", async () => {
+    const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", {
+      fetchImpl: async (input) => {
+        const url = String(input);
+        if (url.includes("/readme")) return new Response("# FrameLab", { status: 200 });
+        if (url.includes("/languages")) return new Response(JSON.stringify({ TypeScript: 80 }), { status: 200 });
+        if (url.includes("/commits")) return new Response("[]", { status: 200 });
+        if (url.includes("/git/trees")) return new Response(JSON.stringify({ tree: [] }), { status: 200 });
+        return new Response(
+          JSON.stringify({
+            name: "FrameLab",
+            description: "frame workstation",
+            private: false,
+            archived: false,
+            default_branch: "main",
+            html_url: "https://github.com/aa0968111723-prog/FrameLab",
+            updated_at: "2026-09-01T00:00:00Z",
+            language: "TypeScript",
+            topics: ["animation"],
+          }),
+          { status: 200 },
+        );
+      },
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.owner, "aa0968111723-prog");
+    assert.equal(result.repo, "FrameLab");
+    assert.equal(result.metadata?.name, "FrameLab");
+    assert.equal(result.metadata?.description, "frame workstation");
+    assert.equal(result.metadata?.language, "TypeScript");
+    assert.equal(result.metadata?.defaultBranch, "main");
+    assert.equal(result.metadata?.private, false);
+    assert.equal(result.languages?.TypeScript, 80);
+  });
+
   it("maps missing readme to a fail state without fake text", async () => {
     const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", {
       fetchImpl: async (input) => {

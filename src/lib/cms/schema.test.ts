@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
 import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
@@ -364,6 +365,69 @@ describe("privacy", () => {
       ),
       "fallback",
     );
+    assert.equal(
+      canvaViewerState(
+        {
+          shareUrl: "https://www.canva.com/design/DAGabc123/view",
+          embedUrl: "https://www.canva.com/design/DAGabc123/view?embed",
+          designId: "DAGabc123",
+          thumbnailUrl: null,
+          status: "verified",
+          lastSyncedAt: null,
+        },
+        false,
+      ),
+      "embed",
+    );
+    assert.equal(
+      demoViewerState(
+        {
+          url: "https://planform-iso-k7d2.zeabur.app",
+          label: "PLANFORM",
+          type: "iframe",
+          embedEnabled: true,
+          status: "verified",
+          lastVerifiedAt: null,
+        },
+        false,
+      ),
+      "embed",
+    );
+    assert.equal(
+      demoViewerState(
+        {
+          url: "https://ai-os-app.zeabur.app",
+          label: "AI Director OS",
+          type: "iframe",
+          embedEnabled: false,
+          status: "unavailable",
+          lastVerifiedAt: null,
+        },
+        false,
+      ),
+      "fallback",
+    );
+  });
+
+  it("CanvaStage and LiveDemoStage never put an iframe in empty/local/fallback branches", () => {
+    const canva = readFileSync(new URL("../../components/experience/CanvaStage.tsx", import.meta.url), "utf8");
+    const demo = readFileSync(new URL("../../components/experience/LiveDemoStage.tsx", import.meta.url), "utf8");
+    const canvaIframe = canva.indexOf("<iframe");
+    const demoIframe = demo.indexOf("<iframe");
+    assert.equal(canva.split("<iframe").length - 1, 1);
+    assert.equal(demo.split("<iframe").length - 1, 1);
+    assert.ok(canva.indexOf('if (state === "empty")') < canvaIframe);
+    assert.ok(canva.indexOf('if (state === "local")') < canvaIframe);
+    assert.ok(canva.indexOf('if (state === "fallback" || !embed)') < canvaIframe);
+    assert.ok(canva.indexOf("空白 iframe") < canvaIframe);
+    assert.ok(demo.indexOf('if (state === "empty")') < demoIframe);
+    assert.ok(demo.indexOf('if (state === "fallback")') < demoIframe);
+    assert.ok(demo.indexOf('if (state === "embed" && demo.url') < demoIframe);
+    assert.match(demo, /不會放空白 iframe/);
+    const caseRoute = readFileSync(new URL("../../routes/work/$slug.tsx", import.meta.url), "utf8");
+    assert.match(caseRoute, /getPublishedProjectFn/);
+    assert.match(caseRoute, /CaseStudyView/);
+    assert.doesNotMatch(caseRoute, /includeJsonLd=\{false\}/);
   });
 });
 
