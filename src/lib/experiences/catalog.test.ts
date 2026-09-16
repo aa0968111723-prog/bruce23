@@ -314,6 +314,10 @@ describe("frontend contract", () => {
     assert.match(index, /seoTitle/);
     assert.match(index, /resolveHomepageCopy\(site, fallbackSite, lang\)/);
     assert.match(index, /overlayProject/);
+    assert.match(index, /ui\.heroAlt/);
+    assert.match(index, /ui\.modalitiesAlt/);
+    assert.doesNotMatch(index, /alt="光域 AI 創作實驗室/);
+    assert.doesNotMatch(index, /alt="多模態節點"/);
     assert.match(header, /md:hidden/);
     assert.doesNotMatch(toggle, /dark:/);
     const about = readFileSync(new URL("../../../src/routes/about.tsx", import.meta.url), "utf8");
@@ -321,6 +325,22 @@ describe("frontend contract", () => {
     assert.match(about, /resolveHomepageCopy/);
     const publicFn = readFileSync(new URL("../../../src/lib/cms/public-fn.ts", import.meta.url), "utf8");
     assert.match(publicFn, /locale:/);
+    assert.doesNotMatch(publicFn, /listAdmin|getAdminProject|previewDraft|authMiddleware/);
+    const caseRoute = readFileSync(new URL("../../../src/routes/work/$slug.tsx", import.meta.url), "utf8");
+    assert.match(caseRoute, /getPublishedProjectFn/);
+    assert.doesNotMatch(caseRoute, /previewDraftFn|listAdminProjectsFn|getAdminProjectFn/);
+    const localeProvider = readFileSync(
+      new URL("../../../src/components/site/LocaleProvider.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(localeProvider, /document\.documentElement\.lang/);
+    assert.match(localeProvider, /zh-Hant/);
+    const folioStudio = readFileSync(new URL("../../../public/media/studio/folio-editor.svg", import.meta.url), "utf8");
+    const zenStudio = readFileSync(new URL("../../../public/media/studio/tku-zen-chat.svg", import.meta.url), "utf8");
+    assert.match(folioStudio, /not an operation screenshot/i);
+    assert.match(zenStudio, /not a screenshot/i);
+    assert.doesNotMatch(folioStudio, /canva\.com\/design\/DAG/);
+    assert.doesNotMatch(zenStudio, /canva\.com\/design\/DAG/);
     const jsonldView = readFileSync(new URL("../../../src/components/work/CaseStudyView.tsx", import.meta.url), "utf8");
     assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
     assert.match(jsonldView, /min-w-0 max-w-4xl/);

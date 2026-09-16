@@ -217,6 +217,10 @@ describe("viewer locale", () => {
   it("keeps chrome dictionaries distinct and skip-link copy in zh", () => {
     assert.equal(chromeFor("zh").skip, "跳到內容");
     assert.equal(chromeFor("en").skip, "Skip to content");
+    assert.match(chromeFor("zh").heroAlt, /光域/);
+    assert.match(chromeFor("en").heroAlt, /morning light/i);
+    assert.notEqual(chromeFor("zh").heroAlt, chromeFor("en").heroAlt);
+    assert.notEqual(chromeFor("zh").modalitiesAlt, chromeFor("en").modalitiesAlt);
     assert.equal(chromeFor("zh").hub.image, "圖像");
     assert.equal(chromeFor("en").hub.image, "Image");
     assert.notEqual(chromeFor("zh").workTitle, chromeFor("en").workTitle);

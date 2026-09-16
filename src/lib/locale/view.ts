@@ -160,6 +160,8 @@ export const chrome = {
     publicIntro: "公開簡介",
     publicIntroBody: "GitHub 是專案真實性來源。本站不放電話、住址或內部帳號。",
     heroCaption: "作品像漂在光場裡的展品。點下方節點即可操作。",
+    heroAlt: "光域 AI 創作實驗室：晨光中漂浮的玻璃展品卡片",
+    modalitiesAlt: "多模態節點：文字、圖像、影片、聲音、空間與互動",
     explorationTitle: "可操作的能力地圖",
     explorationBody:
       "約兩成畫面用來畫作品真正接到的模態。其餘八成是可讀的列表與卡片，不是裝飾粒子，也不用拖曳才能找到作品。",
@@ -298,6 +300,8 @@ export const chrome = {
     publicIntro: "Public notes",
     publicIntroBody: "GitHub is the source of project truth. This site does not publish phone numbers, addresses, or internal accounts.",
     heroCaption: "Works sit in the light field like exhibits. Tap a node below.",
+    heroAlt: "Luminous AI studio: glass exhibit cards floating in morning light",
+    modalitiesAlt: "Modality nodes: text, image, video, sound, space, and interaction",
     explorationTitle: "A map you can operate",
     explorationBody:
       "About a fifth of the screen shows the modalities a work actually uses. The rest is a readable list and cards — not decorative particles, and you do not have to drag to find a work.",

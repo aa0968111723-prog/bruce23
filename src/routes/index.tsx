@@ -93,7 +93,7 @@ function Home() {
             <div className="float-card overflow-hidden rounded-2xl bg-surface p-1.5">
               <img
                 src="/media/hero/light-lab.svg"
-                alt="光域 AI 創作實驗室：晨光中漂浮的玻璃展品卡片"
+                alt={ui.heroAlt}
                 className="aspect-[16/10] w-full object-cover"
                 width={1280}
                 height={720}
@@ -141,7 +141,7 @@ function Home() {
             <p className="mt-3 text-sm text-muted">{ui.processLead}</p>
             <div className="mt-6 overflow-hidden rounded-2xl shadow-card">
               <MediaFrame
-                media={{ src: "/media/hero/modalities.svg", alt: "多模態節點", kind: "image" }}
+                media={{ src: "/media/hero/modalities.svg", alt: ui.modalitiesAlt, kind: "image" }}
                 className="aspect-[16/10] w-full object-cover"
               />
             </div>
