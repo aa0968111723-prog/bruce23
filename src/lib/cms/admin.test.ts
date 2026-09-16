@@ -89,11 +89,14 @@ describe("admin allowlist", () => {
     const source = readFileSync(new URL("./admin-fn.ts", import.meta.url), "utf8");
     assert.match(source, /disconnectedCanvaStatus/);
     assert.match(source, /canvaCredentialsPresent/);
+    assert.match(source, /startCanvaOAuth/);
+    assert.match(source, /searchCanvaDesigns/);
     assert.doesNotMatch(source, /connected:\s*true/);
     assert.match(source, /authMiddleware/);
     assert.match(source, /previewDraftFn/);
     assert.match(source, /語法通過 Canva 允許清單/);
     assert.doesNotMatch(source, /canva_status = 'verified'/);
+    assert.doesNotMatch(source, /假裝已經連上/);
   });
 
   it("builds sitemap from published projects only", () => {

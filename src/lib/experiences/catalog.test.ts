@@ -52,6 +52,7 @@ describe("frontend contract", () => {
       "src/routes/admin/settings.tsx",
       "src/lib/cms/public-fn.ts",
       "src/components/admin/GithubSyncDiff.tsx",
+      "src/components/work/CaseStudyView.tsx",
     ];
     for (const file of files) {
       const text = readFileSync(new URL(`../../../${file}`, import.meta.url), "utf8");
@@ -61,6 +62,8 @@ describe("frontend contract", () => {
       assert.doesNotMatch(text, /service_role/);
       assert.doesNotMatch(text, /VITE_GITHUB/);
       assert.doesNotMatch(text, /VITE_CANVA/);
+      assert.doesNotMatch(text, /access_token/);
+      assert.doesNotMatch(text, /refresh_token/);
     }
   });
 
@@ -127,6 +130,7 @@ describe("frontend contract", () => {
     assert.match(form, /GithubSyncDiff/);
     assert.match(form, /ExperienceEditor/);
     assert.match(form, /互動展示模式/);
+    assert.match(form, /來源證據/);
     assert.doesNotMatch(form, /experience_config JSON/);
     assert.match(form, /canva_page_ids/);
     const editor = readFileSync(
@@ -137,6 +141,16 @@ describe("frontend contract", () => {
     assert.match(editor, /進階 JSON/);
     assert.match(editor, /FrameLab 時間軸/);
     assert.match(editor, /PLANFORM 物件與動線/);
+    const field = readFileSync(
+      new URL("../../../src/components/home/ExplorationField.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(field, /constellationLayout/);
+    assert.match(field, /作品與模態/);
+    const draft = readFileSync(new URL("../../../src/routes/admin/draft.$slug.tsx", import.meta.url), "utf8");
+    assert.match(draft, /CaseStudyView/);
+    assert.match(draft, /includeJsonLd=\{false\}/);
     assert.doesNotMatch(editor, /GITHUB_READ_TOKEN/);
   });
 });
+

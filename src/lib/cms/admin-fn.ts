@@ -312,10 +312,10 @@ export const listIntegrationsFn = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { sql } = await adminSql(asAuthed(context));
     const { listAdminProjects } = await import("./store");
-    const { canvaConnectMode, disconnectedCanvaStatus } = await import("@/lib/canva/oauth.server");
+    const { canvaConnectMode, loadCanvaConnectionStatus } = await import("@/lib/canva/oauth.server");
     const projects = await listAdminProjects(sql);
     return {
-      canva: disconnectedCanvaStatus(),
+      canva: await loadCanvaConnectionStatus(sql),
       canvaMode: canvaConnectMode(),
       githubTokenConfigured: Boolean(process.env.GITHUB_READ_TOKEN?.trim()),
       items: projects.map((project) => ({
@@ -388,29 +388,85 @@ export const saveArchiveFn = createServerFn({ method: "POST" })
 export const getCanvaConnectFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    await adminSql(asAuthed(context));
-    const { disconnectedCanvaStatus, canvaCredentialsPresent } = await import("@/lib/canva/oauth.server");
-    return {
-      ...disconnectedCanvaStatus(),
-      canSearch: canvaCredentialsPresent(),
-      canEditInApp: false,
-    };
+    const { sql } = await adminSql(asAuthed(context));
+    const { loadCanvaConnectionStatus } = await import("@/lib/canva/oauth.server");
+    const status = await loadCanvaConnectionStatus(sql);
+    return { ...status, canEditInApp: false };
   });
 
 export const connectCanvaFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    await adminSql(asAuthed(context));
-    const { canvaCredentialsPresent, disconnectedCanvaStatus } = await import("@/lib/canva/oauth.server");
+    const { sql, actor } = await adminSql(asAuthed(context));
+    const { startCanvaOAuth, canvaCredentialsPresent, disconnectedCanvaStatus } = await import(
+      "@/lib/canva/oauth.server"
+    );
     if (!canvaCredentialsPresent()) {
-      return disconnectedCanvaStatus();
+      return { ok: false as const, authorizeUrl: null, ...disconnectedCanvaStatus() };
     }
+    const { getRequest } = await import("@tanstack/react-start/server");
+    const request = getRequest();
+    const origin = request ? new URL(request.url).origin : null;
+    const result = await startCanvaOAuth(sql, actor.userId, origin);
     return {
-      mode: "oauth" as const,
-      connected: false,
-      status: "pending" as const,
-      message: "Canva Connect 授權網址尚未完成部署設定（redirect URI）。不會假裝已經連上。",
+      ok: result.ok,
+      authorizeUrl: result.ok ? result.authorizeUrl : null,
+      ...result.status,
     };
+  });
+
+export const disconnectCanvaFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { disconnectCanva } = await import("@/lib/canva/oauth.server");
+    return disconnectCanva(sql);
+  });
+
+export const searchCanvaDesignsFn = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ query: z.string().max(150).optional() }).parse(input ?? {}))
+  .handler(async ({ context, data }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { searchCanvaDesigns } = await import("@/lib/canva/connect.server");
+    return searchCanvaDesigns(sql, data.query ?? "");
+  });
+
+export const getCanvaDesignFn = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ designId: z.string().min(6).max(80) }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { getCanvaDesign } = await import("@/lib/canva/connect.server");
+    return getCanvaDesign(sql, data.designId);
+  });
+
+export const exportCanvaDesignFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) =>
+    z.object({ designId: z.string().min(6).max(80), format: z.enum(["png", "pdf"]) }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { sql } = await adminSql(asAuthed(context));
+    const { exportCanvaDesign } = await import("@/lib/canva/connect.server");
+    return exportCanvaDesign(sql, data);
+  });
+
+export const applyCanvaDesignFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) =>
+    z
+      .object({
+        projectId: z.string().min(1),
+        designId: z.string().min(6).max(80),
+        publicShareUrl: z.string().max(500).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { sql, actor } = await adminSql(asAuthed(context));
+    const { applyCanvaDesignToProject } = await import("@/lib/canva/connect.server");
+    return applyCanvaDesignToProject(sql, { ...data, actor: actor.userId });
   });
 
 export const hydrateGithubFn = createServerFn({ method: "POST" })

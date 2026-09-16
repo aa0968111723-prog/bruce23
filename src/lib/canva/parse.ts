@@ -5,6 +5,12 @@ export const CANVA_ALLOWED_HOSTS = [
   "canva.site",
 ] as const;
 
+/** Connect thumbnails / export downloads. Not valid public share/embed hosts. */
+export const CANVA_MEDIA_HOSTS = [
+  "document-export.canva.com",
+  "export-download.canva.com",
+] as const;
+
 export type ParsedCanvaDesign = {
   shareUrl: string;
   embedUrl: string;
@@ -25,6 +31,22 @@ export function isAllowedCanvaUrl(input: string): boolean {
   } catch {
     return false;
   }
+}
+
+export function isAllowedCanvaMediaUrl(input: string): boolean {
+  try {
+    const url = new URL(input.trim());
+    if (url.protocol !== "https:") return false;
+    const host = url.hostname.toLowerCase();
+    return isAllowedCanvaHost(host) || (CANVA_MEDIA_HOSTS as readonly string[]).includes(host);
+  } catch {
+    return false;
+  }
+}
+
+export function canvaStableEditUrl(designId: string): string | null {
+  if (!/^[A-Za-z0-9_-]{6,}$/.test(designId)) return null;
+  return `https://www.canva.com/design/${designId}/edit`;
 }
 
 /** Extract a Canva URL from a share link, embed URL, or iframe HTML snippet. Never executes HTML. */

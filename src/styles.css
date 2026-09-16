@@ -121,6 +121,10 @@
   .orbit {
     animation: orbit 60s linear infinite;
   }
+
+  .constellation {
+    min-height: 22rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

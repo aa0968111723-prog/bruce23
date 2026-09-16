@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
-import { extractCanvaUrl, isAllowedCanvaUrl, parseCanvaDesign } from "../canva/parse.ts";
+import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign } from "../canva/parse.ts";
 import { verifyDemoUrl } from "../demo/verify.ts";
 import { projectInputSchema } from "./schema.ts";
 import { toPublicProject } from "./store.ts";
@@ -63,6 +63,11 @@ describe("canva allowlist", () => {
   it("parses view/edit/watch share shapes", () => {
     assert.equal(parseCanvaDesign("https://www.canva.com/design/DAGabc123/edit")?.designId, "DAGabc123");
     assert.equal(parseCanvaDesign("https://www.canva.com/design/DAGabc123/watch")?.embedUrl?.includes("embed"), true);
+  });
+
+  it("allowlists Canva export hosts without treating them as share embeds", () => {
+    assert.equal(isAllowedCanvaMediaUrl("https://document-export.canva.com/x.png"), true);
+    assert.equal(parseCanvaDesign("https://document-export.canva.com/x.png"), null);
   });
 });
 

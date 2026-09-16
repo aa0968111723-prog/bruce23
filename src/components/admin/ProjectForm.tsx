@@ -347,6 +347,92 @@ export function ProjectForm({ project }: { project: AdminProject }) {
       />
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
+        <legend className="font-display text-lg">來源證據</legend>
+        <p className="text-xs text-muted">公開頁會列出這些來源。不要貼私人 Drive、token 或未公開 Canva。</p>
+        {(form.source_evidence ?? []).map((item, index) => (
+          <div key={`evidence-${index}`} className="grid gap-2 rounded-xl bg-surface-blue/50 p-3">
+            <Field
+              label="標籤"
+              value={item.label}
+              onChange={(value) =>
+                patch(
+                  "source_evidence",
+                  form.source_evidence.map((entry, i) => (i === index ? { ...entry, label: value } : entry)),
+                )
+              }
+            />
+            <Field
+              label="網址"
+              value={item.href ?? ""}
+              onChange={(value) =>
+                patch(
+                  "source_evidence",
+                  form.source_evidence.map((entry, i) => (i === index ? { ...entry, href: value || undefined } : entry)),
+                )
+              }
+            />
+            <Area
+              label="說明"
+              value={item.note}
+              onChange={(value) =>
+                patch(
+                  "source_evidence",
+                  form.source_evidence.map((entry, i) => (i === index ? { ...entry, note: value } : entry)),
+                )
+              }
+            />
+            <label className="grid gap-1 text-sm">
+              類型
+              <select
+                className="min-h-11 rounded-xl border border-line px-3"
+                value={item.kind ?? "other"}
+                onChange={(event) =>
+                  patch(
+                    "source_evidence",
+                    form.source_evidence.map((entry, i) =>
+                      i === index
+                        ? { ...entry, kind: event.target.value as NonNullable<typeof item.kind> }
+                        : entry,
+                    ),
+                  )
+                }
+              >
+                <option value="github">github</option>
+                <option value="canva">canva</option>
+                <option value="demo">demo</option>
+                <option value="narrative">narrative</option>
+                <option value="other">other</option>
+              </select>
+            </label>
+            <button
+              type="button"
+              className="min-h-11 justify-self-start rounded-full px-3 text-sm text-alert"
+              onClick={() =>
+                patch(
+                  "source_evidence",
+                  form.source_evidence.filter((_, i) => i !== index),
+                )
+              }
+            >
+              移除
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="min-h-11 justify-self-start rounded-full bg-surface-mint px-4 text-sm"
+          onClick={() =>
+            patch("source_evidence", [
+              ...form.source_evidence,
+              { label: "來源", note: "待補說明", kind: "other" as const },
+            ])
+          }
+        >
+          新增來源證據
+        </button>
+      </fieldset>
+
+      <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">SEO / 語系</legend>
         <Field label="SEO 標題" value={form.seo_title ?? ""} onChange={(value) => patch("seo_title", value)} />
         <Area label="SEO 描述" value={form.seo_description ?? ""} onChange={(value) => patch("seo_description", value)} />
