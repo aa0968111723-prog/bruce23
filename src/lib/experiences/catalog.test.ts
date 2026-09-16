@@ -442,6 +442,8 @@ describe("frontend contract", () => {
     assert.match(integrationsCard, /測試嵌入/);
     assert.match(integrationsCard, /開啟原稿/);
     assert.match(integrationsCard, /min-w-0 max-w-full/);
+    const adminFn = readFileSync(new URL("../../../src/lib/cms/admin-fn.ts", import.meta.url), "utf8");
+    assert.match(adminFn, /parseProjectPatch/);
     assert.doesNotMatch(integrationsCard, /status:\s*"verified"/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);

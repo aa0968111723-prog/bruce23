@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { archiveInputSchema, projectInputSchema, projectPatchSchema, siteSettingsSchema } from "./schema";
+import { archiveInputSchema, projectInputSchema, parseProjectPatch, siteSettingsSchema } from "./schema";
 import { ValidationError } from "./errors";
 import { parseGithubUrl } from "@/lib/github/parse";
 import { runAdminSql, type AuthedAdmin } from "./admin-runtime.server";
@@ -54,12 +54,12 @@ export const createProjectFn = createServerFn({ method: "POST" })
 
 export const saveProjectFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((input: unknown) => projectPatchSchema.parse(input))
+  .validator((input: unknown) => parseProjectPatch(input))
   .handler(async ({ context, data }) => handleSaveProject(asAuthed(context), data));
 
 export const saveDraftFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((input: unknown) => projectPatchSchema.parse(input))
+  .validator((input: unknown) => parseProjectPatch(input))
   .handler(async ({ context, data }) => handleSaveDraft(asAuthed(context), data));
 
 const idInput = z.object({ id: z.string().min(1) });

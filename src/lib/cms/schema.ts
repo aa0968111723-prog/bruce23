@@ -377,6 +377,24 @@ export const projectPatchSchema = projectInputSchema.partial().extend({
   id: z.string().min(1),
 });
 
+/** Keep omitted keys undefined so Zod defaults cannot blank narrative on a partial save. */
+export function parseProjectPatch(input: unknown): ProjectPatch {
+  const raw = z
+    .object({ id: z.string().min(1) })
+    .passthrough()
+    .parse(input);
+  const parsed = projectPatchSchema.parse(raw);
+  const sent = new Set(Object.keys(raw));
+  const patch: Record<string, unknown> = { id: parsed.id };
+  for (const key of sent) {
+    if (key === "id") continue;
+    if (Object.prototype.hasOwnProperty.call(parsed, key)) {
+      patch[key] = (parsed as Record<string, unknown>)[key];
+    }
+  }
+  return patch as ProjectPatch;
+}
+
 export const archiveInputSchema = z.object({
   slug: z.string().min(1).max(80),
   title: z.string().min(1),

@@ -25,7 +25,7 @@ import {
   listAdminArchive,
 } from "./store.ts";
 import { ensureSeed } from "./seed.ts";
-import { projectInputSchema } from "./schema.ts";
+import { parseProjectPatch, projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
 import { projectCanvaInventory } from "../canva/inventory.ts";
@@ -575,19 +575,19 @@ describe("cms persistence", () => {
       }),
       "admin-1",
     );
-    const cleared = await saveProjectRecord(
-      sql,
-      created.id,
-      {
-        canva_share_url: null,
-        canva_embed_url: null,
-        canva_design_id: null,
-        live_demo_url: null,
-        experience_mode: created.experience_mode,
-      },
-      "admin-1",
-      "integrations",
-    );
+    const patch = parseProjectPatch({
+      id: created.id,
+      canva_share_url: null,
+      canva_embed_url: null,
+      canva_design_id: null,
+      live_demo_url: null,
+      experience_mode: created.experience_mode,
+    });
+    assert.equal("summary" in patch, false);
+    assert.equal("locale_json" in patch, false);
+    assert.equal("title" in patch, false);
+    const { id, ...fields } = patch;
+    const cleared = await saveProjectRecord(sql, id, fields, "admin-1", "integrations");
     assert.equal(cleared.title, "中文標題");
     assert.equal(cleared.summary, "中文摘要不可被清空");
     assert.equal(cleared.locale_json.zh?.title, "中文標題");

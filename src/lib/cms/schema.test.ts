@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
 import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
 import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
-import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema } from "./schema.ts";
+import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema, parseProjectPatch } from "./schema.ts";
 import { serializeJsonLd } from "./jsonld.ts";
 import { toPublicProject } from "./store.ts";
 import { canvaViewerState, demoViewerState, stripSecrets } from "./privacy.ts";
@@ -74,6 +74,27 @@ describe("readme and rate-limit states", () => {
     assert.ok(githubLimited.some((item) => item.path === "README.md"));
     assert.ok(githubLimited.some((item) => item.path.startsWith("src/")));
     assert.ok(githubLimited.filter((item) => item.path.startsWith(".github/")).length <= 12);
+  });
+});
+
+describe("project patches", () => {
+  it("does not default narrative when only Canva fields are sent", () => {
+    const parsed = parseProjectPatch({
+      id: "work-1",
+      canva_share_url: null,
+      canva_embed_url: null,
+      canva_design_id: null,
+      live_demo_url: null,
+      experience_mode: null,
+    });
+    assert.equal(parsed.id, "work-1");
+    assert.equal(parsed.canva_share_url, null);
+    assert.equal("summary" in parsed, false);
+    assert.equal("title" in parsed, false);
+    assert.equal("locale_json" in parsed, false);
+    assert.equal("experience_config" in parsed, false);
+    assert.equal("publication_status" in parsed, false);
+    assert.equal("featured" in parsed, false);
   });
 });
 
