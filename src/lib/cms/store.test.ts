@@ -7,6 +7,7 @@ import {
   countProjects,
   createProjectRecord,
   getAdminProject,
+  getAdminProjectBySlug,
   getPublishedProject,
   listPublishedArchive,
   listPublishedProjects,
@@ -32,6 +33,7 @@ import { howItWorksSteps } from "../experiences/resolve.ts";
 import { publicSitemapPaths } from "./sitemap.ts";
 import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
 import { resolveHomepageCopy } from "./public-site.ts";
+import { FEATURED_WORK_SLUGS, featuredProjectLocaleEn, siteLocaleEn } from "../../content/locale-en.ts";
 
 function sqlFrom(pg: PGlite): Sql {
   const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
@@ -307,6 +309,31 @@ describe("cms persistence", () => {
     } as typeof created);
     assert.equal(blank.title, "中文標題");
     assert.equal(blank.summary, "中文摘要");
+  });
+
+  it("seeds real English overlays for site copy and all eight featured works", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const settings = await getSiteSettings(sql);
+    assert.equal(settings?.locale_json.en?.headline, siteLocaleEn.headline);
+    assert.equal(settings?.locale_json.en?.narrative, siteLocaleEn.narrative);
+    assert.notEqual(settings?.headline, settings?.locale_json.en?.headline);
+    assert.notEqual(settings?.narrative, settings?.locale_json.en?.narrative);
+    assert.equal(settings?.narrative, "我把 AI、設計、影像、動畫、3D、互動與真實工作流程，轉化成看得懂、用得上的數位體驗。");
+    for (const slug of FEATURED_WORK_SLUGS) {
+      const admin = await getAdminProjectBySlug(sql, slug);
+      const en = featuredProjectLocaleEn[slug];
+      assert.notEqual(admin.locale_json.en?.title, admin.title, slug);
+      assert.notEqual(admin.locale_json.en?.summary, admin.summary, slug);
+      assert.equal(admin.locale_json.en?.title, en.title);
+      assert.equal(admin.locale_json.en?.summary, en.summary);
+      assert.equal(admin.locale_json.en?.problem, en.problem);
+      assert.equal(admin.locale_json.en?.role, en.role);
+      const live = serializePublicProject(admin);
+      assert.equal(live.locale.en?.title, en.title);
+      assert.equal(live.locale.en?.summary, en.summary);
+      assert.equal(admin.publication_status, "published");
+    }
   });
 
   it("excludes draft archive items from the public archive", async () => {

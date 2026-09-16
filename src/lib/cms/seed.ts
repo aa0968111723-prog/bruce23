@@ -1,5 +1,6 @@
 import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
+import { localeEnForSlug, localeZhFromProject, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
@@ -120,6 +121,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
   await fillLocaleJsonGaps(sql);
+  await fillSiteLocaleGaps(sql);
   await fillProjectMediaGaps(sql);
   await clearUncustomizedHowSteps(sql);
 }
@@ -162,10 +164,8 @@ export async function ensureSeed(
           highlightSlugs: projects.map((item) => item.slug),
         },
         locale_json: {
-          en: {
-            headline: site.subhead,
-            narrative: site.narrative,
-          },
+          zh: siteLocaleZh,
+          en: siteLocaleEn,
         },
       },
       actor,
@@ -213,14 +213,12 @@ export async function ensureSeed(
         src: item.src.replace(/\.jpg$/i, ".svg"),
       })),
       locale_json: {
-        zh: {
+        zh: localeZhFromProject(project.slug),
+        en: localeEnForSlug(project.slug) ?? {
           title: project.title,
           subtitle: project.subtitle,
           summary: project.summary,
-          problem: project.problem,
-          role: project.role,
         },
-        en: { title: project.title, subtitle: project.subtitle, summary: project.summary },
       },
       seo_title: `${project.title} · ${site.nameZh}`,
       seo_description: project.summary,
@@ -481,25 +479,46 @@ async function fillProjectMediaGaps(sql: Sql): Promise<void> {
 
 async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
   for (const project of projects) {
-    const zh = {
-      title: project.title,
-      subtitle: project.subtitle,
-      summary: project.summary,
-      problem: project.problem,
-      role: project.role,
-    };
-    const en = { title: project.title, subtitle: project.subtitle, summary: project.summary };
+    const zh = localeZhFromProject(project.slug) ?? {};
+    const en = localeEnForSlug(project.slug);
+    if (!en) continue;
+    // Existing zh wins so admin Chinese is not overwritten. Seed English wins so duplicate-zh en copies are replaced.
     await sql.query(
       `update projects
        set locale_json = jsonb_set(
-         jsonb_set(coalesce(locale_json, '{}'::jsonb), '{zh}', coalesce(locale_json->'zh', '{}'::jsonb) || $2::jsonb, true),
+         jsonb_set(
+           coalesce(locale_json, '{}'::jsonb),
+           '{zh}',
+           $2::jsonb || coalesce(locale_json->'zh', '{}'::jsonb),
+           true
+         ),
          '{en}',
          coalesce(locale_json->'en', '{}'::jsonb) || $3::jsonb,
          true
-       )
-       where slug = $1
-         and (locale_json is null or locale_json = '{}'::jsonb)`,
+       ),
+       updated_at = now()
+       where slug = $1`,
       [project.slug, JSON.stringify(zh), JSON.stringify(en)],
     );
   }
+}
+
+async function fillSiteLocaleGaps(sql: Sql): Promise<void> {
+  await sql.query(
+    `update site_settings
+     set locale_json = jsonb_set(
+       jsonb_set(
+         coalesce(locale_json, '{}'::jsonb),
+         '{zh}',
+         $1::jsonb || coalesce(locale_json->'zh', '{}'::jsonb),
+         true
+       ),
+       '{en}',
+       coalesce(locale_json->'en', '{}'::jsonb) || $2::jsonb,
+       true
+     ),
+     updated_at = now()
+     where id = 'default'`,
+    [JSON.stringify(siteLocaleZh), JSON.stringify(siteLocaleEn)],
+  );
 }

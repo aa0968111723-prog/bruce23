@@ -285,6 +285,11 @@ describe("frontend contract", () => {
     assert.match(form, /persistDemoVerify|verifyDemoFn/);
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
+    assert.match(seedSource, /fillSiteLocaleGaps/);
+    const localeEn = readFileSync(new URL("../../../src/content/locale-en.ts", import.meta.url), "utf8");
+    assert.match(localeEn, /featuredProjectLocaleEn/);
+    assert.match(localeEn, /siteLocaleEn/);
+    assert.doesNotMatch(localeEn, /DAGx/);
     const archiveForm = readFileSync(
       new URL("../../../src/components/admin/ArchiveForm.tsx", import.meta.url),
       "utf8",

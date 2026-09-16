@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: public zh|en switcher (not complete)
+Cycle: real English overlays (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -25,6 +25,12 @@ Updated: 2026-09-16
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
 - PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
+
+## This cycle (real English overlays)
+
+- Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
+- `fillLocaleJsonGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English wins. Chinese row `headline` / `narrative` and GitHub/Canva/publication fields are not rewritten. Archive items have no locale columns — chrome already switches; titles stay zh.
+- Decisions / limitations stay zh-only (not on `localeCopySchema`).
 
 ## This cycle (public 中英文 switcher)
 
@@ -78,7 +84,7 @@ Updated: 2026-09-16
 - Google login as `aa0968111723@gmail.com` to browser-prove admin as a human
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
-- Public language switcher ships; remaining bilingual gap is CMS English *content* for works/archive (seed en titles often duplicate zh) plus experience-playable internals.
+- Public language switcher ships with real English overlays for site + eight works; archive item titles stay zh (no locale fields). Experience-playable internals stay zh.
 - Folio still has no public editor-operation screenshot (only og.jpg share card)
 - tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)
 - Platform PWA apple-touch / `__grok` install icon remains Grok chrome (not overwritten)

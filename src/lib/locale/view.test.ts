@@ -3,6 +3,15 @@ import { describe, it } from "node:test";
 import { resolveHomepageCopy } from "../cms/public-site.ts";
 import type { PublicProject } from "../cms/privacy.ts";
 import {
+  featuredProjectLocaleEn,
+  FEATURED_WORK_SLUGS,
+  localeZhFromProject,
+  siteLocaleEn,
+  siteLocaleZh,
+} from "../../content/locale-en.ts";
+import { projects } from "../../content/projects.ts";
+import { site as siteCopy } from "../../content/site.ts";
+import {
   chromeFor,
   overlayProject,
   parseViewerLang,
@@ -204,5 +213,82 @@ describe("viewer locale", () => {
     assert.equal(chromeFor("zh").hub.image, "圖像");
     assert.equal(chromeFor("en").hub.image, "Image");
     assert.notEqual(chromeFor("zh").workTitle, chromeFor("en").workTitle);
+  });
+
+  it("uses distinct English overlays for homepage, about narrative, and all eight works", () => {
+    assert.equal(FEATURED_WORK_SLUGS.length, 8);
+    assert.notEqual(siteLocaleEn.headline, siteCopy.headline);
+    assert.notEqual(siteLocaleEn.narrative, siteCopy.narrative);
+    assert.notEqual(siteLocaleEn.seoTitle, siteLocaleZh.seoTitle);
+    const homepageEn = resolveHomepageCopy(
+      {
+        nameZh: siteCopy.nameZh,
+        nameEn: siteCopy.nameEn,
+        person: siteCopy.person,
+        role: siteCopy.role,
+        headline: siteCopy.headline,
+        subhead: siteCopy.subhead,
+        narrative: siteCopy.narrative,
+        email: siteCopy.email,
+        github: siteCopy.github,
+        githubHandle: siteCopy.githubHandle,
+        location: siteCopy.location,
+        seoTitle: `${siteCopy.nameZh} · ${siteCopy.person}`,
+        seoDescription: siteCopy.narrative,
+        homepageHighlightSlugs: [],
+        locale: { zh: siteLocaleZh, en: siteLocaleEn },
+      },
+      fallback,
+      "en",
+    );
+    assert.equal(homepageEn.headline, siteLocaleEn.headline);
+    assert.equal(homepageEn.narrative, siteLocaleEn.narrative);
+    assert.equal(homepageEn.seoTitle, siteLocaleEn.seoTitle);
+    const homepageZh = resolveHomepageCopy(
+      {
+        nameZh: siteCopy.nameZh,
+        nameEn: siteCopy.nameEn,
+        person: siteCopy.person,
+        role: siteCopy.role,
+        headline: siteCopy.headline,
+        subhead: siteCopy.subhead,
+        narrative: siteCopy.narrative,
+        email: siteCopy.email,
+        github: siteCopy.github,
+        githubHandle: siteCopy.githubHandle,
+        location: siteCopy.location,
+        seoTitle: `${siteCopy.nameZh} · ${siteCopy.person}`,
+        seoDescription: siteCopy.narrative,
+        homepageHighlightSlugs: [],
+        locale: { zh: siteLocaleZh, en: siteLocaleEn },
+      },
+      fallback,
+      "zh",
+    );
+    assert.equal(homepageZh.headline, siteCopy.headline);
+    assert.equal(homepageZh.narrative, siteCopy.narrative);
+
+    for (const slug of FEATURED_WORK_SLUGS) {
+      const row = projects.find((item) => item.slug === slug);
+      assert.ok(row, slug);
+      const en = featuredProjectLocaleEn[slug];
+      const zh = localeZhFromProject(slug);
+      assert.ok(en.title && en.summary && zh);
+      assert.notEqual(en.title, row.title, `${slug} title`);
+      assert.notEqual(en.summary, row.summary, `${slug} summary`);
+      assert.notEqual(en.title, zh.title, `${slug} overlay title`);
+      assert.notEqual(en.summary, zh.summary, `${slug} overlay summary`);
+      const locale = { zh, en };
+      assert.equal(pickLocaleField("en", locale, "title", row.title), en.title);
+      assert.equal(pickLocaleField("en", locale, "summary", row.summary), en.summary);
+      assert.equal(pickLocaleField("zh", locale, "title", row.title), zh.title);
+      const view = overlayProject(project(locale, { title: row.title, summary: row.summary, slug }), "en");
+      assert.equal(view.title, en.title);
+      assert.equal(view.summary, en.summary);
+      assert.equal(view.problem, en.problem);
+      assert.equal(view.role, en.role);
+      assert.equal(view.seoTitle, en.seoTitle);
+      assert.equal(view.seoDescription, en.seoDescription);
+    }
   });
 });
