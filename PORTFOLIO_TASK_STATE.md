@@ -1,10 +1,51 @@
 # Portfolio Task State
 
-Cycle: HermesPreview typecheck + process-map numbers + studio heatmap + Folio document i18n (not complete)
+Cycle: final wrap-up — CODE closed on this branch; OWNER blockers remain (not complete)
 Updated: 2026-09-16
-HEAD: eb95eacbaad9d73f85a190c02377e6c9b324170d
+HEAD: 617762dba5005745405a19d6c8678323d6b3b2de
 
-## Gates this cycle (2026-09-16, after fc94029 / eb95eac)
+## Wrap-up (2026-09-16)
+
+Wrap-up owns from 5695b30 onward. Confirmed actual HEAD before this recording: `617762dba5005745405a19d6c8678323d6b3b2de` (not the stale 6fb52a7 note). Code SHA for homepage alts + §13 public-path tests: `5695b304ef5e9fa3a41acebad7825d079d9bfef5`. Last gate-record commit: `617762d`.
+
+No owner-provided `canva.com/design/{id}` exists in production content. `project-manifest.json` `publicDesignIds` is `[]`. Healing-studio `/d/` shorts stay honest unavailable fallback (browser follow stays on `/d/`, 404). Fixture DAG ids (`DAGfixtureEmbedShape`, `DAGroundTrip1`, …) stay in tests / `live-e2e-work` only.
+
+ManagePullRequest / GitHub PATCH on PR #4: previous cycle 403. PR body already lists SHA `617762d` from another worker; this recording does not invent a successful PATCH.
+
+### Gates (proven after 5695b30 / 617762d)
+
+- `npm run typecheck` pass
+- `npm test` pass (207 script + 245 src, fail 0; admin session E2E ok; admin live E2E ok — bearer `grok-auth.bearer-token`, no `__Host-` on http)
+- `npm run lint` pass (0 errors, 3 existing warnings: LocaleProvider / use-current-user)
+- `npm run build` pass
+- `npm run check:auth` pass (sign-in on)
+- `sh /workspace/startup.sh` → `npm run dev` via `scripts/with-app-env.mjs` on `0.0.0.0:8080` (200)
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no overflow; empty console/page errors; no brand/auth warnings
+- `npm run preview:restart` (`127.0.0.1:8081`) vs baseline: `divergesFromBaseline: false`, same bodyTextHash
+- Interactive: EN home, FrameLab Canva honest fallback, Folio studio reconstruction + og.jpg, Zen local chat honesty, unsigned `/admin` Google-only, 390 AI Director no overflow, unpublished slug 404
+
+### 14-section audit (wrap-up)
+
+| § | Requirement | Verdict |
+|---|---|---|
+| 1 | Platform/stack: TanStack Start/React/TS/Tailwind/Vite/Nitro/PWA/PreviewHostBridge/grokPwaPlugin/`0.0.0.0:8080` Light Luminous Studio | **proven** |
+| 2 | Fail-closed admin: Google allowlist `aa0968111723@gmail.com`; no mock admin; no tokens on client; no localStorage-only CMS | **proven** (CODE). Human Google login as that address: **owner-secret** |
+| 3 | Postgres/PGLite CMS (`0001` auth, `0002` portfolio, `0003` archive locale) | **proven** |
+| 4 | Public reads published rows only; `product_status` ≠ `publication_status` | **proven** |
+| 5 | 8 featured works, distinct ExperiencePanel modes | **proven** |
+| 6 | Honest GitHub sync (server-only; no overwrite of Chinese narrative) | **proven** (CODE). Private-repo token: **owner-secret** |
+| 7 | Honest Canva: paste `/design/{id}` only; `/d/` until resolve; no invented DAG; no blank iframe | **proven** (CODE). Real public `/design/{id}` for the eight works: **owner-secret / not present** |
+| 8 | Admin CMS (create/save/publish/unpublish/revisions/preview drafts) | **proven** (CODE + live E2E). Browser as human admin: **owner-secret** |
+| 9 | Integrations desk (Canva paste, demo verify, GitHub diff, Notion fail-closed, Connect fail-closed) | **proven** (CODE). Connect/Notion/`GITHUB_READ_TOKEN` live: **owner-secret** |
+| 10 | Public zh\|en via `luminous-studio-lang`; CMS copy in Postgres; JSON-LD canonical zh | **proven** |
+| 11 | Playable experience quality (process map, heatmap honesty, Folio/Zen, Planform, 對稿) | **proven** as labeled portfolio demos |
+| 12 | Mobile overflow / 44px / reduced-motion | **proven** (smoke + tests) |
+| 13 | Test matrix: handlers, public isolation, Canva/demo iframe, keyboard, GitHub parse | **proven** |
+| 14 | Honest Folio/Zen evidence (labeled reconstructions, not operation screenshots) | **proven** as reconstructions. True product screenshots: **owner-secret / not present** |
+
+Should parent mark goal complete? **KEEP OPEN.** CODE on this branch is wrap-up-complete; original ask still needs owner secrets (real Canva `/design/{id}`, Drive media, Connect, human Google login, tokens, Folio/Zen operation shots).
+
+## Gates this cycle (2026-09-16, after fc94029 / eb95eac / 5695b30 / 617762d)
 
 - `npm run typecheck` pass
 - `npm test` pass (207 script + 245 src, fail 0; admin session E2E ok; admin live E2E ok)
@@ -14,7 +55,7 @@ HEAD: eb95eacbaad9d73f85a190c02377e6c9b324170d
 - `node scripts/browser-smoke.mjs` desktop+mobile pass; no console/page errors; no overflow
 - `npm run preview:restart` + smoke vs baseline: `divergesFromBaseline: false`
 - Interactive: numbered AI Director pipeline, studio heatmap honesty badge, Folio editor-shell, Zen local chat, Planform isometric, 對稿 pins, unsigned `/admin` Google-only, zh|en overlay
-- GitHub `update_pull_request` on PR #4 returned 403 (token cannot PATCH). No fake PR-body success.
+- GitHub `update_pull_request` on PR #4 returned 403 in an earlier cycle (token cannot PATCH). No fake PR-body success. Later PR HTML already shows SHA `617762d` from another worker.
 
 ## Source of truth
 
