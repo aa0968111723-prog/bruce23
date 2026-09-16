@@ -30,25 +30,35 @@ function AdminSettings() {
   const [locale, setLocale] = useState<"zh" | "en">("zh");
 
   useEffect(() => {
-    loadAdminSettings().then((row) => {
+    void loadAdminSettings().then((row) => {
       if (!row) return;
       const profile = row.profile;
       const homepage = row.homepage;
       const seo = row.seo;
       const i18n = row.i18n;
-      setNameZh(String(profile.nameZh ?? nameZh));
-      setNameEn(String(profile.nameEn ?? nameEn));
-      setPerson(String(profile.person ?? person));
-      setRole(String(profile.role ?? role));
+      setNameZh(String(profile.nameZh ?? "柏能 · 光域工作室"));
+      setNameEn(String(profile.nameEn ?? "Luminous Studio"));
+      setPerson(String(profile.person ?? "陳柏能 / Bruce Chen"));
+      setRole(
+        String(
+          profile.role ??
+            "AI Designer · Multimodal Design Creator · AI Product Builder",
+        ),
+      );
       setHeadline(String(profile.headline ?? ""));
       setHeadlineEn(String(profile.headlineEn ?? ""));
-      setSubhead(String(profile.subhead ?? subhead));
+      setSubhead(
+        String(
+          profile.subhead ??
+            "Designing bright, usable experiences with AI and multimodal creativity.",
+        ),
+      );
       setNarrative(String(profile.narrative ?? ""));
       setNarrativeEn(String(profile.narrativeEn ?? ""));
-      setEmail(String(profile.email ?? email));
-      setGithub(String(profile.github ?? github));
-      setGithubHandle(String(profile.githubHandle ?? githubHandle));
-      setLocation(String(profile.location ?? location));
+      setEmail(String(profile.email ?? "aa0968111723@gmail.com"));
+      setGithub(String(profile.github ?? "https://github.com/aa0968111723-prog"));
+      setGithubHandle(String(profile.githubHandle ?? "aa0968111723-prog"));
+      setLocation(String(profile.location ?? "Taipei"));
       setFeaturedIntro(String(homepage.featuredIntro ?? ""));
       setFeaturedIntroEn(String(homepage.featuredIntroEn ?? ""));
       setSeoTitle(String(seo.title ?? ""));

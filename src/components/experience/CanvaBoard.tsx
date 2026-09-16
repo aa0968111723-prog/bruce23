@@ -23,9 +23,10 @@ export function CanvaBoard({
   const pages = pageIds?.filter(Boolean) ?? [];
   const src = useMemo(() => {
     if (!embedUrl) return null;
-    if (!pages.length) return embedUrl;
+    const list = pageIds?.filter(Boolean) ?? [];
+    if (!list.length) return embedUrl;
     const url = new URL(embedUrl);
-    url.searchParams.set("page", pages[page] ?? String(page + 1));
+    url.searchParams.set("page", list[page] ?? String(page + 1));
     return url.toString();
   }, [embedUrl, page, pageIds]);
 

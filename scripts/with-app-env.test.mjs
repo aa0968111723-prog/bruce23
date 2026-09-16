@@ -80,7 +80,8 @@ test("the wrapped command runs with the app env applied", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  // Auth-on workspace: app-env has no VITE_AUTH_ENABLED, so the flag is unset.
+  assert.equal(stdout, "undefined");
 });
 
 test("the wrapped command sees an explicit override, not the file value", async () => {
@@ -124,5 +125,5 @@ test("the CLI still runs when invoked through a symlinked path", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  assert.equal(stdout, "undefined");
 });
