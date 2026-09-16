@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: 2 in progress
+Cycle: 3 complete (gates verified)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -18,9 +18,14 @@ Updated: 2026-09-16
 - Server-side GitHub / Canva embed test / Demo verify / README verify
 - Nested GitHub file tree, homepage exploration nodes, custom share card
 - Tests for privacy, allowlist, github/canva/demo, seed, publish round-trip
+- `/sitemap.xml` via dotted TanStack filename
+- Local production preview copies `pglite.data` + `pglite.wasm` + `initdb.wasm`
+- Gates: typecheck, test (92), lint (0 errors), build, check:auth, desktop+mobile smoke, production smoke non-diverging
 
 ## Not done / honest gaps
 
-- Canva Connect OAuth is reserved: works in public-embed mode until client id/secret exist
+- Canva Connect OAuth is reserved: public-embed mode works; full Connect search/export/edit-in-app is not live until client id/secret exist and OAuth is finished
 - Original large photos/videos still not on a public CDN
-- GitHub sync metadata fills after an admin clicks 同步
+- GitHub sync metadata fills after an admin clicks 同步 (seed has repo URLs, not REST payloads)
+- Archive Canva items currently have thumbnails + notes; share/embed URLs can be added in admin
+- GitHub MCP cannot create the PR (403 on personal access token); compare URL is used instead
