@@ -13,6 +13,7 @@ import { spawn } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
+  copyFileSync,
   openSync,
   readFileSync,
   readdirSync,
@@ -294,6 +295,15 @@ async function waitForReady(failure) {
 
 async function restart() {
   if (!(await stop())) return 1;
+
+  const destDir = join(ROOT, ".vercel/output/functions/__server.func/_libs");
+  const srcDir = join(ROOT, "node_modules/@electric-sql/pglite/dist");
+  if (existsSync(destDir)) {
+    for (const name of ["pglite.data", "pglite.wasm", "initdb.wasm"]) {
+      const src = join(srcDir, name);
+      if (existsSync(src)) copyFileSync(src, join(destDir, name));
+    }
+  }
 
   mkdirSync(dirname(LOG_FILE), { recursive: true });
   const log = openSync(LOG_FILE, "a");
