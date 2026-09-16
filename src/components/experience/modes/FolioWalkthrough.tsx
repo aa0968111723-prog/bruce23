@@ -125,6 +125,7 @@ function FolioStage({
       </div>
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface shadow-card">
         {kind === "canvas" ? <CanvasStage file={file} ex={ex} /> : null}
+        {kind === "artboard" ? <ArtboardStage file={file} ex={ex} /> : null}
         {kind === "command" ? <CommandStage file={file} ex={ex} /> : null}
         {kind === "audit" ? <AuditStage file={file} ex={ex} /> : null}
         {kind === "mcp" ? <McpStage file={file} ex={ex} /> : null}
@@ -184,6 +185,35 @@ function CanvasStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
       </text>
       <text x="8" y="196" className="fill-muted" fontSize="7">
         {ex.folioSameModel}
+      </text>
+    </svg>
+  );
+}
+
+function ArtboardStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
+  return (
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioArtboards} data-folio-artboard="true">
+      <rect width="320" height="200" className="fill-surface-blue" />
+      <rect x="0" y="0" width="320" height="22" className="fill-surface stroke-line" />
+      <text x="8" y="15" className="fill-muted" fontSize="7">
+        {ex.folioBack}
+      </text>
+      <text x="92" y="15" className="fill-ink" fontSize="7">
+        {ex.folioArtboards}
+      </text>
+      <rect x="18" y="32" width="284" height="118" rx="8" className="fill-surface stroke-line" strokeWidth="1" />
+      <rect x="36" y="44" width="168" height="94" rx="6" className="fill-surface-mint stroke-mint" strokeWidth="2" />
+      <rect x="48" y="56" width="88" height="12" rx="2" className="fill-mint" />
+      <rect x="48" y="76" width="56" height="40" rx="6" className="fill-sky" />
+      <text x="48" y="130" className="fill-muted" fontSize="7">
+        {file}
+      </text>
+      <rect x="22" y="158" width="276" height="32" rx="6" className="fill-surface stroke-line" />
+      <rect x="32" y="164" width="48" height="20" rx="3" className="fill-surface-blue" />
+      <rect x="88" y="164" width="48" height="20" rx="3" className="fill-surface-mint stroke-mint" strokeWidth="1.5" />
+      <rect x="144" y="164" width="48" height="20" rx="3" className="fill-surface-blue" />
+      <text x="220" y="178" className="fill-muted" fontSize="7">
+        {ex.folioArtboards}
       </text>
     </svg>
   );

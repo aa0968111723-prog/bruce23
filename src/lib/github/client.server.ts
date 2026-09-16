@@ -45,6 +45,7 @@ type GithubClientOptions = {
   cache?: GithubCacheStore;
   timeoutMs?: number;
   now?: () => number;
+  keepPaths?: string[];
 };
 
 function githubHeaders(token?: string, extra?: Record<string, string>): Headers {
@@ -249,7 +250,9 @@ export async function fetchPublicRepo(
   const treeOk = treeRes.status >= 200 && treeRes.status < 300 && treeRes.json && typeof treeRes.json === "object";
   if (treeOk) {
     const tree = (treeRes.json as { tree?: Array<{ path: string; type: string; size?: number }> }).tree;
-    fileTree = Array.isArray(tree) ? limitGithubTree(tree, { maxEntries: 80, maxDepth: 4 }) : [];
+    fileTree = Array.isArray(tree)
+      ? limitGithubTree(tree, { maxEntries: 80, maxDepth: 4, keepPaths: options.keepPaths })
+      : [];
   }
 
   const topics = Array.isArray(data.topics) ? data.topics.filter((t): t is string => typeof t === "string") : [];

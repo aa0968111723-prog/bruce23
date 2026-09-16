@@ -20,6 +20,12 @@ describe("experience playable chrome", () => {
     assert.equal(en.tabPlay, "Play");
     assert.equal(zh.folioDocumentLayer, "文件層");
     assert.equal(en.folioDocumentLayer, "document layer");
+    assert.equal(zh.folioArtboards, "畫板");
+    assert.equal(en.folioArtboards, "Artboards");
+    assert.equal(zh.hintInTree, "在同步樹中");
+    assert.equal(en.hintInTree, "In the synced tree");
+    assert.equal(zh.hintMissingFromTree, "不在這次有限檔案樹裡");
+    assert.equal(en.hintMissingFromTree, "Not in this limited file tree");
     assert.equal(zh.tabVisual, "視覺展示");
     assert.equal(en.tabVisual, "Visual");
     assert.notEqual(zh.tabGithub, en.tabGithub);
@@ -169,8 +175,11 @@ describe("experience playable chrome", () => {
       "en",
     );
     assert.ok(zh.some((step) => step.includes("畫布")));
+    assert.ok(zh.some((step) => step.includes("畫板")));
     assert.ok(en.some((step) => step.includes("Canvas")));
+    assert.ok(en.some((step) => step.includes("Artboards")));
     assert.ok(en.some((step) => step.includes("(src/components/editor/canvas-stage.tsx)")));
+    assert.ok(en.some((step) => step.includes("artboard-strip.tsx")));
     assert.doesNotMatch(en.join("\n"), /：|（|）/);
     const director = howItWorksSteps(
       { slug: "ai-director-os", experienceConfig: {}, interactionSteps: [], process: [] },

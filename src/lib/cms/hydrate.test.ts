@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProjectRecord, getAdminProject, listPublishedProjects } from "./store.ts";
-import { hydratePendingGithub, hydratePendingDemos } from "./hydrate.ts";
+import { hydratePendingGithub, hydratePendingDemos, GITHUB_HYDRATE_VERSION, GITHUB_STALE_MS, githubSyncIsStale } from "./hydrate.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 
@@ -280,6 +280,82 @@ describe("github hydrate", () => {
     const admin = await getAdminProject(sql, created.id);
     assert.ok((admin.github_file_tree?.length ?? 0) > 0);
     assert.ok(admin.github_file_tree?.some((item) => item.path === "README.md"));
+  });
+
+  it("treats missing or old sync timestamps as stale", () => {
+    assert.equal(githubSyncIsStale(null), true);
+    assert.equal(githubSyncIsStale(new Date()), false);
+    assert.equal(githubSyncIsStale(new Date(Date.now() - GITHUB_STALE_MS - 1_000)), true);
+  });
+
+  it("rescans verified GitHub rows after GITHUB_STALE_MS on the current hydrate version", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "framelab",
+        title: "FrameLab",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    await sql.query(
+      `update projects set github_readme = $2, github_sync_status = 'verified',
+        github_last_synced_at = now() - interval '7 hours'
+       where id = $1`,
+      [created.id, "STALE README"],
+    );
+    await sql.query(
+      `insert into cms_meta (key, value) values ('github_hydrate', $1)
+       on conflict (key) do update set value = excluded.value`,
+      [GITHUB_HYDRATE_VERSION],
+    );
+    const result = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    assert.equal(result.skipped, false);
+    assert.equal(result.verified, 1);
+    const admin = await getAdminProject(sql, created.id);
+    assert.match(admin.github_readme ?? "", /Real README/);
+    assert.doesNotMatch(admin.github_readme ?? "", /STALE README/);
+  });
+
+  it("rescans enabled repos when the hydrate version changes", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "framelab",
+        title: "FrameLab",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    await sql.query(`update projects set github_readme = $2 where id = $1`, [created.id, "VERSION FOUR COPY"]);
+    await sql.query(
+      `insert into cms_meta (key, value) values ('github_hydrate', '4')
+       on conflict (key) do update set value = excluded.value`,
+    );
+    const result = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    assert.equal(result.skipped, false);
+    const admin = await getAdminProject(sql, created.id);
+    assert.match(admin.github_readme ?? "", /Real README/);
   });
 
   it("probes pending demo URLs without marking a JS bundle verified", async () => {

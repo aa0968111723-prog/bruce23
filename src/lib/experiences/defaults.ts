@@ -175,6 +175,21 @@ function coalesceList<T>(current: T[] | undefined, fallback: T[] | undefined): T
   return current;
 }
 
+function unionByKey<T>(
+  current: T[] | undefined,
+  fallback: T[] | undefined,
+  keyOf: (item: T) => string,
+): T[] | undefined {
+  if (fallback == null || fallback.length === 0) return coalesceList(current, fallback);
+  if (current == null || current.length === 0) return fallback;
+  const seen = new Set(current.map(keyOf).filter(Boolean));
+  const extras = fallback.filter((item) => {
+    const key = keyOf(item);
+    return key !== "" && !seen.has(key);
+  });
+  return extras.length ? [...current, ...extras] : current;
+}
+
 function mergeObject<T extends object>(
   fallback: T | undefined,
   current: T | undefined,
@@ -196,9 +211,9 @@ export function mergeExperienceConfig(slug: string, stored: ExperienceConfig | n
   const merged: ExperienceConfig = {
     ...fallback,
     ...current,
-    processNodes: coalesceList(current.processNodes, fallback.processNodes),
-    walkthrough: coalesceList(current.walkthrough, fallback.walkthrough),
-    fileHints: coalesceList(current.fileHints, fallback.fileHints),
+    processNodes: unionByKey(current.processNodes, fallback.processNodes, (item) => item.id),
+    walkthrough: unionByKey(current.walkthrough, fallback.walkthrough, (item) => item.path || item.title),
+    fileHints: unionByKey(current.fileHints, fallback.fileHints, (item) => item.path),
     canvaPageLabels: current.canvaPageLabels ?? fallback.canvaPageLabels,
     timeline: mergeObject(fallback.timeline, current.timeline, ["frames"]),
     spatial: mergeObject(fallback.spatial, current.spatial, ["objects"]),

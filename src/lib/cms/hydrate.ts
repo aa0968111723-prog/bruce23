@@ -5,10 +5,12 @@ import { applyGithubSync } from "./store.ts";
 import { verifyDemoUrl } from "../demo/verify.ts";
 import { resolveCanvaShareUrl } from "../canva/resolve.ts";
 import { CANVA_SHORTLINK_CANDIDATES, collectCanvaShortUrlsFromText } from "../canva/inventory.ts";
+import { catalogSourcePaths } from "../experiences/catalog.ts";
 import { parseCanvaDesign } from "../canva/parse.ts";
 
 export const GITHUB_HYDRATE_KEY = "github_hydrate";
-export const GITHUB_HYDRATE_VERSION = "4";
+export const GITHUB_HYDRATE_VERSION = "5";
+export const GITHUB_STALE_MS = 6 * 60 * 60 * 1000;
 export const CANVA_SHORTLINK_HYDRATE_KEY = "canva_shortlink_hydrate";
 export const CANVA_SHORTLINK_HYDRATE_VERSION = "3";
 
@@ -49,6 +51,33 @@ const INCOMPLETE_GITHUB_SQL = `
 
 async function incompleteGithubRows(sql: Sql) {
   return sql.query<{ id: string }>(`select id from projects where ${INCOMPLETE_GITHUB_SQL}`);
+}
+
+type EnabledGithubRow = {
+  id: string;
+  github_url: string;
+  slug: string;
+  github_sync_status: string | null;
+  github_last_synced_at: string | Date | null;
+};
+
+export function githubSyncIsStale(
+  lastSyncedAt: string | Date | null | undefined,
+  now = Date.now(),
+  maxAgeMs = GITHUB_STALE_MS,
+): boolean {
+  const at = lastSyncedAt ? new Date(lastSyncedAt).getTime() : 0;
+  return !Number.isFinite(at) || at < now - maxAgeMs;
+}
+
+async function listEnabledGithubProjects(sql: Sql): Promise<EnabledGithubRow[]> {
+  return sql.query<EnabledGithubRow>(
+    `select id, github_url, slug, github_sync_status, github_last_synced_at from projects
+     where github_sync_enabled = true
+       and github_url is not null
+       and github_url <> ''
+     order by sort_order asc, title asc`,
+  );
 }
 
 function shouldSkipLifecycle(): boolean {
@@ -93,7 +122,13 @@ async function hydratePendingGithubOnce(
     if (storedVersion === GITHUB_HYDRATE_VERSION) {
       const leftover = await incompleteGithubRows(sql);
       if (leftover.length === 0) {
-        return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
+        const enabled = await listEnabledGithubProjects(sql);
+        const stale = enabled.filter(
+          (row) => row.github_sync_status === "verified" && githubSyncIsStale(row.github_last_synced_at),
+        );
+        if (stale.length === 0) {
+          return { attempted: 0, verified: 0, failed: 0, skipped: true, rateLimited: false };
+        }
       }
     } else if (storedVersion === "retry" && meta[0]?.updated_at) {
       const at = new Date(meta[0].updated_at).getTime();
@@ -109,21 +144,18 @@ async function hydratePendingGithubOnce(
     [GITHUB_HYDRATE_KEY],
   );
 
+  const enabled = await listEnabledGithubProjects(sql);
+  const leftoverIds = new Set((await incompleteGithubRows(sql)).map((row) => row.id));
   const rescanTrees =
     options.force ||
     (storedVersion !== undefined && storedVersion !== GITHUB_HYDRATE_VERSION);
-
-  const rows = await sql.query<{ id: string; github_url: string }>(
-    rescanTrees
-      ? `select id, github_url from projects
-         where github_sync_enabled = true
-           and github_url is not null
-           and github_url <> ''
-         order by sort_order asc, title asc`
-      : `select id, github_url from projects
-         where ${INCOMPLETE_GITHUB_SQL}
-         order by sort_order asc, title asc`,
-  );
+  const rows = rescanTrees
+    ? enabled
+    : enabled.filter(
+        (row) =>
+          leftoverIds.has(row.id) ||
+          (row.github_sync_status === "verified" && githubSyncIsStale(row.github_last_synced_at)),
+      );
   if (rows.length > 0) {
     console.info(`[cms] hydrating ${rows.length} GitHub repos`);
   }
@@ -135,7 +167,10 @@ async function hydratePendingGithubOnce(
 
   for (const row of rows) {
     try {
-      const result = await fetchPublicRepo(row.github_url, clientOptions);
+      const result = await fetchPublicRepo(row.github_url, {
+        ...clientOptions,
+        keepPaths: catalogSourcePaths(row.slug),
+      });
       await applyGithubSync(sql, row.id, result, "hydrate");
       if (result.ok) verified += 1;
       else {

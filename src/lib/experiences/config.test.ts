@@ -234,9 +234,10 @@ describe("experience config merge", () => {
       interactionSteps: [],
       process: ["fallback"],
     });
-    assert.equal(walk.length, 1);
+    assert.ok(walk.length >= 1);
     assert.match(walk[0] ?? "", /畫布/);
     assert.match(walk[0] ?? "", /src\/editor\.ts/);
+    assert.ok(walk.some((step) => step.includes("artboard-strip") || step.includes("畫板")));
 
     const nodes = howItWorksSteps({
       slug: "ai-director-os",
@@ -262,6 +263,39 @@ describe("experience config merge", () => {
     assert.equal(walkthroughStageKind({ title: "指令層", path: "src/components/editor/command-palette.tsx" }), "command");
     assert.equal(walkthroughStageKind({ title: "設計檢查", path: "src/components/editor/audit-panel.tsx" }), "audit");
     assert.equal(walkthroughStageKind({ title: "MCP 邊界", path: "src/components/editor/mcp-panel.tsx" }), "mcp");
+    assert.equal(walkthroughStageKind({ title: "畫板", path: "src/components/editor/artboard-strip.tsx" }), "artboard");
+    assert.equal(walkthroughStageKind({ title: "Artboards", path: "src/components/editor/artboard-strip.tsx" }), "artboard");
     assert.equal(walkthroughStageKind({ title: "匯出", path: "src/lib/export.ts" }), "document");
+  });
+
+  it("keeps saved walkthrough and fileHints and appends missing catalog paths", () => {
+    const folio = mergeExperienceConfig("folio", {
+      walkthrough: [
+        { title: "畫布", body: "saved-canvas", path: "src/components/editor/canvas-stage.tsx" },
+        { title: "指令層", body: "saved-command", path: "src/components/editor/command-palette.tsx" },
+      ],
+    });
+    assert.equal(
+      folio.walkthrough?.find((step) => step.path === "src/components/editor/canvas-stage.tsx")?.body,
+      "saved-canvas",
+    );
+    assert.ok(folio.walkthrough?.some((step) => step.path === "src/components/editor/artboard-strip.tsx"));
+    assert.ok(folio.fileHints?.some((item) => item.path === "src/components/editor/artboard-strip.tsx"));
+
+    const frame = mergeExperienceConfig("framelab", {
+      fileHints: [{ path: "src/lib/domain/timeline-engine.ts", purpose: "saved-engine", stage: "時間軸" }],
+    });
+    assert.equal(
+      frame.fileHints?.find((item) => item.path === "src/lib/domain/timeline-engine.ts")?.purpose,
+      "saved-engine",
+    );
+    assert.ok(frame.fileHints?.some((item) => item.path === "src/lib/domain/context-engine.ts"));
+    assert.ok(frame.fileHints?.some((item) => item.path === "src/lib/commands/execute.ts"));
+
+    const hermes = mergeExperienceConfig("hermes-console", {
+      fileHints: [{ path: "README.md", purpose: "saved-readme", stage: "來源" }],
+    });
+    assert.equal(hermes.fileHints?.find((item) => item.path === "README.md")?.purpose, "saved-readme");
+    assert.ok(hermes.fileHints?.some((item) => item.path === "lib/server/canva.ts"));
   });
 });

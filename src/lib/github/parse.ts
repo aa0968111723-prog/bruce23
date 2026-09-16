@@ -82,7 +82,8 @@ function treeScore(path: string): number {
     path.startsWith("client/") ||
     path.startsWith("server/") ||
     path.startsWith("shared/") ||
-    path.startsWith("app/")
+    path.startsWith("app/") ||
+    path.startsWith("packages/")
   ) {
     return 80;
   }
@@ -94,22 +95,30 @@ function treeScore(path: string): number {
 
 export function limitGithubTree(
   entries: Array<{ path: string; type: string; size?: number }>,
-  options: { maxEntries?: number; maxDepth?: number } = {},
+  options: { maxEntries?: number; maxDepth?: number; keepPaths?: string[] } = {},
 ): GithubTreeNode[] {
   const maxEntries = options.maxEntries ?? 80;
   const maxDepth = options.maxDepth ?? 4;
+  const keep = new Set(
+    (options.keepPaths ?? []).map((path) => path.replace(/^\/+/, "")).filter(Boolean),
+  );
+  const pinned: GithubTreeNode[] = [];
+  const pinnedSeen = new Set<string>();
   const scored: Array<{ node: GithubTreeNode; score: number }> = [];
   for (const entry of entries) {
     const path = entry.path.replace(/^\/+/, "");
     if (!path) continue;
     if (SKIP_FRAGMENTS.some((frag) => path.includes(frag))) continue;
+    const type = entry.type === "tree" || entry.type === "dir" ? "dir" : "file";
+    const node: GithubTreeNode = { path, type, size: type === "file" ? entry.size : undefined };
+    if (keep.has(path) && !pinnedSeen.has(path)) {
+      pinned.push(node);
+      pinnedSeen.add(path);
+      continue;
+    }
     const depth = path.split("/").length;
     if (depth > maxDepth) continue;
-    const type = entry.type === "tree" || entry.type === "dir" ? "dir" : "file";
-    scored.push({
-      node: { path, type, size: type === "file" ? entry.size : undefined },
-      score: treeScore(path),
-    });
+    scored.push({ node, score: treeScore(path) });
   }
   scored.sort((a, b) => b.score - a.score || a.node.path.localeCompare(b.node.path));
   const high: GithubTreeNode[] = [];
@@ -118,5 +127,7 @@ export function limitGithubTree(
     if (item.score <= 8) low.push(item.node);
     else high.push(item.node);
   }
-  return [...high, ...low.slice(0, MAX_LOW_VALUE_ENTRIES)].slice(0, maxEntries);
+  const rest = [...high, ...low.slice(0, MAX_LOW_VALUE_ENTRIES)].filter((item) => !pinnedSeen.has(item.path));
+  // Catalog source paths stay even if they would otherwise exceed maxEntries.
+  return [...pinned, ...rest].slice(0, Math.max(maxEntries, pinned.length));
 }

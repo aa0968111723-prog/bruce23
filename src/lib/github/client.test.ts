@@ -239,4 +239,47 @@ describe("github client honesty", () => {
     assert.equal(second.status, "verified");
     assert.ok(second.fileTree?.some((item) => item.path === "README.md"));
   });
+
+  it("keeps catalog keepPaths in the limited tree", async () => {
+    const crowd = Array.from({ length: 90 }, (_, index) => ({
+      path: `src/file-${index}.ts`,
+      type: "blob",
+      size: 1,
+    }));
+    const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/hermes-console", {
+      keepPaths: ["lib/server/canva.ts", "src/lib/domain/nested/deep.ts"],
+      fetchImpl: async (input) => {
+        const url = String(input);
+        if (url.includes("/readme")) return new Response("# Hermes", { status: 200 });
+        if (url.includes("/languages")) return new Response("{}", { status: 200 });
+        if (url.includes("/commits")) return new Response("[]", { status: 200 });
+        if (url.includes("/git/trees")) {
+          return new Response(
+            JSON.stringify({
+              tree: [
+                ...crowd,
+                { path: "lib/server/canva.ts", type: "blob", size: 40 },
+                { path: "src/lib/domain/nested/deep.ts", type: "blob", size: 12 },
+              ],
+            }),
+            { status: 200 },
+          );
+        }
+        return new Response(
+          JSON.stringify({
+            name: "hermes-console",
+            description: "console",
+            private: false,
+            default_branch: "main",
+            html_url: "https://github.com/aa0968111723-prog/hermes-console",
+            topics: [],
+          }),
+          { status: 200 },
+        );
+      },
+    });
+    assert.equal(result.ok, true);
+    assert.ok(result.fileTree?.some((item) => item.path === "lib/server/canva.ts"));
+    assert.ok(result.fileTree?.some((item) => item.path === "src/lib/domain/nested/deep.ts"));
+  });
 });

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { experienceCatalog, projectHubIds } from "./catalog.ts";
+import { experienceCatalog, catalogSourcePaths, projectHubIds } from "./catalog.ts";
 import { nextRovingTabIndex } from "../../components/site/useRovingTabs.ts";
 
 describe("experience catalog", () => {
@@ -63,7 +63,26 @@ describe("experience catalog", () => {
     const frameHints = experienceCatalog.framelab.fileHints ?? [];
     assert.ok(frameHints.some((item) => item.path === "src/lib/domain/timeline-engine.ts"));
     assert.ok(frameHints.some((item) => item.path === "src/lib/domain/sample-ball.ts"));
+    assert.ok(frameHints.some((item) => item.path === "src/lib/domain/context-engine.ts"));
+    assert.ok(frameHints.some((item) => item.path === "src/lib/commands/execute.ts"));
     assert.ok((experienceCatalog.planform.fileHints ?? []).some((item) => item.path === "src/core/placement.ts"));
+    assert.ok(
+      (experienceCatalog.folio.walkthrough ?? []).some(
+        (step) => step.path === "src/components/editor/artboard-strip.tsx",
+      ),
+    );
+    assert.ok(
+      (experienceCatalog["hermes-console"].fileHints ?? []).some((item) => item.path === "lib/server/canva.ts"),
+    );
+  });
+
+  it("pins catalog source paths for GitHub tree keepPaths", () => {
+    assert.deepEqual(catalogSourcePaths(), []);
+    assert.deepEqual(catalogSourcePaths("unknown-slug"), []);
+    assert.ok(catalogSourcePaths("folio").includes("src/components/editor/artboard-strip.tsx"));
+    assert.ok(catalogSourcePaths("framelab").includes("src/lib/domain/context-engine.ts"));
+    assert.ok(catalogSourcePaths("hermes-console").includes("lib/server/canva.ts"));
+    assert.ok(catalogSourcePaths("ai-director-os").includes("server/services/projectCore.ts"));
   });
 
   it("maps CMS modalities onto hubs instead of guessing from slug", () => {
@@ -153,6 +172,10 @@ describe("frontend contract", () => {
     assert.match(explorer, /aria-expanded/);
     assert.match(explorer, /role="tree"/);
     assert.match(explorer, /ex\.hintTreeAria|ex\.hintNote/);
+    assert.match(explorer, /data-hint-in-tree/);
+    assert.match(explorer, /hints.length > 0/);
+    assert.match(explorer, /hintInTree/);
+    assert.doesNotMatch(explorer, /tree.length === 0 && hints.length > 0/);
     assert.match(experienceLocale, /來源路徑/);
     assert.match(experienceLocale, /Limited file tree/);
     assert.match(css, /animation:\s*none/);
@@ -245,6 +268,8 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /data-walkthrough-stage/);
     assert.match(folioWalk, /walkthroughStageKind/);
     assert.match(folioWalk, /CanvasStage/);
+    assert.match(folioWalk, /ArtboardStage/);
+    assert.match(folioWalk, /data-folio-artboard/);
     assert.match(folioWalk, /data-folio-shell/);
     assert.match(folioWalk, /folioInsertText/);
     assert.match(folioWalk, /folioDocumentLayer/);
@@ -455,6 +480,8 @@ describe("frontend contract", () => {
     assert.match(field, /constellationLayout/);
     assert.match(field, /useRovingTabs/);
     assert.match(field, /ui\.explorationAria/);
+    assert.match(field, /data-constellation-hub/);
+    assert.match(field, /aria-pressed/);
     assert.match(localeView, /explorationAria: "作品與模態"/);
     assert.match(field, /hidden /);
     assert.match(field, /lg:block/);
@@ -506,6 +533,18 @@ describe("frontend contract", () => {
     assert.match(integrationsCard, /min-w-0 max-w-full/);
     const adminFn = readFileSync(new URL("../../../src/lib/cms/admin-fn.ts", import.meta.url), "utf8");
     assert.match(adminFn, /parseProjectPatch/);
+    assert.match(adminFn, /catalogSourcePaths/);
+    assert.match(adminFn, /fetchGithub\(sql, project.github_url, project.slug\)/);
+    const hydrateSrc = readFileSync(new URL("../../../src/lib/cms/hydrate.ts", import.meta.url), "utf8");
+    assert.match(hydrateSrc, /GITHUB_HYDRATE_VERSION = "5"/);
+    assert.match(hydrateSrc, /githubSyncIsStale/);
+    assert.match(hydrateSrc, /keepPaths: catalogSourcePaths\(row.slug\)/);
+    const parseSrc = readFileSync(new URL("../../../src/lib/github/parse.ts", import.meta.url), "utf8");
+    assert.match(parseSrc, /keepPaths/);
+    assert.match(parseSrc, /packages\//);
+    assert.match(experienceLocale, /folioArtboards/);
+    assert.match(experienceLocale, /hintInTree/);
+    assert.match(experienceLocale, /hintMissingFromTree/);
     assert.doesNotMatch(integrationsCard, /status:\s*"verified"/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);

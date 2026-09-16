@@ -75,6 +75,38 @@ describe("readme and rate-limit states", () => {
     assert.ok(githubLimited.some((item) => item.path.startsWith("src/")));
     assert.ok(githubLimited.filter((item) => item.path.startsWith(".github/")).length <= 12);
   });
+
+  it("pins keepPaths past maxDepth and maxEntries", () => {
+    const crowd = Array.from({ length: 90 }, (_, index) => ({
+      path: `src/file-${index}.ts`,
+      type: "blob" as const,
+      size: 1,
+    }));
+    const limited = limitGithubTree(
+      [
+        ...crowd,
+        { path: "lib/server/canva.ts", type: "blob", size: 40 },
+        { path: "src/lib/domain/nested/deep.ts", type: "blob", size: 12 },
+      ],
+      {
+        maxDepth: 4,
+        maxEntries: 80,
+        keepPaths: ["lib/server/canva.ts", "src/lib/domain/nested/deep.ts"],
+      },
+    );
+    assert.ok(limited.some((item) => item.path === "lib/server/canva.ts"));
+    assert.ok(limited.some((item) => item.path === "src/lib/domain/nested/deep.ts"));
+    const dropped = limitGithubTree(
+      [
+        ...crowd,
+        { path: "lib/server/canva.ts", type: "blob", size: 40 },
+        { path: "src/lib/domain/nested/deep.ts", type: "blob", size: 12 },
+      ],
+      { maxDepth: 4, maxEntries: 80 },
+    );
+    assert.equal(dropped.some((item) => item.path === "lib/server/canva.ts"), false);
+    assert.equal(dropped.some((item) => item.path === "src/lib/domain/nested/deep.ts"), false);
+  });
 });
 
 describe("project patches", () => {

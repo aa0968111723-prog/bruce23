@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { modalityFilters, projectHubIds } from "@/lib/experiences/catalog";
-import { CONSTELLATION_HEIGHT, CONSTELLATION_WIDTH, constellationLayout } from "@/lib/home/constellation";
+import {
+  CONSTELLATION_HEIGHT,
+  CONSTELLATION_WIDTH,
+  HUB_HALF_H,
+  HUB_HALF_W,
+  constellationLayout,
+} from "@/lib/home/constellation";
 import { chromeHub } from "@/lib/locale/view";
 import { cn } from "@/lib/cn";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
@@ -113,10 +119,25 @@ export function ExplorationField({
           })}
           {map.hubs.map((hub) => (
             <g key={hub.id}>
-              <circle cx={hub.x} cy={hub.y} r={24} className="fill-surface-mint stroke-mint/70" strokeWidth={2} />
-              <text x={hub.x} y={hub.y + 4} textAnchor="middle" className="fill-ink text-[13px] font-medium">
-                {chromeHub(ui, hub.id)}
-              </text>
+              <foreignObject
+                x={hub.x - HUB_HALF_W}
+                y={hub.y - HUB_HALF_H}
+                width={HUB_HALF_W * 2}
+                height={HUB_HALF_H * 2}
+              >
+                <button
+                  type="button"
+                  data-constellation-hub={hub.id}
+                  aria-pressed={filter === hub.id}
+                  className={cn(
+                    "flex h-full min-h-11 w-full items-center justify-center rounded-full px-2 text-center text-xs font-medium shadow-card",
+                    filter === hub.id ? "bg-mint text-primary-foreground" : "bg-surface-mint text-ink",
+                  )}
+                  onClick={() => setFilter((value) => (value === hub.id ? null : hub.id))}
+                >
+                  {chromeHub(ui, hub.id)}
+                </button>
+              </foreignObject>
             </g>
           ))}
           {map.nodes.map((node) => (

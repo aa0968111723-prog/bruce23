@@ -106,6 +106,8 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
       { path: "src/lib/domain/regeneration-planner.ts", purpose: "局部重產規劃", stage: "修復" },
       { path: "src/lib/domain/region-repair.ts", purpose: "局部修復", stage: "修復" },
       { path: "src/components/workstation/visual-timeline.tsx", purpose: "視覺時間軸", stage: "工作站" },
+      { path: "src/lib/domain/context-engine.ts", purpose: "Context Engine", stage: "上下文" },
+      { path: "src/lib/commands/execute.ts", purpose: "UI／REST／MCP 同一套指令", stage: "指令" },
       { path: "src/lib/ai/registry.ts", purpose: "模型註冊；未載入時不可用", stage: "限制" },
     ],
   },
@@ -157,6 +159,11 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
         path: "src/components/editor/canvas-stage.tsx",
       },
       {
+        title: "畫板",
+        body: "一份文件可以有多張畫板。MCP 的 list_artboards / get_artboard 走同一套文件模型。",
+        path: "src/components/editor/artboard-strip.tsx",
+      },
+      {
         title: "指令層",
         body: "快捷鍵、命令面板與 MCP 寫入同一 typed command layer。",
         path: "src/components/editor/command-palette.tsx",
@@ -174,6 +181,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     ],
     fileHints: [
       { path: "src/components/editor/editor-shell.tsx", purpose: "編輯器外殼", stage: "畫布" },
+      { path: "src/components/editor/artboard-strip.tsx", purpose: "多畫板列", stage: "畫板" },
       { path: "src/components/editor/canvas-stage.tsx", purpose: "畫布舞台", stage: "畫布" },
       { path: "src/components/editor/command-palette.tsx", purpose: "指令面板", stage: "指令" },
       { path: "src/components/editor/audit-panel.tsx", purpose: "設計檢查", stage: "檢查" },
@@ -207,6 +215,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
       { path: "app/api/ready/route.ts", purpose: "就緒檢查", stage: "狀態" },
       { path: "app/api/mcp-registry/route.ts", purpose: "MCP 登錄", stage: "工具" },
       { path: "app/api/health/route.ts", purpose: "健康檢查", stage: "狀態" },
+      { path: "lib/server/canva.ts", purpose: "Canva Connect 適配；未設定時不可用", stage: "限制" },
     ],
   },
   "tku-zen-ai": {
@@ -222,6 +231,24 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
 
 export function experienceForSlug(slug: string): ExperienceCatalogEntry | null {
   return experienceCatalog[slug] ?? null;
+}
+
+/** Paths the public GitHub tree must keep, even after depth/entry limits. */
+export function catalogSourcePaths(slug?: string | null): string[] {
+  if (!slug) return [];
+  const entry = experienceCatalog[slug];
+  if (!entry) return [];
+  const paths = new Set<string>();
+  for (const hint of entry.fileHints ?? []) {
+    if (hint.path) paths.add(hint.path);
+  }
+  for (const node of entry.processNodes ?? []) {
+    if (node.githubPath) paths.add(node.githubPath);
+  }
+  for (const step of entry.walkthrough ?? []) {
+    if (step.path) paths.add(step.path);
+  }
+  return [...paths];
 }
 
 export const modalityFilters: Array<{ id: string; label: string; slugs: string[] }> = [

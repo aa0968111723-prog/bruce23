@@ -62,6 +62,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
   const hints = config.fileHints ?? [];
   const hintMap = new Map(hints.map((item) => [item.path, item]));
   const tree = useMemo(() => github.fileTree ?? [], [github.fileTree]);
+  const treePaths = useMemo(() => new Set(tree.map((node) => node.path)), [tree]);
   const nested = useMemo(() => nest(tree), [tree]);
   const [open, setOpen] = useState<Record<string, boolean>>({ "": true });
   const [selected, setSelected] = useState<Node | null>(null);
@@ -156,13 +157,16 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             ariaLabel={ex.treeAria}
           />
         )}
-        {tree.length === 0 && hints.length > 0 ? (
+        {hints.length > 0 ? (
           <HintTree
             hints={hints}
             selected={selected?.path}
             onSelect={(path) => setSelected({ path, type: "file" })}
             hintNote={ex.hintNote}
             ariaLabel={ex.hintTreeAria}
+            inTree={(path) => treePaths.has(path)}
+            inTreeLabel={ex.hintInTree}
+            missingLabel={ex.hintMissingFromTree}
           />
         ) : null}
         {selected ? (
@@ -329,12 +333,18 @@ function HintTree({
   onSelect,
   hintNote,
   ariaLabel,
+  inTree,
+  inTreeLabel,
+  missingLabel,
 }: {
   hints: Array<{ path: string; purpose: string; stage: string }>;
   selected?: string;
   onSelect: (path: string) => void;
   hintNote: string;
   ariaLabel: string;
+  inTree: (path: string) => boolean;
+  inTreeLabel: string;
+  missingLabel: string;
 }) {
   const [focusPath, setFocusPath] = useState(hints[0]?.path ?? "");
   const itemRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -374,30 +384,35 @@ function HintTree({
           }
         }}
       >
-        {hints.map((item) => (
-          <li key={item.path} role="none">
-            <button
-              type="button"
-              role="treeitem"
-              aria-selected={selected === item.path}
-              tabIndex={focusPath === item.path ? 0 : -1}
-              ref={(el) => {
-                if (el) itemRefs.current.set(item.path, el);
-                else itemRefs.current.delete(item.path);
-              }}
-              className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
-                selected === item.path ? "bg-surface-mint" : ""
-              }`}
-              onClick={() => {
-                setFocusPath(item.path);
-                onSelect(item.path);
-              }}
-            >
-              <FileText className="size-4 text-muted" />
-              {item.path}
-            </button>
-          </li>
-        ))}
+        {hints.map((item) => {
+          const present = inTree(item.path);
+          return (
+            <li key={item.path} role="none">
+              <button
+                type="button"
+                role="treeitem"
+                aria-selected={selected === item.path}
+                data-hint-in-tree={present ? "true" : "false"}
+                tabIndex={focusPath === item.path ? 0 : -1}
+                ref={(el) => {
+                  if (el) itemRefs.current.set(item.path, el);
+                  else itemRefs.current.delete(item.path);
+                }}
+                className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
+                  selected === item.path ? "bg-surface-mint" : ""
+                }`}
+                onClick={() => {
+                  setFocusPath(item.path);
+                  onSelect(item.path);
+                }}
+              >
+                <FileText className="size-4 shrink-0 text-muted" />
+                <span className="min-w-0 flex-1 break-all">{item.path}</span>
+                <span className="shrink-0 text-xs text-muted">{present ? inTreeLabel : missingLabel}</span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

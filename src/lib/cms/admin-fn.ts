@@ -113,7 +113,7 @@ export const previewGithubFn = createServerFn({ method: "POST" })
     if (!url || !parseGithubUrl(url)) {
       throw new ValidationError("GitHub 網址無效。");
     }
-    const result = await fetchGithub(sql, url);
+    const result = await fetchGithub(sql, url, project.slug);
     return {
       current: {
         github_url: project.github_url,
@@ -148,7 +148,7 @@ export const applyGithubFn = createServerFn({ method: "POST" })
     const project = await getAdminProject(sql, data.id);
     const url = data.url ?? project.github_url;
     if (!url || !parseGithubUrl(url)) throw new ValidationError("GitHub 網址無效。");
-    const result = await fetchGithub(sql, url);
+    const result = await fetchGithub(sql, url, project.slug);
     return applyGithubSync(sql, data.id, result, actor.userId);
   });
 
@@ -162,7 +162,7 @@ export const verifyReadmeFn = createServerFn({ method: "POST" })
     if (!project.github_url) {
       return { status: "not_configured" as const, error: "尚未設定 GitHub 網址。" };
     }
-    const result = await fetchGithub(sql, project.github_url);
+    const result = await fetchGithub(sql, project.github_url, project.slug);
     if (result.readmeError) {
       return { status: "failed" as const, error: result.readmeError };
     }
@@ -341,8 +341,9 @@ export const previewDraftFn = createServerFn({ method: "GET" })
   .validator((input: unknown) => z.object({ slug: z.string().min(1) }).parse(input))
   .handler(async ({ context, data }) => handlePreviewDraft(asAuthed(context), data.slug));
 
-async function fetchGithub(sql: import("@/lib/db").Sql, url: string) {
+async function fetchGithub(sql: import("@/lib/db").Sql, url: string, slug?: string) {
   const { fetchPublicRepo } = await import("@/lib/github/client.server");
   const { githubClientOptions } = await import("@/lib/github/sql-cache");
-  return fetchPublicRepo(url, githubClientOptions(sql));
+  const { catalogSourcePaths } = await import("@/lib/experiences/catalog");
+  return fetchPublicRepo(url, { ...githubClientOptions(sql), keepPaths: catalogSourcePaths(slug) });
 }

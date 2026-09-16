@@ -71,8 +71,10 @@ export const experienceChrome = {
     openOnGithub: "在 GitHub 開啟",
     readmeSummary: "README 摘要",
     readmeMissing: "README 尚未同步，或這個儲存庫沒有公開 README。",
-    hintNote: "來源路徑提示，不是即時 repo 內容。",
+    hintNote: "精選來源路徑對齊公開 repo HEAD。有在這次同步檔案樹裡的會標示；沒讀到的仍可到 GitHub 開啟，不會假裝在樹裡。",
     hintTreeAria: "來源路徑",
+    hintInTree: "在同步樹中",
+    hintMissingFromTree: "不在這次有限檔案樹裡",
     emptyDemo: "沒有已驗證的公開 Demo。GitHub 仍可展開，但這裡不會放假的產品畫面。",
     publicUrl: "公開網址",
     pendingEmbed: "這個網址還沒驗證能不能嵌入。",
@@ -176,6 +178,7 @@ export const experienceChrome = {
     folioAddShape: "加入形狀",
     folioPreview: "預覽",
     folioDocumentLayer: "文件層",
+    folioArtboards: "畫板",
   },
   en: {
     tabPlay: "Play",
@@ -227,8 +230,11 @@ export const experienceChrome = {
     openOnGithub: "Open on GitHub",
     readmeSummary: "README excerpt",
     readmeMissing: "The README has not synced, or this repository has no public README.",
-    hintNote: "Source-path hints, not a live repo listing.",
+    hintNote:
+      "Curated source paths aligned with the public repo HEAD. Paths present in this sync are marked; missing ones can still open on GitHub and are not pretended to be in the tree.",
     hintTreeAria: "Source paths",
+    hintInTree: "In the synced tree",
+    hintMissingFromTree: "Not in this limited file tree",
     emptyDemo: "There is no verified public demo. GitHub can still expand, but a fake product screen is not shown.",
     publicUrl: "Public URL",
     pendingEmbed: "This URL has not been verified as embeddable yet.",
@@ -333,6 +339,7 @@ export const experienceChrome = {
     folioAddShape: "Add shape",
     folioPreview: "Preview",
     folioDocumentLayer: "document layer",
+    folioArtboards: "Artboards",
   },
 } as const;
 
@@ -480,6 +487,8 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       { path: "src/lib/domain/regeneration-planner.ts", purpose: "Local regen planner", stage: "Repair" },
       { path: "src/lib/domain/region-repair.ts", purpose: "Region repair", stage: "Repair" },
       { path: "src/components/workstation/visual-timeline.tsx", purpose: "Visual timeline", stage: "Workstation" },
+      { path: "src/lib/domain/context-engine.ts", purpose: "Context Engine", stage: "Context" },
+      { path: "src/lib/commands/execute.ts", purpose: "One execute path for UI / REST / MCP", stage: "Commands" },
       { path: "src/lib/ai/registry.ts", purpose: "Model registry; unavailable until loaded", stage: "Limits" },
     ],
   },
@@ -554,6 +563,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
         path: "src/components/editor/canvas-stage.tsx",
       },
       {
+        title: "Artboards",
+        body: "One document can hold several artboards. MCP list_artboards / get_artboard use the same document model.",
+        path: "src/components/editor/artboard-strip.tsx",
+      },
+      {
         title: "Command layer",
         body: "Shortcuts, the command palette, and MCP writes hit the same typed command layer.",
         path: "src/components/editor/command-palette.tsx",
@@ -571,6 +585,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
     ],
     fileHints: [
       { path: "src/components/editor/editor-shell.tsx", purpose: "Editor shell", stage: "Canvas" },
+      { path: "src/components/editor/artboard-strip.tsx", purpose: "Multi-artboard strip", stage: "Artboard" },
       { path: "src/components/editor/canvas-stage.tsx", purpose: "Canvas stage", stage: "Canvas" },
       { path: "src/components/editor/command-palette.tsx", purpose: "Command palette", stage: "Command" },
       { path: "src/components/editor/audit-panel.tsx", purpose: "Design audit", stage: "Audit" },
@@ -629,6 +644,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       { path: "app/api/ready/route.ts", purpose: "Ready check", stage: "Status" },
       { path: "app/api/mcp-registry/route.ts", purpose: "MCP registry", stage: "Tools" },
       { path: "app/api/health/route.ts", purpose: "Health check", stage: "Status" },
+      { path: "lib/server/canva.ts", purpose: "Canva Connect adapter; unavailable until configured", stage: "Limits" },
     ],
   },
   "tku-zen-ai": {
