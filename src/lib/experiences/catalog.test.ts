@@ -31,6 +31,7 @@ describe("experience catalog", () => {
     assert.match(source, /https:\/\/ai-os-app\.zeabur\.app/);
     assert.match(source, /https:\/\/duigao-k7q2\.zeabur\.app/);
     assert.match(source, /https:\/\/344\.zeabur\.app/);
+    assert.match(source, /https:\/\/planform-iso-k7d2\.zeabur\.app/);
     assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
     assert.doesNotMatch(source, /github\.io\/planform/);
   });
@@ -97,6 +98,7 @@ describe("frontend contract", () => {
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
+    assert.match(panel, /howItWorksSteps/);
     assert.match(header, /mobile-nav/);
     const roving = readFileSync(
       new URL("../../../src/components/site/useRovingTabs.ts", import.meta.url),

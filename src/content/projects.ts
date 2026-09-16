@@ -252,6 +252,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
+      live: "https://planform-iso-k7d2.zeabur.app",
     },
     media: [
       {
@@ -266,6 +267,11 @@ export const projects: Project[] = [
         label: "GitHub README · planform-iso",
         href: "https://github.com/aa0968111723-prog/planform-iso",
         note: "產品原則與限制取自公開 README。",
+      },
+      {
+        label: "公開站 · planform-iso-k7d2.zeabur.app",
+        href: "https://planform-iso-k7d2.zeabur.app",
+        note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。本次探測為 HTML，沒有 frame-bust，可當 Live Demo。狀態會隨部署變動。",
       },
     ],
     visibility: "public",

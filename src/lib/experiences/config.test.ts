@@ -7,6 +7,7 @@ import {
   roundTripExperienceConfig,
 } from "../cms/schema.ts";
 import { defaultExperienceConfig, mergeExperienceConfig } from "./defaults.ts";
+import { howItWorksSteps } from "./resolve.ts";
 
 const MODE_FIXTURES: Record<(typeof EXPERIENCE_MODES)[number], unknown> = {
   "live-demo": {
@@ -172,5 +173,38 @@ describe("experience config merge", () => {
       timeline: { frames: [], onionDefault: true },
     });
     assert.equal(emptied.timeline?.frames.length, 0);
+  });
+
+  it("how-it-works reads saved steps, then experience_config, then process copy", () => {
+    assert.deepEqual(
+      howItWorksSteps({
+        slug: "folio",
+        experienceConfig: {},
+        interactionSteps: ["看幀", "開 onion-skin"],
+        process: ["fallback"],
+      }),
+      ["看幀", "開 onion-skin"],
+    );
+
+    const walk = howItWorksSteps({
+      slug: "folio",
+      experienceConfig: {
+        walkthrough: [{ title: "畫布", body: "文件模型", path: "src/editor.ts" }],
+      },
+      interactionSteps: [],
+      process: ["fallback"],
+    });
+    assert.equal(walk.length, 1);
+    assert.match(walk[0] ?? "", /畫布/);
+    assert.match(walk[0] ?? "", /src\/editor\.ts/);
+
+    const nodes = howItWorksSteps({
+      slug: "ai-director-os",
+      experienceConfig: {},
+      interactionSteps: [],
+      process: ["fallback"],
+    });
+    assert.ok(nodes.some((step) => step.includes("專案")));
+    assert.notEqual(nodes[0], "fallback");
   });
 });

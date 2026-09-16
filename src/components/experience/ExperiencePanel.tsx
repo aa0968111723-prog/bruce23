@@ -7,7 +7,7 @@ import { CanvaStage } from "./CanvaStage";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { howItWorksSteps, resolveExperienceConfig } from "@/lib/experiences/resolve";
 
 const TABS = [
   { id: "play", label: "立即體驗" },
@@ -133,14 +133,12 @@ export function ExperiencePanel({
         {tab === "canva" ? <CanvaStage project={project} /> : null}
         {tab === "how" ? (
           <ol className="grid gap-3">
-            {(project.interactionSteps.length ? project.interactionSteps : project.process).map(
-              (step, index) => (
-                <li key={step} className="rounded-2xl bg-surface px-4 py-3 shadow-card">
-                  <p className="text-xs text-mint-deep">{String(index + 1).padStart(2, "0")}</p>
-                  <p className="mt-1 text-sm leading-relaxed">{step}</p>
-                </li>
-              ),
-            )}
+            {howItWorksSteps(project).map((step, index) => (
+              <li key={`${index}-${step}`} className="rounded-2xl bg-surface px-4 py-3 shadow-card">
+                <p className="text-xs text-mint-deep">{String(index + 1).padStart(2, "0")}</p>
+                <p className="mt-1 text-sm leading-relaxed">{step}</p>
+              </li>
+            ))}
           </ol>
         ) : null}
         {tab === "source" ? (
