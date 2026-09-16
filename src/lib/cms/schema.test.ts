@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
-import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign } from "../canva/parse.ts";
+import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, isCanvaShortLink } from "../canva/parse.ts";
 import { verifyDemoUrl } from "../demo/verify.ts";
 import { projectInputSchema } from "./schema.ts";
 import { toPublicProject } from "./store.ts";
@@ -37,6 +37,42 @@ describe("readme and rate-limit states", () => {
     assert.equal(limited.length, 1);
     assert.equal(limited[0].path, "src/lib/zen.ts");
   });
+
+  it("does not let .grok/.github files crowd out README and src", () => {
+    const junk = Array.from({ length: 90 }, (_, index) => ({
+      path: `.grok/file-${index}.md`,
+      type: "blob" as const,
+      size: 1,
+    }));
+    const limited = limitGithubTree(
+      [
+        ...junk,
+        { path: ".github/workflows/ci.yml", type: "blob", size: 1 },
+        { path: "README.md", type: "blob", size: 40 },
+        { path: "src/lib/domain/timeline-engine.ts", type: "blob", size: 200 },
+      ],
+      { maxDepth: 4, maxEntries: 80 },
+    );
+    assert.ok(limited.some((item) => item.path === "README.md"));
+    assert.ok(limited.some((item) => item.path.startsWith("src/")));
+    assert.ok(limited.filter((item) => item.path.startsWith(".grok/")).length < 20);
+    const githubHeavy = Array.from({ length: 90 }, (_, index) => ({
+      path: `.github/workflows/job-${index}.yml`,
+      type: "blob" as const,
+      size: 1,
+    }));
+    const githubLimited = limitGithubTree(
+      [
+        ...githubHeavy,
+        { path: "README.md", type: "blob", size: 40 },
+        { path: "src/lib/domain/timeline-engine.ts", type: "blob", size: 200 },
+      ],
+      { maxDepth: 4, maxEntries: 80 },
+    );
+    assert.ok(githubLimited.some((item) => item.path === "README.md"));
+    assert.ok(githubLimited.some((item) => item.path.startsWith("src/")));
+    assert.ok(githubLimited.filter((item) => item.path.startsWith(".github/")).length <= 12);
+  });
 });
 
 describe("canva allowlist", () => {
@@ -58,6 +94,12 @@ describe("canva allowlist", () => {
 
   it("does not treat short /d/ links as public design embeds", () => {
     assert.equal(parseCanvaDesign("https://www.canva.com/d/ysK5sYZisVEjZFe"), null);
+    assert.equal(isCanvaShortLink("https://www.canva.com/d/ysK5sYZisVEjZFe"), true);
+    const stored = canvaPersistShape("https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(stored.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(stored.embedUrl, null);
+    assert.equal(stored.designId, null);
+    assert.equal(stored.statusHint, "pending");
   });
 
   it("parses view/edit/watch share shapes", () => {
@@ -203,6 +245,20 @@ describe("privacy", () => {
         false,
       ),
       "local",
+    );
+    assert.equal(
+      canvaViewerState(
+        {
+          shareUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+          embedUrl: null,
+          designId: null,
+          thumbnailUrl: null,
+          status: "unavailable",
+          lastSyncedAt: null,
+        },
+        false,
+      ),
+      "fallback",
     );
     assert.equal(
       canvaViewerState(

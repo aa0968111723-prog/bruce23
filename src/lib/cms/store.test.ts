@@ -293,6 +293,25 @@ describe("cms persistence", () => {
     assert.ok(published.canva.embedUrl?.includes("embed"));
   });
 
+  it("keeps a Canva /d/ short URL on save without treating it as a verified embed", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(published.canva.embedUrl, null);
+    assert.equal(published.canva.designId, null);
+    assert.equal(published.canva.status, "pending");
+  });
+
   it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(

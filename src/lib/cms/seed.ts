@@ -66,7 +66,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
            canva_status = case
              when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
                then case
-                 when canva_status in ('not_configured', 'unavailable')
+                 when canva_status in ('not_configured', 'unavailable', 'failed')
                    and canva_share_url is null and canva_embed_url is null
                    then 'pending'
                  else canva_status
@@ -240,7 +240,11 @@ export async function ensureSeed(
         label: ref.label,
         href: ref.href,
         note: ref.note,
-        kind: "github" as const,
+        kind: ref.href?.includes("canva.com")
+          ? ("canva" as const)
+          : ref.href?.includes("github.com")
+            ? ("github" as const)
+            : ("demo" as const),
       })),
     });
     await createProjectRecord(sql, input, actor);
@@ -294,13 +298,17 @@ export async function ensureSeed(
 }
 
 async function runPublicHydrates(sql: Sql): Promise<void> {
-  const { shouldHydrateGithub, hydratePendingGithub, hydratePendingDemos } = await import("./hydrate.ts");
+  const { shouldHydrateGithub, hydratePendingGithub, hydratePendingDemos, hydratePendingCanvaShortLinks } =
+    await import("./hydrate.ts");
   if (!shouldHydrateGithub()) return;
   await hydratePendingGithub(sql).catch((err: unknown) => {
     console.warn("[cms] github hydrate deferred:", err instanceof Error ? err.message : "unknown error");
   });
   await hydratePendingDemos(sql).catch((err: unknown) => {
     console.warn("[cms] demo hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
+  await hydratePendingCanvaShortLinks(sql).catch((err: unknown) => {
+    console.warn("[cms] canva shortlink hydrate deferred:", err instanceof Error ? err.message : "unknown error");
   });
 }
 
@@ -406,7 +414,11 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
         label: ref.label,
         href: ref.href,
         note: ref.note,
-        kind: ref.href?.includes("github.com") ? "github" : "demo",
+        kind: ref.href?.includes("canva.com")
+          ? "canva"
+          : ref.href?.includes("github.com")
+            ? "github"
+            : "demo",
       });
       have.add(key);
     }

@@ -84,6 +84,11 @@ export const projects: Project[] = [
         note: "多模態工作室前身，描述取自公開 repo description。",
       },
       {
+        label: "Canva 短網址 · healing-studio 品牌主視覺",
+        href: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        note: "來自 healing-studio docs/design-reference.md。短網址不是 design id；只有伺服器跟隨 canva.com 轉址成功後才嵌入。",
+      },
+      {
         label: "公開站 · ai-os-app.zeabur.app",
         href: "https://ai-os-app.zeabur.app",
         note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。",

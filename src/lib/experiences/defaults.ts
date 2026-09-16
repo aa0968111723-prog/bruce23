@@ -31,6 +31,10 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     processNodes: catalog?.processNodes ?? [],
     walkthrough: catalog?.walkthrough ?? [],
     fileHints: catalog?.fileHints ?? [],
+    githubIntro: "檔案樹來自伺服器同步的公開 GitHub 中繼資料。沒有讀到的路徑不會虛構。",
+    canvaNote:
+      "目前是公開嵌入模式。沒有公開 /design/{id} 或伺服器可轉址的 /d/ 短網址就不會嵌入空白 iframe。短網址成功轉到設計後才嵌入，不會標成已驗證，也不會宣稱 Connect 已連線。",
+    demoNote: "沒有已驗證的公開 Demo 時，不會放假的產品畫面。",
   };
 
   if (slug === "framelab") {
@@ -146,9 +150,6 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
 
   return {
     ...base,
-    demoNote: "沒有已驗證的公開 Demo 時，不會放假的產品畫面。",
-    githubIntro: "檔案樹來自伺服器同步的公開 GitHub 中繼資料。",
-    canvaNote: "目前是公開嵌入模式。沒有分享網址就不會顯示空白 iframe。",
     galleryNote: "只顯示作品已發布的媒體。",
   };
 }

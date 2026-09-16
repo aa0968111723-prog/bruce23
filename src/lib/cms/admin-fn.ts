@@ -84,7 +84,7 @@ export const restoreProjectFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => idInput.parse(input))
   .handler(async ({ context, data }) => handleSetPublication(asAuthed(context), data.id, "draft"));
 
-export const listRevisionsFn = createServerFn({ method: "GET" })
+export const listRevisionsFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => idInput.parse(input))
   .handler(async ({ context, data }) => {

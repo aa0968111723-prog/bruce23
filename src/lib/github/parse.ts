@@ -67,16 +67,38 @@ const SKIP_FRAGMENTS = [
   ".git/",
   "pnpm-lock",
   "package-lock.json",
-  ".grok/skills/",
+  ".grok/",
 ];
+
+const LOW_VALUE_PREFIXES = [".github/", ".grok/", ".cursor/", ".vscode/", ".manus/"];
+const MAX_LOW_VALUE_ENTRIES = 12;
+
+function treeScore(path: string): number {
+  const lower = path.toLowerCase();
+  if (lower === "readme.md" || lower.endsWith("/readme.md")) return 100;
+  if (lower === "package.json" || lower === "agents.md") return 90;
+  if (
+    path.startsWith("src/") ||
+    path.startsWith("client/") ||
+    path.startsWith("server/") ||
+    path.startsWith("shared/") ||
+    path.startsWith("app/")
+  ) {
+    return 80;
+  }
+  if (LOW_VALUE_PREFIXES.some((prefix) => path === prefix.slice(0, -1) || path.startsWith(prefix))) {
+    return 8;
+  }
+  return 40;
+}
 
 export function limitGithubTree(
   entries: Array<{ path: string; type: string; size?: number }>,
   options: { maxEntries?: number; maxDepth?: number } = {},
 ): GithubTreeNode[] {
   const maxEntries = options.maxEntries ?? 80;
-  const maxDepth = options.maxDepth ?? 3;
-  const out: GithubTreeNode[] = [];
+  const maxDepth = options.maxDepth ?? 4;
+  const scored: Array<{ node: GithubTreeNode; score: number }> = [];
   for (const entry of entries) {
     const path = entry.path.replace(/^\/+/, "");
     if (!path) continue;
@@ -84,8 +106,17 @@ export function limitGithubTree(
     const depth = path.split("/").length;
     if (depth > maxDepth) continue;
     const type = entry.type === "tree" || entry.type === "dir" ? "dir" : "file";
-    out.push({ path, type, size: type === "file" ? entry.size : undefined });
-    if (out.length >= maxEntries) break;
+    scored.push({
+      node: { path, type, size: type === "file" ? entry.size : undefined },
+      score: treeScore(path),
+    });
   }
-  return out;
+  scored.sort((a, b) => b.score - a.score || a.node.path.localeCompare(b.node.path));
+  const high: GithubTreeNode[] = [];
+  const low: GithubTreeNode[] = [];
+  for (const item of scored) {
+    if (item.score <= 8) low.push(item.node);
+    else high.push(item.node);
+  }
+  return [...high, ...low.slice(0, MAX_LOW_VALUE_ENTRIES)].slice(0, maxEntries);
 }

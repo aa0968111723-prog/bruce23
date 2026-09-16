@@ -1,5 +1,5 @@
 import type { Sql } from "../db.ts";
-import { evaluateCanvaEmbedTest } from "../canva/embed.ts";
+import { resolveCanvaShareUrl } from "../canva/resolve.ts";
 import { requireAdminActor } from "./guard.server.ts";
 
 export type AuthedAdmin = { userId: string; bearerToken?: string };
@@ -22,6 +22,7 @@ export async function persistCanvaEmbedTest(
   sql: Sql,
   actorUserId: string,
   data: { id?: string; url?: string },
+  options: { fetchImpl?: typeof fetch } = {},
 ) {
   let raw = data.url ?? "";
   if (data.id && !raw) {
@@ -29,24 +30,17 @@ export async function persistCanvaEmbedTest(
     const project = await getAdminProject(sql, data.id);
     raw = project.canva_embed_url || project.canva_share_url || "";
   }
-  const payload = evaluateCanvaEmbedTest(raw);
+  const payload = await resolveCanvaShareUrl(raw, { fetchImpl: options.fetchImpl });
   if (!data.id) return payload;
-  if (payload.status === "failed" && !("parsed" in payload)) {
-    await sql.query(
-      `update projects set canva_status = 'failed', canva_error = $2, updated_by = $3, updated_at = now() where id = $1`,
-      [data.id, payload.error, actorUserId],
-    );
-    return payload;
-  }
-  const parsedOk = "parsed" in payload && payload.parsed === true;
+  const parsedOk = payload.status === "pending" && payload.parsed === true;
   await sql.query(
-    `update projects set canva_share_url = coalesce($2, canva_share_url),
-      canva_embed_url = coalesce($3, canva_embed_url), canva_design_id = coalesce($4, canva_design_id),
+    `update projects set canva_share_url = $2,
+      canva_embed_url = $3, canva_design_id = $4,
       canva_status = $5, canva_error = $6, canva_last_synced_at = now(),
       updated_by = $7, updated_at = now() where id = $1`,
     [
       data.id,
-      parsedOk ? payload.shareUrl : null,
+      parsedOk ? payload.shareUrl : payload.status === "failed" ? null : (payload.shareUrl ?? null),
       parsedOk ? payload.embedUrl : null,
       parsedOk ? payload.designId : null,
       payload.status,

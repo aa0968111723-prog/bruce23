@@ -173,7 +173,7 @@ export async function fetchPublicRepo(
     language: typeof data.language === "string" ? data.language : null,
   };
 
-  const [readmeRes, langRes, commitRes, treeRes] = await Promise.all([
+  const [readmeRes, langRes, commitRes] = await Promise.all([
     fetchJson(
       `https://api.github.com/repos/${owner}/${repo}/readme`,
       { ...options, fetchImpl: wrapRawAccept(options.fetchImpl) },
@@ -188,11 +188,6 @@ export async function fetchPublicRepo(
       `https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`,
       options,
       `commit:${owner}/${repo}`,
-    ),
-    fetchJson(
-      `https://api.github.com/repos/${owner}/${repo}/git/trees/${encodeURIComponent(defaultBranch)}?recursive=1`,
-      options,
-      `tree:${owner}/${repo}:${defaultBranch}`,
     ),
   ]);
 
@@ -215,10 +210,13 @@ export async function fetchPublicRepo(
       : undefined;
 
   let latestCommit: GithubFetchResult["latestCommit"];
+  let treeSha: string | undefined;
   if (Array.isArray(commitRes.json) && commitRes.json[0] && typeof commitRes.json[0] === "object") {
     const commit = commitRes.json[0] as Record<string, unknown>;
     const inner = (commit.commit as Record<string, unknown> | undefined) ?? {};
     const author = (inner.author as Record<string, unknown> | undefined) ?? {};
+    const tree = (inner.tree as Record<string, unknown> | undefined) ?? {};
+    treeSha = typeof tree.sha === "string" ? tree.sha : undefined;
     latestCommit = {
       sha: typeof commit.sha === "string" ? commit.sha : "",
       message: typeof inner.message === "string" ? inner.message.split("\n")[0] : "",
@@ -227,13 +225,24 @@ export async function fetchPublicRepo(
     };
   }
 
+  const treeTarget = treeSha ?? defaultBranch;
+  const treeRes = await fetchJson(
+    `https://api.github.com/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeTarget)}?recursive=1`,
+    options,
+    `tree:${owner}/${repo}:${treeTarget}`,
+  );
+
   let fileTree: GithubTreeNode[] | undefined;
+  if (treeRes.errorCode === "rate_limited") {
+    return { ok: false, status: "failed", error: treeRes.error, errorCode: "rate_limited", owner, repo, metadata };
+  }
   if (treeRes.json && typeof treeRes.json === "object") {
     const tree = (treeRes.json as { tree?: Array<{ path: string; type: string; size?: number }> }).tree;
     if (Array.isArray(tree)) {
-      fileTree = limitGithubTree(tree, { maxEntries: 80, maxDepth: 3 });
+      fileTree = limitGithubTree(tree, { maxEntries: 80, maxDepth: 4 });
     }
   }
+  if (!fileTree) fileTree = [];
 
   const topics = Array.isArray(data.topics) ? data.topics.filter((t): t is string => typeof t === "string") : [];
 

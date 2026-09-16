@@ -281,7 +281,7 @@ function IntegrationsPage() {
                     className="min-h-11 rounded-xl border border-line px-3"
                     value={shareUrl}
                     onChange={(event) => setShareUrl(event.target.value)}
-                    placeholder="https://www.canva.com/design/…/view"
+                    placeholder="https://www.canva.com/design/…/view 或 /d/ 短網址"
                   />
                 </label>
                 <button

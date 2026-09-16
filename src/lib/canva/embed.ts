@@ -1,4 +1,4 @@
-import { extractCanvaUrl, isAllowedCanvaUrl, parseCanvaDesign } from "./parse.ts";
+import { extractCanvaUrl, isAllowedCanvaUrl, isCanvaShortLink, parseCanvaDesign } from "./parse.ts";
 
 export type CanvaEmbedTestResult =
   | {
@@ -71,7 +71,9 @@ export function canvaEmbedSrc(embedUrl: string, pageId?: string | null): string 
 
 export function canvaOpenOriginalUrl(shareOrEmbed: string | null | undefined): string | null {
   const parsed = parseCanvaDesign(shareOrEmbed);
-  return parsed?.shareUrl ?? null;
+  if (parsed) return parsed.shareUrl;
+  if (isCanvaShortLink(shareOrEmbed)) return extractCanvaUrl(shareOrEmbed);
+  return null;
 }
 
 export function parseCanvaPageIds(input: string | null | undefined): string[] | null {

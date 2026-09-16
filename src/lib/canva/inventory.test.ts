@@ -9,6 +9,8 @@ import {
   archiveCanvaInventory,
   canvaFieldsForProject,
   collectCanvaUrlsFromText,
+  collectCanvaShortUrlsFromText,
+  CANVA_SHORTLINK_CANDIDATES,
   projectCanvaInventory,
 } from "./inventory.ts";
 
@@ -28,6 +30,13 @@ describe("canva content inventory", () => {
     assert.deepEqual(collectCanvaUrlsFromText(combined), []);
   });
 
+  it("collects the healing-studio /d/ short URL without treating it as a design embed", () => {
+    const combined = SOURCE_FILES.map((file) => readFileSync(join(root, file), "utf8")).join("\n");
+    const shorts = collectCanvaShortUrlsFromText(combined);
+    assert.ok(shorts.includes("https://www.canva.com/d/ysK5sYZisVEjZFe"));
+    assert.ok(CANVA_SHORTLINK_CANDIDATES["ai-director-os"]?.includes("https://www.canva.com/d/ysK5sYZisVEjZFe"));
+  });
+
   it("parses a real share URL when one is supplied later", () => {
     const parsed = collectCanvaUrlsFromText(
       "poster https://www.canva.com/design/DAGOnlyInTests/view?utm=1 extra",
@@ -37,19 +46,24 @@ describe("canva content inventory", () => {
     assert.ok(parsed[0].embedUrl.includes("embed"));
   });
 
-  it("keeps all eight works honest: local thumbnails or not_configured, never invented embeds", () => {
+  it("keeps all eight works honest: local thumbnails, pending short links, never invented embeds", () => {
     const inventory = projectCanvaInventory();
     assert.equal(Object.keys(inventory).length, 8);
     assert.equal(projects.length, 8);
     for (const project of projects) {
       const fields = inventory[project.slug];
-      assert.equal(fields.shareUrl, null, project.slug);
       assert.equal(fields.embedUrl, null, project.slug);
       assert.equal(fields.designId, null, project.slug);
       if (project.slug === "tku-zen-ai") {
+        assert.equal(fields.shareUrl, null, project.slug);
         assert.equal(fields.status, "unavailable");
         assert.equal(fields.thumbnailUrl, "/media/archive/tku-zen-poster.svg");
+      } else if (project.slug === "ai-director-os") {
+        assert.equal(fields.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+        assert.equal(fields.status, "pending");
+        assert.equal(fields.thumbnailUrl, null);
       } else {
+        assert.equal(fields.shareUrl, null, project.slug);
         assert.equal(fields.status, "not_configured");
         assert.equal(fields.thumbnailUrl, null);
       }

@@ -10,7 +10,7 @@ import {
 } from "./privacy.ts";
 import type { IntegrationStatus, PublicationStatus } from "./status.ts";
 import { parseGithubUrl } from "../github/parse.ts";
-import { parseCanvaDesign, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
+import { canvaPersistShape, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
 import type { GithubFetchResult } from "../github/client.server.ts";
 
 export function jsonb(value: unknown): string {
@@ -287,7 +287,17 @@ async function insertRevision(
 
 function insertParams(input: ProjectInput, id: string, actor: string | null): unknown[] {
   const parsedGh = parseGithubUrl(input.github_url ?? undefined);
-  const parsedCanva = parseCanvaDesign(input.canva_share_url || input.canva_embed_url || undefined);
+  const canvaShape = canvaPersistShape(input.canva_share_url || input.canva_embed_url || undefined);
+  const canvaStatus =
+    canvaShape.designId
+      ? input.canva_status
+      : canvaShape.shareUrl
+        ? input.canva_status === "unavailable" || input.canva_status === "failed"
+          ? input.canva_status
+          : "pending"
+        : canvaShape.statusHint === "failed"
+          ? "failed"
+          : "not_configured";
   return [
     id,
     input.slug,
@@ -332,16 +342,12 @@ function insertParams(input: ProjectInput, id: string, actor: string | null): un
     input.live_demo_last_verified_at ?? null,
     input.live_demo_status,
     input.live_demo_error ?? null,
-    parsedCanva?.shareUrl ?? null,
-    parsedCanva?.embedUrl ?? null,
-    parsedCanva?.designId ?? null,
+    canvaShape.shareUrl,
+    canvaShape.embedUrl,
+    canvaShape.designId,
     jsonb(input.canva_page_ids ?? null),
     sanitizeStoredCanvaThumbnail(input.canva_thumbnail_url),
-    parsedCanva
-      ? input.canva_status
-      : input.canva_share_url || input.canva_embed_url
-        ? "failed"
-        : "not_configured",
+    canvaStatus,
     input.canva_last_synced_at ?? null,
     input.canva_alt ?? null,
     input.canva_caption ?? null,
@@ -646,7 +652,17 @@ export async function listAdminArchive(sql: Sql): Promise<AdminArchiveItem[]> {
 
 export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: string }, actor: string) {
   const id = input.id ?? crypto.randomUUID();
-  const parsed = parseCanvaDesign(input.canva_share_url || input.canva_embed_url || undefined);
+  const canvaShape = canvaPersistShape(input.canva_share_url || input.canva_embed_url || undefined);
+  const canvaStatus =
+    canvaShape.designId
+      ? input.canva_status
+      : canvaShape.shareUrl
+        ? input.canva_status === "unavailable" || input.canva_status === "failed"
+          ? input.canva_status
+          : "pending"
+        : canvaShape.statusHint === "failed"
+          ? "failed"
+          : input.canva_status;
   await sql.query(
     `insert into archive_items (
       id, slug, title, kind, year, summary, media, href, origin_note, publication_status, sort_order,
@@ -677,12 +693,12 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
       input.origin_note,
       input.publication_status,
       input.sort_order,
-      parsed?.shareUrl ?? null,
-      parsed?.embedUrl ?? null,
-      parsed?.designId ?? null,
+      canvaShape.shareUrl,
+      canvaShape.embedUrl,
+      canvaShape.designId,
       jsonb(input.canva_page_ids ?? null),
       sanitizeStoredCanvaThumbnail(input.canva_thumbnail_url),
-      parsed ? input.canva_status : input.canva_share_url || input.canva_embed_url ? "failed" : input.canva_status,
+      canvaStatus,
       input.canva_alt ?? null,
       input.canva_caption ?? null,
       actor,

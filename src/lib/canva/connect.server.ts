@@ -227,12 +227,19 @@ export async function applyCanvaDesignToProject(
   input: { projectId: string; designId: string; publicShareUrl?: string; actor: string },
 ): Promise<ApplyCanvaResult> {
   const design = await getCanvaDesign(sql, input.designId);
-  const parsedShare = parseCanvaDesign(input.publicShareUrl);
+  const { resolveCanvaShareUrl } = await import("./resolve.ts");
+  const resolved = input.publicShareUrl ? await resolveCanvaShareUrl(input.publicShareUrl) : null;
+  const parsedShare =
+    resolved?.status === "pending" && resolved.parsed
+      ? { shareUrl: resolved.shareUrl, embedUrl: resolved.embedUrl, designId: resolved.designId }
+      : parseCanvaDesign(input.publicShareUrl);
   const pageIds = design.pages.length ? design.pages : null;
   const publicEmbedReady = Boolean(parsedShare);
   const error = publicEmbedReady
     ? null
-    : "已從 Canva Connect 寫入 design id 與頁面。公開嵌入仍需 canva.com/design 分享網址；Connect 的 view/edit／縮圖 URL 會過期，不會寫成訪客封面或 iframe。";
+    : resolved?.status === "unavailable"
+      ? resolved.error
+      : "已從 Canva Connect 寫入 design id 與頁面。公開嵌入仍需 canva.com/design 分享網址或可轉址的 /d/ 短網址；Connect 的 view/edit／縮圖 URL 會過期，不會寫成訪客封面或 iframe。";
   await sql.query(
     `update projects set
        canva_design_id = $2,
@@ -255,7 +262,7 @@ export async function applyCanvaDesignToProject(
       pageIds ? JSON.stringify(pageIds) : null,
       design.title,
       `Canva Connect 同步「${design.title}」${design.pageCount ? ` · ${design.pageCount} 頁` : ""}。`,
-      publicEmbedReady ? "pending" : "pending",
+      publicEmbedReady ? "pending" : "unavailable",
       error,
       input.actor,
     ],

@@ -239,3 +239,77 @@ describe("github hydrate", () => {
     assert.match(admin.live_demo_error ?? "", /不是網頁/);
   });
 });
+
+describe("canva shortlink hydrate", () => {
+  it("persists a redirected design URL and never marks verified", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "ai-director-os",
+        title: "AI Director OS",
+        category: "AI Product",
+        year: "2026",
+        product_status: "in-progress",
+        publication_status: "published",
+        featured: true,
+        sort_order: 0,
+        canva_status: "not_configured",
+      }),
+      "seed",
+    );
+    const { hydratePendingCanvaShortLinks } = await import("./hydrate.ts");
+    const result = await hydratePendingCanvaShortLinks(sql, {
+      force: true,
+      fetchImpl: async (input) => {
+        const url = String(input);
+        if (url.includes("/d/")) {
+          return new Response(null, {
+            status: 302,
+            headers: { Location: "https://www.canva.com/design/DAGhydrateResolved/view" },
+          });
+        }
+        return new Response("nope", { status: 404 });
+      },
+    });
+    assert.equal(result.skipped, false);
+    assert.ok(result.resolved >= 1);
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.canva_design_id, "DAGhydrateResolved");
+    assert.ok(admin.canva_embed_url?.includes("embed"));
+    assert.notEqual(admin.canva_status, "verified");
+    assert.equal(admin.canva_status, "pending");
+  });
+
+  it("marks a login-wall short URL unavailable without an embed", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "ai-director-os",
+        title: "AI Director OS",
+        category: "AI Product",
+        year: "2026",
+        product_status: "in-progress",
+        publication_status: "published",
+        featured: true,
+        sort_order: 0,
+      }),
+      "seed",
+    );
+    const { hydratePendingCanvaShortLinks } = await import("./hydrate.ts");
+    await hydratePendingCanvaShortLinks(sql, {
+      force: true,
+      fetchImpl: async () =>
+        new Response(null, {
+          status: 302,
+          headers: { Location: "https://www.canva.com/login?redirect=%2Fd%2Fx" },
+        }),
+    });
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.canva_status, "unavailable");
+    assert.equal(admin.canva_embed_url, null);
+    assert.equal(admin.canva_design_id, null);
+    assert.ok(admin.canva_share_url?.includes("/d/"));
+  });
+});

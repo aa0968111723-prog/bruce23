@@ -5,6 +5,9 @@ export const CANVA_ALLOWED_HOSTS = [
   "canva.site",
 ] as const;
 
+/** Redirect follow allowlist for short links. Broader than paste hosts; never evil.com. */
+export const CANVA_REDIRECT_HOSTS = ["www.canva.com", "canva.com"] as const;
+
 /** Connect thumbnails / export downloads. Not valid public share/embed hosts. */
 export const CANVA_MEDIA_HOSTS = [
   "document-export.canva.com",
@@ -21,6 +24,10 @@ export type ParsedCanvaDesign = {
 function isAllowedCanvaHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
   return (CANVA_ALLOWED_HOSTS as readonly string[]).includes(host);
+}
+
+export function isCanvaRedirectHost(hostname: string): boolean {
+  return (CANVA_REDIRECT_HOSTS as readonly string[]).includes(hostname.toLowerCase());
 }
 
 export function isAllowedCanvaUrl(input: string): boolean {
@@ -69,8 +76,8 @@ export function parseCanvaDesign(input: string | null | undefined): ParsedCanvaD
   const extracted = extractCanvaUrl(input);
   if (!extracted) return null;
   const url = new URL(extracted);
-  // Official share/embed/view/edit/watch paths only. Short /d/ links are not
-  // treated as public embeds — they are not proof of a DAG design id.
+  // Official share/embed/view/edit/watch/present paths only. Short /d/ links are
+  // not public embeds until a server-side redirect yields a DAG design id.
   const match = url.pathname.match(/\/design\/([A-Za-z0-9_-]+)(?:\/(?:view|edit|watch|present))?\/?/);
   if (!match) return null;
   const designId = match[1];
@@ -83,6 +90,72 @@ export function parseCanvaDesign(input: string | null | undefined): ParsedCanvaD
     designId,
     host: url.hostname.toLowerCase(),
   };
+}
+
+/** Canva share short links (`/d/{id}`). Not a design id; must be resolved server-side. */
+export function isCanvaShortLink(input: string | null | undefined): boolean {
+  const extracted = extractCanvaUrl(input);
+  if (!extracted) return false;
+  try {
+    const url = new URL(extracted);
+    if (!isCanvaRedirectHost(url.hostname)) return false;
+    return /^\/d\/[A-Za-z0-9_-]{6,}$/.test(url.pathname.replace(/\/$/, ""));
+  } catch {
+    return false;
+  }
+}
+
+export function isCanvaLoginUrl(input: string): boolean {
+  try {
+    const url = new URL(input);
+    const path = url.pathname.toLowerCase();
+    return (
+      path === "/login" ||
+      path.startsWith("/login/") ||
+      path.startsWith("/signup") ||
+      path.includes("/_login") ||
+      path.startsWith("/oidc") ||
+      path.startsWith("/account/login")
+    );
+  } catch {
+    return false;
+  }
+}
+
+export type CanvaPersistShape = {
+  shareUrl: string | null;
+  embedUrl: string | null;
+  designId: string | null;
+  statusHint: "pending" | "failed" | "not_configured";
+};
+
+/**
+ * What to store on save. Short /d/ URLs stay as pending share links (no embed,
+ * no design id). Non-Canva hosts are dropped. Never marks verified.
+ */
+export function canvaPersistShape(shareOrEmbed: string | null | undefined): CanvaPersistShape {
+  const parsed = parseCanvaDesign(shareOrEmbed);
+  if (parsed) {
+    return {
+      shareUrl: parsed.shareUrl,
+      embedUrl: parsed.embedUrl,
+      designId: parsed.designId,
+      statusHint: "pending",
+    };
+  }
+  if (isCanvaShortLink(shareOrEmbed)) {
+    const extracted = extractCanvaUrl(shareOrEmbed);
+    return {
+      shareUrl: extracted,
+      embedUrl: null,
+      designId: null,
+      statusHint: "pending",
+    };
+  }
+  if (shareOrEmbed?.trim()) {
+    return { shareUrl: null, embedUrl: null, designId: null, statusHint: "failed" };
+  }
+  return { shareUrl: null, embedUrl: null, designId: null, statusHint: "not_configured" };
 }
 
 export function toCanvaEmbedUrl(shareOrEmbed: string | null | undefined): string | null {

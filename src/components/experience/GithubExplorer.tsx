@@ -121,7 +121,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
               ? "檔案樹還在從公開 GitHub REST 同步。沒有寫入金鑰；完成前不會顯示虛構路徑。"
               : github.syncStatus === "failed"
                 ? "這次公開同步失敗。不會顯示虛構檔案樹。"
-                : "沒有可公開的檔案樹。"}
+                : "這次沒有讀到可公開的檔案樹。不會顯示虛構路徑。"}
           </p>
         ) : (
           <TreeDir

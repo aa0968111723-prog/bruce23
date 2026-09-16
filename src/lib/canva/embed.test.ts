@@ -6,6 +6,7 @@ import {
   CANVA_FIXTURE_PAGE_IDS,
   CANVA_FIXTURE_SHARE_URL,
   canvaEmbedSrc,
+  canvaOpenOriginalUrl,
   evaluateCanvaEmbedTest,
   parseCanvaPageIds,
 } from "./embed.ts";
@@ -36,5 +37,13 @@ describe("canva embed fixtures", () => {
     assert.equal(html.status, "pending");
     const denied = evaluateCanvaEmbedTest("https://evil.example/design/DAGfake/view");
     assert.equal(denied.status, "failed");
+  });
+
+  it("uses a /d/ short URL as the original link without treating it as an embed", () => {
+    assert.equal(
+      canvaOpenOriginalUrl("https://www.canva.com/d/ysK5sYZisVEjZFe"),
+      "https://www.canva.com/d/ysK5sYZisVEjZFe",
+    );
+    assert.equal(canvaOpenOriginalUrl(CANVA_FIXTURE_SHARE_URL), "https://www.canva.com/design/DAGfixtureEmbedShape/view");
   });
 });

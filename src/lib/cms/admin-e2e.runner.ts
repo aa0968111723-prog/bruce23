@@ -379,9 +379,23 @@ export async function runAdminE2E() {
     assert.notEqual(afterCanva.canva_status, "verified");
     assert.match(afterCanva.canva_error ?? "", /不會標成已驗證/);
 
+    const shortLink = await withAuthedAdmin(minted.token, async (ctx) => {
+      return handleTestCanvaEmbed(ctx, {
+        id: created.id,
+        url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+      });
+    });
+    assert.notEqual(shortLink.status, "verified");
+    assert.ok(shortLink.status === "unavailable" || shortLink.status === "pending" || shortLink.status === "failed");
+    const afterShort = await getAdminProject(sql, created.id);
+    assert.notEqual(afterShort.canva_status, "verified");
+    if (shortLink.status !== "pending") {
+      assert.equal(afterShort.canva_embed_url, null);
+    }
+
     const integrations = await withAuthedAdmin(minted.token, async (ctx) => handleListIntegrations(ctx));
     const integrationRow = integrations.items.find((item) => item.id === created.id);
-    assert.equal(integrationRow?.canva.status, "pending");
+    assert.equal(integrationRow?.canva.status, afterShort.canva_status);
     assert.notEqual(integrationRow?.canva.status, "verified");
     assert.equal(integrationRow?.public, false);
     assert.equal(integrations.notion.connected, false);

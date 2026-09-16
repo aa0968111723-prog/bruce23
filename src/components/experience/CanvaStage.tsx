@@ -24,7 +24,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
         {config.canvaNote ??
-          "這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect 憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。後台貼上 canva.com/design 分享網址後即可嵌入。"}
+          "這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect 憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。後台可貼 canva.com/design 或 /d/ 短網址；短網址由伺服器跟隨轉址後才嵌入。"}
       </div>
     );
   }
@@ -34,12 +34,16 @@ export function CanvaStage({ project }: { project: PublicProject }) {
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         {thumb}
         <div className="space-y-2 p-4 text-sm">
-          <p className="font-medium">Canva 原作沒有公開分享連結</p>
+          <p className="font-medium">
+            {canva.status === "unavailable" ? "Canva 原作目前無法公開嵌入" : "Canva 原作沒有公開分享連結"}
+          </p>
           <p className="text-muted">
-            站內只放已匯出的縮圖。沒有 canva.com 分享／嵌入網址，所以不嵌入空白 iframe。
+            {canva.status === "unavailable"
+              ? "可能需要登入、權限不是公開分享，或短網址沒有轉到 /design/{id}。站內只放縮圖，不嵌入空白 iframe。"
+              : "站內只放已匯出的縮圖。沒有 canva.com 分享／嵌入網址，所以不嵌入空白 iframe。"}
           </p>
           {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
-          <p className="text-xs text-muted">來源標記：公開嵌入模式 · 狀態 {canva.status}</p>
+          <p className="text-xs text-muted">來源標記：公開嵌入模式 · 狀態 {canva.status} · 未宣稱 Connect 已連線</p>
         </div>
       </div>
     );
@@ -50,9 +54,15 @@ export function CanvaStage({ project }: { project: PublicProject }) {
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         {thumb}
         <div className="space-y-2 p-4 text-sm">
-          <p className="font-medium">Canva 嵌入無法顯示</p>
+          <p className="font-medium">
+            {canva.status === "pending" && !embed
+              ? "Canva 短網址還沒有公開設計可嵌入"
+              : "Canva 嵌入無法顯示"}
+          </p>
           <p className="text-muted">
-            可能是權限改成私人、分享連結失效，或瀏覽器擋住嵌入。請用「在 Canva 開啟原作」。
+            {canva.status === "pending" && !embed
+              ? "伺服器還沒有從 canva.com 轉址得到 /design/{id}。不會嵌入空白 iframe，也不會標成已驗證。"
+              : "可能是權限改成私人、短網址停在登入牆、分享連結失效，或瀏覽器擋住嵌入。沒有空白 iframe。"}
           </p>
           {original ? (
             <a

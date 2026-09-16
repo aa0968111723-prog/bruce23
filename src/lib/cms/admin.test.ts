@@ -99,6 +99,7 @@ describe("admin allowlist", () => {
     assert.doesNotMatch(source, /connected:\s*true/);
     assert.match(source, /authMiddleware/);
     assert.match(source, /handleTestCanvaEmbed/);
+    assert.match(source, /export const listRevisionsFn = createServerFn\(\{ method: "POST" \}/);
     assert.match(source, /runAdminSql/);
     assert.match(source, /previewDraftFn/);
     assert.match(source, /handleCreateProject/);
@@ -115,7 +116,7 @@ describe("admin allowlist", () => {
     assert.match(embed, /語法通過 Canva 允許清單/);
     assert.doesNotMatch(embed, /status: "verified"/);
     const runtime = readFileSync(new URL("./admin-runtime.server.ts", import.meta.url), "utf8");
-    assert.match(runtime, /evaluateCanvaEmbedTest/);
+    assert.match(runtime, /resolveCanvaShareUrl/);
     assert.doesNotMatch(runtime, /canva_status = 'verified'/);
     assert.doesNotMatch(source, /假裝已經連上/);
     assert.doesNotMatch(handlers, /notion: \{\s*connected:\s*true/);

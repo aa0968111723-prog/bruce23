@@ -169,6 +169,11 @@ describe("frontend contract", () => {
     assert.match(form, /來源證據/);
     assert.doesNotMatch(form, /experience_config JSON/);
     assert.match(form, /canva_page_ids/);
+    assert.match(form, /修訂紀錄/);
+    assert.match(form, /尚無修訂/);
+    assert.match(form, /年份/);
+    assert.match(form, /listRevisionsFn/);
+    assert.match(form, /\/d\/ 短網址/);
     const editor = readFileSync(
       new URL("../../../src/components/admin/ExperienceEditor.tsx", import.meta.url),
       "utf8",

@@ -1,6 +1,6 @@
 import { archiveItems } from "../../content/archive.ts";
 import { projects } from "../../content/projects.ts";
-import { parseCanvaDesign, type ParsedCanvaDesign } from "./parse.ts";
+import { parseCanvaDesign, isCanvaShortLink, type ParsedCanvaDesign } from "./parse.ts";
 import type { IntegrationStatus } from "../cms/status.ts";
 
 const CANVA_URL_RE = /https:\/\/(?:www\.)?canva\.(?:com|site)\/[^\s"'<>)]+/gi;
@@ -48,6 +48,28 @@ export function collectCanvaUrlsFromText(text: string): ParsedCanvaDesign[] {
   return [...found.values()];
 }
 
+export function collectCanvaShortUrlsFromText(text: string): string[] {
+  const found = new Set<string>();
+  for (const match of text.match(CANVA_URL_RE) ?? []) {
+    const cleaned = match.replace(/[.,;]+$/, "");
+    if (isCanvaShortLink(cleaned)) found.add(cleaned.split("?")[0]);
+  }
+  return [...found];
+}
+
+/**
+ * Public /d/ URLs found in Bruce repos (healing-studio docs). Not DAG ids.
+ * Server resolve must succeed before any of these become embeds.
+ */
+export const CANVA_SHORTLINK_CANDIDATES: Record<string, string[]> = {
+  "ai-director-os": [
+    "https://www.canva.com/d/ysK5sYZisVEjZFe",
+    "https://www.canva.com/d/WJgjSP967WEuhhN",
+    "https://www.canva.com/d/g4tColMMj63-XRu",
+    "https://www.canva.com/d/kFV4KQpB2QzPjb0",
+  ],
+};
+
 function firstParsed(texts: Array<string | null | undefined>): ParsedCanvaDesign | null {
   return collectCanvaUrlsFromText(texts.filter((item): item is string => Boolean(item)).join("\n"))[0] ?? null;
 }
@@ -90,7 +112,7 @@ function fieldsFromParsed(
 }
 
 export function canvaFieldsForProject(project: (typeof projects)[number]): CanvaSeedFields {
-  const parsed = firstParsed([
+  const texts = [
     project.links.github,
     project.links.live,
     project.links.demo,
@@ -100,8 +122,29 @@ export function canvaFieldsForProject(project: (typeof projects)[number]): Canva
     project.problem,
     ...project.outputs,
     ...project.limitations,
-  ]);
-  return fieldsFromParsed(parsed, LOCAL_THUMBS[project.slug]);
+  ];
+  const parsed = firstParsed(texts);
+  const local = LOCAL_THUMBS[project.slug];
+  if (parsed) return fieldsFromParsed(parsed, local);
+  const shorts = [
+    ...(CANVA_SHORTLINK_CANDIDATES[project.slug] ?? []),
+    ...collectCanvaShortUrlsFromText(texts.filter((item): item is string => Boolean(item)).join("\n")),
+  ];
+  const shareUrl = shorts[0] ?? null;
+  if (shareUrl) {
+    return {
+      shareUrl,
+      embedUrl: null,
+      designId: null,
+      thumbnailUrl: local?.src ?? null,
+      alt: local?.alt ?? null,
+      caption:
+        local?.caption ??
+        "Canva 短網址。伺服器跟隨 canva.com 轉址成功後才嵌入，不會標成已驗證。",
+      status: "pending",
+    };
+  }
+  return fieldsFromParsed(null, local);
 }
 
 export function canvaFieldsForArchive(item: (typeof archiveItems)[number]): CanvaSeedFields {

@@ -18,7 +18,7 @@ import type { AdminProject } from "@/lib/cms/store";
 import { EXPERIENCE_MODE_LABEL, EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
 import type { ProjectInput } from "@/lib/cms/schema";
 import { experienceConfigSchema } from "@/lib/cms/schema";
-import { parseCanvaDesign } from "@/lib/canva/parse";
+import { parseCanvaDesign, isCanvaShortLink } from "@/lib/canva/parse";
 import { parseCanvaPageIds } from "@/lib/canva/embed";
 import { mergeExperienceConfig } from "@/lib/experiences/defaults";
 import { githubSyncDiff, type GithubDiffRow } from "@/lib/github/diff";
@@ -63,8 +63,24 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   }, [dirty]);
 
   useEffect(() => {
-    void listRevisionsFn({ data: { id: project.id } }).then(setRevisions).catch(() => undefined);
+    void loadRevisions();
   }, [project.id]);
+
+  function loadRevisions() {
+    return listRevisionsFn({ data: { id: project.id } })
+      .then(setRevisions)
+      .catch((err: unknown) => {
+        setStatus(err instanceof Error ? err.message : "修訂紀錄讀取失敗");
+      });
+  }
+
+  function applyServerProject(result: unknown, fallback: ProjectInput) {
+    if (result && typeof result === "object" && "id" in result && "slug" in result && "title" in result) {
+      setForm(toForm(result as AdminProject));
+      return;
+    }
+    setForm(fallback);
+  }
 
   function patch<K extends keyof ProjectInput>(key: K, value: ProjectInput[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -85,8 +101,9 @@ export function ProjectForm({ project }: { project: AdminProject }) {
     const payload = validatedForm();
     if (!payload) return;
     try {
-      await fn(payload);
-      setForm(payload);
+      const result = await fn(payload);
+      applyServerProject(result, payload);
+      void loadRevisions();
       setStatus(`${label}成功`);
       toast.success(`${label}成功`);
       setDirty(false);
@@ -119,6 +136,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field label="標題" value={form.title} onChange={(value) => patch("title", value)} />
         <Field label="副標" value={form.subtitle} onChange={(value) => patch("subtitle", value)} />
         <Field label="slug" value={form.slug} onChange={(value) => patch("slug", value)} />
+        <Field label="年份" value={form.year} onChange={(value) => patch("year", value)} />
         <label className="grid gap-1 text-sm">
           分類
           <select
@@ -271,7 +289,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">Canva / Demo / 體驗</legend>
         <Field
-          label="Canva 分享"
+          label="Canva 分享（可貼 /design/{id} 或 /d/ 短網址）"
           value={form.canva_share_url ?? ""}
           onChange={(value) => {
             const parsed = parseCanvaDesign(value);
@@ -279,6 +297,10 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             if (parsed) {
               patch("canva_embed_url", parsed.embedUrl);
               patch("canva_design_id", parsed.designId);
+            } else if (isCanvaShortLink(value)) {
+              patch("canva_embed_url", "");
+              patch("canva_design_id", null);
+              patch("canva_status", "pending");
             }
           }}
         />
@@ -291,6 +313,10 @@ export function ProjectForm({ project }: { project: AdminProject }) {
         <Field label="封面" value={form.canva_thumbnail_url ?? ""} onChange={(value) => patch("canva_thumbnail_url", value)} />
         <Field label="Canva alt" value={form.canva_alt ?? ""} onChange={(value) => patch("canva_alt", value)} />
         <Field label="Canva 說明" value={form.canva_caption ?? ""} onChange={(value) => patch("canva_caption", value)} />
+        <p className="text-xs text-muted">
+          狀態 {form.canva_status}
+          {form.canva_error ? ` · ${form.canva_error}` : ""}
+        </p>
         <Field label="Demo URL" value={form.live_demo_url ?? ""} onChange={(value) => patch("live_demo_url", value)} />
         <Field label="Demo 標籤" value={form.live_demo_label ?? ""} onChange={(value) => patch("live_demo_label", value)} />
         <label className="grid gap-1 text-sm">
@@ -314,13 +340,33 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           <button
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
-            onClick={() =>
-              void run("Canva 測試", (payload) =>
-                testCanvaEmbedFn({
-                  data: { id: project.id, url: payload.canva_share_url || payload.canva_embed_url || undefined },
-                }),
-              )
-            }
+            onClick={() => {
+              const payload = validatedForm();
+              if (!payload) return;
+              void testCanvaEmbedFn({
+                data: { id: project.id, url: payload.canva_share_url || payload.canva_embed_url || undefined },
+              })
+                .then((result) => {
+                  if (result.status === "pending" && "shareUrl" in result && result.shareUrl) {
+                    patch("canva_share_url", result.shareUrl);
+                    patch("canva_embed_url", result.embedUrl);
+                    patch("canva_design_id", result.designId);
+                    patch("canva_status", "pending");
+                    patch("canva_error", result.error);
+                    toast.success("Canva 短網址或分享網址已解析，尚未標成已驗證");
+                    setStatus("Canva 測試完成：可嵌入，未驗證 Connect");
+                  } else {
+                    if (result.shareUrl) patch("canva_share_url", result.shareUrl);
+                    patch("canva_embed_url", "");
+                    patch("canva_design_id", null);
+                    patch("canva_status", result.status === "unavailable" ? "unavailable" : "failed");
+                    patch("canva_error", result.error);
+                    toast.error(result.error);
+                    setStatus(result.error);
+                  }
+                })
+                .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Canva 測試失敗"));
+            }}
           >
             測試 Canva 嵌入
           </button>
@@ -447,6 +493,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           }
         />
         <Area
+          label="中文副標"
+          value={String(form.locale_json?.zh?.subtitle ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, subtitle: value },
+            })
+          }
+        />
+        <Area
           label="中文摘要"
           value={String(form.locale_json?.zh?.summary ?? "")}
           onChange={(value) =>
@@ -463,6 +519,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             patch("locale_json", {
               ...form.locale_json,
               en: { ...form.locale_json?.en, title: value },
+            })
+          }
+        />
+        <Area
+          label="英文副標"
+          value={String(form.locale_json?.en?.subtitle ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, subtitle: value },
             })
           }
         />
@@ -521,6 +587,9 @@ export function ProjectForm({ project }: { project: AdminProject }) {
 
       <section>
         <h2 className="font-display text-lg">修訂紀錄</h2>
+        {revisions.length === 0 ? (
+          <p className="mt-2 text-sm text-muted">尚無修訂。儲存後會出現可還原的版本。</p>
+        ) : null}
         <ul className="mt-2 grid gap-2">
           {revisions.map((item) => (
             <li key={item.id} className="flex min-h-11 items-center justify-between rounded-xl bg-surface px-3 text-sm shadow-card">

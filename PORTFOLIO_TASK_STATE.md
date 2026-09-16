@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: independent Canva Connect path/export + public spatial map (not complete)
+Cycle: Canva short-link server resolve (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -10,27 +10,30 @@ Updated: 2026-09-16
 - Drive indexed, not published as folders: `平面設計作品集`, `柏能作品集.pdf`
 - Canva originals hosted locally: TKU Zen poster + deck pages
 - Notion: disconnected. Adapter stub only.
-- Canva MCP this environment: `needsAuth`; not used. No design list.
-- Public GitHub READMEs / homepages: no live `canva.com/design/{DAG…}` share URLs. Re-scanned 11 READMEs 2026-09-16. Search hits are helper functions and test fixtures (`duigao`, `hermes-console`). Only `ai_os` has homepage `https://ai-os-ten.vercel.app`. healing-studio `canva.com/d/…` is not a public embed.
+- Canva MCP this environment: `needsAuth`; not used. No design list. Connect OAuth is not claimed connected.
+- Public GitHub READMEs / homepages: no live `canva.com/design/{DAG…}` share URLs. Re-scanned 2026-09-16 (GitHub code search + content inventory).
+- healing-studio `docs/design-reference.md` has public short links:
+  - `https://www.canva.com/d/ysK5sYZisVEjZFe`
+  - `/d/WJgjSP967WEuhhN`, `/d/g4tColMMj63-XRu`, `/d/kFV4KQpB2QzPjb0`
+  These are **not** design ids. Server follows Location headers on `canva.com` / `www.canva.com` only. Live HEAD and GET in this sandbox returned Cloudflare **403** with no Location and no DAG id. They are **not** stored as verified embeds. Seed keeps the first `/d/` as a pending/unavailable share for “open original” only.
 
 ## Done in product code (still not the full /goal)
 
 - Light-only luminous site + CMS 0002 + auth fail-closed
 - 8 GitHub-backed case studies with distinct ExperiencePanel modes
-- Admin ProjectForm: narrative, SEO, zh/en, media/video, Canva fields, page ids, structured experience editors, GitHub diff, source_evidence editor
+- Admin ProjectForm: narrative, year, SEO, zh/en (incl. subtitles), media/video, Canva fields (`/d/` paste + server resolve + status/error), page ids, structured experience editors, GitHub diff, source_evidence editor, revision list that reloads after save/restore
 - Settings persist homepage highlight slugs and locale JSON
-- Canva public-embed paste path + fixture embed test
-- Official Canva Connect/OAuth shape: PKCE start + callback, AES-GCM tokens in `integration_secrets`, search/metadata/pages/export/apply/disconnect. Export poll allows Canva `e:uuid` job ids. Search continuation. Select fetches design metadata. Fail-closed without `CANVA_CLIENT_ID`/`CANVA_CLIENT_SECRET`/`CANVA_TOKEN_KEY`. Connect button does not toast success when unconfigured. Refresh failure marks disconnected. Stored covers refuse expiring CDN thumbs. Admin Canva paste drops non-allowlisted URLs.
-- Homepage constellation: desktop SVG uses AABB collision so node labels do not sit on hubs; mobile uses a 2D list as primary (`hidden lg:block` on the SVG). Filter chips only for modalities the visible works use. No decorative particles.
-- Archive: no public Canva share URLs, so no embed and no paging. Items without an embed URL show local cover + 公開嵌入模式 / 尚未提供分享連結. Photo/event/graphic/stroop/zen copy names SVG translations and does not claim original photos, scans, live Canva, or score screenshots.
-- Notion: adapter `isConnected()` is false; admin integrations panel is `not_configured` and lists no pages.
+- Canva public-embed paste path + **server-side short-link resolve** (fixtures: success redirect, relative Location, login-wall, open-redirect to evil.com, HTML body ignored, client modules do not fetch Canva HTML)
+- Official Canva Connect/OAuth shape remains fail-closed without credentials. Connect button does not toast success when unconfigured. Connect apply without a public share is `unavailable`, not verified.
+- GitHub file tree: skip `.grok/`, cap `.github` noise, rank README/`src`; tree fetched by commit tree sha; hydrate v3 rescan
+- Homepage constellation + archive honesty copy unchanged: no invented Canva embeds
 
 ## Not done / blocked
 
 - Original photography and event photos (Drive originals not on a public CDN)
 - Original AI video files (too large for git; old Manus URLs are dead)
-- Real public Canva share/embed URLs for the 8 works
-- Canva Connect credentials + CANVA_TOKEN_KEY in this environment (OAuth cannot be live-proved)
+- Real public Canva share/embed URLs for the 8 works — healing-studio `/d/` links **did not resolve** here (403, no Location)
+- Canva Connect credentials + CANVA_TOKEN_KEY (OAuth cannot be live-proved)
 - Google login as `aa0968111723@gmail.com` to browser-prove admin
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
