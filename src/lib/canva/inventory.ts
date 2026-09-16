@@ -3,7 +3,7 @@ import { projects } from "../../content/projects.ts";
 import { parseCanvaDesign, type ParsedCanvaDesign } from "./parse.ts";
 import type { IntegrationStatus } from "../cms/status.ts";
 
-const CANVA_URL_RE = /https:\/\/(?:www\.)?canva\.(?:com|site)\/[^\s"'<>)\\]]+/gi;
+const CANVA_URL_RE = /https:\/\/(?:www\.)?canva\.(?:com|site)\/[^\s"'<>)]+/gi;
 
 export type CanvaSeedFields = {
   shareUrl: string | null;
