@@ -17,17 +17,17 @@ export function CanvaBoard({
   caption?: string;
   pageIds?: string[];
 }) {
-  const pages = pageIds?.filter(Boolean) ?? [];
   const [page, setPage] = useState(0);
   const [full, setFull] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const pages = pageIds?.filter(Boolean) ?? [];
   const src = useMemo(() => {
     if (!embedUrl) return null;
     if (!pages.length) return embedUrl;
     const url = new URL(embedUrl);
     url.searchParams.set("page", pages[page] ?? String(page + 1));
     return url.toString();
-  }, [embedUrl, page, pages]);
+  }, [embedUrl, page, pageIds]);
 
   if (!embedUrl || !src) {
     return (

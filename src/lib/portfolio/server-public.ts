@@ -13,7 +13,7 @@ import {
   listPublishedProjects,
   getProjectBySlugAny,
 } from "./cms.ts";
-import { assertPublicSafe, toPublicProject, asObject } from "./public.ts";
+import { assertPublicSafe, toPublicProject } from "./public.ts";
 import { ensureSeeded } from "./seed.ts";
 import { previewQuerySchema, slugSchema } from "./schema.ts";
 import { fetchGithubSnapshot } from "./github-client.ts";
@@ -31,7 +31,7 @@ export const getViewerFlags = createServerFn({ method: "GET" }).handler(
     return {
       signedIn: true,
       isAdmin: access.ok,
-      adminConfigError: access.reason === "missing_allowlist",
+      adminConfigError: !access.ok && access.reason === "missing_allowlist",
     };
   },
 );
@@ -52,10 +52,20 @@ export const getPublicProject = createServerFn({ method: "GET" })
     const sql = await getSql();
     await ensureSeeded(sql);
     const existing = await getProjectBySlugAny(sql, data.slug);
-    if (existing?.github_url && !asObject(existing.github_metadata).name) {
+    if (
+      existing?.publication_status === "published" &&
+      existing.github_url &&
+      !existing.github_metadata?.name
+    ) {
       const snapshot = await fetchGithubSnapshot(sql, String(existing.github_url));
-      if (snapshot.ok && asObject(snapshot.incoming.github_metadata).private !== true) {
-        await applyGithubPatch(sql, String(existing.id), snapshot.incoming, "github-hydrate");
+      if (snapshot.ok && snapshot.incoming.github_metadata.private !== true) {
+        await applyGithubPatch(
+          sql,
+          String(existing.id),
+          snapshot.incoming,
+          "system-hydrate",
+          "github-hydrate",
+        );
       }
     }
     const project = await getPublishedProject(sql, data.slug);
@@ -106,11 +116,23 @@ export const getPublicSite = createServerFn({ method: "GET" }).handler(
     const sql = await getSql();
     await ensureSeeded(sql);
     const settings = await getSiteSettings(sql);
-    const payload = {
-      profile: asObject(settings?.profile_json),
-      homepage: asObject(settings?.homepage_json),
-      seo: asObject(settings?.seo_json),
-      i18n: asObject(settings?.i18n_json),
+    const payload = settings ?? {
+      profile: {
+        nameZh: "",
+        nameEn: "",
+        person: "",
+        role: "",
+        headline: "",
+        subhead: "",
+        narrative: "",
+        email: "unused@example.com",
+        github: "",
+        githubHandle: "",
+        location: "",
+      },
+      homepage: {},
+      seo: {},
+      i18n: { defaultLocale: "zh" as const },
     };
     assertPublicSafe(payload);
     return payload;

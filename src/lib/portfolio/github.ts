@@ -1,5 +1,6 @@
 import { GITHUB_AUTO_FIELDS, NARRATIVE_FIELDS } from "./constants.ts";
 import type { FileTreeNode } from "./schema.ts";
+import type { GithubMetadataPublic, Json } from "./public.ts";
 import { githubCommitSchema, githubMetadataSchema } from "./schema.ts";
 
 const GITHUB_HOSTS = new Set(["github.com", "www.github.com"]);
@@ -181,21 +182,27 @@ export type GithubIncoming = {
   github_owner: string;
   github_repo: string;
   github_branch: string;
-  github_metadata: unknown;
+  github_metadata: GithubMetadataPublic;
   github_readme: string | null;
-  github_file_tree: unknown;
-  github_languages: unknown;
-  github_topics: unknown;
-  github_latest_commit: unknown;
+  github_file_tree: FileTreeNode[];
+  github_languages: Record<string, number>;
+  github_topics: string[];
+  github_latest_commit: {
+    sha: string;
+    message: string;
+    htmlUrl: string;
+    date?: string;
+    author?: string;
+  } | null;
   github_sync_status: string;
   github_last_synced_at: string;
 };
 
 export function githubSyncDiff(
-  current: Record<string, unknown>,
-  incoming: Partial<GithubIncoming>,
+  current: { [key: string]: Json | undefined },
+  incoming: Partial<GithubIncoming> & { [key: string]: Json | undefined },
 ) {
-  const auto: Array<{ field: string; from: unknown; to: unknown }> = [];
+  const auto: Array<{ field: string; from: string; to: string }> = [];
   const skippedNarrative: string[] = [];
 
   for (const field of GITHUB_AUTO_FIELDS) {
@@ -203,7 +210,11 @@ export function githubSyncDiff(
     if (next === undefined) continue;
     const prev = current[field];
     if (JSON.stringify(prev) !== JSON.stringify(next)) {
-      auto.push({ field, from: prev ?? null, to: next });
+      auto.push({
+        field,
+        from: JSON.stringify(prev ?? null),
+        to: JSON.stringify(next),
+      });
     }
   }
 

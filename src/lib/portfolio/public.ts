@@ -1,5 +1,27 @@
+import type { ExperienceConfig, FileTreeNode } from "./schema.ts";
 import { SECRET_KEY_PATTERN } from "./constants.ts";
-import type { FileTreeNode } from "./schema.ts";
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | Json[]
+  | { [key: string]: Json };
+
+export type JsonObject = { [key: string]: Json };
+
+export type GithubMetadataPublic = {
+  name?: string;
+  description?: string | null;
+  htmlUrl?: string;
+  defaultBranch?: string;
+  updatedAt?: string;
+  private?: boolean;
+  archived?: boolean;
+  homepage?: string | null;
+  language?: string | null;
+};
 
 export type PublicGithub = {
   url: string;
@@ -77,26 +99,207 @@ export type PublicProject = {
     lastVerifiedAt?: string;
   } | null;
   experience_mode: string;
-  experience_config: Record<string, unknown>;
+  experience_config: ExperienceConfig;
   interaction_steps: Array<{ id: string; title: string; body: string }>;
   experience_label?: string | null;
 };
 
-export type ProjectRow = Record<string, unknown> & {
+export type ProjectRow = {
   id: string;
   slug: string;
+  title: string;
+  title_en?: string | null;
+  subtitle?: string | null;
+  subtitle_en?: string | null;
+  category: string;
+  year: string;
+  product_status: string;
   publication_status: string;
-  github_metadata?: { private?: boolean } | null;
+  featured: boolean;
+  sort_order: number;
+  summary?: string | null;
+  summary_en?: string | null;
+  problem?: string | null;
+  problem_en?: string | null;
+  role?: string | null;
+  role_en?: string | null;
+  decisions_json?: string[];
+  modalities_json?: string[];
+  process_json?: string[];
+  outputs_json?: string[];
+  stack_json?: string[];
+  limitations_json?: string[];
+  media_json?: PublicProject["media"];
+  source_evidence?: PublicProject["source_evidence"];
+  seo_json?: PublicProject["seo"];
+  github_url?: string | null;
+  github_owner?: string | null;
+  github_repo?: string | null;
+  github_branch?: string | null;
+  github_sync_enabled?: boolean;
+  github_sync_status?: string | null;
+  github_last_synced_at?: string | null;
+  github_sync_error?: string | null;
+  github_metadata?: GithubMetadataPublic | null;
+  github_readme?: string | null;
+  github_file_tree?: FileTreeNode[] | null;
+  github_languages?: Record<string, number> | null;
+  github_topics?: string[] | null;
+  github_latest_commit?: PublicGithub["latestCommit"] | null;
+  live_demo_url?: string | null;
+  live_demo_label?: string | null;
+  live_demo_type?: string | null;
+  live_demo_embed_enabled?: boolean;
+  live_demo_status?: string | null;
+  live_demo_last_verified_at?: string | null;
+  live_demo_error?: string | null;
+  canva_share_url?: string | null;
+  canva_embed_url?: string | null;
+  canva_design_id?: string | null;
+  canva_page_ids?: string[];
+  canva_thumbnail_url?: string | null;
+  canva_status?: string | null;
+  canva_last_synced_at?: string | null;
+  canva_alt?: string | null;
+  canva_caption?: string | null;
+  canva_error?: string | null;
+  experience_mode?: string | null;
+  experience_config?: ExperienceConfig | null;
+  interaction_steps?: PublicProject["interaction_steps"];
+  experience_label?: string | null;
+  updated_at?: string | null;
+  published_at?: string | null;
+};
+
+export type ArchiveRow = {
+  id: string;
+  title: string;
+  kind: string;
+  year: string;
+  summary: string;
+  media: PublicProject["media"][number] | null;
+  href: string | null;
+  origin_note: string;
+  canva_share_url: string | null;
+  canva_embed_url: string | null;
+  publication_status: string;
+  sort_order: number;
+};
+
+export type PublicArchive = {
+  id: string;
+  title: string;
+  kind: string;
+  year: string;
+  summary: string;
+  media: PublicProject["media"][number] | null;
+  href?: string;
+  originNote: string;
+  canvaShareUrl?: string;
+  canvaEmbedUrl?: string;
+};
+
+export type SiteSettingsDto = {
+  profile: {
+    nameZh: string;
+    nameEn: string;
+    person: string;
+    role: string;
+    headline: string;
+    headlineEn?: string;
+    subhead: string;
+    narrative: string;
+    narrativeEn?: string;
+    email: string;
+    github: string;
+    githubHandle: string;
+    location: string;
+  };
+  homepage: {
+    featuredIntro?: string;
+    featuredIntroEn?: string;
+    processTitle?: string;
+  };
+  seo: { title?: string; description?: string; ogAlt?: string };
+  i18n: { defaultLocale: "zh" | "en" };
 };
 
 export function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-export function asObject<T extends Record<string, unknown>>(value: unknown): T {
+export function asObject<T extends object = JsonObject>(value: unknown): T {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as T)
     : ({} as T);
+}
+
+export function asLanguageMap(value: unknown): Record<string, number> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: Record<string, number> = {};
+  for (const [key, bytes] of Object.entries(value)) {
+    if (typeof bytes === "number" && Number.isFinite(bytes)) out[key] = bytes;
+  }
+  return out;
+}
+
+export function asGithubCommit(
+  value: unknown,
+): PublicGithub["latestCommit"] | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const row = value as Record<string, unknown>;
+  if (
+    typeof row.sha !== "string" ||
+    typeof row.message !== "string" ||
+    typeof row.htmlUrl !== "string"
+  ) {
+    return null;
+  }
+  return {
+    sha: row.sha,
+    message: row.message,
+    htmlUrl: row.htmlUrl,
+    date: typeof row.date === "string" ? row.date : undefined,
+  };
+}
+
+export function asGithubMetadata(value: unknown): GithubMetadataPublic | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const row = value as Record<string, unknown>;
+  return {
+    name: typeof row.name === "string" ? row.name : undefined,
+    description:
+      typeof row.description === "string" || row.description === null
+        ? row.description
+        : undefined,
+    htmlUrl: typeof row.htmlUrl === "string" ? row.htmlUrl : undefined,
+    defaultBranch: typeof row.defaultBranch === "string" ? row.defaultBranch : undefined,
+    updatedAt: typeof row.updatedAt === "string" ? row.updatedAt : undefined,
+    private: typeof row.private === "boolean" ? row.private : undefined,
+    archived: typeof row.archived === "boolean" ? row.archived : undefined,
+    homepage:
+      typeof row.homepage === "string" || row.homepage === null
+        ? row.homepage
+        : undefined,
+    language:
+      typeof row.language === "string" || row.language === null
+        ? row.language
+        : undefined,
+  };
+}
+
+export function asArchiveMedia(value: unknown): ArchiveRow["media"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const row = value as Record<string, unknown>;
+  if (typeof row.src !== "string" || typeof row.alt !== "string") return null;
+  if (row.kind !== "image" && row.kind !== "video") return null;
+  return {
+    src: row.src,
+    alt: row.alt,
+    kind: row.kind,
+    caption: typeof row.caption === "string" ? row.caption : undefined,
+    poster: typeof row.poster === "string" ? row.poster : undefined,
+  };
 }
 
 export function containsSecretKey(value: unknown, path = ""): string | null {
@@ -118,9 +321,11 @@ export function containsSecretKey(value: unknown, path = ""): string | null {
   return null;
 }
 
-export function toPublicProject(row: ProjectRow): PublicProject | null {
+export function toPublicProject(
+  row: Pick<ProjectRow, "publication_status"> & Partial<ProjectRow>,
+): PublicProject | null {
   if (row.publication_status !== "published") return null;
-  const metadata = asObject<{ private?: boolean }>(row.github_metadata);
+  const metadata = asGithubMetadata(row.github_metadata) ?? {};
   const isPrivateRepo = metadata.private === true;
   const githubUrl = typeof row.github_url === "string" ? row.github_url : null;
 
@@ -136,13 +341,11 @@ export function toPublicProject(row: ProjectRow): PublicProject | null {
             typeof metadata.description === "string" || metadata.description === null
               ? (metadata.description as string | null)
               : undefined,
-          languages: asObject<Record<string, number>>(row.github_languages),
+          languages: asLanguageMap(row.github_languages),
           topics: asArray<string>(row.github_topics),
           updatedAt:
             typeof metadata.updatedAt === "string" ? metadata.updatedAt : undefined,
-          latestCommit: row.github_latest_commit
-            ? (asObject(row.github_latest_commit) as PublicGithub["latestCommit"])
-            : undefined,
+          latestCommit: asGithubCommit(row.github_latest_commit) ?? undefined,
           readmeSummary:
             typeof row.github_readme === "string" ? row.github_readme : null,
           fileTree: asArray<FileTreeNode>(row.github_file_tree),
@@ -217,28 +420,26 @@ export function toPublicProject(row: ProjectRow): PublicProject | null {
         }
       : null,
     experience_mode: String(row.experience_mode ?? "github-explorer"),
-    experience_config: asObject(row.experience_config),
+    experience_config: asObject<ExperienceConfig>(row.experience_config),
     interaction_steps: asArray(row.interaction_steps),
     experience_label:
       typeof row.experience_label === "string" ? row.experience_label : null,
   };
 }
 
-export function toPublicArchive(row: Record<string, unknown>) {
+export function toPublicArchive(row: ArchiveRow): PublicArchive | null {
   if (row.publication_status !== "published") return null;
   return {
-    id: String(row.id),
-    title: String(row.title),
-    kind: String(row.kind),
-    year: String(row.year),
-    summary: String(row.summary ?? ""),
-    media: row.media_json ?? undefined,
-    href: typeof row.href === "string" ? row.href : undefined,
-    originNote: String(row.origin_note ?? ""),
-    canvaShareUrl:
-      typeof row.canva_share_url === "string" ? row.canva_share_url : undefined,
-    canvaEmbedUrl:
-      typeof row.canva_embed_url === "string" ? row.canva_embed_url : undefined,
+    id: row.id,
+    title: row.title,
+    kind: row.kind,
+    year: row.year,
+    summary: row.summary,
+    media: row.media,
+    href: row.href ?? undefined,
+    originNote: row.origin_note,
+    canvaShareUrl: row.canva_share_url ?? undefined,
+    canvaEmbedUrl: row.canva_embed_url ?? undefined,
   };
 }
 

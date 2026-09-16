@@ -18,7 +18,7 @@ export function ExplorationMap({
   const visible = useMemo(() => {
     if (active === "all") return projects;
     const slugs = MULTIMODAL_NODES.find((node) => node.id === active)?.slugs ?? [];
-    return projects.filter((project) => slugs.includes(project.slug));
+    return projects.filter((project) => (slugs as readonly string[]).includes(project.slug));
   }, [active, projects]);
 
   return (
@@ -73,7 +73,9 @@ export function ExplorationMap({
           {MULTIMODAL_NODES.map((node, index) => {
             const x = 80 + index * 210;
             const selected = active === node.id;
-            const count = projects.filter((project) => node.slugs.includes(project.slug)).length;
+            const count = projects.filter((project) =>
+              (node.slugs as readonly string[]).includes(project.slug),
+            ).length;
             return (
               <g key={node.id} className="cursor-pointer" onClick={() => onActiveChange(node.id)}>
                 <circle

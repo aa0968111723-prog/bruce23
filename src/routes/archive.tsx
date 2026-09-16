@@ -5,7 +5,6 @@ import { archiveKinds } from "@/content/archive";
 import { cn } from "@/lib/cn";
 import { listPublicArchive } from "@/lib/portfolio/server-public";
 import { CanvaBoard } from "@/components/experience/CanvaBoard";
-import type { ProjectMedia } from "@/content/types";
 
 export const Route = createFileRoute("/archive")({
   loader: () => listPublicArchive(),
@@ -56,12 +55,12 @@ function Archive() {
               <CanvaBoard
                 shareUrl={item.canvaShareUrl}
                 embedUrl={item.canvaEmbedUrl}
-                thumbnailUrl={(item.media as ProjectMedia | undefined)?.src}
-                alt={(item.media as ProjectMedia | undefined)?.alt}
+                thumbnailUrl={item.media?.src}
+                alt={item.media?.alt}
               />
             ) : item.media ? (
               <div className="aspect-[4/3] overflow-hidden bg-surface-blue">
-                <MediaFrame media={item.media as ProjectMedia} />
+                <MediaFrame media={item.media} />
               </div>
             ) : (
               <div className="flex aspect-[4/3] items-center justify-center bg-surface-mint px-6 text-center text-sm text-muted">

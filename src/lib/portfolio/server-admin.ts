@@ -315,7 +315,14 @@ export const testCanvaEmbed = createServerFn({ method: "POST" })
         userId,
       );
     }
-    return { ok: true as const, ...parsed, mode: canvaConnectMode(hasCanvaCredentials()) };
+    return {
+      ok: true as const,
+      shareUrl: parsed.shareUrl,
+      embedUrl: parsed.embedUrl,
+      designId: parsed.designId,
+      host: parsed.host,
+      mode: canvaConnectMode(hasCanvaCredentials()),
+    };
   });
 
 export const getCanvaConnectStatus = createServerFn({ method: "GET" })

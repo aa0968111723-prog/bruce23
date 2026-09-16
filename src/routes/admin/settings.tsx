@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { loadAdminSettings, saveAdminSettings } from "@/lib/portfolio/server-admin";
-import { asObject } from "@/lib/portfolio/public";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -32,10 +31,11 @@ function AdminSettings() {
 
   useEffect(() => {
     loadAdminSettings().then((row) => {
-      const profile = asObject(row?.profile_json);
-      const homepage = asObject(row?.homepage_json);
-      const seo = asObject(row?.seo_json);
-      const i18n = asObject(row?.i18n_json);
+      if (!row) return;
+      const profile = row.profile;
+      const homepage = row.homepage;
+      const seo = row.seo;
+      const i18n = row.i18n;
       setNameZh(String(profile.nameZh ?? nameZh));
       setNameEn(String(profile.nameEn ?? nameEn));
       setPerson(String(profile.person ?? person));

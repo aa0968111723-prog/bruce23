@@ -1,7 +1,19 @@
-import type { ArchiveWrite, ProjectWrite } from "./schema.ts";
+import type { ArchiveWrite, ProjectWrite, SiteSettings } from "./schema.ts";
 import type { Sql } from "./sql.ts";
 import { jsonParam } from "./sql.ts";
-import { asArray, asObject, type ProjectRow, toPublicArchive, toPublicProject } from "./public.ts";
+import {
+  asArray,
+  asArchiveMedia,
+  asGithubCommit,
+  asGithubMetadata,
+  asLanguageMap,
+  asObject,
+  type ArchiveRow,
+  type ProjectRow,
+  type SiteSettingsDto,
+  toPublicArchive,
+  toPublicProject,
+} from "./public.ts";
 import type { PublicationStatus } from "./constants.ts";
 import { INTEGRATION_PATCH_KEYS, isSafeSqlIdent } from "./patch-keys.ts";
 
@@ -15,18 +27,58 @@ function asBool(value: unknown): boolean {
 
 export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
   return {
-    ...row,
     id: String(row.id),
     slug: String(row.slug),
+    title: String(row.title ?? ""),
+    title_en: typeof row.title_en === "string" ? row.title_en : null,
+    subtitle: typeof row.subtitle === "string" ? row.subtitle : "",
+    subtitle_en: typeof row.subtitle_en === "string" ? row.subtitle_en : null,
+    category: String(row.category ?? ""),
+    year: String(row.year ?? ""),
+    product_status: String(row.product_status),
     publication_status: String(row.publication_status),
     featured: asBool(row.featured),
+    sort_order: Number(row.sort_order ?? 0),
+    summary: typeof row.summary === "string" ? row.summary : "",
+    summary_en: typeof row.summary_en === "string" ? row.summary_en : null,
+    problem: typeof row.problem === "string" ? row.problem : "",
+    problem_en: typeof row.problem_en === "string" ? row.problem_en : null,
+    role: typeof row.role === "string" ? row.role : "",
+    role_en: typeof row.role_en === "string" ? row.role_en : null,
     github_sync_enabled: asBool(row.github_sync_enabled),
     live_demo_embed_enabled: asBool(row.live_demo_embed_enabled),
-    github_metadata: asObject(row.github_metadata),
+    github_url: typeof row.github_url === "string" ? row.github_url : null,
+    github_owner: typeof row.github_owner === "string" ? row.github_owner : null,
+    github_repo: typeof row.github_repo === "string" ? row.github_repo : null,
+    github_branch: typeof row.github_branch === "string" ? row.github_branch : null,
+    github_sync_status: String(row.github_sync_status ?? "not_configured"),
+    github_last_synced_at:
+      row.github_last_synced_at != null ? String(row.github_last_synced_at) : null,
+    github_sync_error: typeof row.github_sync_error === "string" ? row.github_sync_error : null,
+    github_metadata: asGithubMetadata(row.github_metadata),
     github_file_tree: asArray(row.github_file_tree),
-    github_languages: asObject(row.github_languages),
+    github_languages: asLanguageMap(row.github_languages),
     github_topics: asArray(row.github_topics),
-    github_latest_commit: row.github_latest_commit ?? null,
+    github_latest_commit: asGithubCommit(row.github_latest_commit),
+    github_readme: typeof row.github_readme === "string" ? row.github_readme : null,
+    live_demo_url: typeof row.live_demo_url === "string" ? row.live_demo_url : null,
+    live_demo_label: typeof row.live_demo_label === "string" ? row.live_demo_label : null,
+    live_demo_type: typeof row.live_demo_type === "string" ? row.live_demo_type : null,
+    live_demo_status: String(row.live_demo_status ?? "not_configured"),
+    live_demo_last_verified_at:
+      row.live_demo_last_verified_at != null ? String(row.live_demo_last_verified_at) : null,
+    live_demo_error: typeof row.live_demo_error === "string" ? row.live_demo_error : null,
+    canva_share_url: typeof row.canva_share_url === "string" ? row.canva_share_url : null,
+    canva_embed_url: typeof row.canva_embed_url === "string" ? row.canva_embed_url : null,
+    canva_design_id: typeof row.canva_design_id === "string" ? row.canva_design_id : null,
+    canva_thumbnail_url:
+      typeof row.canva_thumbnail_url === "string" ? row.canva_thumbnail_url : null,
+    canva_status: String(row.canva_status ?? "not_configured"),
+    canva_last_synced_at:
+      row.canva_last_synced_at != null ? String(row.canva_last_synced_at) : null,
+    canva_alt: typeof row.canva_alt === "string" ? row.canva_alt : null,
+    canva_caption: typeof row.canva_caption === "string" ? row.canva_caption : null,
+    canva_error: typeof row.canva_error === "string" ? row.canva_error : null,
     decisions_json: asArray(row.decisions_json),
     modalities_json: asArray(row.modalities_json),
     process_json: asArray(row.process_json),
@@ -39,6 +91,10 @@ export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
     experience_config: asObject(row.experience_config),
     interaction_steps: asArray(row.interaction_steps),
     canva_page_ids: asArray(row.canva_page_ids),
+    experience_mode: String(row.experience_mode ?? "github-explorer"),
+    experience_label: typeof row.experience_label === "string" ? row.experience_label : null,
+    updated_at: row.updated_at != null ? String(row.updated_at) : null,
+    published_at: row.published_at != null ? String(row.published_at) : null,
   };
 }
 
@@ -392,23 +448,42 @@ export async function restoreRevision(
   return getAdminProject(sql, projectId);
 }
 
+export function normalizeArchiveRow(row: Record<string, unknown>): ArchiveRow {
+  return {
+    id: String(row.id),
+    title: String(row.title ?? ""),
+    kind: String(row.kind ?? ""),
+    year: String(row.year ?? ""),
+    summary: typeof row.summary === "string" ? row.summary : "",
+    media: asArchiveMedia(row.media_json ?? row.media),
+    href: typeof row.href === "string" ? row.href : null,
+    origin_note: typeof row.origin_note === "string" ? row.origin_note : "",
+    canva_share_url: typeof row.canva_share_url === "string" ? row.canva_share_url : null,
+    canva_embed_url: typeof row.canva_embed_url === "string" ? row.canva_embed_url : null,
+    publication_status: String(row.publication_status ?? "draft"),
+    sort_order: Number(row.sort_order ?? 0),
+  };
+}
+
 export async function listPublishedArchive(sql: Sql) {
   const rows = await sql.query<Record<string, unknown>>(
     `select * from archive_items where publication_status = $1 order by sort_order asc, title asc`,
     ["published"],
   );
   return rows
+    .map(normalizeArchiveRow)
     .map(toPublicArchive)
     .filter((row): row is NonNullable<typeof row> => row !== null);
 }
 
-export async function listAdminArchive(sql: Sql) {
-  return sql.query<Record<string, unknown>>(
+export async function listAdminArchive(sql: Sql): Promise<ArchiveRow[]> {
+  const rows = await sql.query<Record<string, unknown>>(
     `select * from archive_items order by sort_order asc, title asc`,
   );
+  return rows.map(normalizeArchiveRow);
 }
 
-export async function upsertArchive(sql: Sql, input: ArchiveWrite) {
+export async function upsertArchive(sql: Sql, input: ArchiveWrite): Promise<ArchiveRow> {
   const id = input.id ?? newId();
   await sql.query(
     `insert into archive_items (
@@ -440,15 +515,31 @@ export async function upsertArchive(sql: Sql, input: ArchiveWrite) {
     `select * from archive_items where id = $1`,
     [id],
   );
-  return rows[0];
+  return normalizeArchiveRow(rows[0] ?? { id, title: input.title, kind: input.kind, year: input.year });
 }
 
-export async function getSiteSettings(sql: Sql) {
+function asSiteSettingsDto(row: Record<string, unknown> | null): SiteSettingsDto | null {
+  if (!row) return null;
+  const profile = asObject<SiteSettings["profile"]>(row.profile_json);
+  const homepage = asObject<SiteSettings["homepage"]>(row.homepage_json);
+  const seo = asObject<SiteSettings["seo"]>(row.seo_json);
+  const i18n = asObject<SiteSettings["i18n"]>(row.i18n_json);
+  return {
+    profile,
+    homepage,
+    seo,
+    i18n: {
+      defaultLocale: i18n.defaultLocale === "en" ? "en" : "zh",
+    },
+  };
+}
+
+export async function getSiteSettings(sql: Sql): Promise<SiteSettingsDto | null> {
   const rows = await sql.query<Record<string, unknown>>(
     `select * from site_settings where id = $1`,
     ["default"],
   );
-  return rows[0] ?? null;
+  return asSiteSettingsDto(rows[0] ?? null);
 }
 
 export async function saveSiteSettings(

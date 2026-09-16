@@ -169,6 +169,7 @@ export const projectWriteSchema = z.object({
 });
 
 export type ProjectWrite = z.infer<typeof projectWriteSchema>;
+export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
 
 export const siteSettingsSchema = z.object({
   profile: z.object({

@@ -44,4 +44,8 @@ export default tseslint.config(
   },
   // Disable rules that conflict with Prettier formatting.
   prettier,
+  {
+    files: ["src/lib/app-data/client.server.ts"],
+    rules: { "no-empty": "off" },
+  },
 );

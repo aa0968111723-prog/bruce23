@@ -36,7 +36,14 @@ function AdminArchive() {
                     data: {
                       id: String(row.id),
                       title: String(row.title),
-                      kind: row.kind as "photography",
+                      kind: row.kind as
+                        | "photography"
+                        | "graphic"
+                        | "social"
+                        | "event"
+                        | "video"
+                        | "club-visual"
+                        | "interactive",
                       year: String(row.year),
                       summary: String(row.summary ?? ""),
                       origin_note: String(row.origin_note ?? ""),
@@ -60,11 +67,18 @@ function AdminArchive() {
                     data: {
                       id: String(row.id),
                       title: String(row.title),
-                      kind: row.kind as "photography",
+                      kind: row.kind as
+                        | "photography"
+                        | "graphic"
+                        | "social"
+                        | "event"
+                        | "video"
+                        | "club-visual"
+                        | "interactive",
                       year: String(row.year),
                       summary: String(row.summary ?? ""),
                       origin_note: String(row.origin_note ?? ""),
-                      canva_share_url: (row.canva_share_url as string | undefined) || undefined,
+                      canva_share_url: row.canva_share_url || undefined,
                       publication_status: next,
                       sort_order: Number(row.sort_order ?? 0),
                     },
