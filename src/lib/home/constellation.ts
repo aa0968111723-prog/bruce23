@@ -66,8 +66,17 @@ export function constellationLayout(projects: PublicProject[]): {
   const years = projects.map((item) => yearValue(item.year));
   const minY = Math.min(...years, 2020);
   const maxY = Math.max(...years, 2026);
-  const nodes = projects.map((project, index) => {
+  const groups = new Map<string, number[]>();
+  const membership = projects.map((project, index) => {
     const linked = modalityFilters.filter((item) => item.slugs.includes(project.slug) && hubById.has(item.id));
+    const key = linked.map((item) => item.id).sort().join("|") || "_";
+    const list = groups.get(key) ?? [];
+    list.push(index);
+    groups.set(key, list);
+    return { linked, key };
+  });
+  const nodes = projects.map((project, index) => {
+    const { linked, key } = membership[index];
     const points = linked
       .map((item) => hubById.get(item.id))
       .filter((item): item is ConstellationHub => Boolean(item));
@@ -75,14 +84,15 @@ export function constellationLayout(projects: PublicProject[]): {
     const cx = points.length ? points.reduce((sum, item) => sum + item.x, 0) / points.length : 500 + Math.cos(fallbackAngle) * 80;
     const cy = points.length ? points.reduce((sum, item) => sum + item.y, 0) / points.length : 280 + Math.sin(fallbackAngle) * 60;
     const t = (yearValue(project.year) - minY) / Math.max(maxY - minY, 1);
-    const radial = 0.55 + t * 0.45;
-    const angle = slugAngle(project.slug, index);
-    const spread = 40 + (index % 4) * 16;
+    const siblings = groups.get(key) ?? [index];
+    const k = Math.max(siblings.indexOf(index), 0);
+    const ring = (Math.PI * 2 * k) / Math.max(siblings.length, 1) + slugAngle(project.slug, 0) * 0.08;
+    const radius = 78 + t * 36 + Math.max(0, siblings.length - 2) * 10;
     return {
       slug: project.slug,
       title: project.title,
-      x: clamp(500 + (cx - 500) * radial + Math.cos(angle) * spread, 70, 930),
-      y: clamp(280 + (cy - 280) * radial + Math.sin(angle) * spread * 0.72, 48, 512),
+      x: clamp(cx + Math.cos(ring) * radius, 70, 930),
+      y: clamp(cy + Math.sin(ring) * radius * 0.78, 48, 512),
       category: project.category,
       year: project.year,
       modalities: linked.map((item) => item.label),
