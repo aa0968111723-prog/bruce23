@@ -328,6 +328,24 @@ describe("cms persistence", () => {
     const zen = archive.find((item) => item.id === "tku-zen-poster");
     assert.equal(zen?.canva.status, "unavailable");
     assert.equal(zen?.canva.shareUrl, null);
+    assert.match(zen?.summary ?? "", /SVG 轉譯/);
+  });
+
+  it("rewrites already-seeded archive copy that claimed live Canva or original photos", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update archive_items set summary = '縮圖來自 Canva 原作匯出，不是生成圖。' where slug = $1 or id = $1`,
+      ["tku-zen-poster"],
+    );
+    await sql.query(`delete from cms_meta where key = 'archive_honesty_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const archive = await listPublishedArchive(sql);
+    const zen = archive.find((item) => item.id === "tku-zen-poster");
+    const photo = archive.find((item) => item.id === "landscape-series");
+    assert.match(zen?.summary ?? "", /不是 Canva 嵌入/);
+    assert.doesNotMatch(zen?.summary ?? "", /原作匯出/);
+    assert.match(photo?.summary ?? "", /不是原作照片/);
   });
 
   it("saves homepage highlight slugs without wiping locale_json", async () => {

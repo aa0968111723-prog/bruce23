@@ -10,6 +10,47 @@ import { projectInputSchema, type ExperienceConfig } from "./schema.ts";
 import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive } from "./store.ts";
 
 export const SEED_VERSION = "portfolio-cms-1";
+const ARCHIVE_HONESTY_VERSION = "svg-translations-20260916";
+
+async function refreshArchiveHonesty(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'archive_honesty_version' limit 1`,
+  );
+  if (meta[0]?.value === ARCHIVE_HONESTY_VERSION) return;
+  for (const item of archiveItems) {
+    const fields = canvaFieldsForArchive(item);
+    await sql.query(
+      `update archive_items
+       set summary = $2,
+           origin_note = $3,
+           media = $4::jsonb,
+           canva_alt = $5,
+           canva_caption = $6,
+           canva_thumbnail_url = coalesce(nullif($7, ''), canva_thumbnail_url),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null then canva_status
+             else $8
+           end,
+           updated_at = now()
+       where slug = $1 or id = $1`,
+      [
+        item.id,
+        item.summary,
+        item.originNote,
+        item.media ? JSON.stringify(item.media) : null,
+        fields.alt,
+        fields.caption,
+        fields.thumbnailUrl,
+        fields.status,
+      ],
+    );
+  }
+  await sql.query(
+    `insert into cms_meta (key, value) values ('archive_honesty_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [ARCHIVE_HONESTY_VERSION],
+  );
+}
 
 async function ensureSeedComplements(sql: Sql): Promise<void> {
   for (const project of projects) {
@@ -75,6 +116,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
       ],
     );
   }
+  await refreshArchiveHonesty(sql);
   await fillExperienceConfigGaps(sql);
 }
 
