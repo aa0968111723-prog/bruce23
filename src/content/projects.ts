@@ -520,6 +520,14 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "folio",
+        "og.jpg",
+        "Folio 公開分享卡：深色桌面與幾何 F 字標",
+        "canva2",
+        "public/og.jpg",
+        "這是 og.jpg 分享卡／字標，不是 Folio 編輯器操作截圖，也不是 Canva 嵌入。canva2 沒有產品操作 PNG。",
+      ),
     ],
     sourceReferences: [
       {
@@ -527,6 +535,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/canva2",
         note: "完成功能與限制取自公開 README。",
       },
+      githubExportEvidence(
+        "canva2",
+        "本站 /media/github-exports/folio/og.jpg 複製自公開 repo public/og.jpg。是分享卡／字標，不是編輯器截圖，不是 Canva 原作。",
+      ),
     ],
     visibility: "public",
   },
@@ -644,13 +656,25 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "tku-zen-ai",
+        "club-illustration.jpg",
+        "淡江禪學社公開插畫：女孩與烏龜坐在簷下，掛牌寫著淡江禪學社",
+        "urban-green-rose-pixel",
+        "attachments/淡江大學 禪學社 (1).png",
+        "本站為公開 PNG 的壓縮 JPEG。這是社團插畫，不是 tku-zen-ai 對話截圖，不是 Canva 原作。tku-zen-ai 公開 repo 沒有產品操作畫面。",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · tku-zen-ai",
         href: "https://github.com/aa0968111723-prog/tku-zen-ai",
-        note: "本地引擎說明取自 README。",
+        note: "本地引擎說明取自 README。公開 repo 只有 Next.js 預設 SVG／favicon，沒有產品操作截圖。",
       },
+      githubExportEvidence(
+        "urban-green-rose-pixel",
+        "本站 /media/github-exports/tku-zen-ai/club-illustration.jpg 壓縮自公開 PNG attachments/淡江大學 禪學社 (1).png。是社團插畫，不是對話 UI，不是 Canva 嵌入。",
+      ),
     ],
     visibility: "public",
   },

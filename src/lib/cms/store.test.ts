@@ -629,5 +629,9 @@ describe("cms persistence", () => {
     assert.match(framelab.media.find((item) => item.src.includes("github-exports"))?.caption ?? "", /GitHub 匯出/);
     const director = await getPublishedProject(sql, "ai-director-os");
     assert.ok(director.media.some((item) => item.src.startsWith("/media/github-exports/ai-director-os/")));
+    const folio = await getPublishedProject(sql, "folio");
+    assert.ok(folio.media.some((item) => item.src === "/media/github-exports/folio/og.jpg"));
+    const zen = await getPublishedProject(sql, "tku-zen-ai");
+    assert.ok(zen.media.some((item) => item.src === "/media/github-exports/tku-zen-ai/club-illustration.jpg"));
   });
 });

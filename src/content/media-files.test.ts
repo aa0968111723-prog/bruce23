@@ -19,14 +19,16 @@ describe("github export media", () => {
         }
       }
     }
-    assert.ok(exports.length >= 12);
-    assert.equal(
-      projects.find((item) => item.slug === "tku-zen-ai")?.media.some((item) => item.src.includes("github-exports")),
-      false,
-    );
-    assert.equal(
-      projects.find((item) => item.slug === "folio")?.media.some((item) => item.src.includes("github-exports")),
-      false,
-    );
+    assert.ok(exports.length >= 14);
+    const folio = projects.find((item) => item.slug === "folio");
+    const zen = projects.find((item) => item.slug === "tku-zen-ai");
+    const folioExport = folio?.media.find((item) => item.src === "/media/github-exports/folio/og.jpg");
+    const zenExport = zen?.media.find((item) => item.src === "/media/github-exports/tku-zen-ai/club-illustration.jpg");
+    assert.ok(folioExport);
+    assert.ok(zenExport);
+    assert.match(folioExport?.caption ?? "", /分享卡/);
+    assert.match(folioExport?.caption ?? "", /不是 Folio 編輯器操作截圖/);
+    assert.match(zenExport?.caption ?? "", /社團插畫/);
+    assert.match(zenExport?.caption ?? "", /不是 tku-zen-ai 對話截圖/);
   });
 });

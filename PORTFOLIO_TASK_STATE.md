@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: hunt shareable visuals (not complete)
+Cycle: Folio/TKU Zen public GitHub visuals (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -13,8 +13,8 @@ Updated: 2026-09-16
 - Canva MCP this environment: `needsAuth`; `mcp_auth` failed (`Interaction query handler is not initialized`). No design list. Connect OAuth is not claimed connected.
 - Drive MCP: ready as `aaassswwwyyy17@gmail.com` (not the allowlisted admin). PNG/architecture files are owner-only. Spreadsheets (禪師開示、招生總表) and a 1GB Filmora video refused. No public PDF Canva download.
 - Public GitHub READMEs / homepages: no live `canva.com/design/{DAG…}` share URLs.
-- Web + GitHub code search this cycle: still **no** owner-tied public `canva.com/design/{id}` URLs. healing-studio `docs/design-reference.md` still only `/d/ysK5sYZisVEjZFe`.
-- Wired this cycle: public GitHub PNG copies under `/media/github-exports/` for ai_os, FrameLab, poster-vision-ai, planform-iso, duigao, hermes-console. Folio (canva2) and tku-zen-ai have no product PNG in-repo. Archive stays SVG translations.
+- Web + GitHub trees this cycle: canva2 has `public/og.jpg` + tiny favicon + Grok chrome. tku-zen-ai has only Next.js default SVGs/favicon (refused as product shots). Related: `urban-green-rose-pixel/attachments/淡江大學 禪學社 (1).png` club illustration. Refused: Grok install chrome, Next defaults, wood-ivory tea/lecture, tamsui drama sprites, urban-green quiz screenshots (leader-quiz), ever-marble game shots.
+- Wired GitHub exports under `/media/github-exports/` for all 8 featured works. Folio: canva2 `public/og.jpg` (share card / F wordmark, not editor UI). TKU Zen: compressed JPEG of public `urban-green-rose-pixel` club illustration (not tku-zen-ai chat, not Canva). tku-zen-ai itself has zero product-operation images (Next.js default SVGs refused). Archive stays SVG translations.
 
 ## CI (PR #4)
 
@@ -47,4 +47,5 @@ Updated: 2026-09-16
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
 - Full bilingual UI toggle (zh/en fields are stored and read; no language switcher)
-- Folio / tku-zen-ai still lack public in-repo PNG/PDF product shots
+- Folio still has no public editor-operation screenshot (only og.jpg share card)
+- tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)

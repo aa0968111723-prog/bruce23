@@ -17,6 +17,14 @@ describe("experience catalog", () => {
     ];
     const modes = slugs.map((slug) => experienceCatalog[slug].mode);
     assert.equal(new Set(slugs.filter((slug) => experienceCatalog[slug])).size, 8);
+    assert.equal(experienceCatalog["ai-director-os"].mode, "process-map");
+    assert.equal(experienceCatalog.framelab.mode, "timeline");
+    assert.equal(experienceCatalog["poster-vision-ai"].mode, "image-comparison");
+    assert.equal(experienceCatalog.planform.mode, "spatial-preview");
+    assert.equal(experienceCatalog.duigao.mode, "image-comparison");
+    assert.equal(experienceCatalog.folio.mode, "interactive-walkthrough");
+    assert.equal(experienceCatalog["hermes-console"].mode, "conversation-preview");
+    assert.equal(experienceCatalog["tku-zen-ai"].mode, "conversation-preview");
     assert.ok(modes.includes("process-map"));
     assert.ok(modes.includes("timeline"));
     assert.ok(modes.includes("spatial-preview"));
@@ -36,6 +44,8 @@ describe("experience catalog", () => {
     assert.doesNotMatch(source, /github\.io\/planform/);
     assert.match(source, /\/media\/github-exports\/\$\{slug\}\/\$\{file\}/);
     assert.match(source, /desktop-dashboard\.png/);
+    assert.match(source, /"og.jpg"/);
+    assert.match(source, /"club-illustration.jpg"/);
     assert.match(source, /公開 GitHub 匯出/);
     assert.doesNotMatch(source, /drive\.google\.com\/file/);
   });
