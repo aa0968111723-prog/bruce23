@@ -269,7 +269,18 @@ async function proveLiveAdmin(page, request) {
 
   const share = page.getByLabel(/Canva 分享/);
   await share.waitFor({ timeout: 15000 });
-  await share.fill(CANVA_FIXTURE_SHARE_URL);
+  await share.click();
+  await share.evaluate((el, value) => {
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+    setter?.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  }, CANVA_FIXTURE_SHARE_URL);
+  const pasted = await share.inputValue();
+  assert(
+    pasted.includes(CANVA_FIXTURE_DESIGN_ID),
+    `Canva share field did not keep the fixture URL (got ${pasted})`,
+  );
   await page.getByRole("button", { name: "測試 Canva 嵌入" }).click();
   await page.getByText("Canva 測試完成：可嵌入，未驗證 Connect").first().waitFor({ timeout: 20000 });
   const afterTest = await page.locator("body").innerText();

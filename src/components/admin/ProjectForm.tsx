@@ -365,10 +365,9 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() => {
-              const payload = validatedForm();
-              if (!payload) return;
+              const url = form.canva_share_url || form.canva_embed_url || undefined;
               void testCanvaEmbedFn({
-                data: { id: project.id, url: payload.canva_share_url || payload.canva_embed_url || undefined },
+                data: { id: project.id, url },
               })
                 .then((result) => {
                   if (result.status === "pending" && "shareUrl" in result && result.shareUrl) {
