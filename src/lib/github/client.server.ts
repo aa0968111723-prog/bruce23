@@ -77,12 +77,22 @@ async function fetchJson(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetchImpl(url, {
+    let response = await fetchImpl(url, {
       headers: githubHeaders(options.token, extra),
       signal: controller.signal,
     });
     if (response.status === 304 && cached?.body) {
-      return { status: 304, json: JSON.parse(cached.body) as unknown, fromCache: true };
+      try {
+        return { status: 200, json: JSON.parse(cached.body) as unknown, fromCache: true };
+      } catch {
+        // Corrupt cache — retry without validators below.
+      }
+    }
+    if (response.status === 304) {
+      response = await fetchImpl(url, {
+        headers: githubHeaders(options.token),
+        signal: controller.signal,
+      });
     }
     if (rateLimited(response)) {
       return {
@@ -200,7 +210,7 @@ export async function fetchPublicRepo(
     readmeError = "這個儲存庫沒有 README，或 README 無法公開讀取。";
   } else if (readmeRes.status >= 200 && readmeRes.status < 300) {
     readme = extractReadme(readmeRes.json);
-  } else if (readmeRes.status !== 304) {
+  } else {
     readmeError = `README 讀取失敗（HTTP ${readmeRes.status}）。`;
   }
 

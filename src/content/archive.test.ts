@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { archiveItems } from "./archive.ts";
 import { notionAdapter } from "./adapters/notion.ts";
@@ -23,6 +24,15 @@ describe("archive honesty", () => {
     assert.match(stroop?.summary ?? "", /不是現場成績截圖/);
     assert.match(zen?.summary ?? "", /不是 Canva 嵌入/);
     assert.match(zen?.summary ?? "", /也不能翻頁/);
+  });
+
+  it("keeps archive SVG labels readable instead of garbled bytes", () => {
+    const stroop = readFileSync(new URL("../../public/media/archive/stroop-challenge.svg", import.meta.url), "utf8");
+    const graphic = readFileSync(new URL("../../public/media/archive/graphic-portfolio.svg", import.meta.url), "utf8");
+    assert.match(stroop, /aria-label="社博 stroop/);
+    assert.match(graphic, /aria-label="平面設計作品集/);
+    assert.doesNotMatch(stroop, /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/);
+    assert.doesNotMatch(graphic, /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/);
   });
 });
 

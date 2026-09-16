@@ -3,7 +3,8 @@ import { ArrowLeft, Github, Globe } from "lucide-react";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { publishedCreativeWorkJsonLd } from "@/lib/cms/jsonld";
+import { publishedCreativeWorkJsonLd, serializeJsonLd } from "@/lib/cms/jsonld";
+import { sanitizePublicHref } from "@/lib/safe-href";
 
 export function CaseStudyView({
   project,
@@ -22,7 +23,7 @@ export function CaseStudyView({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(publishedCreativeWorkJsonLd(project)),
+            __html: serializeJsonLd(publishedCreativeWorkJsonLd(project)),
           }}
         />
       ) : null}
@@ -94,8 +95,8 @@ export function CaseStudyView({
             <li key={`${item.label}-${item.href ?? item.note}`} className="rounded-xl bg-surface-blue/70 px-4 py-3 text-sm">
               <p className="font-medium">{item.label}</p>
               <p className="text-muted">{item.note}</p>
-              {item.href ? (
-                <a href={item.href} className="mt-1 inline-flex min-h-11 items-center text-mint-deep" rel="noreferrer" target="_blank">
+              {sanitizePublicHref(item.href) ? (
+                <a href={sanitizePublicHref(item.href)} className="mt-1 inline-flex min-h-11 items-center text-mint-deep" rel="noreferrer" target="_blank">
                   {item.href}
                 </a>
               ) : null}

@@ -141,4 +141,67 @@ describe("github client honesty", () => {
     assert.equal(result.fileTree, undefined);
     assert.notEqual(result.status, "verified");
   });
+
+  it("treats a cached 304 as a successful tree, not HTTP failure", async () => {
+    const store = new Map<string, { etag?: string; lastModified?: string; body: string }>();
+    const cache = {
+      async read(key: string) {
+        return store.get(key) ?? null;
+      },
+      async write(key: string, value: { etag?: string; lastModified?: string; body: string; status: number }) {
+        store.set(key, { etag: value.etag, lastModified: value.lastModified, body: value.body });
+      },
+    };
+    const fetchImpl = async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      const headers = new Headers(init?.headers);
+      if (url.includes("/readme")) return new Response("# FrameLab", { status: 200 });
+      if (url.includes("/languages")) return new Response("{}", { status: 200 });
+      if (url.includes("/commits")) {
+        return new Response(
+          JSON.stringify([
+            {
+              sha: "abc",
+              html_url: "https://github.com/aa0968111723-prog/FrameLab/commit/abc",
+              commit: {
+                message: "docs",
+                author: { date: "2026-09-01T00:00:00Z" },
+                tree: { sha: "treesha123" },
+              },
+            },
+          ]),
+          { status: 200 },
+        );
+      }
+      if (url.includes("/git/trees")) {
+        if (headers.get("If-None-Match")) {
+          return new Response(null, { status: 304, headers: { etag: '"tree"' } });
+        }
+        return new Response(
+          JSON.stringify({ tree: [{ path: "README.md", type: "blob", size: 12 }] }),
+          { status: 200, headers: { etag: '"tree"' } },
+        );
+      }
+      if (headers.get("If-None-Match")) {
+        return new Response(null, { status: 304, headers: { etag: '"repo"' } });
+      }
+      return new Response(
+        JSON.stringify({
+          name: "FrameLab",
+          description: "demo",
+          private: false,
+          default_branch: "main",
+          html_url: "https://github.com/aa0968111723-prog/FrameLab",
+          topics: [],
+        }),
+        { status: 200, headers: { etag: '"repo"' } },
+      );
+    };
+    const first = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", { fetchImpl, cache });
+    assert.equal(first.status, "verified");
+    const second = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", { fetchImpl, cache });
+    assert.equal(second.ok, true);
+    assert.equal(second.status, "verified");
+    assert.ok(second.fileTree?.some((item) => item.path === "README.md"));
+  });
 });

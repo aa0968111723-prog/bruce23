@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
 import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
-import { verifyDemoUrl } from "../demo/verify.ts";
-import { projectInputSchema } from "./schema.ts";
+import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
+import { projectInputSchema, sourceEvidenceSchema } from "./schema.ts";
+import { serializeJsonLd } from "./jsonld.ts";
 import { toPublicProject } from "./store.ts";
 import { canvaViewerState, demoViewerState, stripSecrets } from "./privacy.ts";
 
@@ -167,6 +168,43 @@ describe("demo verification", () => {
     assert.equal(result.embedEnabled, false);
     assert.match(result.error ?? "", /不是網頁/);
   });
+
+  it("treats CSP frame-ancestors 'self' as unavailable, not verified", async () => {
+    const result = await verifyDemoUrl("https://demo.example/", {
+      fetchImpl: async () =>
+        new Response(null, {
+          status: 200,
+          headers: { "content-type": "text/html", "content-security-policy": "frame-ancestors 'self'" },
+        }),
+    });
+    assert.equal(result.status, "unavailable");
+    assert.equal(result.embedEnabled, false);
+    assert.equal(framingBlocked(null, "frame-ancestors 'self'"), true);
+    assert.equal(framingBlocked(null, "frame-ancestors *"), false);
+  });
+
+  it("does not probe private or loopback demo hosts", async () => {
+    const result = await verifyDemoUrl("http://127.0.0.1/");
+    assert.equal(result.status, "failed");
+    assert.match(result.error ?? "", /內網/);
+  });
+
+  it("retries GET after HEAD 403 so frame headers can still fail closed", async () => {
+    const methods: string[] = [];
+    const result = await verifyDemoUrl("https://demo.example/", {
+      fetchImpl: async (_input, init) => {
+        methods.push(String(init?.method ?? "GET"));
+        if (init?.method === "HEAD") return new Response(null, { status: 403 });
+        return new Response(null, {
+          status: 200,
+          headers: { "content-type": "text/html", "x-frame-options": "DENY" },
+        });
+      },
+    });
+    assert.deepEqual(methods, ["HEAD", "GET"]);
+    assert.equal(result.status, "unavailable");
+    assert.equal(result.embedEnabled, false);
+  });
 });
 
 describe("privacy", () => {
@@ -312,6 +350,20 @@ describe("privacy", () => {
       ),
       "fallback",
     );
+    assert.equal(
+      demoViewerState(
+        {
+          url: "https://demo.example",
+          label: "Demo",
+          type: "iframe",
+          embedEnabled: true,
+          status: "pending",
+          lastVerifiedAt: null,
+        },
+        false,
+      ),
+      "fallback",
+    );
   });
 });
 
@@ -353,6 +405,33 @@ describe("project schema", () => {
         },
       }),
     );
+  });
+
+  it("rejects javascript: source evidence hrefs", () => {
+    assert.equal(
+      sourceEvidenceSchema.safeParse({
+        label: "evil",
+        note: "should not link",
+        href: "javascript:alert(1)",
+      }).success,
+      false,
+    );
+    assert.equal(
+      sourceEvidenceSchema.safeParse({
+        label: "github",
+        note: "public repo",
+        href: "https://github.com/aa0968111723-prog/FrameLab",
+      }).success,
+      true,
+    );
+  });
+});
+
+describe("json-ld", () => {
+  it("escapes script breakout in serialized JSON-LD", () => {
+    const html = serializeJsonLd({ name: "</script><script>alert(1)" });
+    assert.match(html, /\\u003c/);
+    assert.doesNotMatch(html, /<\/script>/);
   });
 });
 

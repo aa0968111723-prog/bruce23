@@ -13,6 +13,7 @@ import { parseGithubUrl } from "../github/parse.ts";
 import { canvaPersistFromFields, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
 import type { CanvaPersistShape } from "../canva/parse.ts";
 import type { GithubFetchResult } from "../github/client.server.ts";
+import { sanitizePublicHref } from "../safe-href.ts";
 
 export function jsonb(value: unknown): string {
   return JSON.stringify(value ?? null);
@@ -175,7 +176,7 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
     interactionSteps: admin.interaction_steps,
     sourceEvidence: admin.source_evidence.map((item) => ({
       label: item.label,
-      href: item.href,
+      href: sanitizePublicHref(item.href),
       note: item.note,
       kind: item.kind,
     })),
@@ -593,7 +594,7 @@ export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[
     year: String(row.year),
     summary: String(row.summary ?? ""),
     media: parseJson<PublicProject["media"][number] | null>(row.media, null),
-    href: (row.href as string | null) ?? null,
+    href: sanitizePublicHref(row.href as string | null) ?? null,
     originNote: String(row.origin_note ?? ""),
     canva: {
       shareUrl: (row.canva_share_url as string | null) ?? null,

@@ -94,7 +94,7 @@ export function canvaViewerState(canva: CanvaPublicSlice, failed: boolean) {
 
 export function demoViewerState(demo: DemoPublicSlice, failed: boolean) {
   if (!demo.url) return "empty" as const;
-  if (!demo.embedEnabled || failed || demo.status === "unavailable" || demo.status === "failed") {
+  if (failed || !demo.embedEnabled || demo.status !== "verified") {
     return "fallback" as const;
   }
   return "embed" as const;

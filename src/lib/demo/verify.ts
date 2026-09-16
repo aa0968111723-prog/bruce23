@@ -1,3 +1,5 @@
+import { isBlockedPrivateHost, isSafeHttpUrl } from "../safe-href.ts";
+
 export type DemoVerifyResult = {
   status: "verified" | "unavailable" | "failed" | "not_configured";
   embedEnabled: boolean;
@@ -6,7 +8,6 @@ export type DemoVerifyResult = {
   httpStatus?: number;
 };
 
-const BLOCKED_FRAME = /deny|sameorigin/i;
 const HTML_TYPE = /text\/html|application\/xhtml\+xml/i;
 const NON_PAGE_TYPE = /javascript|json|wasm|octet-stream|image\/|video\/|text\/css|text\/plain/i;
 
@@ -15,6 +16,21 @@ export function isHtmlDemoContentType(contentType: string | null | undefined): b
   if (HTML_TYPE.test(type)) return true;
   if (!type.trim()) return false;
   return !NON_PAGE_TYPE.test(type);
+}
+
+export function framingBlocked(xFrameOptions: string | null, contentSecurityPolicy: string | null): boolean {
+  const xfo = xFrameOptions ?? "";
+  if (/deny|sameorigin/i.test(xfo)) return true;
+  const csp = contentSecurityPolicy ?? "";
+  const ancestors = csp.match(/frame-ancestors\s+([^;]+)/i);
+  if (!ancestors) return false;
+  const tokens = ancestors[1]
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (tokens.length === 1 && tokens[0] === "*") return false;
+  return true;
 }
 
 export async function verifyDemoUrl(
@@ -32,27 +48,30 @@ export async function verifyDemoUrl(
   if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
     return { status: "failed", embedEnabled: false, error: "Demo 只接受 http(s) 網址。" };
   }
+  if (isBlockedPrivateHost(parsed.hostname)) {
+    return { status: "failed", embedEnabled: false, error: "Demo 不探測內網或本機網址。" };
+  }
 
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? 8000;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const headers = { "User-Agent": "luminous-studio-portfolio" };
   try {
     let response = await fetchImpl(parsed.toString(), {
       method: "HEAD",
       redirect: "follow",
       signal: controller.signal,
-      headers: { "User-Agent": "luminous-studio-portfolio" },
+      headers,
     });
-    if (response.status === 405 || response.status === 501) {
+    if (response.status === 403 || response.status === 405 || response.status === 501) {
       response = await fetchImpl(parsed.toString(), {
         method: "GET",
         redirect: "follow",
         signal: controller.signal,
-        headers: { "User-Agent": "luminous-studio-portfolio", Range: "bytes=0-0" },
+        headers: { ...headers, Range: "bytes=0-0" },
       });
     }
-    const frame = `${response.headers.get("x-frame-options") ?? ""} ${response.headers.get("content-security-policy") ?? ""}`;
     const contentType = response.headers.get("content-type") ?? undefined;
     if (response.status >= 400) {
       return {
@@ -63,7 +82,7 @@ export async function verifyDemoUrl(
         contentType,
       };
     }
-    if (BLOCKED_FRAME.test(frame) || /frame-ancestors\s+'none'/i.test(frame)) {
+    if (framingBlocked(response.headers.get("x-frame-options"), response.headers.get("content-security-policy"))) {
       return {
         status: "unavailable",
         embedEnabled: false,
@@ -95,11 +114,5 @@ export async function verifyDemoUrl(
 }
 
 export function isSafeDemoUrl(raw: string | null | undefined): boolean {
-  if (!raw?.trim()) return false;
-  try {
-    const url = new URL(raw.trim());
-    return url.protocol === "https:" || url.protocol === "http:";
-  } catch {
-    return false;
-  }
+  return isSafeHttpUrl(raw);
 }

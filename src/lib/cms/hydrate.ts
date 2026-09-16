@@ -38,7 +38,7 @@ const INCOMPLETE_GITHUB_SQL = `
     )
     or (
       github_sync_status = 'verified'
-      and (github_file_tree is null or github_file_tree = '[]'::jsonb)
+      and github_file_tree is null
     )
   )
 `;

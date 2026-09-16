@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isSafePublicHref } from "../safe-href.ts";
 import {
   EXPERIENCE_MODES,
   INTEGRATION_STATUSES,
@@ -18,7 +19,12 @@ export const mediaSchema = z.object({
 
 export const sourceEvidenceSchema = z.object({
   label: z.string().min(1),
-  href: z.string().optional(),
+  href: z
+    .string()
+    .optional()
+    .refine((value) => isSafePublicHref(value), {
+      message: "來源連結只接受 http(s) 或站內路徑。",
+    }),
   note: z.string().min(1),
   kind: z.enum(["github", "canva", "demo", "narrative", "other"]).optional(),
 });

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import type { PublicProject } from "@/lib/cms/privacy";
+import { sanitizePublicHref } from "@/lib/safe-href";
 import { cn } from "@/lib/cn";
 import { GithubExplorer } from "./GithubExplorer";
 import { CanvaStage } from "./CanvaStage";
@@ -144,11 +145,13 @@ export function ExperiencePanel({
         {tab === "source" ? (
           project.sourceEvidence.length ? (
             <ul className="grid gap-3">
-              {project.sourceEvidence.map((ref) => (
+              {project.sourceEvidence.map((ref) => {
+                const href = sanitizePublicHref(ref.href);
+                return (
                 <li key={ref.label} className="rounded-2xl bg-surface-blue/70 px-4 py-3 text-sm">
-                  {ref.href ? (
+                  {href ? (
                     <a
-                      href={ref.href}
+                      href={href}
                       className="inline-flex min-h-11 items-center font-medium text-mint-deep"
                       rel="noreferrer"
                       target="_blank"
@@ -160,7 +163,8 @@ export function ExperiencePanel({
                   )}
                   <p className="mt-1 text-muted">{ref.note}</p>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           ) : (
             <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">

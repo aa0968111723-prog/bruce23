@@ -4,7 +4,7 @@ import { MediaFrame } from "@/components/site/MediaFrame";
 import { CanvaStage } from "@/components/experience/CanvaStage";
 import { listPublishedArchiveFn } from "@/lib/cms/public-fn";
 import { archiveKinds } from "@/content/archive";
-import { parseCanvaDesign } from "@/lib/canva/parse";
+import { sanitizePublicHref } from "@/lib/safe-href";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
 import type { PublicArchiveItem } from "@/lib/cms/store";
@@ -103,9 +103,9 @@ function Archive() {
               <h2 className="mt-1 font-display text-xl font-semibold">{item.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">{item.summary}</p>
               <p className="mt-3 text-xs text-muted">{item.originNote}</p>
-              {item.href ? (
+              {sanitizePublicHref(item.href) ? (
                 <a
-                  href={item.href}
+                  href={sanitizePublicHref(item.href)}
                   className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
                   rel="noreferrer"
                   target="_blank"
