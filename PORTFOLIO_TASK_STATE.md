@@ -2,7 +2,7 @@
 
 Cycle: source-aligned Folio/Zen reconstructions + playable experience quality (not complete)
 Updated: 2026-09-16
-HEAD: 56f91830c5ab4719d93d502e33b3f7ece6ccc9d2
+HEAD: dc4adcd8a872181586b5d01a49a4d190c81aca80
 
 ## Source of truth
 
