@@ -1,8 +1,7 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { IntegrationWorkCard } from "@/components/admin/IntegrationWorkCard";
 import {
-  applyCanvaDesignFn,
-  applyGithubFn,
   connectCanvaFn,
   disconnectCanvaFn,
   exportCanvaDesignFn,
@@ -10,14 +9,9 @@ import {
   getCanvaDesignFn,
   hydrateGithubFn,
   listIntegrationsFn,
-  publishProjectFn,
   searchCanvaDesignsFn,
-  testCanvaEmbedFn,
-  unpublishProjectFn,
-  verifyDemoFn,
-  verifyReadmeFn,
+  applyCanvaDesignFn,
 } from "@/lib/cms/admin-fn";
-import { integrationStatusLabel } from "@/lib/cms/status";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/integrations")({
@@ -26,9 +20,10 @@ export const Route = createFileRoute("/admin/integrations")({
 
 type CanvaStatus = Awaited<ReturnType<typeof getCanvaConnectFn>>;
 type DesignCard = Awaited<ReturnType<typeof searchCanvaDesignsFn>>["items"][number];
+type IntegrationsData = Awaited<ReturnType<typeof listIntegrationsFn>>;
 
 function IntegrationsPage() {
-  const [data, setData] = useState<Awaited<ReturnType<typeof listIntegrationsFn>> | null>(null);
+  const [data, setData] = useState<IntegrationsData | null>(null);
   const [canva, setCanva] = useState<CanvaStatus | null>(null);
   const [query, setQuery] = useState("");
   const [designs, setDesigns] = useState<DesignCard[]>([]);
@@ -112,11 +107,21 @@ function IntegrationsPage() {
 
   const connected = Boolean(canva?.connected);
   const notConfigured = canva?.status === "not_configured";
+  const published = useMemo(
+    () => (data?.items ?? []).filter((item) => item.public),
+    [data],
+  );
+  const unpublished = useMemo(
+    () => (data?.items ?? []).filter((item) => !item.public),
+    [data],
+  );
 
   return (
     <div>
       <h1 className="font-display text-3xl">整合</h1>
-      <p className="mt-2 text-sm text-muted">狀態只反映真實探測。失敗不會顯示成成功。</p>
+      <p className="mt-2 text-sm text-muted">
+        每件已發布作品一屏處理 GitHub、Canva、Demo 與體驗。狀態只反映真實探測。失敗不會顯示成成功。
+      </p>
 
       <div className="mt-6 rounded-2xl bg-surface p-5 shadow-card">
         <h2 className="font-display text-xl">Canva Connect</h2>
@@ -148,7 +153,7 @@ function IntegrationsPage() {
           <div className="mt-4 rounded-xl bg-surface-blue/70 px-3 py-3 text-sm text-muted">
             <p className="font-medium text-ink">目前沒有 Canva Connect</p>
             <p className="mt-2 text-xs">
-              Connect 按鈕不會假裝成功。請到作品編輯頁貼上 canva.com/design/{"{id}"} 公開分享網址（例如
+              Connect 按鈕不會假裝成功。請在下方作品卡片貼上 canva.com/design/{"{id}"} 公開分享網址（例如
               https://www.canva.com/design/{"{id}"}/view）。短網址 /d/ 可以貼，但要等轉到 /design/{"{id}"}{" "}
               才會嵌入。不要虛構設計編號，也不要把未連線標成已連線。
             </p>
@@ -350,94 +355,33 @@ function IntegrationsPage() {
       >
         同步所有待處理 GitHub
       </button>
+
       {data === null ? <p className="mt-6 text-sm text-muted">整合列載入中。</p> : null}
-      <ul className="mt-6 grid gap-3">
-        {data?.items.map((item) => (
-          <li key={item.id} className="rounded-2xl bg-surface p-4 shadow-card">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-display text-lg">{item.title}</p>
-              <span className="text-xs text-muted">{item.public ? "公開" : "未公開"}</span>
-            </div>
-            <p className="mt-2 text-sm text-muted">
-              GitHub {integrationStatusLabel[item.github.status]}
-              {item.github.lastSyncedAt ? ` · 上次探測 ${item.github.lastSyncedAt.slice(0, 16)}` : " · 尚未探測"}
-              {" · "}
-              Canva {integrationStatusLabel[item.canva.status]}
-              {item.canva.lastSyncedAt ? ` · 上次探測 ${item.canva.lastSyncedAt.slice(0, 16)}` : " · 尚未探測"}
-              {" · "}
-              Demo {integrationStatusLabel[item.demo.status]}
-              {item.demo.lastVerifiedAt ? ` · 上次探測 ${item.demo.lastVerifiedAt.slice(0, 16)}` : " · 尚未探測"}
-            </p>
-            {item.github.error ? <p className="text-xs text-alert">{item.github.error}</p> : null}
-            {item.github.errorCode === "rate_limited" ? (
-              <p className="text-xs text-alert">GitHub API 速率限制。稍後再同步，不會標記為成功。</p>
-            ) : null}
-            {item.canva.error ? <p className="text-xs text-alert">{item.canva.error}</p> : null}
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                className="min-h-11 rounded-full bg-surface-blue px-3 text-sm"
-                onClick={() => void act("已同步", () => applyGithubFn({ data: { id: item.id } }))}
-              >
-                同步 GitHub
-              </button>
-              <button
-                type="button"
-                className="min-h-11 rounded-full bg-surface-blue px-3 text-sm"
-                onClick={() => void act("README", () => verifyReadmeFn({ data: { id: item.id } }))}
-              >
-                驗證 README
-              </button>
-              <button
-                type="button"
-                className="min-h-11 rounded-full bg-surface-blue px-3 text-sm"
-                onClick={() => void act("Demo", () => verifyDemoFn({ data: { id: item.id } }))}
-              >
-                驗證 Demo
-              </button>
-              <button
-                type="button"
-                className="min-h-11 rounded-full bg-surface-blue px-3 text-sm"
-                onClick={() => void act("Canva", () => testCanvaEmbedFn({ data: { id: item.id } }))}
-              >
-                測試嵌入
-              </button>
-              <Link
-                className="inline-flex min-h-11 items-center rounded-full bg-surface-mint px-3 text-sm"
-                to="/admin/projects/$id/edit"
-                params={{ id: item.id }}
-              >
-                選體驗／封面
-              </Link>
-              <a
-                className="inline-flex min-h-11 items-center rounded-full px-3 text-sm text-mint-deep"
-                href={`/work/${item.slug}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                預覽前台
-              </a>
-              {item.public ? (
-                <button
-                  type="button"
-                  className="min-h-11 rounded-full px-3 text-sm"
-                  onClick={() => void act("已取消發布", () => unpublishProjectFn({ data: { id: item.id } }))}
-                >
-                  取消發布
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="min-h-11 rounded-full bg-mint px-3 text-sm"
-                  onClick={() => void act("已發布", () => publishProjectFn({ data: { id: item.id } }))}
-                >
-                  發布整合
-                </button>
-              )}
-            </div>
+
+      <h2 className="mt-10 font-display text-2xl">已發布作品</h2>
+      <p className="mt-2 text-sm text-muted">每件作品一屏：貼 Canva／Demo、測嵌入、驗證可用性、同步 GitHub、選體驗。</p>
+      <ul className="mt-4 grid gap-5">
+        {published.map((item) => (
+          <li key={item.id}>
+            <IntegrationWorkCard item={item} onReload={reload} />
           </li>
         ))}
       </ul>
+      {data && published.length === 0 ? <p className="mt-3 text-sm text-muted">目前沒有已發布作品。</p> : null}
+
+      {unpublished.length ? (
+        <>
+          <h2 className="mt-10 font-display text-2xl">尚未發布</h2>
+          <p className="mt-2 text-sm text-muted">草稿也可以先接來源，但不會出現在前台。</p>
+          <ul className="mt-4 grid gap-5">
+            {unpublished.map((item) => (
+              <li key={item.id}>
+                <IntegrationWorkCard item={item} onReload={reload} />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </div>
   );
 }

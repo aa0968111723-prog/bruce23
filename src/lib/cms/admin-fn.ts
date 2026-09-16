@@ -207,6 +207,9 @@ export const listIntegrationsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => handleListIntegrations(asAuthed(context)));
 
+export type AdminIntegrationsPayload = Awaited<ReturnType<typeof handleListIntegrations>>;
+export type IntegrationWorkItem = AdminIntegrationsPayload["items"][number];
+
 export const getSettingsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => handleGetSettings(asAuthed(context)));

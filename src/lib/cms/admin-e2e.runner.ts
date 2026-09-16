@@ -12,6 +12,7 @@ import {
   handleListIntegrations,
   handlePreviewDraft,
   handleSaveDraft,
+  handleSaveProject,
   handleSaveSettings,
   handleSetPublication,
   handleTestCanvaEmbed,
@@ -428,6 +429,32 @@ export async function runAdminE2E() {
     assert.equal(afterGithub.problem, "問題敘事");
     assert.equal(afterGithub.github_readme, "# FrameLab from GitHub");
     assert.equal(afterGithub.github_sync_status, "verified");
+
+    const integrationsPaste = await withAuthedAdmin(minted.token, async (ctx) =>
+      handleSaveProject(ctx, {
+        id: created.id,
+        canva_share_url: CANVA_FIXTURE_SHARE_URL,
+      }),
+    );
+    assert.equal(integrationsPaste.canva_share_url, "https://www.canva.com/design/DAGfixtureEmbedShape/view");
+    assert.equal(integrationsPaste.canva_status, "pending");
+    assert.notEqual(integrationsPaste.canva_status, "verified");
+    const listedAfterPaste = await withAuthedAdmin(minted.token, async (ctx) => handleListIntegrations(ctx));
+    const pastedRow = listedAfterPaste.items.find((item) => item.id === created.id);
+    assert.equal(pastedRow?.canva.url, "https://www.canva.com/design/DAGfixtureEmbedShape/view");
+    assert.equal(pastedRow?.canva.status, "pending");
+
+    const integrationsEvil = await withAuthedAdmin(minted.token, async (ctx) =>
+      handleSaveProject(ctx, {
+        id: created.id,
+        canva_share_url: "https://evil.com/design/DAGhacked/view",
+        canva_embed_url: null,
+        canva_design_id: null,
+      }),
+    );
+    assert.equal(integrationsEvil.canva_share_url, null);
+    assert.equal(integrationsEvil.canva_embed_url, null);
+    assert.equal(integrationsEvil.canva_status, "failed");
 
     const canva = await withAuthedAdmin(minted.token, async (ctx) => {
       const syntax = evaluateCanvaEmbedTest(CANVA_FIXTURE_SHARE_URL);

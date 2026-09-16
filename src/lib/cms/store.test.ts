@@ -531,6 +531,35 @@ describe("cms persistence", () => {
     assert.equal(after.github_sync_status, "stale");
   });
 
+  it("updates canva_share_url from an integrations-style save and rejects evil.com", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    const saved = await saveProjectRecord(
+      sql,
+      created.id,
+      { canva_share_url: "https://www.canva.com/design/DAGadminPasted/view" },
+      "admin-1",
+      "integrations",
+    );
+    assert.equal(saved.canva_share_url, "https://www.canva.com/design/DAGadminPasted/view");
+    assert.equal(saved.canva_status, "pending");
+    assert.notEqual(saved.canva_status, "verified");
+    const rejected = await saveProjectRecord(
+      sql,
+      created.id,
+      {
+        canva_share_url: "https://evil.com/design/DAGhacked/view",
+        canva_embed_url: null,
+        canva_design_id: null,
+      },
+      "admin-1",
+      "integrations",
+    );
+    assert.equal(rejected.canva_share_url, null);
+    assert.equal(rejected.canva_embed_url, null);
+    assert.equal(rejected.canva_status, "failed");
+  });
+
   it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(

@@ -412,13 +412,31 @@ describe("frontend contract", () => {
       new URL("../../../src/routes/admin/integrations.tsx", import.meta.url),
       "utf8",
     );
+    const integrationsCard = readFileSync(
+      new URL("../../../src/components/admin/IntegrationWorkCard.tsx", import.meta.url),
+      "utf8",
+    );
     assert.match(integrations, /Notion/);
     assert.match(integrations, /not_configured/);
-    assert.match(integrations, /rate_limited/);
     assert.match(integrations, /不會標記為成功/);
     assert.match(integrations, /目前沒有 Canva Connect/);
     assert.match(integrations, /canva.com\/design\/\{id\}/);
+    assert.match(integrations, /IntegrationWorkCard/);
+    assert.match(integrations, /已發布作品/);
     assert.doesNotMatch(integrations, /Notion 已連線/);
+    assert.match(integrationsCard, /rate_limited/);
+    assert.match(integrationsCard, /saveProjectFn/);
+    assert.match(integrationsCard, /testCanvaEmbedFn/);
+    assert.match(integrationsCard, /verifyDemoFn/);
+    assert.match(integrationsCard, /previewGithubFn/);
+    assert.match(integrationsCard, /applyGithubFn/);
+    assert.match(integrationsCard, /GithubSyncDiff/);
+    assert.match(integrationsCard, /有未儲存的修改/);
+    assert.match(integrationsCard, /beforeunload/);
+    assert.match(integrationsCard, /experience_mode/);
+    assert.match(integrationsCard, /測試嵌入/);
+    assert.match(integrationsCard, /開啟原稿/);
+    assert.doesNotMatch(integrationsCard, /status:\s*"verified"/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);
     assert.match(preview, /includeJsonLd=\{false\}/);
