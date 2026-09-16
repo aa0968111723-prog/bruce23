@@ -345,6 +345,7 @@ function IntegrationsPage() {
       >
         同步所有待處理 GitHub
       </button>
+      {data === null ? <p className="mt-6 text-sm text-muted">整合列載入中。</p> : null}
       <ul className="mt-6 grid gap-3">
         {data?.items.map((item) => (
           <li key={item.id} className="rounded-2xl bg-surface p-4 shadow-card">

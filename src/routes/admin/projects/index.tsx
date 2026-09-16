@@ -9,10 +9,18 @@ export const Route = createFileRoute("/admin/projects/")({
 });
 
 function AdminProjects() {
-  const [projects, setProjects] = useState<AdminProject[]>([]);
+  const [projects, setProjects] = useState<AdminProject[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    void listAdminProjectsFn().then(setProjects);
+    void listAdminProjectsFn()
+      .then(setProjects)
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "讀取失敗");
+        setProjects([]);
+      });
   }, []);
+  const loaded = projects !== null;
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -24,8 +32,13 @@ function AdminProjects() {
           新增
         </Link>
       </div>
+      {error ? <p className="mt-4 text-sm text-alert">{error}</p> : null}
       <ul className="mt-6 grid gap-2">
-        {projects.map((project) => (
+        {!loaded ? <li className="text-sm text-muted">作品列載入中。</li> : null}
+        {loaded && projects.length === 0 && !error ? (
+          <li className="text-sm text-muted">目前沒有作品。</li>
+        ) : null}
+        {(projects ?? []).map((project) => (
           <li key={project.id}>
             <Link
               to="/admin/projects/$id/edit"

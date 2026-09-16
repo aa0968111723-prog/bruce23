@@ -327,6 +327,14 @@ function HintTree({
   onSelect: (path: string) => void;
 }) {
   const [focusPath, setFocusPath] = useState(hints[0]?.path ?? "");
+  const itemRefs = useRef(new Map<string, HTMLButtonElement>());
+  const keyboardNav = useRef(false);
+
+  useEffect(() => {
+    if (!keyboardNav.current) return;
+    itemRefs.current.get(focusPath)?.focus();
+  }, [focusPath]);
+
   return (
     <div className="mt-3">
       <p className="text-xs text-muted">來源路徑提示，不是即時 repo 內容。</p>
@@ -335,6 +343,8 @@ function HintTree({
         role="tree"
         aria-label="來源路徑"
         onKeyDown={(event) => {
+          if (!hints.length) return;
+          keyboardNav.current = true;
           const idx = Math.max(0, hints.findIndex((item) => item.path === focusPath));
           if (event.key === "ArrowDown") {
             event.preventDefault();
@@ -342,6 +352,12 @@ function HintTree({
           } else if (event.key === "ArrowUp") {
             event.preventDefault();
             setFocusPath(hints[(idx - 1 + hints.length) % hints.length].path);
+          } else if (event.key === "Home") {
+            event.preventDefault();
+            setFocusPath(hints[0].path);
+          } else if (event.key === "End") {
+            event.preventDefault();
+            setFocusPath(hints[hints.length - 1].path);
           } else if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             onSelect(hints[idx].path);
@@ -355,6 +371,10 @@ function HintTree({
               role="treeitem"
               aria-selected={selected === item.path}
               tabIndex={focusPath === item.path ? 0 : -1}
+              ref={(el) => {
+                if (el) itemRefs.current.set(item.path, el);
+                else itemRefs.current.delete(item.path);
+              }}
               className={`inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-left text-sm hover:bg-surface-blue ${
                 selected === item.path ? "bg-surface-mint" : ""
               }`}

@@ -11,6 +11,7 @@ import { ZenTalk } from "./modes/ZenTalk";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { CanvaStage } from "./CanvaStage";
 import { GithubExplorer } from "./GithubExplorer";
+import { MediaFrame } from "@/components/site/MediaFrame";
 
 export function ExperienceCanvas({ project }: { project: PublicProject }) {
   const mode = project.experienceMode;
@@ -35,21 +36,12 @@ export function ExperienceCanvas({ project }: { project: PublicProject }) {
       <div className="grid gap-3">
         {config.galleryNote ? <p className="text-sm text-muted">{config.galleryNote}</p> : null}
         <div className="grid gap-3 sm:grid-cols-2">
-          {project.media.map((item) =>
-            item.kind === "video" ? (
-              <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-                <video className="aspect-video w-full object-cover" controls playsInline preload="metadata" poster={item.poster}>
-                  <source src={item.src} />
-                </video>
-                {item.caption ? <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption> : null}
-              </figure>
-            ) : (
-              <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-                <img src={item.src} alt={item.alt} className="aspect-[4/3] w-full object-cover" />
-                {item.caption ? <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption> : null}
-              </figure>
-            ),
-          )}
+          {project.media.map((item) => (
+            <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface shadow-card">
+              <MediaFrame media={item} className={item.kind === "video" ? "aspect-video" : "aspect-[4/3]"} />
+              {item.caption ? <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption> : null}
+            </figure>
+          ))}
         </div>
       </div>
     );

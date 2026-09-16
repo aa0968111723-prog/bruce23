@@ -27,6 +27,10 @@ function SettingsPage() {
     localeEnHeadline: "",
     localeZhNarrative: "",
     localeEnNarrative: "",
+    localeZhSeoTitle: "",
+    localeEnSeoTitle: "",
+    localeZhSeoDescription: "",
+    localeEnSeoDescription: "",
   });
   const [dirty, setDirty] = useState(false);
 
@@ -52,6 +56,10 @@ function SettingsPage() {
         localeEnHeadline: String(row.locale_json?.en?.headline ?? ""),
         localeZhNarrative: String(row.locale_json?.zh?.narrative ?? ""),
         localeEnNarrative: String(row.locale_json?.en?.narrative ?? ""),
+        localeZhSeoTitle: String(row.locale_json?.zh?.seoTitle ?? ""),
+        localeEnSeoTitle: String(row.locale_json?.en?.seoTitle ?? ""),
+        localeZhSeoDescription: String(row.locale_json?.zh?.seoDescription ?? ""),
+        localeEnSeoDescription: String(row.locale_json?.en?.seoDescription ?? ""),
       });
       setDirty(false);
     });
@@ -112,10 +120,14 @@ function SettingsPage() {
               zh: {
                 headline: form.localeZhHeadline,
                 narrative: form.localeZhNarrative,
+                seoTitle: form.localeZhSeoTitle,
+                seoDescription: form.localeZhSeoDescription,
               },
               en: {
                 headline: form.localeEnHeadline,
                 narrative: form.localeEnNarrative,
+                seoTitle: form.localeEnSeoTitle,
+                seoDescription: form.localeEnSeoDescription,
               },
             },
           },
@@ -205,6 +217,50 @@ function SettingsPage() {
           onChange={(event) => {
             setDirty(true);
             setForm((current) => ({ ...current, localeEnNarrative: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 SEO 標題
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeZhSeoTitle}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSeoTitle: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 SEO 標題
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeEnSeoTitle}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSeoTitle: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 SEO 描述
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeZhSeoDescription}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSeoDescription: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 SEO 描述
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeEnSeoDescription}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSeoDescription: event.target.value }));
           }}
         />
       </label>

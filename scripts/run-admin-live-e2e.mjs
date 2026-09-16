@@ -129,31 +129,43 @@ async function attachSession(context, page, session) {
 
 async function waitForProjectList(page) {
   await page.getByRole("heading", { name: "作品" }).waitFor({ timeout: 20000 });
-  await page.locator('a[href*="/admin/projects/"]').first().waitFor({ timeout: 20000 });
+  await page.getByText("作品列載入中。").waitFor({ state: "detached", timeout: 20000 }).catch(() => {});
+  const edit = page.locator('a[href*="/admin/projects/"][href*="/edit"]');
+  const empty = page.getByText("目前沒有作品。");
+  try {
+    await Promise.race([
+      edit.first().waitFor({ timeout: 20000 }),
+      empty.waitFor({ timeout: 20000 }),
+    ]);
+  } catch {
+    throw new Error("admin project list did not finish loading");
+  }
+}
+
+async function openExistingWork(page) {
+  const existing = page.getByText(SLUG, { exact: true });
+  if (!(await existing.count())) return false;
+  await existing.first().click();
+  await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+  return true;
 }
 
 async function openOrCreateWork(page) {
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await waitForProjectList(page);
-  const existing = page.getByText(SLUG, { exact: true });
-  if (await existing.count()) {
-    await existing.first().click();
-  } else {
-    await page.getByRole("link", { name: "新增", exact: true }).click();
-    await page.getByRole("heading", { name: "新增作品" }).waitFor({ timeout: 15000 });
-    await page.getByLabel("標題", { exact: true }).fill(TITLE);
-    await page.getByLabel("slug", { exact: true }).fill(SLUG);
-    await page.getByRole("button", { name: "建立草稿" }).click();
-  }
+  if (await openExistingWork(page)) return;
+  await page.getByRole("link", { name: "新增", exact: true }).click();
+  await page.getByRole("heading", { name: "新增作品" }).waitFor({ timeout: 15000 });
+  await page.getByLabel("標題", { exact: true }).fill(TITLE);
+  await page.getByLabel("slug", { exact: true }).fill(SLUG);
+  await page.getByRole("button", { name: "建立草稿" }).click();
   try {
     await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
   } catch (err) {
     await gotoReady(page, `${ORIGIN}/admin/projects`);
     await waitForProjectList(page);
-    const retry = page.getByText(SLUG, { exact: true });
-    if (!(await retry.count())) throw err;
-    await retry.first().click();
-    await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+    if (await openExistingWork(page)) return;
+    throw err;
   }
 }
 

@@ -8,7 +8,7 @@ export function publishedCreativeWorkJsonLd(project: PublicProject) {
     "@type": "CreativeWork",
     name: project.title,
     alternateName: en && en !== project.title ? en : undefined,
-    description: project.summary,
+    description: project.seoDescription?.trim() || project.summary,
     url: `/work/${project.slug}`,
     inLanguage: "zh-Hant",
     image: project.media[0]?.src?.startsWith("/media/") ? project.media[0].src : undefined,

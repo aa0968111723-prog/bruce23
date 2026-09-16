@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/preview")({
 });
 
 function PreviewPage() {
-  const [projects, setProjects] = useState<AdminProject[]>([]);
+  const [projects, setProjects] = useState<AdminProject[] | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ publicationStatus: string; project: PublicProject } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -21,6 +21,9 @@ function PreviewPage() {
     void listAdminProjectsFn().then((list) => {
       setProjects(list);
       setSlug((current) => current ?? list[0]?.slug ?? null);
+    }).catch((err: unknown) => {
+      setError(err instanceof Error ? err.message : "讀取失敗");
+      setProjects([]);
     });
   }, []);
 
@@ -40,7 +43,8 @@ function PreviewPage() {
       </p>
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(15rem,18rem)_minmax(0,1fr)]">
         <ul className="grid gap-2">
-          {projects.map((project) => (
+          {projects === null ? <li className="text-sm text-muted">作品列載入中。</li> : null}
+          {(projects ?? []).map((project) => (
             <li key={project.id}>
               <button
                 type="button"

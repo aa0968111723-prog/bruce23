@@ -9,26 +9,30 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminHome() {
-  const [projects, setProjects] = useState<AdminProject[]>([]);
+  const [projects, setProjects] = useState<AdminProject[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     void Promise.all([listAdminProjectsFn(), listIntegrationsFn()])
       .then(([list]) => setProjects(list))
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : "讀取失敗"));
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "讀取失敗");
+        setProjects([]);
+      });
   }, []);
 
-  const published = projects.filter((item) => item.publication_status === "published").length;
-  const drafts = projects.filter((item) => item.publication_status === "draft").length;
+  const loaded = projects !== null;
+  const published = (projects ?? []).filter((item) => item.publication_status === "published").length;
+  const drafts = (projects ?? []).filter((item) => item.publication_status === "draft").length;
 
   return (
     <div>
       <h1 className="font-display text-3xl">內容總覽</h1>
       {error ? <p className="mt-3 text-sm text-alert">{error}</p> : null}
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Stat label="作品" value={projects.length} />
-        <Stat label="已發布" value={published} />
-        <Stat label="草稿" value={drafts} />
+        <Stat label="作品" value={loaded ? (projects?.length ?? 0) : "…"} />
+        <Stat label="已發布" value={loaded ? published : "…"} />
+        <Stat label="草稿" value={loaded ? drafts : "…"} />
       </div>
       <div className="mt-8 flex flex-wrap gap-3">
         <Link to="/admin/projects/new" className="inline-flex min-h-11 items-center rounded-full bg-mint px-5 text-sm font-semibold text-primary-foreground">
@@ -39,7 +43,8 @@ function AdminHome() {
         </Link>
       </div>
       <ul className="mt-8 grid gap-2">
-        {projects.map((project) => (
+        {projects === null ? <li className="text-sm text-muted">作品列載入中。</li> : null}
+        {(projects ?? []).map((project) => (
           <li key={project.id}>
             <Link
               to="/admin/projects/$id/edit"
@@ -59,7 +64,7 @@ function AdminHome() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="rounded-2xl bg-surface p-5 shadow-card">
       <p className="text-sm text-muted">{label}</p>

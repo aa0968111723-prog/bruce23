@@ -35,7 +35,15 @@ export function resolveHomepageCopy(
     headline: site?.locale?.zh?.headline?.trim() || site?.headline || fallback.headline,
     subhead: site?.locale?.en?.headline?.trim() || site?.subhead || fallback.subhead,
     narrative: site?.locale?.zh?.narrative?.trim() || site?.narrative || fallback.narrative,
-    seoTitle: site?.seoTitle?.trim() || null,
-    seoDescription: site?.seoDescription?.trim() || null,
+    seoTitle:
+      site?.locale?.zh?.seoTitle?.trim() ||
+      site?.locale?.en?.seoTitle?.trim() ||
+      site?.seoTitle?.trim() ||
+      null,
+    seoDescription:
+      site?.locale?.zh?.seoDescription?.trim() ||
+      site?.locale?.en?.seoDescription?.trim() ||
+      site?.seoDescription?.trim() ||
+      null,
   };
 }

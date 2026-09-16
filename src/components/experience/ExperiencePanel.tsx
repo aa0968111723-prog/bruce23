@@ -7,6 +7,7 @@ import { GithubExplorer } from "./GithubExplorer";
 import { CanvaStage } from "./CanvaStage";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
+import { MediaFrame } from "@/components/site/MediaFrame";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
 import { howItWorksSteps, resolveExperienceConfig } from "@/lib/experiences/resolve";
 
@@ -111,36 +112,14 @@ export function ExperiencePanel({
             {galleryNote ? <p className="text-sm text-muted">{galleryNote}</p> : null}
             {project.media.length ? (
               <div className="grid gap-3 sm:grid-cols-2">
-                {project.media.map((item) =>
-                  item.kind === "video" ? (
-                    <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface-blue">
-                      <video
-                        className="aspect-video w-full object-cover"
-                        controls
-                        playsInline
-                        preload="metadata"
-                        poster={item.poster}
-                      >
-                        <source src={item.src} />
-                      </video>
-                      {item.caption ? (
-                        <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption>
-                      ) : null}
-                    </figure>
-                  ) : (
-                    <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface-blue">
-                      <img
-                        src={item.src}
-                        alt={item.alt}
-                        className="aspect-[4/3] w-full object-cover"
-                        loading="lazy"
-                      />
-                      {item.caption ? (
-                        <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption>
-                      ) : null}
-                    </figure>
-                  ),
-                )}
+                {project.media.map((item) => (
+                  <figure key={item.src} className="overflow-hidden rounded-2xl bg-surface-blue">
+                    <MediaFrame media={item} className={item.kind === "video" ? "aspect-video" : "aspect-[4/3]"} />
+                    {item.caption ? (
+                      <figcaption className="px-3 py-2 text-xs text-muted">{item.caption}</figcaption>
+                    ) : null}
+                  </figure>
+                ))}
               </div>
             ) : (
               <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">

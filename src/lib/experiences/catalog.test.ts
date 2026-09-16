@@ -169,6 +169,8 @@ describe("frontend contract", () => {
     const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
     assert.doesNotMatch(settings, /homepage_json: \{\}/);
     assert.match(settings, /highlightSlugs/);
+    assert.match(settings, /localeZhSeoTitle/);
+    assert.match(settings, /localeEnSeoDescription/);
     const index = readFileSync(new URL("../../../src/routes/index.tsx", import.meta.url), "utf8");
     assert.match(index, /resolveHomepageCopy/);
     assert.match(index, /seoTitle/);
@@ -192,6 +194,8 @@ describe("frontend contract", () => {
     assert.match(form, /listRevisionsFn/);
     assert.match(form, /\/d\/ 短網址/);
     assert.match(form, /localeKey/);
+    assert.match(form, /中文 SEO 標題/);
+    assert.match(form, /英文 SEO 描述/);
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
     const archiveForm = readFileSync(
@@ -248,6 +252,17 @@ describe("frontend contract", () => {
     const draft = readFileSync(new URL("../../../src/routes/admin/draft.$slug.tsx", import.meta.url), "utf8");
     assert.match(draft, /CaseStudyView/);
     assert.match(draft, /includeJsonLd=\{false\}/);
+    const panel = readFileSync(
+      new URL("../../../src/components/experience/ExperiencePanel.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(panel, /MediaFrame/);
+    const explorer = readFileSync(
+      new URL("../../../src/components/experience/GithubExplorer.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(explorer, /keyboardNav/);
+    assert.match(explorer, /itemRefs/);
     assert.doesNotMatch(editor, /GITHUB_READ_TOKEN/);
   });
 });

@@ -165,6 +165,7 @@ describe("admin allowlist", () => {
     const live = readFileSync(new URL("../../../scripts/run-admin-live-e2e.mjs", import.meta.url), "utf8");
     assert.match(live, /mint-admin-session\.mjs/);
     assert.match(live, /__Host-grok-auth\.session_token|SESSION_TOKEN_COOKIE/);
+    assert.match(live, /href\*="\/admin\/projects\/"\]\[href\*="\/edit"\]/);
     assert.doesNotMatch(live, /\/api\/test-login/);
     const db = readFileSync(new URL("../db.ts", import.meta.url), "utf8");
     assert.match(db, /PGLITE_DATA_DIR/);
@@ -184,6 +185,14 @@ describe("public json-ld and homepage copy", () => {
     assert.equal(jsonLd["@type"], "CreativeWork");
     assert.equal(jsonLd.url, "/work/folio");
     assert.equal(jsonLd.image, "/media/covers/folio.svg");
+    const withSeo = publishedCreativeWorkJsonLd({
+      slug: "folio",
+      title: "Folio",
+      summary: "摘要",
+      seoDescription: "SEO desc",
+      media: [{ src: "/media/covers/folio.svg", alt: "x", kind: "image" }],
+    } as PublicProject);
+    assert.equal(withSeo.description, "SEO desc");
   });
 
   it("prefers saved zh/en locale and SEO on the public homepage", () => {
@@ -203,14 +212,15 @@ describe("public json-ld and homepage copy", () => {
         seoTitle: "SEO",
         seoDescription: "desc",
         homepageHighlightSlugs: ["framelab"],
-        locale: { zh: { headline: "中文", narrative: "敘事" }, en: { headline: "EN" } },
+        locale: { zh: { headline: "中文", narrative: "敘事", seoTitle: "中 SEO", seoDescription: "中 desc" }, en: { headline: "EN" } },
       },
       { nameEn: "fb", person: "fb", headline: "fb", subhead: "fb", narrative: "fb" },
     );
     assert.equal(copy.headline, "中文");
     assert.equal(copy.narrative, "敘事");
     assert.equal(copy.subhead, "EN");
-    assert.equal(copy.seoTitle, "SEO");
+    assert.equal(copy.seoTitle, "中 SEO");
+    assert.equal(copy.seoDescription, "中 desc");
   });
 
   it("applies zh copy and keeps a distinct English title", () => {

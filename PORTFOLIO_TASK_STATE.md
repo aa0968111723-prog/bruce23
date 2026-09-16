@@ -20,32 +20,17 @@ Updated: 2026-09-16
 - Check runs: none (no `.github/workflows` in repo).
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
+- PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
 
-## Viewer navigation of healing-studio `/d/` links (Playwright Chromium)
+## This cycle (CODE leftovers)
 
-All four public short URLs were opened in Chromium. Classification used `page.url()` after load. HTML was not scraped for design ids.
-
-| Short URL | Final `page.url()` class | Outcome |
-|---|---|---|
-| `/d/ysK5sYZisVEjZFe` | stayed `/d/` · Canva 404 roadblock | **unavailable** · no design id |
-| `/d/WJgjSP967WEuhhN` | stayed `/d/` · Cloudflare then 404 roadblock | **unavailable** · no design id |
-| `/d/g4tColMMj63-XRu` | stayed `/d/` · Cloudflare challenge | **unavailable** · no design id |
-| `/d/kFV4KQpB2QzPjb0` | stayed `/d/` · Cloudflare challenge | **unavailable** · no design id |
-
-No allowlisted `canva.com/design/{id}` landing. Public AI Director OS item keeps the first short URL for Open original + cover thumbnail, **no iframe**, status **unavailable** (not verified).
-
-## Done in product code (still not the full /goal)
-
-- Light-only luminous site + CMS 0002 + auth fail-closed
-- 8 GitHub-backed case studies with distinct ExperiencePanel modes
-- Admin ProjectForm + ArchiveForm + settings + GitHub hydrate v4 + stampede lock
-- Canva: Location follow + Chrome UA retry + optional viewer `navigateImpl` (`page.url()`). Never `verified` from URL shape. HTML unread. Iframe only after parsed `/design/{id}` (length ≥ 6).
-- Connect/OAuth fail-closed without credentials
-- Unavailable + share URL shows thumbnail + Open original (no blank iframe)
-- GitHub HTTP 304 with ETag cache treated as success; verified empty trees rehydrate
-- Public locale overlay + SEO heads; `/privacy`; sitemap published-only including privacy
-- Homepage hubs from CMS modalities (no reverse token matching, no `平面` → poster)
-- File tree keyboard without stealing tab focus on mount
+- Admin `/admin/projects` list: loading vs empty vs error; live E2E waits for `/edit` links, not the 新增 button; duplicate-slug create recovers by opening the existing row.
+- Homepage/about SEO reads `locale.zh/en.seoTitle|seoDescription` then row fields.
+- Admin settings + ProjectForm edit locale SEO / problem / role overlays.
+- JSON-LD description prefers `seoDescription`.
+- Visual / media-gallery tabs use MediaFrame (poster + error).
+- Hint-tree keyboard actually moves DOM focus.
+- Admin home/archive/preview/integrations show loading instead of a false empty list.
 
 ## Not done / blocked
 
@@ -53,7 +38,7 @@ No allowlisted `canva.com/design/{id}` landing. Public AI Director OS item keeps
 - Original AI video files (too large for git; old Manus URLs are dead)
 - Real public Canva share/embed URLs for the 8 works
 - Canva Connect credentials + CANVA_TOKEN_KEY (OAuth cannot be live-proved)
-- Google login as `aa0968111723@gmail.com` to browser-prove admin
+- Google login as `aa0968111723@gmail.com` to browser-prove admin as a human
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
 - Full bilingual UI toggle (zh/en fields are stored and read; no language switcher)

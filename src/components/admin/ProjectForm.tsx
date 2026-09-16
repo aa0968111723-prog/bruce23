@@ -537,6 +537,46 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           }
         />
         <Area
+          label="中文問題"
+          value={String(form.locale_json?.zh?.problem ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, problem: value },
+            })
+          }
+        />
+        <Area
+          label="中文角色"
+          value={String(form.locale_json?.zh?.role ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, role: value },
+            })
+          }
+        />
+        <Field
+          label="中文 SEO 標題"
+          value={String(form.locale_json?.zh?.seoTitle ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, seoTitle: value },
+            })
+          }
+        />
+        <Area
+          label="中文 SEO 描述"
+          value={String(form.locale_json?.zh?.seoDescription ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              zh: { ...form.locale_json?.zh, seoDescription: value },
+            })
+          }
+        />
+        <Area
           label="英文標題"
           value={String(form.locale_json?.en?.title ?? "")}
           onChange={(value) =>
@@ -563,6 +603,46 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             patch("locale_json", {
               ...form.locale_json,
               en: { ...form.locale_json?.en, summary: value },
+            })
+          }
+        />
+        <Area
+          label="英文問題"
+          value={String(form.locale_json?.en?.problem ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, problem: value },
+            })
+          }
+        />
+        <Area
+          label="英文角色"
+          value={String(form.locale_json?.en?.role ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, role: value },
+            })
+          }
+        />
+        <Field
+          label="英文 SEO 標題"
+          value={String(form.locale_json?.en?.seoTitle ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, seoTitle: value },
+            })
+          }
+        />
+        <Area
+          label="英文 SEO 描述"
+          value={String(form.locale_json?.en?.seoDescription ?? "")}
+          onChange={(value) =>
+            patch("locale_json", {
+              ...form.locale_json,
+              en: { ...form.locale_json?.en, seoDescription: value },
             })
           }
         />
