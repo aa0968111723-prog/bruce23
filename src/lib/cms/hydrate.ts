@@ -60,6 +60,9 @@ export async function hydratePendingGithub(
        and github_sync_status in ('pending', 'stale', 'failed')
      order by sort_order asc, title asc`,
   );
+  if (rows.length > 0) {
+    console.info(`[cms] hydrating ${rows.length} GitHub repos`);
+  }
 
   const clientOptions = githubClientOptions(sql, options.fetchImpl);
   let verified = 0;

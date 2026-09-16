@@ -50,7 +50,12 @@ export async function ensureSeed(
     if (!options.skipGithubHydrate) {
       const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
       if (shouldHydrateGithub()) {
-        await hydratePendingGithub(sql).catch(() => undefined);
+        await hydratePendingGithub(sql).catch((err: unknown) => {
+          console.warn(
+            "[cms] github hydrate deferred:",
+            err instanceof Error ? err.message : "unknown error",
+          );
+        });
       }
     }
     return { seeded: false, skipped: true };
@@ -201,7 +206,12 @@ export async function ensureSeed(
   if (!options.skipGithubHydrate) {
     const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
     if (shouldHydrateGithub()) {
-      await hydratePendingGithub(sql).catch(() => undefined);
+      await hydratePendingGithub(sql).catch((err: unknown) => {
+        console.warn(
+          "[cms] github hydrate deferred:",
+          err instanceof Error ? err.message : "unknown error",
+        );
+      });
     }
   }
   return { seeded: true, skipped: false };
