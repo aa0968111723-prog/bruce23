@@ -1,4 +1,4 @@
-import type { Project, ProjectCategory, ProjectStatus } from "./types";
+import type { Project, ProjectCategory, ProjectStatus } from "./types.ts";
 
 const vis = "工作室視覺轉譯，不是產品截圖。";
 
@@ -66,7 +66,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/ai-director-os.jpg",
+        src: "/media/covers/ai-director-os.svg",
         alt: "AI Director OS 光域工作室視覺：玻璃控制台與分鏡卡片漂在晨光中",
         kind: "image",
         caption: vis,
@@ -129,7 +129,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/framelab.jpg",
+        src: "/media/covers/framelab.svg",
         alt: "FrameLab 視覺：明亮畫布上的 onion skin 彈跳球與時間軸",
         kind: "image",
         caption: vis,
@@ -187,7 +187,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/poster-vision-ai.jpg",
+        src: "/media/covers/poster-vision-ai.svg",
         alt: "Poster Vision AI 視覺：海報上的柔和熱圖與構圖引導",
         kind: "image",
         caption: vis,
@@ -245,7 +245,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/planform.jpg",
+        src: "/media/covers/planform.svg",
         alt: "PLANFORM 視覺：等角教室模型、地墊與薄荷色動線",
         kind: "image",
         caption: vis,
@@ -303,7 +303,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/duigao.jpg",
+        src: "/media/covers/duigao.svg",
         alt: "對稿視覺：玻璃桌上的海報與薄荷色註記圖釘",
         kind: "image",
         caption: vis,
@@ -360,7 +360,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/folio.jpg",
+        src: "/media/covers/folio.svg",
         alt: "Folio 視覺：明亮畫板上的幾何色塊與玻璃屬性面板",
         kind: "image",
         caption: vis,
@@ -413,7 +413,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/hermes-console.jpg",
+        src: "/media/covers/hermes-console.svg",
         alt: "Hermes Console 視覺：明亮工作區、對話欄與漂浮專案卡片",
         kind: "image",
         caption: vis,
@@ -459,7 +459,7 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/tku-zen-ai.jpg",
+        src: "/media/covers/tku-zen-ai.svg",
         alt: "TKU Zen AI 視覺：晨光庭園、紙燈與呼吸圓",
         kind: "image",
         caption: vis,

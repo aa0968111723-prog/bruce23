@@ -7,6 +7,7 @@ import {
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/site/SiteShell";
+import { Toaster } from "sonner";
 import { NotFoundView } from "@/components/site/NotFoundView";
 import appCss from "../styles.css?url";
 
@@ -61,6 +62,7 @@ function RootDocument() {
           <SiteShell>
             <Outlet />
           </SiteShell>
+          <Toaster position="top-center" richColors />
         </AuthProvider>
         <Scripts />
       </body>

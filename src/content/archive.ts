@@ -1,4 +1,4 @@
-import type { ArchiveItem } from "./types";
+import type { ArchiveItem } from "./types.ts";
 
 export const archiveKinds = [
   { id: "all", label: "全部" },
@@ -17,7 +17,7 @@ export const archiveItems: ArchiveItem[] = [
     year: "2018–2025",
     summary: "風景、日出與河邊光線。原始檔尚未放到公開 CDN，這裡只用光線方向的視覺轉譯，不冒充原作。",
     media: {
-      src: "/media/archive/landscape-translation.jpg",
+      src: "/media/archive/landscape-translation.svg",
       alt: "晨霧河岸風景的光線轉譯，不是原作照片",
       kind: "image",
       caption: "視覺轉譯 · 原作待公開媒體層",
@@ -32,7 +32,7 @@ export const archiveItems: ArchiveItem[] = [
     summary:
       "街頭音樂快閃：場地、表演者協調到現場執行。畫面為活動氣氛轉譯，未放可識別臉孔的原始活動照。",
     media: {
-      src: "/media/archive/event-flashmob.jpg",
+      src: "/media/archive/event-flashmob.svg",
       alt: "老街快閃活動的明亮氣氛轉譯",
       kind: "image",
       caption: "現場氣氛轉譯 · 原作待公開媒體層",
@@ -46,7 +46,7 @@ export const archiveItems: ArchiveItem[] = [
     year: "Canva",
     summary: "社團識別與活動視覺。縮圖來自 Canva 原作匯出，不是生成圖。",
     media: {
-      src: "/media/archive/tku-zen-poster.jpg",
+      src: "/media/archive/tku-zen-poster.svg",
       alt: "淡大禪學社文宣原作縮圖",
       kind: "image",
       caption: "Canva 原作縮圖",
@@ -60,7 +60,7 @@ export const archiveItems: ArchiveItem[] = [
     year: "Canva",
     summary: "簡報首頁視覺，用於社團敘事與活動說明。",
     media: {
-      src: "/media/archive/tku-zen-brand.jpg",
+      src: "/media/archive/tku-zen-brand.svg",
       alt: "淡大禪學社 TKU Zen 簡報首頁",
       kind: "image",
       caption: "Canva 原作縮圖",
@@ -74,7 +74,7 @@ export const archiveItems: ArchiveItem[] = [
     year: "Canva",
     summary: "同一份簡報的內頁，保留為社群與活動敘事素材。",
     media: {
-      src: "/media/archive/tku-zen-page2.jpg",
+      src: "/media/archive/tku-zen-page2.svg",
       alt: "禪學社活動簡報內頁",
       kind: "image",
       caption: "Canva 原作縮圖",
@@ -89,7 +89,7 @@ export const archiveItems: ArchiveItem[] = [
     summary:
       "社博現場 10 題情境，算出遠見／同理／決策／應變傾向。這是互動探索，不是正式心理測驗。",
     media: {
-      src: "/media/archive/booth-quiz.jpg",
+      src: "/media/archive/booth-quiz.svg",
       alt: "社博攤位平板與四維雷達圖的現場氣氛",
       kind: "image",
       caption: "現場氣氛轉譯",

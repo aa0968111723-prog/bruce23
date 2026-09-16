@@ -1,0 +1,50 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { describe, it } from "node:test";
+import { experienceCatalog } from "./catalog.ts";
+
+describe("experience catalog", () => {
+  it("covers all eight works with distinct modes", () => {
+    const slugs = [
+      "ai-director-os",
+      "framelab",
+      "poster-vision-ai",
+      "planform",
+      "duigao",
+      "folio",
+      "hermes-console",
+      "tku-zen-ai",
+    ];
+    const modes = slugs.map((slug) => experienceCatalog[slug].mode);
+    assert.equal(new Set(slugs.filter((slug) => experienceCatalog[slug])).size, 8);
+    assert.ok(modes.includes("process-map"));
+    assert.ok(modes.includes("timeline"));
+    assert.ok(modes.includes("spatial-preview"));
+    assert.ok(experienceCatalog["ai-director-os"].honestyLabel.includes("作品集"));
+    assert.ok(experienceCatalog["tku-zen-ai"].honestyLabel.includes("不是雲端"));
+  });
+});
+
+describe("frontend contract", () => {
+  it("does not put integration tokens in client modules", () => {
+    const files = [
+      "src/components/experience/ExperiencePanel.tsx",
+      "src/routes/index.tsx",
+      "src/routes/login.tsx",
+      "src/lib/cms/public-fn.ts",
+    ];
+    for (const file of files) {
+      const text = readFileSync(new URL(`../../../${file}`, import.meta.url), "utf8");
+      assert.doesNotMatch(text, /GITHUB_READ_TOKEN/);
+      assert.doesNotMatch(text, /CANVA_CLIENT_SECRET/);
+      assert.doesNotMatch(text, /service_role/);
+    }
+  });
+
+  it("keeps reduced-motion and 44px targets in the design system", () => {
+    const css = readFileSync(new URL("../../../src/styles.css", import.meta.url), "utf8");
+    assert.match(css, /prefers-reduced-motion/);
+    const header = readFileSync(new URL("../../../src/components/site/SiteHeader.tsx", import.meta.url), "utf8");
+    assert.match(header, /min-h-11/);
+  });
+});

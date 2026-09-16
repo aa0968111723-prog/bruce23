@@ -11,6 +11,7 @@
   --color-sun: #ffd166;
   --color-ink: #17324d;
   --color-muted: #59748a;
+  --color-alert: #c45c4a;
   --color-line: #d9eaf2;
   --color-background: var(--color-bg);
   --color-foreground: var(--color-ink);
@@ -104,6 +105,14 @@
     box-shadow: var(--shadow-float);
   }
 
+  .float-card-lite {
+    transition: transform 180ms ease;
+  }
+
+  .float-card-lite:hover {
+    transform: translateY(-4px);
+  }
+
   .drift {
     animation: drift 14s ease-in-out alternate infinite;
   }
@@ -120,8 +129,11 @@
     animation: none !important;
   }
 
-  .float-card {
-    transform: none;
+  .float-card,
+  .float-card-lite,
+  .node-chip {
+    transform: none !important;
+    animation: none !important;
   }
 }
 

@@ -1,28 +1,34 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MediaFrame } from "@/components/site/MediaFrame";
-import { archiveItems, archiveKinds } from "@/content/archive";
+import { CanvaStage } from "@/components/experience/CanvaStage";
+import { listPublishedArchiveFn } from "@/lib/cms/public-fn";
+import { archiveKinds } from "@/content/archive";
 import { cn } from "@/lib/cn";
+import type { PublicProject } from "@/lib/cms/privacy";
 
-export const Route = createFileRoute("/archive")({ component: Archive });
+export const Route = createFileRoute("/archive")({
+  loader: () => listPublishedArchiveFn(),
+  component: Archive,
+});
 
 function Archive() {
+  const items = Route.useLoaderData();
   const [kind, setKind] = useState<(typeof archiveKinds)[number]["id"]>("all");
   const visible = useMemo(() => {
-    if (kind === "all") return archiveItems;
+    if (kind === "all") return items;
     if (kind === "graphic") {
-      return archiveItems.filter((item) => item.kind === "graphic" || item.kind === "social");
+      return items.filter((item) => item.kind === "graphic" || item.kind === "social");
     }
-    return archiveItems.filter((item) => item.kind === kind);
-  }, [kind]);
+    return items.filter((item) => item.kind === kind);
+  }, [kind, items]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">Archive</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        攝影、平面、活動、社團文宣與招生活動互動。原始大檔與私人 Drive 資料夾不公開；能放原作縮圖的會標示來源。
+        攝影、平面、活動、社團文宣與招生活動互動。私人 Drive 不公開；有 Canva 嵌入的會直接可翻頁。
       </p>
-
       <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Archive 分類">
         {archiveKinds.map((item) => {
           const active = item.id === kind;
@@ -43,11 +49,29 @@ function Archive() {
           );
         })}
       </div>
-
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((item) => (
           <article key={item.id} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-            {item.media ? (
+            {item.canva.embedUrl ? (
+              <CanvaStage
+                project={
+                  {
+                    title: item.title,
+                    canva: {
+                      shareUrl: item.canva.shareUrl,
+                      embedUrl: item.canva.embedUrl,
+                      designId: item.canva.designId,
+                      thumbnailUrl: item.canva.thumbnailUrl,
+                      status: item.canva.status,
+                      lastSyncedAt: null,
+                      alt: item.canva.alt,
+                      caption: item.canva.caption,
+                    },
+                    media: item.media ? [item.media] : [],
+                  } as unknown as PublicProject
+                }
+              />
+            ) : item.media ? (
               <div className="aspect-[4/3] overflow-hidden bg-surface-blue">
                 <MediaFrame media={item.media} />
               </div>
@@ -57,9 +81,7 @@ function Archive() {
               </div>
             )}
             <div className="p-5">
-              <p className="text-xs font-medium tracking-wide text-muted">
-                {item.year}
-              </p>
+              <p className="text-xs font-medium tracking-wide text-muted">{item.year}</p>
               <h2 className="mt-1 font-display text-xl font-semibold">{item.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">{item.summary}</p>
               <p className="mt-3 text-xs text-muted">{item.originNote}</p>
