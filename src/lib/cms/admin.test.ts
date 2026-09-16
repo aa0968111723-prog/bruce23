@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { assertAdminAccess, isAllowedAdminOrigin, parseAdminEmails } from "./admin.ts";
+import { AdminConfigError, ForbiddenError } from "./errors.ts";
 import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
 import { resolveHomepageCopy } from "./public-site.ts";
 import type { PublicProject } from "./privacy.ts";
