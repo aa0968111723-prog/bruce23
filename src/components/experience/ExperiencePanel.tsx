@@ -7,7 +7,7 @@ import { GithubExplorer } from "./GithubExplorer";
 import { CanvaStage } from "./CanvaStage";
 import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
-import { isGithubExportSrc, MediaFrame } from "@/components/site/MediaFrame";
+import { MediaFrame } from "@/components/site/MediaFrame";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
 import { howItWorksSteps, resolveExperienceConfig } from "@/lib/experiences/resolve";
 
@@ -116,7 +116,7 @@ export function ExperiencePanel({
                   <figure
                     key={item.src}
                     className={
-                      isGithubExportSrc(item.src)
+                      item.src.startsWith("/media/github-exports/")
                         ? "overflow-hidden rounded-2xl bg-surface shadow-card"
                         : "overflow-hidden rounded-2xl bg-surface-blue"
                     }

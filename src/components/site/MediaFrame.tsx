@@ -3,7 +3,7 @@ import { ImageOff } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { ProjectMedia } from "@/content/types";
 
-export function isGithubExportSrc(src: string) {
+function isGithubExportSrc(src: string) {
   return src.startsWith("/media/github-exports/");
 }
 

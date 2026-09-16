@@ -140,7 +140,7 @@ describe("frontend contract", () => {
     assert.match(panel, /howItWorksSteps/);
     assert.match(panel, /galleryNote/);
     assert.match(panel, /MediaFrame/);
-    assert.match(panel, /isGithubExportSrc/);
+    assert.match(panel, /github-exports/);
     const mediaFrame = readFileSync(new URL("../../../src/components/site/MediaFrame.tsx", import.meta.url), "utf8");
     assert.match(mediaFrame, /bg-mat/);
     assert.match(mediaFrame, /GitHub 匯出/);
