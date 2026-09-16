@@ -2,7 +2,7 @@
 
 Cycle: HermesPreview typecheck + process-map numbers + studio heatmap + Folio document i18n (not complete)
 Updated: 2026-09-16
-HEAD: pending-this-commit
+HEAD: fc94029d7c3c4c149219bab7b337a69911ac56a8
 
 ## Source of truth
 
