@@ -89,6 +89,9 @@ export const getAdminSession = createServerFn({ method: "GET" })
       if (error instanceof AdminConfigError) {
         return { ok: false as const, email: null, configError: true, message: error.message };
       }
+      if (error instanceof ForbiddenError) {
+        return { ok: false as const, email: null, configError: false };
+      }
       throw error;
     }
   });

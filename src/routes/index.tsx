@@ -9,6 +9,8 @@ import { listPublicProjects, getPublicSite } from "@/lib/portfolio/server-public
 import { modalities, processSteps, site } from "@/content/site";
 import type { PublicProject } from "@/lib/portfolio/public";
 import type { Project } from "@/content/types";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -21,18 +23,22 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-function toCard(project: PublicProject): Project {
+function toCard(project: PublicProject, locale: "zh" | "en"): Project {
+  const title = locale === "en" && project.title_en ? project.title_en : project.title;
+  const subtitle =
+    locale === "en" && project.subtitle_en ? project.subtitle_en : project.subtitle;
+  const summary = locale === "en" && project.summary_en ? project.summary_en : project.summary;
   return {
     slug: project.slug,
-    title: project.title,
-    subtitle: project.subtitle,
+    title,
+    subtitle,
     category: project.category as Project["category"],
     year: project.year,
     status: project.product_status as Project["status"],
     featured: project.featured,
-    summary: project.summary,
-    problem: project.problem,
-    role: project.role,
+    summary,
+    problem: locale === "en" && project.problem_en ? project.problem_en : project.problem,
+    role: locale === "en" && project.role_en ? project.role_en : project.role,
     decisions: project.decisions,
     modalities: project.modalities,
     process: project.process,
@@ -48,10 +54,23 @@ function toCard(project: PublicProject): Project {
 
 function Home() {
   const { projects, settings } = Route.useLoaderData();
-  const headline =
-    String(settings.profile.headline || "") || site.headline;
-  const narrative =
-    String(settings.profile.narrative || "") || site.narrative;
+  const { locale } = useLocale();
+  const headline = pickCopy(
+    locale,
+    String(settings.profile.headline || "") || site.headline,
+    settings.profile.headlineEn,
+  );
+  const narrative = pickCopy(
+    locale,
+    String(settings.profile.narrative || "") || site.narrative,
+    settings.profile.narrativeEn,
+  );
+  const featuredIntro = pickCopy(
+    locale,
+    String(settings.homepage.featuredIntro || "") ||
+      "只放最能代表定位的作品。狀態按真實進度標示，沒有使用者數或成效數字。",
+    settings.homepage.featuredIntroEn,
+  );
   const featured = projects.filter((project) => project.featured);
   const [explore, setExplore] = useState<ExploreId>("image");
 
@@ -72,7 +91,9 @@ function Home() {
             <h1 className="mt-4 max-w-xl font-display text-4xl font-semibold text-ink sm:text-5xl lg:text-6xl">
               {headline}
             </h1>
-            <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">{site.subhead}</p>
+            <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">
+              {pickCopy(locale, site.subhead, settings.profile.subhead)}
+            </p>
             <p className="mt-3 max-w-lg text-sm text-ink/80">{narrative}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -110,10 +131,7 @@ function Home() {
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="font-display text-3xl font-semibold">精選作品</h2>
-            <p className="mt-2 max-w-xl text-sm text-muted">
-              {String(settings.homepage.featuredIntro || "") ||
-                "只放最能代表定位的作品。狀態按真實進度標示，沒有使用者數或成效數字。"}
-            </p>
+            <p className="mt-2 max-w-xl text-sm text-muted">{featuredIntro}</p>
           </div>
           <Link to="/work" className="inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
             全部作品
@@ -121,12 +139,12 @@ function Home() {
         </div>
         <div className="grid gap-5 md:grid-cols-2">
           {featured.slice(0, 2).map((project) => (
-            <ProjectCard key={project.slug} project={toCard(project)} featured />
+            <ProjectCard key={project.slug} project={toCard(project, locale)} featured />
           ))}
         </div>
         <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featured.slice(2).map((project) => (
-            <ProjectCard key={project.slug} project={toCard(project)} />
+            <ProjectCard key={project.slug} project={toCard(project, locale)} />
           ))}
         </div>
       </section>

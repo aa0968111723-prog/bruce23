@@ -6,24 +6,26 @@ import type { Project, ProjectCategory } from "@/content/types";
 import { cn } from "@/lib/cn";
 import { listPublicProjects } from "@/lib/portfolio/server-public";
 import type { PublicProject } from "@/lib/portfolio/public";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export const Route = createFileRoute("/work/")({
   loader: () => listPublicProjects(),
   component: WorkIndex,
 });
 
-function toCard(project: PublicProject): Project {
+function toCard(project: PublicProject, locale: "zh" | "en"): Project {
   return {
     slug: project.slug,
-    title: project.title,
-    subtitle: project.subtitle,
+    title: pickCopy(locale, project.title, project.title_en),
+    subtitle: pickCopy(locale, project.subtitle, project.subtitle_en),
     category: project.category as Project["category"],
     year: project.year,
     status: project.product_status as Project["status"],
     featured: project.featured,
-    summary: project.summary,
-    problem: project.problem,
-    role: project.role,
+    summary: pickCopy(locale, project.summary, project.summary_en),
+    problem: pickCopy(locale, project.problem, project.problem_en),
+    role: pickCopy(locale, project.role, project.role_en),
     decisions: project.decisions,
     modalities: project.modalities,
     process: project.process,
@@ -39,6 +41,7 @@ function toCard(project: PublicProject): Project {
 
 function WorkIndex() {
   const projects = Route.useLoaderData();
+  const { locale } = useLocale();
   const [category, setCategory] = useState<"All" | ProjectCategory>("All");
   const visible = useMemo(
     () =>
@@ -79,7 +82,7 @@ function WorkIndex() {
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((project) => (
-            <ProjectCard key={project.slug} project={toCard(project)} />
+            <ProjectCard key={project.slug} project={toCard(project, locale)} />
           ))}
         </div>
       )}

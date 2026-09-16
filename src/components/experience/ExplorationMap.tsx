@@ -3,6 +3,8 @@ import { Link } from "@tanstack/react-router";
 import type { PublicProject } from "@/lib/portfolio/public";
 import { MULTIMODAL_NODES } from "@/lib/portfolio/constants";
 import { cn } from "@/lib/cn";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export type ExploreId = (typeof MULTIMODAL_NODES)[number]["id"] | "all";
 
@@ -15,6 +17,7 @@ export function ExplorationMap({
   active: ExploreId;
   onActiveChange: (id: ExploreId) => void;
 }) {
+  const { locale } = useLocale();
   const visible = useMemo(() => {
     if (active === "all") return projects;
     const slugs = MULTIMODAL_NODES.find((node) => node.id === active)?.slugs ?? [];
@@ -57,7 +60,7 @@ export function ExplorationMap({
             )}
             onClick={() => onActiveChange(node.id)}
           >
-            {node.labelZh}
+            {locale === "en" ? node.labelEn : node.labelZh}
           </button>
         ))}
       </div>
@@ -77,7 +80,20 @@ export function ExplorationMap({
               (node.slugs as readonly string[]).includes(project.slug),
             ).length;
             return (
-              <g key={node.id} className="cursor-pointer" onClick={() => onActiveChange(node.id)}>
+              <g
+                key={node.id}
+                className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={locale === "en" ? node.labelEn : node.labelZh}
+                onClick={() => onActiveChange(node.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onActiveChange(node.id);
+                  }
+                }}
+              >
                 <circle
                   cx={x}
                   cy={90}
@@ -93,7 +109,7 @@ export function ExplorationMap({
                   fontSize="14"
                   fill="var(--color-ink)"
                 >
-                  {node.labelZh}
+                  {locale === "en" ? node.labelEn : node.labelZh}
                 </text>
                 <text
                   x={x}
@@ -120,8 +136,12 @@ export function ExplorationMap({
             className="min-w-[78%] rounded-2xl bg-surface p-5 shadow-card sm:min-w-[46%] lg:min-w-0"
           >
             <p className="text-xs text-muted">{project.category}</p>
-            <h3 className="mt-1 font-display text-xl font-semibold">{project.title}</h3>
-            <p className="mt-2 line-clamp-3 text-sm text-muted">{project.summary}</p>
+            <h3 className="mt-1 font-display text-xl font-semibold">
+              {pickCopy(locale, project.title, project.title_en)}
+            </h3>
+            <p className="mt-2 line-clamp-3 text-sm text-muted">
+              {pickCopy(locale, project.summary, project.summary_en)}
+            </p>
             <p className="mt-3 text-xs text-mint-deep">打開體驗面板</p>
           </Link>
         ))}

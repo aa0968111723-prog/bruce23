@@ -9,6 +9,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/site/SiteShell";
 import { NotFoundView } from "@/components/site/NotFoundView";
+import { LocaleProvider } from "@/lib/portfolio/locale";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
@@ -68,8 +69,10 @@ function RootDocument() {
       <body className="bg-bg text-ink">
         <PreviewHostBridge />
         <AuthProvider>
-          <AppFrame />
-          <Toaster position="top-center" richColors />
+          <LocaleProvider>
+            <AppFrame />
+            <Toaster position="top-center" richColors />
+          </LocaleProvider>
         </AuthProvider>
         <Scripts />
       </body>

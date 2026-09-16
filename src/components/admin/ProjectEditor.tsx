@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import { Link, useBlocker } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { ProjectWrite } from "@/lib/portfolio/schema";
 import { projectWriteSchema } from "@/lib/portfolio/schema";
@@ -44,16 +45,11 @@ export function ProjectEditor({
     skippedNarrative: string[];
   } | null>(null);
   const json = useMemo(() => JSON.stringify(value), [value]);
-
-  useEffect(() => {
-    const onLeave = (event: BeforeUnloadEvent) => {
-      if (!dirty) return;
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    window.addEventListener("beforeunload", onLeave);
-    return () => window.removeEventListener("beforeunload", onLeave);
-  }, [dirty]);
+  const blocker = useBlocker({
+    shouldBlockFn: () => dirty,
+    enableBeforeUnload: true,
+    withResolver: true,
+  });
 
   const patch = (partial: Partial<ProjectWrite>) => {
     setValue((current) => ({ ...current, ...partial }));
@@ -409,6 +405,36 @@ export function ProjectEditor({
         </div>
       ) : null}
       <p className="text-xs text-muted">表單指紋 {json.length} · {dirty ? "有未儲存變更" : "已同步"}</p>
+      {blocker.status === "blocked" ? (
+        <div className="rounded-2xl bg-surface-blue p-4 text-sm">
+          <p>有未儲存變更。要離開這個編輯頁嗎？</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm text-bg"
+              onClick={() => blocker.proceed()}
+            >
+              離開
+            </button>
+            <button
+              type="button"
+              className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
+              onClick={() => blocker.reset()}
+            >
+              繼續編輯
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {id ? (
+        <Link
+          to="/admin/preview"
+          search={{ slug: value.slug }}
+          className="inline-flex min-h-11 items-center text-sm text-mint-deep"
+        >
+          草稿預覽（公開頁不會顯示草稿）
+        </Link>
+      ) : null}
       <div className="flex flex-wrap gap-2">
         <button
           type="button"

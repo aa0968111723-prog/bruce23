@@ -4,6 +4,7 @@ import type { PublicProject } from "@/lib/portfolio/public";
 import { EXPERIENCE_TABS } from "@/lib/portfolio/constants";
 import { moveTabIndex } from "@/lib/portfolio/a11y";
 import { cn } from "@/lib/cn";
+import { useLocale } from "@/lib/portfolio/locale";
 import { GithubTree } from "./GithubTree";
 import { CanvaBoard } from "./CanvaBoard";
 import { SafeFrame } from "./SafeFrame";
@@ -45,6 +46,7 @@ function TryNow({ project }: { project: PublicProject }) {
 
 export function ExperiencePanel({ project }: { project: PublicProject }) {
   const [tab, setTab] = useState(0);
+  const { locale } = useLocale();
   const current = EXPERIENCE_TABS[tab];
 
   return (
@@ -74,7 +76,7 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
             )}
             onClick={() => setTab(index)}
           >
-            {item.labelZh}
+            {locale === "en" ? item.labelEn : item.labelZh}
           </button>
         ))}
       </div>

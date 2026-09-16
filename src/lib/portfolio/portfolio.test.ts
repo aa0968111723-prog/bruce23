@@ -365,3 +365,53 @@ describe("secret encryption", () => {
     assert.equal(decryptSecret(cipher, "unit-test-secret"), "refresh-token-value");
   });
 });
+
+describe("public sitemap, json-ld, i18n, overflow", () => {
+  it("sitemap and json-ld omit drafts", async () => {
+    const { sitemapXml } = await import("./sitemap.ts");
+    const { creativeWorkJsonLd } = await import("./jsonld.ts");
+    const sql = await createTestSql();
+    await seedPortfolio(sql);
+    const created = await createProject(
+      sql,
+      projectWriteSchema.parse({
+        slug: "hidden-draft-case",
+        title: "Hidden",
+        subtitle: "no",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "draft",
+        featured: false,
+        sort_order: 91,
+        summary: "draft",
+      }),
+      "admin-1",
+    );
+    const listed = await listPublishedProjects(sql);
+    const xml = sitemapXml(listed.map((item) => item.slug));
+    assert.equal(xml.includes("/work/hidden-draft-case"), false);
+    assert.ok(xml.includes("/work/framelab"));
+    assert.equal(creativeWorkJsonLd(null), null);
+    const jsonLd = creativeWorkJsonLd(listed[0]);
+    assert.ok(jsonLd);
+    assert.equal(jsonLd?.["@type"], "CreativeWork");
+    assert.equal(jsonLd?.url, `/work/${listed[0]?.slug}`);
+    assert.equal(await getPublishedProject(sql, "hidden-draft-case"), null);
+    assert.ok(created);
+  });
+
+  it("picks English copy only when present", async () => {
+    const { pickCopy } = await import("./i18n.ts");
+    assert.equal(pickCopy("en", "中文", "English"), "English");
+    assert.equal(pickCopy("en", "中文", "  "), "中文");
+    assert.equal(pickCopy("zh", "中文", "English"), "中文");
+  });
+
+  it("clips horizontal overflow and honors reduced motion in CSS", () => {
+    const css = readFileSync(join(process.cwd(), "src/styles.css"), "utf8");
+    assert.ok(css.includes("overflow-x: clip"));
+    assert.ok(css.includes("prefers-reduced-motion"));
+  });
+});
+

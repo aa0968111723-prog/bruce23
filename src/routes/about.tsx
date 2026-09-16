@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Github, Mail } from "lucide-react";
 import { site } from "@/content/site";
+import { getPublicSite } from "@/lib/portfolio/server-public";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 
-export const Route = createFileRoute("/about")({ component: About });
+export const Route = createFileRoute("/about")({
+  loader: () => getPublicSite(),
+  component: About,
+});
 
 const beliefs = [
   "人的意圖是起點，AI 是可驗證的加速器，不是自動完成的導演。",
@@ -21,6 +27,13 @@ const publicWork = [
 ];
 
 function About() {
+  const settings = Route.useLoaderData();
+  const { locale } = useLocale();
+  const narrative = pickCopy(
+    locale,
+    String(settings.profile.narrative || "") || site.narrative,
+    settings.profile.narrativeEn,
+  );
   return (
     <div>
       <section className="bg-surface-blue/50">
@@ -30,7 +43,9 @@ function About() {
             關於我
           </h1>
           <p className="mt-4 text-lg text-muted">
-            我是{site.person}，{site.role}。
+            {locale === "en"
+              ? `${settings.profile.person || site.person} · ${settings.profile.role || site.role}`
+              : `我是${settings.profile.person || site.person}，${settings.profile.role || site.role}。`}
           </p>
         </div>
       </section>
@@ -38,7 +53,7 @@ function About() {
       <section className="mx-auto w-full max-w-3xl space-y-10 px-4 py-14 sm:px-6">
         <div>
           <h2 className="font-display text-2xl font-semibold">公開定位</h2>
-          <p className="mt-3 leading-relaxed text-ink/85">{site.narrative}</p>
+          <p className="mt-3 leading-relaxed text-ink/85">{narrative}</p>
           <p className="mt-3 leading-relaxed text-muted">
             目標觀眾是 AI 產品團隊、設計主管、多模態創作者與合作夥伴。這個網站要讓人快速看出我正在做什麼、解決什麼、AI 扮演什麼角色，以及作品能不能被使用。
           </p>

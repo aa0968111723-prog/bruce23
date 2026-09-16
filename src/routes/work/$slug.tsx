@@ -4,6 +4,9 @@ import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { NotFoundView } from "@/components/site/NotFoundView";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import { getPublicProject, listPublicProjects } from "@/lib/portfolio/server-public";
+import { creativeWorkJsonLd } from "@/lib/portfolio/jsonld";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 import type { ProjectStatus } from "@/content/types";
 
 export const Route = createFileRoute("/work/$slug")({
@@ -31,17 +34,19 @@ export const Route = createFileRoute("/work/$slug")({
 
 function CaseStudy() {
   const { project, others } = Route.useLoaderData();
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.title,
-    description: project.summary,
-    url: `/work/${project.slug}`,
-  };
+  const { locale } = useLocale();
+  const jsonLd = creativeWorkJsonLd(project);
+  const title = pickCopy(locale, project.title, project.title_en);
+  const subtitle = pickCopy(locale, project.subtitle, project.subtitle_en);
+  const summary = pickCopy(locale, project.summary, project.summary_en);
+  const problem = pickCopy(locale, project.problem, project.problem_en);
+  const role = pickCopy(locale, project.role, project.role_en);
 
   return (
     <article className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
-      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      {jsonLd ? (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      ) : null}
       <Link
         to="/work"
         className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-ink"
@@ -56,15 +61,15 @@ function CaseStudy() {
           </span>
           <StatusBadge status={project.product_status as ProjectStatus} />
         </div>
-        <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{project.title}</h1>
-        <p className="mt-3 text-lg text-muted">{project.subtitle}</p>
+        <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{title}</h1>
+        <p className="mt-3 text-lg text-muted">{subtitle}</p>
       </header>
 
       <div className="mt-8">
         <ExperiencePanel project={project} />
       </div>
 
-      <p className="mt-10 text-[0.95rem] leading-relaxed text-ink/85">{project.summary}</p>
+      <p className="mt-10 text-[0.95rem] leading-relaxed text-ink/85">{summary}</p>
 
       <section className="mt-8 rounded-2xl bg-surface-blue p-5">
         <h2 className="font-display text-xl font-semibold">來源與證據</h2>
@@ -86,8 +91,8 @@ function CaseStudy() {
       </section>
 
       <section className="mt-10 grid gap-8">
-        <Block title="問題">{project.problem}</Block>
-        <Block title="我的角色">{project.role}</Block>
+        <Block title={locale === "en" ? "Problem" : "問題"}>{problem}</Block>
+        <Block title={locale === "en" ? "My role" : "我的角色"}>{role}</Block>
         <ListBlock title="設計決策" items={project.decisions} />
         <ListBlock title="限制與尚未完成" items={project.limitations} />
       </section>

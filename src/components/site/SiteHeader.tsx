@@ -5,16 +5,15 @@ import { nav, site } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { getViewerFlags } from "@/lib/portfolio/server-public";
 import { SignedIn, UserButton } from "@/lib/auth/gates";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const [locale, setLocale] = useState<"zh" | "en">("zh");
+  const { locale, setLocale } = useLocale();
   const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("luminous-locale");
-    if (stored === "en" || stored === "zh") setLocale(stored);
     getViewerFlags()
       .then((flags) => setAdmin(flags.isAdmin))
       .catch(() => setAdmin(false));
@@ -22,8 +21,6 @@ export function SiteHeader() {
 
   const setLang = (next: "zh" | "en") => {
     setLocale(next);
-    window.localStorage.setItem("luminous-locale", next);
-    document.documentElement.lang = next === "zh" ? "zh-Hant" : "en";
   };
 
   return (
@@ -138,6 +135,15 @@ export function SiteHeader() {
                 </Link>
               </li>
             ) : null}
+            <li>
+              <button
+                type="button"
+                className="flex min-h-11 w-full items-center rounded-xl px-3 text-sm font-medium text-ink"
+                onClick={() => setLang(locale === "zh" ? "en" : "zh")}
+              >
+                {locale === "zh" ? "English" : "中文"}
+              </button>
+            </li>
           </ul>
         </nav>
       ) : null}
