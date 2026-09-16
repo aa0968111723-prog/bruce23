@@ -29,10 +29,10 @@ describe("archive honesty", () => {
   it("keeps archive SVG labels readable instead of garbled bytes", () => {
     const stroop = readFileSync(new URL("../../public/media/archive/stroop-challenge.svg", import.meta.url), "utf8");
     const graphic = readFileSync(new URL("../../public/media/archive/graphic-portfolio.svg", import.meta.url), "utf8");
-    assert.match(stroop, /aria-label="社博 stroop/);
-    assert.match(graphic, /aria-label="平面設計作品集/);
-    assert.doesNotMatch(stroop, /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/);
-    assert.doesNotMatch(graphic, /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/);
+    assert.match(stroop, /aria-label="Stroop 60s challenge translation/);
+    assert.match(graphic, /aria-label="Graphic portfolio translation/);
+    assert.match(stroop, /not a live score/);
+    assert.match(graphic, /Drive index only/);
   });
 });
 

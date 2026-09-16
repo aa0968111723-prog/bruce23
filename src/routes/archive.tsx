@@ -4,6 +4,7 @@ import { MediaFrame } from "@/components/site/MediaFrame";
 import { CanvaStage } from "@/components/experience/CanvaStage";
 import { listPublishedArchiveFn } from "@/lib/cms/public-fn";
 import { archiveKinds } from "@/content/archive";
+import { parseCanvaDesign } from "@/lib/canva/parse";
 import { sanitizePublicHref } from "@/lib/safe-href";
 import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
