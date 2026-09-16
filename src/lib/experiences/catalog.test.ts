@@ -132,7 +132,7 @@ describe("frontend contract", () => {
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
-    assert.match(panel, /min-w-0 max-w-full overflow-x-auto/);
+    assert.match(panel, /min-w-0 max-w-full gap-1 overflow-x-auto/);
     const experienceLocale = readFileSync(
       new URL("../../../src/lib/locale/experience.ts", import.meta.url),
       "utf8",
@@ -217,7 +217,7 @@ describe("frontend contract", () => {
     assert.match(processMap, /ArrowRight|useRovingTabs/);
     assert.match(processMap, /node.githubPath/);
     assert.match(processMap, /ex\.processDefaultIntro|useExperienceView/);
-    assert.match(processMap, /min-w-0 max-w-full overflow-x-auto/);
+    assert.match(processMap, /min-w-0 max-w-full gap-2 overflow-x-auto/);
     assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
