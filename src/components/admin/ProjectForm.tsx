@@ -529,8 +529,19 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
             onClick={() => {
-              const typed = canvaShareRef.current?.value?.trim();
-              const url = form.canva_share_url || form.canva_embed_url || typed || undefined;
+              const typed = canvaShareRef.current?.value?.trim() ?? "";
+              if (typed) {
+                const parsed = parseCanvaDesign(typed);
+                patch("canva_share_url", parsed?.shareUrl ?? typed);
+                if (parsed) {
+                  patch("canva_embed_url", parsed.embedUrl);
+                  patch("canva_design_id", parsed.designId);
+                } else if (isCanvaShortLink(typed)) {
+                  patch("canva_embed_url", "");
+                  patch("canva_design_id", null);
+                }
+              }
+              const url = typed || form.canva_share_url || form.canva_embed_url || undefined;
               void testCanvaEmbedFn({
                 data: { id: project.id, url },
               })

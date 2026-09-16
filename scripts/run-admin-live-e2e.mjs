@@ -210,6 +210,52 @@ async function selectExperienceTab(page, name) {
   throw new Error(`experience tab ${String(name)} did not select (${last})`);
 }
 
+/**
+ * Playwright fill can write the DOM before React's tracker sees a change.
+ * Wait until the controlled empty-state copy is gone so the test click sends the fixture.
+ */
+async function pasteCanvaShareAndTest(page) {
+  const share = page.getByLabel(/Canva 分享/);
+  await share.waitFor({ timeout: 15000 });
+  const deadline = Date.now() + 30000;
+  let last = "";
+  while (Date.now() < deadline) {
+    await share.click();
+    await share.evaluate((el, value) => {
+      const input = el instanceof HTMLInputElement ? el : el.querySelector?.("input");
+      if (!(input instanceof HTMLInputElement)) throw new Error("Canva share input missing");
+      const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      input._valueTracker?.setValue("");
+      proto?.call(input, value);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }, CANVA_FIXTURE_SHARE_URL);
+    const pasted = await share.inputValue();
+    if (!pasted.includes(CANVA_FIXTURE_DESIGN_ID)) {
+      last = `share field ${pasted}`;
+      await new Promise((r) => setTimeout(r, 250));
+      continue;
+    }
+    await page.getByText("目前沒有 Canva 分享連結").waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
+    await page.getByRole("button", { name: "測試 Canva 嵌入" }).click();
+    try {
+      await page
+        .getByText(/Canva 測試完成：可嵌入，未驗證 Connect|Canva 短網址或分享網址已解析/)
+        .first()
+        .waitFor({ timeout: 8000 });
+      return;
+    } catch {
+      last = (await page.locator("body").innerText()).slice(0, 800);
+      if (/只接受 Canva 允許網域/.test(last)) {
+        await new Promise((r) => setTimeout(r, 250));
+        continue;
+      }
+      throw new Error(`Canva embed test did not complete. Body excerpt: ${last}`);
+    }
+  }
+  throw new Error(`Canva share paste did not reach embed test (${last})`);
+}
+
 async function proveIntegrationsDesk(page) {
   await gotoReady(page, `${ORIGIN}/admin/integrations`);
   await page.getByRole("heading", { name: "已發布作品" }).waitFor({ timeout: 20000 });
@@ -339,30 +385,7 @@ async function proveLiveAdmin(page, request) {
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
 
-  const share = page.getByLabel(/Canva 分享/);
-  await share.waitFor({ timeout: 15000 });
-  await share.click();
-  await share.fill(CANVA_FIXTURE_SHARE_URL);
-  await share.evaluate((el, value) => {
-    const input = el;
-    const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-    const tracker = input._valueTracker;
-    const previous = input.value;
-    proto?.call(input, value);
-    tracker?.setValue(previous);
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  }, CANVA_FIXTURE_SHARE_URL);
-  const pasted = await share.inputValue();
-  assert(
-    pasted.includes(CANVA_FIXTURE_DESIGN_ID),
-    `Canva share field did not keep the fixture URL (got ${pasted})`,
-  );
-  await page.getByRole("button", { name: "測試 Canva 嵌入" }).click();
-  await page
-    .getByText(/Canva 測試完成：可嵌入，未驗證 Connect|Canva 短網址或分享網址已解析/)
-    .first()
-    .waitFor({ timeout: 20000 });
+  await pasteCanvaShareAndTest(page);
   const afterTest = await page.locator("body").innerText();
   assert(/狀態 pending/.test(afterTest), "Canva embed test did not stay pending after a valid /design/{id} paste");
   assert(!/狀態 verified/.test(afterTest), "Canva embed test marked verified from URL shape");
