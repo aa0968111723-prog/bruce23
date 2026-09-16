@@ -225,12 +225,12 @@ async function proveLiveAdmin(page, request) {
   await page.getByText("發布成功").first().waitFor({ timeout: 20000 });
 
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
-  await page.getByRole("heading", { name: TITLE }).waitFor({ timeout: 20000 });
+  await page.getByRole("heading", { name: TITLE, level: 1 }).waitFor({ timeout: 20000 });
   assert((await page.content()).includes(MARKER), "published public page missing the saved marker");
   await page.screenshot({ path: resolve(SHOTS, "public-published.png"), fullPage: true });
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("heading", { name: TITLE }).waitFor({ timeout: 20000 });
+  await page.getByRole("heading", { name: TITLE, level: 1 }).waitFor({ timeout: 20000 });
   assert((await page.content()).includes(MARKER), "reload dropped the published page");
   await page.screenshot({ path: resolve(SHOTS, "public-published-reload.png"), fullPage: true });
 
