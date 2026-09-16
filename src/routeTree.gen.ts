@@ -23,6 +23,7 @@ import { Route as AdminPreviewRouteImport } from './routes/admin/preview'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as WorkIndexRouteImport } from './routes/work/index'
 import { Route as WorkSlugRouteImport } from './routes/work/$slug'
+import { Route as AdminDraftSlugRouteImport } from './routes/admin/draft.$slug'
 import { Route as AdminProjectsIndexRouteImport } from './routes/admin/projects/index'
 import { Route as AdminProjectsIdRouteImport } from './routes/admin/projects/$id'
 import { Route as AdminProjectsNewRouteImport } from './routes/admin/projects/new'
@@ -99,6 +100,11 @@ const WorkSlugRoute = WorkSlugRouteImport.update({
   path: '/work/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDraftSlugRoute = AdminDraftSlugRouteImport.update({
+  id: '/draft/$slug',
+  path: '/draft/$slug',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProjectsIndexRoute = AdminProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/work/$slug': typeof WorkSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
+  '/admin/draft/$slug': typeof AdminDraftSlugRoute
   '/admin/projects/$id': typeof AdminProjectsIdRouteWithChildren
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/work/$slug': typeof WorkSlugRoute
   '/admin': typeof AdminIndexRoute
   '/work': typeof WorkIndexRoute
+  '/admin/draft/$slug': typeof AdminDraftSlugRoute
   '/admin/projects/$id': typeof AdminProjectsIdRouteWithChildren
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/work/$slug': typeof WorkSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/work/': typeof WorkIndexRoute
+  '/admin/draft/$slug': typeof AdminDraftSlugRoute
   '/admin/projects/$id': typeof AdminProjectsIdRouteWithChildren
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/work/$slug'
     | '/admin/'
     | '/work/'
+    | '/admin/draft/$slug'
     | '/admin/projects/$id'
     | '/admin/projects/new'
     | '/api/auth/$'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/work/$slug'
     | '/admin'
     | '/work'
+    | '/admin/draft/$slug'
     | '/admin/projects/$id'
     | '/admin/projects/new'
     | '/api/auth/$'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/work/$slug'
     | '/admin/'
     | '/work/'
+    | '/admin/draft/$slug'
     | '/admin/projects/$id'
     | '/admin/projects/new'
     | '/api/auth/$'
@@ -366,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/draft/$slug': {
+      id: '/admin/draft/$slug'
+      path: '/draft/$slug'
+      fullPath: '/admin/draft/$slug'
+      preLoaderRoute: typeof AdminDraftSlugRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/projects/': {
       id: '/admin/projects/'
       path: '/projects'
@@ -422,6 +441,7 @@ interface AdminRouteChildren {
   AdminPreviewRoute: typeof AdminPreviewRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminDraftSlugRoute: typeof AdminDraftSlugRoute
   AdminProjectsIdRoute: typeof AdminProjectsIdRouteWithChildren
   AdminProjectsNewRoute: typeof AdminProjectsNewRoute
   AdminProjectsIndexRoute: typeof AdminProjectsIndexRoute
@@ -433,6 +453,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPreviewRoute: AdminPreviewRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminDraftSlugRoute: AdminDraftSlugRoute,
   AdminProjectsIdRoute: AdminProjectsIdRouteWithChildren,
   AdminProjectsNewRoute: AdminProjectsNewRoute,
   AdminProjectsIndexRoute: AdminProjectsIndexRoute,
