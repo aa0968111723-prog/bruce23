@@ -117,12 +117,14 @@ describe("frontend contract", () => {
     assert.match(explorer, /ArrowDown/);
     assert.match(explorer, /ArrowUp/);
     assert.match(explorer, /keyboardNav/);
+    assert.match(explorer, /itemRefs/);
     assert.match(explorer, /aria-expanded/);
     assert.match(explorer, /role="tree"/);
     assert.match(explorer, /來源路徑/);
     assert.match(css, /animation:\s*none/);
     assert.match(panel, /howItWorksSteps/);
     assert.match(panel, /galleryNote/);
+    assert.match(panel, /MediaFrame/);
     assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
     const roving = readFileSync(
@@ -252,17 +254,6 @@ describe("frontend contract", () => {
     const draft = readFileSync(new URL("../../../src/routes/admin/draft.$slug.tsx", import.meta.url), "utf8");
     assert.match(draft, /CaseStudyView/);
     assert.match(draft, /includeJsonLd=\{false\}/);
-    const panel = readFileSync(
-      new URL("../../../src/components/experience/ExperiencePanel.tsx", import.meta.url),
-      "utf8",
-    );
-    assert.match(panel, /MediaFrame/);
-    const explorer = readFileSync(
-      new URL("../../../src/components/experience/GithubExplorer.tsx", import.meta.url),
-      "utf8",
-    );
-    assert.match(explorer, /keyboardNav/);
-    assert.match(explorer, /itemRefs/);
     assert.doesNotMatch(editor, /GITHUB_READ_TOKEN/);
   });
 });
