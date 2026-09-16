@@ -250,10 +250,11 @@ async function proveLiveAdmin(page, request) {
   await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
   const play = page.getByRole("tab", { name: "立即體驗" });
   await play.focus();
-  await page.keyboard.press("ArrowRight");
+  await play.press("ArrowRight");
   const visual = page.getByRole("tab", { name: "視覺展示" });
+  await visual.waitFor({ state: "visible" });
   assert((await visual.getAttribute("aria-selected")) === "true", "ArrowRight did not move ExperiencePanel tabs");
-  await page.keyboard.press("ArrowRight");
+  await visual.press("ArrowRight");
   const github = page.getByRole("tab", { name: "GitHub 專案" });
   assert((await github.getAttribute("aria-selected")) === "true", "ArrowRight did not reach the GitHub tab");
   const tree = page.getByRole("tree").first();
