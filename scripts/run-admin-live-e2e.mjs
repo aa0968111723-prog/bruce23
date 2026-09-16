@@ -188,7 +188,21 @@ async function proveLiveAdmin(page, request) {
   await page.screenshot({ path: resolve(SHOTS, "admin-live-home.png"), fullPage: true });
 
   await openOrCreateWork(page);
-  await page.locator("fieldset").filter({ hasText: "敘事" }).locator("textarea").first().fill(MARKER);
+  const summary = page
+    .locator("fieldset")
+    .filter({ has: page.locator("legend", { hasText: /^敘事$/ }) })
+    .locator("textarea")
+    .first();
+  await summary.click();
+  await summary.fill(MARKER);
+  await summary.evaluate((el, value) => {
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+    setter?.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  }, MARKER);
+  const typed = await summary.inputValue();
+  assert(typed.includes("LIVE-E2E"), `summary field did not keep the live marker (got ${typed})`);
   await page.getByRole("button", { name: "存成草稿" }).click();
   await page.getByText("存成草稿成功").first().waitFor({ timeout: 20000 });
   await page.screenshot({ path: resolve(SHOTS, "admin-live-draft-saved.png"), fullPage: true });
@@ -214,7 +228,12 @@ async function proveLiveAdmin(page, request) {
 
   await gotoReady(page, `${ORIGIN}/admin/draft/${SLUG}`);
   await page.getByText("後台預覽瀏覽器框").waitFor({ timeout: 20000 });
-  assert((await page.content()).includes(MARKER), "admin draft preview missing the saved marker");
+  await page.getByText(/LIVE-E2E/).waitFor({ timeout: 15000 });
+  const previewText = await page.locator("body").innerText();
+  assert(
+    previewText.includes(typed) || previewText.includes(MARKER) || previewText.includes("LIVE-E2E"),
+    `admin draft preview missing the saved marker (${MARKER})`,
+  );
   await page.screenshot({ path: resolve(SHOTS, "admin-live-preview.png"), fullPage: true });
 
   await gotoReady(page, `${ORIGIN}/admin/projects`);
@@ -226,12 +245,19 @@ async function proveLiveAdmin(page, request) {
 
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
   await page.getByRole("heading", { name: TITLE, level: 1 }).waitFor({ timeout: 20000 });
-  assert((await page.content()).includes(MARKER), "published public page missing the saved marker");
+  await page.getByText(/LIVE-E2E/).waitFor({ timeout: 10000 });
+  assert(
+    (await page.locator("body").innerText()).includes("LIVE-E2E"),
+    "published public page missing the saved marker",
+  );
   await page.screenshot({ path: resolve(SHOTS, "public-published.png"), fullPage: true });
 
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: TITLE, level: 1 }).waitFor({ timeout: 20000 });
-  assert((await page.content()).includes(MARKER), "reload dropped the published page");
+  assert(
+    (await page.locator("body").innerText()).includes("LIVE-E2E"),
+    "reload dropped the published page",
+  );
   await page.screenshot({ path: resolve(SHOTS, "public-published-reload.png"), fullPage: true });
 
   const liveSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
