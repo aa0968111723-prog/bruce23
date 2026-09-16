@@ -144,20 +144,26 @@ export function ExperiencePanel({
           </ol>
         ) : null}
         {tab === "source" ? (
-          <ul className="grid gap-3">
-            {project.sourceEvidence.map((ref) => (
-              <li key={ref.label} className="rounded-2xl bg-surface-blue/70 px-4 py-3 text-sm">
-                {ref.href ? (
-                  <a href={ref.href} className="font-medium text-mint-deep" rel="noreferrer" target="_blank">
-                    {ref.label}
-                  </a>
-                ) : (
-                  <span className="font-medium">{ref.label}</span>
-                )}
-                <p className="mt-1 text-muted">{ref.note}</p>
-              </li>
-            ))}
-          </ul>
+          project.sourceEvidence.length ? (
+            <ul className="grid gap-3">
+              {project.sourceEvidence.map((ref) => (
+                <li key={ref.label} className="rounded-2xl bg-surface-blue/70 px-4 py-3 text-sm">
+                  {ref.href ? (
+                    <a href={ref.href} className="font-medium text-mint-deep" rel="noreferrer" target="_blank">
+                      {ref.label}
+                    </a>
+                  ) : (
+                    <span className="font-medium">{ref.label}</span>
+                  )}
+                  <p className="mt-1 text-muted">{ref.note}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
+              尚未登錄技術來源。公開 GitHub 仍可在「GitHub 專案」分頁打開。
+            </p>
+          )
         ) : null}
       </div>
     </div>

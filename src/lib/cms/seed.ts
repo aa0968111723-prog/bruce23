@@ -118,6 +118,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   }
   await refreshArchiveHonesty(sql);
   await fillExperienceConfigGaps(sql);
+  await fillLiveDemoAndEvidenceGaps(sql);
 }
 
 export async function ensureSeed(
@@ -131,15 +132,7 @@ export async function ensureSeed(
   if (meta[0]?.value === SEED_VERSION) {
     await ensureSeedComplements(sql);
     if (!options.skipGithubHydrate) {
-      const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
-      if (shouldHydrateGithub()) {
-        await hydratePendingGithub(sql).catch((err: unknown) => {
-          console.warn(
-            "[cms] github hydrate deferred:",
-            err instanceof Error ? err.message : "unknown error",
-          );
-        });
-      }
+      await runPublicHydrates(sql);
     }
     return { seeded: false, skipped: true };
   }
@@ -294,17 +287,20 @@ export async function ensureSeed(
   );
   await ensureSeedComplements(sql);
   if (!options.skipGithubHydrate) {
-    const { shouldHydrateGithub, hydratePendingGithub } = await import("./hydrate.ts");
-    if (shouldHydrateGithub()) {
-      await hydratePendingGithub(sql).catch((err: unknown) => {
-        console.warn(
-          "[cms] github hydrate deferred:",
-          err instanceof Error ? err.message : "unknown error",
-        );
-      });
-    }
+    await runPublicHydrates(sql);
   }
   return { seeded: true, skipped: false };
+}
+
+async function runPublicHydrates(sql: Sql): Promise<void> {
+  const { shouldHydrateGithub, hydratePendingGithub, hydratePendingDemos } = await import("./hydrate.ts");
+  if (!shouldHydrateGithub()) return;
+  await hydratePendingGithub(sql).catch((err: unknown) => {
+    console.warn("[cms] github hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
+  await hydratePendingDemos(sql).catch((err: unknown) => {
+    console.warn("[cms] demo hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
 }
 
 function asStoredConfig(value: unknown): ExperienceConfig {
@@ -331,5 +327,84 @@ async function fillExperienceConfigGaps(sql: Sql): Promise<void> {
       row.id,
       JSON.stringify(merged),
     ]);
+  }
+}
+
+function asEvidenceList(value: unknown): Array<{ label: string; href?: string; note: string; kind: string }> {
+  if (typeof value === "string") {
+    try {
+      return asEvidenceList(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is { label: string; href?: string; note: string; kind: string } => {
+    return Boolean(item && typeof item === "object" && "label" in item);
+  });
+}
+
+/** GitHub homepage that currently serves a JS bundle, not HTML. Seed live URLs replace it. */
+const STALE_NON_PAGE_LIVE_URL = "https://ai-os-ten.vercel.app";
+
+async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const demoUrl = project.links.live ?? project.links.demo ?? null;
+    if (demoUrl) {
+      const stale = demoUrl === STALE_NON_PAGE_LIVE_URL ? "" : STALE_NON_PAGE_LIVE_URL;
+      await sql.query(
+        `update projects
+         set live_demo_url = $2,
+             live_demo_label = coalesce(nullif(live_demo_label, ''), $3),
+             live_demo_type = case
+               when live_demo_type is null or live_demo_type in ('unavailable', '') then 'link'
+               else live_demo_type
+             end,
+             live_demo_embed_enabled = false,
+             live_demo_status = 'pending',
+             live_demo_error = null,
+             live_demo_last_verified_at = null,
+             updated_at = now()
+         where slug = $1 and (
+           live_demo_url is null or live_demo_url = ''
+           or ($4 <> '' and live_demo_url = $4)
+         )`,
+        [project.slug, demoUrl, "公開網址（狀態可能變動）", stale],
+      );
+    }
+
+    const rows = await sql.query<{
+      id: string;
+      source_evidence: unknown;
+      experience_mode: string | null;
+    }>(`select id, source_evidence, experience_mode from projects where slug = $1 limit 1`, [project.slug]);
+    const row = rows[0];
+    if (!row) continue;
+
+    const catalog = experienceForSlug(project.slug);
+    if (!row.experience_mode && catalog?.mode) {
+      await sql.query(`update projects set experience_mode = $2 where id = $1`, [row.id, catalog.mode]);
+    }
+
+    const stored = asEvidenceList(row.source_evidence);
+    const have = new Set(stored.map((item) => item.href || item.label));
+    const next = [...stored];
+    for (const ref of project.sourceReferences) {
+      const key = ref.href || ref.label;
+      if (have.has(key)) continue;
+      next.push({
+        label: ref.label,
+        href: ref.href,
+        note: ref.note,
+        kind: ref.href?.includes("github.com") ? "github" : "demo",
+      });
+      have.add(key);
+    }
+    if (next.length !== stored.length) {
+      await sql.query(`update projects set source_evidence = $2::jsonb where id = $1`, [
+        row.id,
+        JSON.stringify(next),
+      ]);
+    }
   }
 }

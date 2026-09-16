@@ -62,7 +62,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ai_os",
-      live: "https://ai-os-ten.vercel.app",
+      live: "https://ai-os-app.zeabur.app",
     },
     media: [
       {
@@ -82,6 +82,16 @@ export const projects: Project[] = [
         label: "GitHub · healing-studio",
         href: "https://github.com/aa0968111723-prog/healing-studio",
         note: "多模態工作室前身，描述取自公開 repo description。",
+      },
+      {
+        label: "公開站 · ai-os-app.zeabur.app",
+        href: "https://ai-os-app.zeabur.app",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。",
+      },
+      {
+        label: "GitHub homepage · ai-os-ten.vercel.app",
+        href: "https://ai-os-ten.vercel.app",
+        note: "GitHub 上的 homepage。目前回傳 JavaScript bundle，不是網頁，所以不當 Live Demo。",
       },
     ],
     visibility: "public",
@@ -300,6 +310,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
+      live: "https://duigao-k7q2.zeabur.app",
     },
     media: [
       {
@@ -314,6 +325,11 @@ export const projects: Project[] = [
         label: "GitHub README · duigao",
         href: "https://github.com/aa0968111723-prog/duigao",
         note: "權限模型與雲端層取自 README。",
+      },
+      {
+        label: "公開站 · duigao-k7q2.zeabur.app",
+        href: "https://duigao-k7q2.zeabur.app",
+        note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
       },
     ],
     visibility: "public",
@@ -410,6 +426,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/hermes-console",
+      live: "https://344.zeabur.app",
     },
     media: [
       {
@@ -424,6 +441,11 @@ export const projects: Project[] = [
         label: "GitHub README · hermes-console",
         href: "https://github.com/aa0968111723-prog/hermes-console",
         note: "產品不變量取自 README。",
+      },
+      {
+        label: "公開站 · 344.zeabur.app",
+        href: "https://344.zeabur.app",
+        note: "FEATURE_AUDIT_EDU.md 記載的正式站。禁止嵌入時只開新分頁。",
       },
     ],
     visibility: "public",

@@ -7,6 +7,15 @@ export type DemoVerifyResult = {
 };
 
 const BLOCKED_FRAME = /deny|sameorigin/i;
+const HTML_TYPE = /text\/html|application\/xhtml\+xml/i;
+const NON_PAGE_TYPE = /javascript|json|wasm|octet-stream|image\/|video\/|text\/css|text\/plain/i;
+
+export function isHtmlDemoContentType(contentType: string | null | undefined): boolean {
+  const type = contentType ?? "";
+  if (HTML_TYPE.test(type)) return true;
+  if (!type.trim()) return false;
+  return !NON_PAGE_TYPE.test(type);
+}
 
 export async function verifyDemoUrl(
   raw: string | null | undefined,
@@ -59,6 +68,15 @@ export async function verifyDemoUrl(
         status: "unavailable",
         embedEnabled: false,
         error: "這個網站禁止被嵌入。可以開新分頁，但不能當 Live Demo iframe。",
+        httpStatus: response.status,
+        contentType,
+      };
+    }
+    if (!isHtmlDemoContentType(contentType)) {
+      return {
+        status: "failed",
+        embedEnabled: false,
+        error: "這個網址回傳的不是網頁。可以開新分頁檢查，但不能當 Live Demo iframe。",
         httpStatus: response.status,
         contentType,
       };

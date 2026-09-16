@@ -7,6 +7,8 @@ import { test } from "node:test";
 import { promisify } from "node:util";
 import {
   APP_ENV_REL_PATH,
+  DEFAULT_PORTFOLIO_ADMIN_EMAILS,
+  applyRuntimeDefaults,
   mergeAppEnv,
   parseAppEnv,
   projectRoot,
@@ -61,6 +63,29 @@ test("an explicit process-env override wins over the file", () => {
 
 test("this app ships auth on", () => {
   assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "true" });
+});
+
+test("defaults PORTFOLIO_ADMIN_EMAILS when unset", () => {
+  assert.equal(applyRuntimeDefaults({}).PORTFOLIO_ADMIN_EMAILS, DEFAULT_PORTFOLIO_ADMIN_EMAILS);
+  assert.equal(applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "  " }).PORTFOLIO_ADMIN_EMAILS, DEFAULT_PORTFOLIO_ADMIN_EMAILS);
+});
+
+test("wrapper sets PORTFOLIO_ADMIN_EMAILS when process env left it blank", async () => {
+  const env = { ...process.env };
+  delete env.PORTFOLIO_ADMIN_EMAILS;
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [WRAPPER, process.execPath, "-e", "process.stdout.write(process.env.PORTFOLIO_ADMIN_EMAILS ? 'set' : 'unset')"],
+    { env },
+  );
+  assert.equal(stdout, "set");
+});
+
+test("does not overwrite an explicit PORTFOLIO_ADMIN_EMAILS", () => {
+  assert.equal(
+    applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "other@example.com" }).PORTFOLIO_ADMIN_EMAILS,
+    "other@example.com",
+  );
 });
 
 test("vite loadEnv resolves the wrapped value", () => {

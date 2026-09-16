@@ -88,6 +88,19 @@ describe("demo verification", () => {
     assert.equal(result.status, "failed");
     assert.equal(result.embedEnabled, false);
   });
+
+  it("does not treat a JavaScript bundle as a verified webpage", async () => {
+    const result = await verifyDemoUrl("https://demo.example/", {
+      fetchImpl: async () =>
+        new Response("var x=1", {
+          status: 200,
+          headers: { "content-type": "application/javascript; charset=utf-8" },
+        }),
+    });
+    assert.equal(result.status, "failed");
+    assert.equal(result.embedEnabled, false);
+    assert.match(result.error ?? "", /不是網頁/);
+  });
 });
 
 describe("privacy", () => {

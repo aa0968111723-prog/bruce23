@@ -16,7 +16,7 @@ export function SiteFooter() {
               <li key={item.to}>
                 <Link
                   to={item.to}
-                  className="text-sm text-muted hover:text-mint-deep"
+                  className="inline-flex min-h-11 items-center text-sm text-muted hover:text-mint-deep"
                 >
                   {item.label}
                 </Link>
@@ -28,13 +28,13 @@ export function SiteFooter() {
           <p className="text-sm font-semibold text-ink">公開聯絡</p>
           <a
             href={`mailto:${site.email}`}
-            className="mt-3 block break-all text-sm text-muted hover:text-mint-deep"
+            className="mt-3 flex min-h-11 max-w-full items-center break-all text-sm text-muted hover:text-mint-deep"
           >
             {site.email}
           </a>
           <a
             href={site.github}
-            className="mt-2 block text-sm text-muted hover:text-mint-deep"
+            className="mt-2 inline-flex min-h-11 items-center text-sm text-muted hover:text-mint-deep"
             rel="noreferrer"
             target="_blank"
           >

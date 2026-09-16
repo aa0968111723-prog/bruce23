@@ -117,9 +117,11 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
         <p className="text-sm font-semibold">有限檔案樹</p>
         {tree.length === 0 ? (
           <p className="mt-3 text-sm text-muted">
-            {github.syncStatus === "pending"
-              ? "還沒同步過檔案樹。後台按「同步 GitHub」後才會出現真實路徑。"
-              : "沒有可公開的檔案樹。"}
+            {github.syncStatus === "pending" || github.syncStatus === "stale"
+              ? "檔案樹還在從公開 GitHub REST 同步。沒有寫入金鑰；完成前不會顯示虛構路徑。"
+              : github.syncStatus === "failed"
+                ? "這次公開同步失敗。不會顯示虛構檔案樹。"
+                : "沒有可公開的檔案樹。"}
           </p>
         ) : (
           <TreeDir

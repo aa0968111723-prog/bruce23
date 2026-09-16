@@ -24,6 +24,17 @@ describe("experience catalog", () => {
     assert.ok(experienceCatalog["tku-zen-ai"].honestyLabel.includes("不是雲端"));
   });
 
+  it("wires only hunted public demo URLs into featured seed content", () => {
+    const source = readFileSync(new URL("../../../src/content/projects.ts", import.meta.url), "utf8");
+    assert.match(source, /live: "https:\/\/ai-os-app\.zeabur\.app"/);
+    assert.match(source, /https:\/\/ai-os-ten\.vercel\.app/);
+    assert.match(source, /https:\/\/ai-os-app\.zeabur\.app/);
+    assert.match(source, /https:\/\/duigao-k7q2\.zeabur\.app/);
+    assert.match(source, /https:\/\/344\.zeabur\.app/);
+    assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
+    assert.doesNotMatch(source, /github\.io\/planform/);
+  });
+
   it("uses real GitHub source paths for AI Director OS and FrameLab", () => {
     const nodes = experienceCatalog["ai-director-os"].processNodes ?? [];
     assert.ok(nodes.some((node) => node.githubPath === "server/services/projectCore.ts"));
@@ -73,6 +84,8 @@ describe("frontend contract", () => {
     assert.match(css, /overflow-x:\s*clip/);
     const header = readFileSync(new URL("../../../src/components/site/SiteHeader.tsx", import.meta.url), "utf8");
     assert.match(header, /min-h-11/);
+    const footer = readFileSync(new URL("../../../src/components/site/SiteFooter.tsx", import.meta.url), "utf8");
+    assert.match(footer, /min-h-11/);
     const shell = readFileSync(new URL("../../../src/components/site/SiteShell.tsx", import.meta.url), "utf8");
     assert.match(shell, /跳到內容/);
     const panel = readFileSync(

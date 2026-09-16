@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProjectRecord, getAdminProject, listPublishedProjects } from "./store.ts";
-import { hydratePendingGithub } from "./hydrate.ts";
+import { hydratePendingGithub, hydratePendingDemos } from "./hydrate.ts";
 import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 
@@ -161,5 +161,81 @@ describe("github hydrate", () => {
     await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     const second = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
     assert.equal(second.skipped, true);
+  });
+
+  it("does not skip version 1 while a public repo is still pending", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "done",
+        title: "Done",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "later",
+        title: "Later",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 1,
+        github_url: "https://github.com/aa0968111723-prog/tku-zen-ai",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "seed",
+    );
+    const again = await hydratePendingGithub(sql, { fetchImpl: githubFetchImpl });
+    assert.equal(again.skipped, false);
+    assert.equal(again.verified, 1);
+  });
+
+  it("probes pending demo URLs without marking a JS bundle verified", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "aios",
+        title: "Aios",
+        category: "AI Product",
+        year: "2026",
+        product_status: "in-progress",
+        publication_status: "published",
+        featured: true,
+        sort_order: 0,
+        live_demo_url: "https://ai-os-ten.vercel.app",
+        live_demo_status: "pending",
+        live_demo_embed_enabled: false,
+      }),
+      "seed",
+    );
+    const result = await hydratePendingDemos(sql, {
+      fetchImpl: async () =>
+        new Response("var x=1", {
+          status: 200,
+          headers: { "content-type": "application/javascript" },
+        }),
+    });
+    assert.equal(result.skipped, false);
+    assert.equal(result.probed, 1);
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.live_demo_status, "failed");
+    assert.equal(admin.live_demo_embed_enabled, false);
+    assert.match(admin.live_demo_error ?? "", /不是網頁/);
   });
 });

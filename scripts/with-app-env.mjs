@@ -104,13 +104,24 @@ export function isMainModule(moduleUrl) {
   }
 }
 
+export const DEFAULT_PORTFOLIO_ADMIN_EMAILS = "aa0968111723@gmail.com";
+
+/** Fail-closed admin allowlist for preview/dev when the platform did not inject one. Not a secret. */
+export function applyRuntimeDefaults(env) {
+  const next = { ...env };
+  if (!String(next.PORTFOLIO_ADMIN_EMAILS ?? "").trim()) {
+    next.PORTFOLIO_ADMIN_EMAILS = DEFAULT_PORTFOLIO_ADMIN_EMAILS;
+  }
+  return next;
+}
+
 function main(argv) {
   const [command, ...args] = argv;
   if (!command) {
     console.error("usage: node scripts/with-app-env.mjs <command> [args…]");
     process.exit(2);
   }
-  const env = mergeAppEnv(readAppEnv(projectRoot()), process.env);
+  const env = applyRuntimeDefaults(mergeAppEnv(readAppEnv(projectRoot()), process.env));
   const child = spawn(command, args, { stdio: "inherit", env });
   // The dev server is long-running and is stopped by signalling this wrapper.
   for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
