@@ -1,8 +1,9 @@
-import type { ArchiveWrite, ProjectWrite } from "./schema";
-import type { Sql } from "./sql";
-import { jsonParam } from "./sql";
-import { asArray, asObject, type ProjectRow, toPublicArchive, toPublicProject } from "./public";
-import type { PublicationStatus } from "./constants";
+import type { ArchiveWrite, ProjectWrite } from "./schema.ts";
+import type { Sql } from "./sql.ts";
+import { jsonParam } from "./sql.ts";
+import { asArray, asObject, type ProjectRow, toPublicArchive, toPublicProject } from "./public.ts";
+import type { PublicationStatus } from "./constants.ts";
+import { INTEGRATION_PATCH_KEYS, isSafeSqlIdent } from "./patch-keys.ts";
 
 export function newId(): string {
   return crypto.randomUUID();
@@ -486,10 +487,12 @@ export async function applyGithubPatch(
   id: string,
   patch: Record<string, unknown>,
   actorId: string,
+  note = "github-sync",
 ) {
   const assignments: string[] = [];
   const values: unknown[] = [id];
   for (const [key, value] of Object.entries(patch)) {
+    if (!isSafeSqlIdent(key) || !INTEGRATION_PATCH_KEYS.has(key)) continue;
     values.push(
       value && typeof value === "object" ? jsonParam(value) : (value ?? null),
     );
@@ -503,7 +506,7 @@ export async function applyGithubPatch(
     `update projects set ${assignments.join(", ")}, updated_at=now() where id=$1`,
     values,
   );
-  await insertRevision(sql, id, actorId, "github-sync");
+  await insertRevision(sql, id, actorId, note);
   return getAdminProject(sql, id);
 }
 
@@ -514,10 +517,5 @@ export async function applyIntegrationPatch(
   actorId: string,
   note: string,
 ) {
-  return applyGithubPatch(sql, id, { ...patch }, actorId).then(async (row) => {
-    if (note !== "github-sync") {
-      await insertRevision(sql, id, actorId, note);
-    }
-    return row;
-  });
+  return applyGithubPatch(sql, id, patch, actorId, note);
 }

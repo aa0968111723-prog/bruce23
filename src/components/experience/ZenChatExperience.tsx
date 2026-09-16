@@ -54,7 +54,7 @@ export function ZenChatExperience() {
         >
           送出
         </button>
-      </div>
+      </form>
     </div>
   );
 }

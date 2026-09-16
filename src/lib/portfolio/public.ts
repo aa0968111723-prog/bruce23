@@ -1,5 +1,5 @@
-import { SECRET_KEY_PATTERN } from "./constants";
-import type { FileTreeNode } from "./schema";
+import { SECRET_KEY_PATTERN } from "./constants.ts";
+import type { FileTreeNode } from "./schema.ts";
 
 export type PublicGithub = {
   url: string;

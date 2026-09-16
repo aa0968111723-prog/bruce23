@@ -49,7 +49,7 @@ export function TimelineExperience() {
             type="button"
             onClick={() => setPlayhead(item.index)}
             className={cn(
-              "flex h-14 min-w-10 flex-col items-center justify-center rounded-lg text-[10px]",
+              "flex h-14 min-w-11 flex-col items-center justify-center rounded-lg text-[10px]",
               item.problem ? "bg-sun/80" : item.kind === "key" ? "bg-ink text-bg" : "bg-surface shadow-card",
               playhead === item.index && "ring-2 ring-sky",
             )}

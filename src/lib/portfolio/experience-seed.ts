@@ -1,4 +1,4 @@
-import type { ExperienceMode } from "./constants";
+import type { ExperienceMode } from "./constants.ts";
 
 export type ExperienceSeed = {
   slug: string;

@@ -1,7 +1,7 @@
-import type { ProjectWrite } from "./schema";
-import type { ProjectRow } from "./public";
-import { asArray, asObject } from "./public";
-import type { ExperienceMode } from "./constants";
+import type { ProjectWrite } from "./schema.ts";
+import type { ProjectRow } from "./public.ts";
+import { asArray, asObject } from "./public.ts";
+import type { ExperienceMode } from "./constants.ts";
 
 export function rowToWrite(row: ProjectRow): ProjectWrite {
   return {

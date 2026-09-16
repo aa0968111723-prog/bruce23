@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { Maximize2 } from "lucide-react";
 import { SafeFrame } from "./SafeFrame";
 
 export function CanvaBoard({
@@ -18,6 +19,8 @@ export function CanvaBoard({
 }) {
   const pages = pageIds?.filter(Boolean) ?? [];
   const [page, setPage] = useState(0);
+  const [full, setFull] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
   const src = useMemo(() => {
     if (!embedUrl) return null;
     if (!pages.length) return embedUrl;
@@ -51,7 +54,7 @@ export function CanvaBoard({
   }
 
   return (
-    <div>
+    <div ref={boxRef} className={full ? "fixed inset-4 z-50 rounded-3xl bg-bg p-3 shadow-float" : undefined}>
       <SafeFrame
         src={src}
         title={alt ?? "Canva 原作"}
@@ -61,21 +64,40 @@ export function CanvaBoard({
         openLabel="在 Canva 開啟原作"
       />
       {caption ? <p className="mt-2 text-xs text-muted">{caption}</p> : null}
-      {pages.length > 1 ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {pages.map((id, index) => (
-            <button
-              key={id}
-              type="button"
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-surface px-3 text-sm shadow-card"
-              onClick={() => setPage(index)}
-              aria-current={page === index}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      ) : null}
+      <p className="mt-2 text-xs text-muted">來源：Canva 公開嵌入，不是截圖替代。</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 text-sm shadow-card"
+          onClick={async () => {
+            if (!document.fullscreenElement && boxRef.current?.requestFullscreen) {
+              await boxRef.current.requestFullscreen();
+              setFull(true);
+            } else if (document.fullscreenElement) {
+              await document.exitFullscreen();
+              setFull(false);
+            } else {
+              setFull((value) => !value);
+            }
+          }}
+        >
+          <Maximize2 className="size-4" />
+          全螢幕
+        </button>
+        {pages.length > 1
+          ? pages.map((id, index) => (
+              <button
+                key={id}
+                type="button"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-surface px-3 text-sm shadow-card"
+                onClick={() => setPage(index)}
+                aria-current={page === index}
+              >
+                {index + 1}
+              </button>
+            ))
+          : null}
+      </div>
     </div>
   );
 }

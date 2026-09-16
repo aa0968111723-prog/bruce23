@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/auth/verify.server";
 import {
   adminAllowlistFromEnv,
   resolveAdminAccess,
-} from "./admin";
+} from "./admin.ts";
 import {
   applyGithubPatch,
   getPublishedProject,
@@ -12,11 +12,11 @@ import {
   listPublishedArchive,
   listPublishedProjects,
   getProjectBySlugAny,
-} from "./cms";
-import { assertPublicSafe, toPublicProject, asObject } from "./public";
-import { ensureSeeded } from "./seed";
-import { previewQuerySchema, slugSchema } from "./schema";
-import { fetchGithubSnapshot } from "./github-client";
+} from "./cms.ts";
+import { assertPublicSafe, toPublicProject, asObject } from "./public.ts";
+import { ensureSeeded } from "./seed.ts";
+import { previewQuerySchema, slugSchema } from "./schema.ts";
+import { fetchGithubSnapshot } from "./github-client.ts";
 
 export const getViewerFlags = createServerFn({ method: "GET" }).handler(
   async () => {

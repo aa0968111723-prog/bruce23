@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Github } from "lucide-react";
+import { useState } from "react";
 import { LightField } from "@/components/site/LightField";
 import { MediaFrame } from "@/components/site/MediaFrame";
 import { ProjectCard } from "@/components/site/ProjectCard";
-import { ExplorationMap } from "@/components/experience/ExplorationMap";
+import { ExplorationMap, type ExploreId } from "@/components/experience/ExplorationMap";
 import { listPublicProjects, getPublicSite } from "@/lib/portfolio/server-public";
 import { modalities, processSteps, site } from "@/content/site";
 import type { PublicProject } from "@/lib/portfolio/public";
@@ -52,6 +53,12 @@ function Home() {
   const narrative =
     String(settings.profile.narrative || "") || site.narrative;
   const featured = projects.filter((project) => project.featured);
+  const [explore, setExplore] = useState<ExploreId>("image");
+
+  const activate = (id: ExploreId) => {
+    setExplore(id);
+    document.getElementById("explore")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div>
@@ -97,14 +104,15 @@ function Home() {
         </div>
       </section>
 
-      <ExplorationMap projects={projects} />
+      <ExplorationMap projects={projects} active={explore} onActiveChange={setExplore} />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="font-display text-3xl font-semibold">精選作品</h2>
             <p className="mt-2 max-w-xl text-sm text-muted">
-              只放最能代表定位的作品。狀態按真實進度標示，沒有使用者數或成效數字。
+              {String(settings.homepage.featuredIntro || "") ||
+                "只放最能代表定位的作品。狀態按真實進度標示，沒有使用者數或成效數字。"}
             </p>
           </div>
           <Link to="/work" className="inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
@@ -156,12 +164,32 @@ function Home() {
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="font-display text-3xl font-semibold">多模態能力</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {modalities.map((item) => (
-            <li key={item.label} className="rounded-2xl bg-surface p-5 shadow-card">
-              <h3 className="font-display text-lg font-semibold">{item.label}</h3>
-              <p className="mt-2 text-sm text-muted">{item.note}</p>
-            </li>
-          ))}
+          {modalities.map((item) => {
+            const nodeId: ExploreId | null =
+              item.label === "圖像"
+                ? "image"
+                : item.label === "影片"
+                  ? "video"
+                  : item.label.includes("空間")
+                    ? "space"
+                    : item.label === "互動"
+                      ? "interact"
+                      : item.label === "文字"
+                        ? "print"
+                        : null;
+            return (
+              <li key={item.label}>
+                <button
+                  type="button"
+                  className="h-full w-full rounded-2xl bg-surface p-5 text-left shadow-card"
+                  onClick={() => activate(nodeId ?? "all")}
+                >
+                  <h3 className="font-display text-lg font-semibold">{item.label}</h3>
+                  <p className="mt-2 text-sm text-muted">{item.note}</p>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </section>
 

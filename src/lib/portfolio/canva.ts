@@ -1,4 +1,4 @@
-import { CANVA_ALLOWED_HOSTS } from "./constants";
+import { CANVA_ALLOWED_HOSTS } from "./constants.ts";
 
 export type CanvaParseOk = {
   ok: true;

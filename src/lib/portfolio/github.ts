@@ -1,6 +1,6 @@
-import { GITHUB_AUTO_FIELDS, NARRATIVE_FIELDS } from "./constants";
-import type { FileTreeNode } from "./schema";
-import { githubCommitSchema, githubMetadataSchema } from "./schema";
+import { GITHUB_AUTO_FIELDS, NARRATIVE_FIELDS } from "./constants.ts";
+import type { FileTreeNode } from "./schema.ts";
+import { githubCommitSchema, githubMetadataSchema } from "./schema.ts";
 
 const GITHUB_HOSTS = new Set(["github.com", "www.github.com"]);
 

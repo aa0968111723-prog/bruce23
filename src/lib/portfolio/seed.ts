@@ -1,10 +1,10 @@
-import { archiveItems } from "@/content/archive";
-import { projects } from "@/content/projects";
-import { site } from "@/content/site";
-import { parseGithubRepoUrl } from "./github";
-import { experienceSeedBySlug } from "./experience-seed";
-import type { Sql } from "./sql";
-import { jsonParam } from "./sql";
+import { archiveItems } from "../../content/archive.ts";
+import { projects } from "../../content/projects.ts";
+import { site } from "../../content/site.ts";
+import { parseGithubRepoUrl } from "./github.ts";
+import { experienceSeedBySlug } from "./experience-seed.ts";
+import type { Sql } from "./sql.ts";
+import { jsonParam } from "./sql.ts";
 
 export const SEED_NAME = "portfolio-cms-v1";
 

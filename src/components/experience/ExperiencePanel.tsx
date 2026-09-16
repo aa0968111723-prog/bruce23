@@ -48,7 +48,7 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
   const current = EXPERIENCE_TABS[tab];
 
   return (
-    <section className="rounded-3xl bg-surface p-4 shadow-float sm:p-6">
+    <section id="experience" className="rounded-3xl bg-surface p-4 shadow-float sm:p-6">
       <div
         className="flex gap-2 overflow-x-auto pb-2"
         role="tablist"
@@ -83,13 +83,24 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
         {current.id === "try" ? <TryNow project={project} /> : null}
         {current.id === "visual" ? (
           <div>
-            {project.media[0] ? (
+            {project.media[0]?.kind === "video" ? (
+              <video
+                src={project.media[0].src}
+                poster={project.media[0].poster}
+                controls
+                className="w-full rounded-2xl"
+              >
+                無法播放時請改看封面或來源連結。
+              </video>
+            ) : project.media[0] ? (
               <img
                 src={project.media[0].src}
                 alt={project.media[0].alt}
                 className="w-full rounded-2xl"
               />
-            ) : null}
+            ) : (
+              <p className="text-sm text-muted">尚未設定公開畫面。</p>
+            )}
             {project.media[0]?.caption ? (
               <p className="mt-2 text-xs text-muted">{project.media[0].caption}</p>
             ) : null}

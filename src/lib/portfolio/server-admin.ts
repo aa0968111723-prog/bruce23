@@ -8,7 +8,7 @@ import {
   ForbiddenError,
   adminAllowlistFromEnv,
   resolveAdminAccess,
-} from "./admin";
+} from "./admin.ts";
 import {
   applyGithubPatch,
   createProject,
@@ -22,24 +22,34 @@ import {
   setPublication,
   updateProject,
   upsertArchive,
-} from "./cms";
-import { canvaConnectMode, hasCanvaCredentials, parseCanvaEmbedCode, parseCanvaUrl } from "./canva";
-import { parseGithubRepoUrl, githubSyncDiff } from "./github";
-import { fetchGithubSnapshot, verifyLiveDemo } from "./github-client";
-import { asObject } from "./public";
-import { integrationSummary, rowToWrite } from "./map";
-import { assertOriginMatchesHost } from "./origin";
+} from "./cms.ts";
+import { canvaConnectMode, hasCanvaCredentials, parseCanvaEmbedCode, parseCanvaUrl } from "./canva.ts";
+import {
+  canvaAuthorizeUrl,
+  connectAvailability,
+  exchangeCanvaCode,
+  exportCanvaDesignApi,
+  loadCanvaTokens,
+  searchCanvaDesignsApi,
+  storeCanvaTokens,
+} from "./canva-connect.ts";
+import { parseGithubRepoUrl, githubSyncDiff } from "./github.ts";
+import { fetchGithubSnapshot, verifyLiveDemo } from "./github-client.ts";
+import { asObject } from "./public.ts";
+import { EXPERIENCE_MODES } from "./constants.ts";
+import { integrationSummary, rowToWrite } from "./map.ts";
+import { assertOriginMatchesHost } from "./origin.ts";
 import {
   archiveWriteSchema,
   idSchema,
   projectWriteSchema,
   siteSettingsSchema,
   slugSchema,
-} from "./schema";
-import { ensureSeeded } from "./seed";
+} from "./schema.ts";
+import { ensureSeeded } from "./seed.ts";
 import { z } from "zod";
-import type { Sql } from "./sql";
-import type { PublicationStatus } from "./constants";
+import type { Sql } from "./sql.ts";
+import type { PublicationStatus } from "./constants.ts";
 
 async function requireAdmin(userId: string): Promise<{
   userId: string;
@@ -393,4 +403,141 @@ export const lookupAdminBySlug = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const { sql } = await requireAdmin(context.userId);
     return getAdminProject(sql, data.slug);
+  });
+
+export const updateAdminIntegration = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((data: unknown) =>
+    z
+      .object({
+        id: z.string().min(1),
+        experience_mode: z.enum(EXPERIENCE_MODES).optional(),
+        canva_share_url: z.string().optional(),
+        canva_embed_url: z.string().optional(),
+        canva_thumbnail_url: z.string().optional(),
+        canva_alt: z.string().optional(),
+        canva_caption: z.string().optional(),
+        canva_page_ids: z.array(z.string()).optional(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    const { sql, userId } = await requireAdmin(context.userId);
+    const { id, ...rest } = data;
+    const patch: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(rest)) {
+      if (value !== undefined) patch[key] = value;
+    }
+    if (data.canva_share_url) {
+      const parsed = parseCanvaUrl(data.canva_share_url);
+      if (parsed.ok) {
+        patch.canva_share_url = parsed.shareUrl;
+        patch.canva_embed_url = parsed.embedUrl;
+        patch.canva_design_id = parsed.designId ?? null;
+        patch.canva_status = "verified";
+      }
+    }
+    return applyGithubPatch(sql, id, patch, userId, "integration-update");
+  });
+
+export const startCanvaConnect = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const { userId } = await requireAdmin(context.userId);
+    const availability = connectAvailability();
+    if (availability.mode === "public_embed") return availability;
+    if (availability.status === "failed") return availability;
+    const request = getRequest();
+    const origin =
+      request?.headers.get("origin") ??
+      (request?.headers.get("host") ? `https://${request.headers.get("host")}` : "");
+    if (!origin) {
+      return { mode: "connect_api" as const, status: "failed" as const, error: "origin_missing" };
+    }
+    const clientId = process.env.CANVA_CLIENT_ID?.trim();
+    if (!clientId) {
+      return {
+        mode: "public_embed" as const,
+        status: "not_configured" as const,
+        labelZh: "公開嵌入模式",
+      };
+    }
+    const redirectUri = `${origin.replace(/\/$/, "")}/api/admin/canva/callback`;
+    return {
+      mode: "connect_api" as const,
+      status: "pending" as const,
+      authorizeUrl: canvaAuthorizeUrl({
+        clientId,
+        redirectUri,
+        state: userId,
+      }),
+    };
+  });
+
+export const searchCanvaDesigns = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((data: unknown) => z.object({ query: z.string().optional() }).parse(data))
+  .handler(async ({ context, data }) => {
+    const { sql } = await requireAdmin(context.userId);
+    if (!hasCanvaCredentials()) {
+      return { mode: "public_embed" as const, designs: [], status: "not_configured" as const };
+    }
+    const tokens = await loadCanvaTokens(sql);
+    if (!tokens) {
+      return { mode: "connect_api" as const, designs: [], status: "not_configured" as const };
+    }
+    const result = await searchCanvaDesignsApi(tokens.access_token, data.query);
+    return {
+      mode: "connect_api" as const,
+      status: result.ok ? ("connected" as const) : ("failed" as const),
+      designs: result.designs.map((item) => ({
+        id: item.id,
+        title: item.title,
+        thumbnailUrl: item.thumbnail?.url,
+        editUrl: item.urls?.edit_url,
+        viewUrl: item.urls?.view_url,
+      })),
+    };
+  });
+
+export const exportCanvaDesign = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((data: unknown) =>
+    z
+      .object({ designId: z.string().min(1), format: z.enum(["png", "pdf"]).default("png") })
+      .parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    const { sql } = await requireAdmin(context.userId);
+    if (!hasCanvaCredentials()) {
+      return { ok: false as const, status: "not_configured" as const };
+    }
+    const tokens = await loadCanvaTokens(sql);
+    if (!tokens) return { ok: false as const, status: "not_configured" as const };
+    return exportCanvaDesignApi(tokens.access_token, data.designId, data.format);
+  });
+
+export const completeCanvaOAuth = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((data: unknown) =>
+    z.object({ code: z.string().min(1), redirectUri: z.string().url() }).parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    const { sql, userId } = await requireAdmin(context.userId);
+    if (!hasCanvaCredentials()) {
+      return { ok: false as const, status: "not_configured" as const };
+    }
+    const clientId = process.env.CANVA_CLIENT_ID?.trim();
+    const clientSecret = process.env.CANVA_CLIENT_SECRET?.trim();
+    if (!clientId || !clientSecret) {
+      return { ok: false as const, status: "not_configured" as const };
+    }
+    const bundle = await exchangeCanvaCode({
+      code: data.code,
+      redirectUri: data.redirectUri,
+      clientId,
+      clientSecret,
+    });
+    await storeCanvaTokens(sql, bundle, userId);
+    return { ok: true as const, status: "connected" as const };
   });

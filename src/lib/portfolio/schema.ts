@@ -1,11 +1,12 @@
 import { z } from "zod";
 import {
   EXPERIENCE_MODES,
+  INTEGRATION_STATUSES,
   LIVE_DEMO_TYPES,
   PRODUCT_STATUSES,
   PROJECT_CATEGORIES,
   PUBLICATION_STATUSES,
-} from "./constants";
+} from "./constants.ts";
 
 const emptyToUndef = (value: unknown) => {
   if (value === "" || value === null) return undefined;

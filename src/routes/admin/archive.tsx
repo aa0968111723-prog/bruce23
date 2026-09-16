@@ -50,6 +50,32 @@ function AdminArchive() {
                 }}
               />
             </label>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
+                onClick={async () => {
+                  const next = row.publication_status === "published" ? "draft" : "published";
+                  await saveAdminArchiveItem({
+                    data: {
+                      id: String(row.id),
+                      title: String(row.title),
+                      kind: row.kind as "photography",
+                      year: String(row.year),
+                      summary: String(row.summary ?? ""),
+                      origin_note: String(row.origin_note ?? ""),
+                      canva_share_url: (row.canva_share_url as string | undefined) || undefined,
+                      publication_status: next,
+                      sort_order: Number(row.sort_order ?? 0),
+                    },
+                  });
+                  toast.success(next === "published" ? "已恢復公開" : "已從公開列表移除");
+                  setRows(await listAdminArchiveItems());
+                }}
+              >
+                {row.publication_status === "published" ? "取消公開" : "恢復公開"}
+              </button>
+            </div>
           </li>
         ))}
       </ul>

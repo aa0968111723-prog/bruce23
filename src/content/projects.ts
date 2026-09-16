@@ -1,4 +1,4 @@
-import type { Project, ProjectCategory, ProjectStatus } from "./types";
+import type { Project, ProjectCategory, ProjectStatus } from "./types.ts";
 
 const vis = "工作室視覺轉譯，不是產品截圖。";
 

@@ -31,7 +31,6 @@ import { createTestSql } from "./test-db.ts";
 import { projectWriteSchema } from "./schema.ts";
 import { zenReply } from "./zen-engine.ts";
 import { analyzePosterPixels } from "./poster-analysis.ts";
-import { analyzePosterPixels } from "./poster-analysis.ts";
 
 function assertAdminFromEmail(email: string | null, allowlistRaw?: string) {
   const access = resolveAdminAccess({
@@ -322,5 +321,47 @@ describe("poster analysis", () => {
     const result = analyzePosterPixels(data, width, height);
     assert.ok(result.contrast > 0.9);
     assert.ok(result.limits.some((line) => line.includes("不是眼動")));
+  });
+});
+
+describe("origin and sync guards", () => {
+  it("rejects mismatched origins", async () => {
+    const { originMatchesHost } = await import("./origin.ts");
+    assert.equal(originMatchesHost("https://evil.example", "example.com"), false);
+    assert.equal(originMatchesHost("https://127.0.0.1:8080", "localhost:8080"), true);
+    assert.equal(originMatchesHost(null, "example.com"), true);
+  });
+
+  it("never auto-overwrites narrative on github sync", async () => {
+    const { githubSyncDiff, applyGithubAutoFields } = await import("./github.ts");
+    const current = { title: "Owner copy", github_readme: "old" };
+    const incoming = {
+      title: "Repo name",
+      github_readme: "new readme",
+      github_topics: ["ai"],
+    };
+    const diff = githubSyncDiff(current, incoming);
+    assert.ok(diff.skippedNarrative.includes("title"));
+    const next = applyGithubAutoFields(current, incoming);
+    assert.equal(next.title, "Owner copy");
+    assert.equal(next.github_readme, "new readme");
+  });
+});
+
+describe("canva connect reservation", () => {
+  it("stays on public embed when credentials are missing", async () => {
+    const { connectAvailability } = await import("./canva-connect.ts");
+    const result = connectAvailability();
+    assert.equal(result.mode, "public_embed");
+    assert.equal(result.status, "not_configured");
+  });
+});
+
+describe("secret encryption", () => {
+  it("round-trips and never looks like plaintext", async () => {
+    const { encryptSecret, decryptSecret } = await import("./crypto.ts");
+    const cipher = encryptSecret("refresh-token-value", "unit-test-secret");
+    assert.equal(cipher.includes("refresh-token-value"), false);
+    assert.equal(decryptSecret(cipher, "unit-test-secret"), "refresh-token-value");
   });
 });

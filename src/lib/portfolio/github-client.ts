@@ -9,8 +9,9 @@ import {
   summarizeReadme,
   type GithubIncoming,
   type GithubTreeEntry,
-} from "./github";
-import type { Sql } from "./sql";
+} from "./github.ts";
+import { isHttpsPublicUrl } from "./demo.ts";
+import type { Sql } from "./sql.ts";
 
 const API = "https://api.github.com";
 const TIMEOUT_MS = 8000;
@@ -243,11 +244,14 @@ export async function fetchGithubSnapshot(
   }
 }
 
-    return { ok: true, incoming: {(url: string): Promise<{
+export async function verifyLiveDemo(url: string): Promise<{
   status: "verified" | "failed" | "unavailable";
   httpStatus: number | null;
   error?: string;
 }> {
+  if (!isHttpsPublicUrl(url)) {
+    return { status: "failed", httpStatus: null, error: "url_not_public_https" };
+  }
   try {
     const response = await fetch(url, {
       method: "HEAD",
