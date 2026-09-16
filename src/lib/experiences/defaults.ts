@@ -35,6 +35,8 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     canvaNote:
       "目前是公開嵌入模式。沒有公開 /design/{id} 或伺服器可轉址的 /d/ 短網址就不會嵌入空白 iframe。短網址成功轉到設計後才嵌入，不會標成已驗證，也不會宣稱 Connect 已連線。",
     demoNote: "沒有已驗證的公開 Demo 時，不會放假的產品畫面。",
+    galleryNote:
+      "只顯示已發布媒體。標成 GitHub 匯出的是公開 repo 檔的複本；工作室 SVG 是轉譯。沒有公開 Canva /design/{id} 就不嵌入。",
   };
 
   if (slug === "framelab") {
@@ -86,7 +88,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
       intro: "上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。",
       comparison: {
         variant: "poster-analysis",
-        sampleSrc: "/media/samples/poster.svg",
+        sampleSrc: "/media/github-exports/poster-vision-ai/demo-event.png",
         estimateDisclaimer: "熱圖與區域是像素對比推估，不是眼動追蹤。",
       },
     };
@@ -148,13 +150,22 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
-  return {
-    ...base,
-    galleryNote: "只顯示作品已發布的媒體。",
-  };
+  return base;
 }
 
-function mergeObject<T extends Record<string, unknown>>(
+const STALE_POSTER_SAMPLE = "/media/samples/poster.svg";
+const POSTER_SAMPLE = "/media/github-exports/poster-vision-ai/demo-event.png";
+
+function isEmptyArray(value: unknown): boolean {
+  return Array.isArray(value) && value.length === 0;
+}
+
+function coalesceList<T>(current: T[] | undefined, fallback: T[] | undefined): T[] | undefined {
+  if (current == null || current.length === 0) return fallback;
+  return current;
+}
+
+function mergeObject<T extends object>(
   fallback: T | undefined,
   current: T | undefined,
   arrayKeys: (keyof T)[],
@@ -163,7 +174,8 @@ function mergeObject<T extends Record<string, unknown>>(
   if (fallback == null) return current;
   const next = { ...fallback, ...current };
   for (const key of arrayKeys) {
-    if (current[key] === undefined) next[key] = fallback[key];
+    const value = current[key];
+    if (value === undefined || isEmptyArray(value)) next[key] = fallback[key];
   }
   return next;
 }
@@ -171,16 +183,24 @@ function mergeObject<T extends Record<string, unknown>>(
 export function mergeExperienceConfig(slug: string, stored: ExperienceConfig | null | undefined): ExperienceConfig {
   const fallback = defaultExperienceConfig(slug);
   const current = stored ?? {};
-  return {
+  const merged: ExperienceConfig = {
     ...fallback,
     ...current,
-    processNodes: current.processNodes ?? fallback.processNodes,
-    walkthrough: current.walkthrough ?? fallback.walkthrough,
-    fileHints: current.fileHints ?? fallback.fileHints,
+    processNodes: coalesceList(current.processNodes, fallback.processNodes),
+    walkthrough: coalesceList(current.walkthrough, fallback.walkthrough),
+    fileHints: coalesceList(current.fileHints, fallback.fileHints),
     canvaPageLabels: current.canvaPageLabels ?? fallback.canvaPageLabels,
     timeline: mergeObject(fallback.timeline, current.timeline, ["frames"]),
     spatial: mergeObject(fallback.spatial, current.spatial, ["objects"]),
     comparison: mergeObject(fallback.comparison, current.comparison, ["versions", "seedPins"]),
     conversation: mergeObject(fallback.conversation, current.conversation, ["replies"]),
   };
+  if (
+    slug === "poster-vision-ai" &&
+    merged.comparison &&
+    (!merged.comparison.sampleSrc || merged.comparison.sampleSrc === STALE_POSTER_SAMPLE)
+  ) {
+    merged.comparison = { ...merged.comparison, sampleSrc: POSTER_SAMPLE };
+  }
+  return merged;
 }

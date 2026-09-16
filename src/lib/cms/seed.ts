@@ -120,6 +120,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
   await fillLocaleJsonGaps(sql);
+  await fillProjectMediaGaps(sql);
   await clearUncustomizedHowSteps(sql);
 }
 
@@ -432,6 +433,45 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
     }
     if (next.length !== stored.length) {
       await sql.query(`update projects set source_evidence = $2::jsonb where id = $1`, [
+        row.id,
+        JSON.stringify(next),
+      ]);
+    }
+  }
+}
+
+function asMediaList(value: unknown): Array<{ src: string; alt: string; kind: string; caption?: string; poster?: string }> {
+  if (typeof value === "string") {
+    try {
+      return asMediaList(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is { src: string; alt: string; kind: string; caption?: string; poster?: string } => {
+    return Boolean(item && typeof item === "object" && "src" in item && "alt" in item);
+  });
+}
+
+async function fillProjectMediaGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const rows = await sql.query<{ id: string; media: unknown }>(
+      `select id, media from projects where slug = $1 limit 1`,
+      [project.slug],
+    );
+    const row = rows[0];
+    if (!row) continue;
+    const stored = asMediaList(row.media);
+    const have = new Set(stored.map((item) => item.src));
+    const next = [...stored];
+    for (const item of project.media) {
+      if (have.has(item.src)) continue;
+      next.push(item);
+      have.add(item.src);
+    }
+    if (next.length !== stored.length) {
+      await sql.query(`update projects set media = $2::jsonb, updated_at = now() where id = $1`, [
         row.id,
         JSON.stringify(next),
       ]);

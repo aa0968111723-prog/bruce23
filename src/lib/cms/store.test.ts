@@ -611,4 +611,23 @@ describe("cms persistence", () => {
     const director = await getPublishedProject(sql, "ai-director-os");
     assert.ok(director.experienceConfig.processNodes?.some((node) => node.id === "project"));
   });
+
+  it("restores empty FrameLab frames and appends GitHub export media on seed complement", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set experience_config = $2::jsonb, media = $3::jsonb where slug = $1`, [
+      "framelab",
+      JSON.stringify({ honestyLabel: "kept-empty-frames", timeline: { frames: [] } }),
+      JSON.stringify([{ src: "/media/covers/framelab.svg", alt: "cover", kind: "image" }]),
+    ]);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const framelab = await getPublishedProject(sql, "framelab");
+    assert.equal(framelab.experienceConfig.honestyLabel, "kept-empty-frames");
+    assert.ok((framelab.experienceConfig.timeline?.frames.length ?? 0) >= 3);
+    assert.ok(framelab.media.some((item) => item.src === "/media/covers/framelab.svg"));
+    assert.ok(framelab.media.some((item) => item.src.startsWith("/media/github-exports/framelab/")));
+    assert.match(framelab.media.find((item) => item.src.includes("github-exports"))?.caption ?? "", /GitHub 匯出/);
+    const director = await getPublishedProject(sql, "ai-director-os");
+    assert.ok(director.media.some((item) => item.src.startsWith("/media/github-exports/ai-director-os/")));
+  });
 });

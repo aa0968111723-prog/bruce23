@@ -44,13 +44,15 @@ export function MediaFrame({
     );
   }
 
+  const contain = media.src.startsWith("/media/github-exports/");
+
   return (
     <img
       src={media.src}
       alt={media.alt}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
-      className={cn("h-full w-full object-cover", className)}
+      className={cn("h-full w-full", contain ? "object-contain bg-surface-blue" : "object-cover", className)}
       onError={() => setErrored(true)}
     />
   );

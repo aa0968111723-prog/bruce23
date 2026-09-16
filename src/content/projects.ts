@@ -1,6 +1,30 @@
-import type { Project, ProjectCategory, ProjectStatus } from "./types.ts";
+import type { Project, ProjectCategory, ProjectMedia, ProjectStatus, SourceReference } from "./types.ts";
 
 const vis = "工作室視覺轉譯，不是產品截圖。";
+
+function githubExport(
+  slug: string,
+  file: string,
+  alt: string,
+  repo: string,
+  path: string,
+  extra = "",
+): ProjectMedia {
+  return {
+    src: `/media/github-exports/${slug}/${file}`,
+    alt,
+    kind: "image",
+    caption: `公開 GitHub 匯出（${repo} · ${path}）。不是 Canva 原作，也不是 Drive 私有檔。${extra}`.trim(),
+  };
+}
+
+function githubExportEvidence(repo: string, note: string): SourceReference {
+  return {
+    label: `GitHub 公開畫面 · ${repo}`,
+    href: `https://github.com/aa0968111723-prog/${repo}`,
+    note,
+  };
+}
 
 export const statusLabel: Record<ProjectStatus, string> = {
   completed: "已完成",
@@ -71,12 +95,42 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "ai-director-os",
+        "desktop-dashboard.png",
+        "AI Director OS 公開截圖：建立新創作專案對話框",
+        "ai_os",
+        "client/public/screenshots/desktop-dashboard.png",
+      ),
+      githubExport(
+        "ai-director-os",
+        "desktop-mixed.png",
+        "AI Director OS 公開證據截圖：桌面 Mixed Look 比較",
+        "ai_os",
+        "docs/evidence/visual-creative-ux-v3/desktop-mixed.png",
+      ),
+      githubExport(
+        "ai-director-os",
+        "mobile-390-compare.png",
+        "AI Director OS 公開證據截圖：手機並排比較",
+        "ai_os",
+        "docs/evidence/visual-creative-ux-v3/mobile-390-compare.png",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · ai_os",
         href: "https://github.com/aa0968111723-prog/ai_os",
         note: "功能完成項與未完成項直接取自 README 路線圖。",
+      },
+      githubExportEvidence(
+        "ai_os",
+        "本站 /media/github-exports/ai-director-os 複製自公開 repo 的 screenshots 與 docs/evidence。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
+      {
+        label: "GitHub 公開 PDF · Aios系統介紹-剪輯組長",
+        href: "https://github.com/aa0968111723-prog/ai_os/blob/claude/healing-migration-ai-os-erewp2/docs/%E7%B0%A1%E5%A0%B1/Aios%E7%B3%BB%E7%B5%B1%E4%BB%8B%E7%B4%B9-%E5%89%AA%E8%BC%AF%E7%B5%84%E9%95%B7.pdf",
+        note: "公開 repo 簡報 PDF。沒有複製進本站。不是 Canva 嵌入。",
       },
       {
         label: "GitHub · healing-studio",
@@ -149,6 +203,20 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "framelab",
+        "zh-workstation.png",
+        "FrameLab 公開截圖：經典彈跳球工作站",
+        "FrameLab",
+        "screenshots/zh-workstation.png",
+      ),
+      githubExport(
+        "framelab",
+        "zh-inbetween.png",
+        "FrameLab 公開截圖：中間影格產生面板",
+        "FrameLab",
+        "screenshots/zh-inbetween.png",
+      ),
     ],
     sourceReferences: [
       {
@@ -156,6 +224,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/FrameLab",
         note: "能力邊界與模型表直接取自公開 README。",
       },
+      githubExportEvidence(
+        "FrameLab",
+        "本站 /media/github-exports/framelab 複製自公開 repo screenshots。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
     ],
     visibility: "public",
   },
@@ -207,6 +279,22 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "poster-vision-ai",
+        "demo-event.png",
+        "Poster Vision AI 公開樣本海報：活動文宣 fixture",
+        "poster-vision-ai",
+        "public/samples/demo-event.png",
+        "這是 repo 裡的分析樣本，不是真實招生名冊。",
+      ),
+      githubExport(
+        "poster-vision-ai",
+        "demo-product.png",
+        "Poster Vision AI 公開樣本海報：商品文宣 fixture",
+        "poster-vision-ai",
+        "public/samples/demo-product.png",
+        "這是 repo 裡的分析樣本，不是真實商品拍攝。",
+      ),
     ],
     sourceReferences: [
       {
@@ -214,6 +302,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/poster-vision-ai",
         note: "功能與限制原文來自 README。",
       },
+      githubExportEvidence(
+        "poster-vision-ai",
+        "本站 /media/github-exports/poster-vision-ai 複製自公開 repo public/samples。是分析用 fixture，不是 Canva 原作或 Drive 私有檔。",
+      ),
     ],
     visibility: "public",
   },
@@ -266,6 +358,20 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "planform",
+        "e310-overview.png",
+        "PLANFORM 公開場刊圖：E310 社課場佈總覽",
+        "planform-iso",
+        "docs/release-1.0/e310-overview.png",
+      ),
+      githubExport(
+        "planform",
+        "phone-editor.png",
+        "PLANFORM 公開截圖：手機場佈編輯",
+        "planform-iso",
+        "docs/release-1.0/phone-editor.png",
+      ),
     ],
     sourceReferences: [
       {
@@ -273,6 +379,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/planform-iso",
         note: "產品原則與限制取自公開 README。",
       },
+      githubExportEvidence(
+        "planform-iso",
+        "本站 /media/github-exports/planform 複製自公開 repo docs/release-1.0。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
       {
         label: "公開站 · planform-iso-k7d2.zeabur.app",
         href: "https://planform-iso-k7d2.zeabur.app",
@@ -330,6 +440,20 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "duigao",
+        "desktop-1280-board-20.png",
+        "對稿公開截圖：桌面視覺基準板",
+        "duigao",
+        "scripts/e2e/visual-baselines/desktop-1280-board-20.png",
+      ),
+      githubExport(
+        "duigao",
+        "phone-390-board-20.png",
+        "對稿公開截圖：手機視覺基準板",
+        "duigao",
+        "scripts/e2e/visual-baselines/phone-390-board-20.png",
+      ),
     ],
     sourceReferences: [
       {
@@ -337,6 +461,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/duigao",
         note: "權限模型與雲端層取自 README。",
       },
+      githubExportEvidence(
+        "duigao",
+        "本站 /media/github-exports/duigao 複製自公開 repo scripts/e2e/visual-baselines。不是 Canva 原作，也不是私人對稿房間。",
+      ),
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
@@ -446,6 +574,21 @@ export const projects: Project[] = [
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "hermes-console",
+        "home-desktop.png",
+        "Hermes Console 公開截圖：桌面工作區首頁",
+        "hermes-console",
+        "docs/screenshots/visual-workspace/home-desktop.png",
+      ),
+      githubExport(
+        "hermes-console",
+        "canva-unconfigured.png",
+        "Hermes Console 公開截圖：Canva 連線未設定",
+        "hermes-console",
+        "docs/screenshots/visual-workspace/canva-unconfigured.png",
+        "畫面本身標未設定；本站也不宣稱 Canva 已連線。",
+      ),
     ],
     sourceReferences: [
       {
@@ -453,6 +596,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/hermes-console",
         note: "產品不變量取自 README。",
       },
+      githubExportEvidence(
+        "hermes-console",
+        "本站 /media/github-exports/hermes-console 複製自公開 repo docs/screenshots。含「Canva 未設定」畫面，不宣稱已連線。",
+      ),
       {
         label: "公開站 · 344.zeabur.app",
         href: "https://344.zeabur.app",

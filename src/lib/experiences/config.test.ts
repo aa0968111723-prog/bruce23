@@ -162,7 +162,7 @@ describe("experience config merge", () => {
     assert.ok((merged.fileHints?.length ?? 0) > 0);
   });
 
-  it("fills missing nested arrays without replacing an explicit empty list", () => {
+  it("fills missing or empty nested arrays from catalog defaults", () => {
     const filled = mergeExperienceConfig("framelab", {
       timeline: { onionDefault: false } as never,
     });
@@ -172,7 +172,20 @@ describe("experience config merge", () => {
     const emptied = mergeExperienceConfig("framelab", {
       timeline: { frames: [], onionDefault: true },
     });
-    assert.equal(emptied.timeline?.frames.length, 0);
+    assert.ok((emptied.timeline?.frames.length ?? 0) >= 3);
+    assert.equal(emptied.timeline?.onionDefault, true);
+
+    const emptyNodes = mergeExperienceConfig("ai-director-os", { processNodes: [] });
+    assert.ok((emptyNodes.processNodes?.length ?? 0) > 0);
+  });
+
+  it("points Poster Vision sample at the public GitHub fixture", () => {
+    const config = defaultExperienceConfig("poster-vision-ai");
+    assert.equal(config.comparison?.sampleSrc, "/media/github-exports/poster-vision-ai/demo-event.png");
+    const stale = mergeExperienceConfig("poster-vision-ai", {
+      comparison: { variant: "poster-analysis", sampleSrc: "/media/samples/poster.svg" },
+    });
+    assert.equal(stale.comparison?.sampleSrc, "/media/github-exports/poster-vision-ai/demo-event.png");
   });
 
   it("how-it-works reads saved steps, then experience_config, then process copy", () => {
