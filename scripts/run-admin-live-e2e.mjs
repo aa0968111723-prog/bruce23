@@ -311,8 +311,6 @@ async function proveLiveAdmin(page, request) {
   );
   await page.screenshot({ path: resolve(SHOTS, "admin-live-preview.png"), fullPage: true });
 
-  await proveIntegrationsDesk(page);
-
   await gotoReady(page, `${ORIGIN}/admin/projects`);
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
@@ -433,6 +431,8 @@ async function proveLiveAdmin(page, request) {
       `fixture Canva design leaked onto featured work ${featured}`,
     );
   }
+
+  await proveIntegrationsDesk(page);
 
   const a11y = await page.context().newPage();
   try {
