@@ -10,7 +10,7 @@ function pick(copy: LocaleCopy | undefined, key: keyof LocaleCopy): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-/** Public pages prefer saved zh copy, then the row, then en. SEO may use either locale. */
+/** Public pages use the row as canonical zh copy. Locale fills blanks; SEO may use either locale. */
 export function applyPublicLocale<T extends {
   title: string;
   subtitle: string;
@@ -25,11 +25,11 @@ export function applyPublicLocale<T extends {
   const en = project.locale.en;
   return {
     ...project,
-    title: pick(zh, "title") || project.title,
-    subtitle: pick(zh, "subtitle") || project.subtitle,
-    summary: pick(zh, "summary") || project.summary,
-    problem: pick(zh, "problem") || project.problem,
-    role: pick(zh, "role") || project.role,
+    title: project.title.trim() || pick(zh, "title") || project.title,
+    subtitle: project.subtitle.trim() || pick(zh, "subtitle") || project.subtitle,
+    summary: project.summary.trim() || pick(zh, "summary") || project.summary,
+    problem: project.problem.trim() || pick(zh, "problem") || project.problem,
+    role: project.role.trim() || pick(zh, "role") || project.role,
     seoTitle: pick(zh, "seoTitle") || pick(en, "seoTitle") || project.seoTitle || null,
     seoDescription: pick(zh, "seoDescription") || pick(en, "seoDescription") || project.seoDescription || null,
   };

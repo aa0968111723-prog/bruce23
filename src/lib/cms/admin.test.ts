@@ -227,9 +227,21 @@ describe("public json-ld and homepage copy", () => {
         en: { title: "EN title" },
       },
     });
-    assert.equal(localized.title, "中文");
-    assert.equal(localized.summary, "摘要");
+    assert.equal(localized.title, "row");
+    assert.equal(localized.summary, "sum");
     assert.equal(localized.seoTitle, "中 SEO");
     assert.equal(englishTitle(localized.locale, localized.title), "EN title");
+    const filled = applyPublicLocale({
+      title: "",
+      subtitle: "",
+      summary: "",
+      problem: "",
+      role: "",
+      seoTitle: null,
+      seoDescription: null,
+      locale: { zh: { title: "中文", summary: "摘要", seoTitle: "中 SEO" }, en: { title: "EN title" } },
+    });
+    assert.equal(filled.title, "中文");
+    assert.equal(filled.summary, "摘要");
   });
 });

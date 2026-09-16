@@ -256,12 +256,21 @@ describe("cms persistence", () => {
       "admin-1",
     );
     const live = serializePublicProject(created);
-    assert.equal(live.title, "中文標題");
-    assert.equal(live.summary, "中文摘要");
+    assert.equal(live.title, "Row title");
+    assert.equal(live.summary, "row summary");
     assert.equal(live.seoTitle, "SEO 中");
     assert.equal(live.locale.en?.title, "English title");
     const published = await getPublishedProject(sql, created.slug);
-    assert.equal(published.title, "中文標題");
+    assert.equal(published.title, "Row title");
+    const blank = serializePublicProject({
+      ...created,
+      title: "",
+      summary: "",
+      seo_title: null,
+      locale_json: created.locale_json,
+    } as typeof created);
+    assert.equal(blank.title, "中文標題");
+    assert.equal(blank.summary, "中文摘要");
   });
 
   it("excludes draft archive items from the public archive", async () => {
