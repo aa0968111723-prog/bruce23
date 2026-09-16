@@ -25,6 +25,15 @@ function asBool(value: unknown): boolean {
   return value === true || value === "t" || value === "true";
 }
 
+function asIso(value: unknown): string | null {
+  if (value == null || value === "") return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value.toISOString();
+  }
+  const parsed = new Date(String(value));
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
 export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
   return {
     id: String(row.id),
@@ -52,8 +61,7 @@ export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
     github_repo: typeof row.github_repo === "string" ? row.github_repo : null,
     github_branch: typeof row.github_branch === "string" ? row.github_branch : null,
     github_sync_status: String(row.github_sync_status ?? "not_configured"),
-    github_last_synced_at:
-      row.github_last_synced_at != null ? String(row.github_last_synced_at) : null,
+    github_last_synced_at: asIso(row.github_last_synced_at),
     github_sync_error: typeof row.github_sync_error === "string" ? row.github_sync_error : null,
     github_metadata: asGithubMetadata(row.github_metadata),
     github_file_tree: asArray(row.github_file_tree),
@@ -65,8 +73,7 @@ export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
     live_demo_label: typeof row.live_demo_label === "string" ? row.live_demo_label : null,
     live_demo_type: typeof row.live_demo_type === "string" ? row.live_demo_type : null,
     live_demo_status: String(row.live_demo_status ?? "not_configured"),
-    live_demo_last_verified_at:
-      row.live_demo_last_verified_at != null ? String(row.live_demo_last_verified_at) : null,
+    live_demo_last_verified_at: asIso(row.live_demo_last_verified_at),
     live_demo_error: typeof row.live_demo_error === "string" ? row.live_demo_error : null,
     canva_share_url: typeof row.canva_share_url === "string" ? row.canva_share_url : null,
     canva_embed_url: typeof row.canva_embed_url === "string" ? row.canva_embed_url : null,
@@ -74,8 +81,7 @@ export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
     canva_thumbnail_url:
       typeof row.canva_thumbnail_url === "string" ? row.canva_thumbnail_url : null,
     canva_status: String(row.canva_status ?? "not_configured"),
-    canva_last_synced_at:
-      row.canva_last_synced_at != null ? String(row.canva_last_synced_at) : null,
+    canva_last_synced_at: asIso(row.canva_last_synced_at),
     canva_alt: typeof row.canva_alt === "string" ? row.canva_alt : null,
     canva_caption: typeof row.canva_caption === "string" ? row.canva_caption : null,
     canva_error: typeof row.canva_error === "string" ? row.canva_error : null,
@@ -93,8 +99,8 @@ export function normalizeProjectRow(row: Record<string, unknown>): ProjectRow {
     canva_page_ids: asArray(row.canva_page_ids),
     experience_mode: String(row.experience_mode ?? "github-explorer"),
     experience_label: typeof row.experience_label === "string" ? row.experience_label : null,
-    updated_at: row.updated_at != null ? String(row.updated_at) : null,
-    published_at: row.published_at != null ? String(row.published_at) : null,
+    updated_at: asIso(row.updated_at),
+    published_at: asIso(row.published_at),
   };
 }
 
@@ -368,7 +374,11 @@ export async function setPublication(
   const existing = await getAdminProject(sql, id);
   if (!existing) return null;
   const publishedAt =
-    status === "published" ? new Date().toISOString() : existing.published_at;
+    status === "published"
+      ? new Date().toISOString()
+      : existing.published_at
+        ? asIso(existing.published_at)
+        : null;
   const archivedAt = status === "archived" ? new Date().toISOString() : null;
   await sql.query(
     `update projects set publication_status=$2, published_at=$3, archived_at=$4, updated_at=now() where id=$1`,
@@ -423,6 +433,15 @@ export async function restoreRevision(
   const revision = await getRevision(sql, revisionId);
   if (!revision || String(revision.project_id) !== projectId) return null;
   const snapshot = asObject(revision.snapshot);
+  const timestampKeys = new Set([
+    "created_at",
+    "updated_at",
+    "published_at",
+    "archived_at",
+    "github_last_synced_at",
+    "live_demo_last_verified_at",
+    "canva_last_synced_at",
+  ]);
   const keys = Object.keys(snapshot).filter(
     (key) =>
       ![
@@ -437,6 +456,7 @@ export async function restoreRevision(
   const assignments = keys.map((key, i) => `${key}=$${i + 2}`).join(", ");
   const values = keys.map((key) => {
     const value = snapshot[key];
+    if (timestampKeys.has(key)) return asIso(value);
     if (value && typeof value === "object") return jsonParam(value);
     return value ?? null;
   });
