@@ -271,10 +271,14 @@ async function proveLiveAdmin(page, request) {
   await share.waitFor({ timeout: 15000 });
   await share.click();
   await share.evaluate((el, value) => {
-    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-    setter?.call(el, value);
-    el.dispatchEvent(new Event("input", { bubbles: true }));
-    el.dispatchEvent(new Event("change", { bubbles: true }));
+    const input = el;
+    const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+    const tracker = input._valueTracker;
+    const previous = input.value;
+    proto?.call(input, value);
+    tracker?.setValue(previous);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
   }, CANVA_FIXTURE_SHARE_URL);
   const pasted = await share.inputValue();
   assert(

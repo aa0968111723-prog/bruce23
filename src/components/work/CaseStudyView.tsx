@@ -20,7 +20,7 @@ export function CaseStudyView({
 }) {
   const enTitle = englishTitle(project.locale, project.title);
   return (
-    <article className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
+    <article className="mx-auto w-full max-w-4xl scroll-mt-20 px-4 py-12 sm:px-6">
       {includeJsonLd ? (
         <script
           type="application/ld+json"

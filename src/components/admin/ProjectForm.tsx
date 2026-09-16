@@ -312,9 +312,18 @@ export function ProjectForm({ project }: { project: AdminProject }) {
 
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg">Canva / Demo / 體驗</legend>
+        {!(form.canva_share_url ?? "").trim() ? (
+          <p className="rounded-xl bg-surface-blue/70 px-3 py-2 text-xs text-muted">
+            目前沒有 Canva 分享連結。請貼上 canva.com/design/{"{id}"} 公開分享網址（例如
+            https://www.canva.com/design/{"{id}"}/view）。短網址 /d/ 也可以貼，但要等伺服器轉到
+            /design/{"{id}"} 才會嵌入。沒有真實分享連結時不要虛構設計編號，也不要填頁面 ID。
+          </p>
+        ) : null}
         <Field
-          label="Canva 分享（可貼 /design/{id} 或 /d/ 短網址）"
+          label="Canva 分享（可貼 canva.com/design/{id} 或 /d/ 短網址）"
           value={form.canva_share_url ?? ""}
+          placeholder="https://www.canva.com/design/{id}/view"
+          emptyHint="空著就不會嵌入。請貼公開分享連結，不要發明設計編號。"
           onChange={(value) => {
             const parsed = parseCanvaDesign(value);
             patch("canva_share_url", parsed?.shareUrl ?? value);
@@ -328,10 +337,18 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             }
           }}
         />
-        <Field label="Canva 嵌入" value={form.canva_embed_url ?? ""} onChange={(value) => patch("canva_embed_url", value)} />
         <Field
-          label="Canva 頁面 ID（逗號分隔，可貼明天的分享連結後再填）"
+          label="Canva 嵌入"
+          value={form.canva_embed_url ?? ""}
+          placeholder="https://www.canva.com/design/{id}/view?embed"
+          emptyHint="通常由分享連結自動填入。沒有 /design/{id} 時保持空白，不要放空 iframe。"
+          onChange={(value) => patch("canva_embed_url", value)}
+        />
+        <Field
+          label="Canva 頁面 ID（逗號分隔；僅在已有 /design/{id} 之後填真實頁面）"
           value={(form.canva_page_ids ?? []).join(", ")}
+          placeholder="有真實分享連結後再填，例如 cover, page-2"
+          emptyHint="沒有公開 canva.com/design/{id} 時保持空白。頁面 ID 不能虛構，也不代表可以翻頁。"
           onChange={(value) => patch("canva_page_ids", parseCanvaPageIds(value))}
         />
         <Field label="封面" value={form.canva_thumbnail_url ?? ""} onChange={(value) => patch("canva_thumbnail_url", value)} />
@@ -720,15 +737,29 @@ function splitLines(value: string) {
   return value.split("\n").map((item) => item.trim()).filter(Boolean);
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  emptyHint,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  emptyHint?: string;
+}) {
   return (
     <label className="grid gap-1 text-sm">
       {label}
       <input
         className="min-h-11 rounded-xl border border-line px-3"
         value={value}
+        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
       />
+      {!value.trim() && emptyHint ? <p className="text-xs text-muted">{emptyHint}</p> : null}
     </label>
   );
 }

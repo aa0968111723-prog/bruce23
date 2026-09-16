@@ -148,6 +148,10 @@ describe("frontend contract", () => {
     assert.doesNotMatch(mediaFrame, /dark:|bg-black|className="[^"]*bg-ink/);
     assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
+    const rootDoc = readFileSync(new URL("../../../src/routes/__root.tsx", import.meta.url), "utf8");
+    assert.match(rootDoc, /\/favicon.svg/);
+    assert.match(rootDoc, /\/icon-192.png/);
+    assert.match(rootDoc, /\/icon-512.png/);
     const roving = readFileSync(
       new URL("../../../src/components/site/useRovingTabs.ts", import.meta.url),
       "utf8",
@@ -168,6 +172,8 @@ describe("frontend contract", () => {
     assert.match(stage, /全螢幕/);
     assert.match(stage, /在 Canva 開啟原作/);
     assert.match(stage, /publicCanvaEmbedUrl/);
+    assert.match(stage, /pages.length > 1/);
+    assert.doesNotMatch(stage, /\["cover"\]/);
     const processMap = readFileSync(
       new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
       "utf8",
@@ -216,6 +222,10 @@ describe("frontend contract", () => {
     assert.match(form, /年份/);
     assert.match(form, /listRevisionsFn/);
     assert.match(form, /\/d\/ 短網址/);
+    assert.match(form, /canva.com\/design\/\{id\}/);
+    assert.match(form, /目前沒有 Canva 分享連結/);
+    assert.match(form, /不要虛構設計編號/);
+    assert.doesNotMatch(form, /明天的分享連結/);
     assert.match(form, /localeKey/);
     assert.match(form, /中文 SEO 標題/);
     assert.match(form, /英文 SEO 描述/);
@@ -229,6 +239,8 @@ describe("frontend contract", () => {
     assert.match(archiveForm, /publication_status/);
     assert.match(archiveForm, /origin_note/);
     assert.match(archiveForm, /媒體路徑/);
+    assert.match(archiveForm, /canva.com\/design\/\{id\}/);
+    assert.match(archiveForm, /目前沒有 Canva 分享連結/);
     const privacy = readFileSync(new URL("../../../src/routes/privacy.tsx", import.meta.url), "utf8");
     assert.match(privacy, /不會公開的/);
     assert.match(privacy, /電話/);
@@ -242,6 +254,7 @@ describe("frontend contract", () => {
     assert.match(editor, /進階 JSON/);
     assert.match(editor, /FrameLab 時間軸/);
     assert.match(editor, /PLANFORM 物件與動線/);
+    assert.match(editor, /不要加頁面標籤或虛構頁面 ID/);
     const field = readFileSync(
       new URL("../../../src/components/home/ExplorationField.tsx", import.meta.url),
       "utf8",
@@ -267,6 +280,8 @@ describe("frontend contract", () => {
     assert.match(integrations, /not_configured/);
     assert.match(integrations, /rate_limited/);
     assert.match(integrations, /不會標記為成功/);
+    assert.match(integrations, /目前沒有 Canva Connect/);
+    assert.match(integrations, /canva.com\/design\/\{id\}/);
     assert.doesNotMatch(integrations, /Notion 已連線/);
     const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
     assert.match(preview, /CaseStudyView/);

@@ -740,6 +740,11 @@ function CanvaFields({
   return (
     <div className="grid gap-2">
       <Field label="Canva 說明" value={config.canvaNote ?? ""} onChange={(value) => patch({ canvaNote: value })} multiline />
+      {pages.length === 0 ? (
+        <p className="rounded-xl bg-surface-blue/70 px-3 py-2 text-xs text-muted">
+          還沒有公開 canva.com/design/{"{id}"} 分享連結時，不要加頁面標籤或虛構頁面 ID。貼上真實分享連結之後再填實際頁面。
+        </p>
+      ) : null}
       {pages.map((page, index) => (
         <div key={`${page.id}-${index}`} className="grid gap-2 rounded-2xl border border-line p-3 sm:grid-cols-2">
           <Field

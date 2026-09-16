@@ -145,9 +145,14 @@ function IntegrationsPage() {
           </button>
         </div>
         {notConfigured ? (
-          <p className="mt-3 text-xs text-muted">
-            Connect 按鈕不會假裝成功。公開作品仍可用分享網址嵌入。授權開始／回呼在憑證缺失時會回傳設定錯誤。
-          </p>
+          <div className="mt-4 rounded-xl bg-surface-blue/70 px-3 py-3 text-sm text-muted">
+            <p className="font-medium text-ink">目前沒有 Canva Connect</p>
+            <p className="mt-2 text-xs">
+              Connect 按鈕不會假裝成功。請到作品編輯頁貼上 canva.com/design/{"{id}"} 公開分享網址（例如
+              https://www.canva.com/design/{"{id}"}/view）。短網址 /d/ 可以貼，但要等轉到 /design/{"{id}"}{" "}
+              才會嵌入。不要虛構設計編號，也不要把未連線標成已連線。
+            </p>
+          </div>
         ) : null}
 
         {connected ? (
@@ -281,7 +286,7 @@ function IntegrationsPage() {
                     className="min-h-11 rounded-xl border border-line px-3"
                     value={shareUrl}
                     onChange={(event) => setShareUrl(event.target.value)}
-                    placeholder="https://www.canva.com/design/…/view 或 /d/ 短網址"
+                    placeholder="https://www.canva.com/design/{id}/view"
                   />
                 </label>
                 <button

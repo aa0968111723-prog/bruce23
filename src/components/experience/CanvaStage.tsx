@@ -10,14 +10,22 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const pages = canva.pageIds?.length ? canva.pageIds : ["cover"];
+  const pages = canva.pageIds?.filter(Boolean) ?? [];
   const state = canvaViewerState(canva, failed);
   const embed = publicCanvaEmbedUrl(canva.embedUrl);
   const original = canvaOpenOriginalUrl(canva.shareUrl ?? canva.embedUrl) ?? canva.shareUrl;
   const thumb = canva.thumbnailUrl ? (
-    <img src={canva.thumbnailUrl} alt={canva.alt ?? project.title} className="w-full object-cover" />
+    <img
+      src={canva.thumbnailUrl}
+      alt={canva.alt ?? project.title}
+      className="mx-auto max-h-80 w-full object-contain bg-surface-blue"
+    />
   ) : project.media[0] ? (
-    <img src={project.media[0].src} alt={project.media[0].alt} className="w-full object-cover" />
+    <img
+      src={project.media[0].src}
+      alt={project.media[0].alt}
+      className="mx-auto max-h-80 w-full object-contain bg-surface-blue"
+    />
   ) : null;
 
   if (state === "empty") {
@@ -110,22 +118,24 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {pages.map((item, index) => {
-          const label =
-            config.canvaPageLabels?.find((page) => page.id === item)?.label ?? `第 ${index + 1} 頁`;
-          return (
-          <button
-            key={item}
-            type="button"
-            className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm ${
-              pageIndex === index ? "bg-ink text-bg" : "bg-surface shadow-card"
-            }`}
-            onClick={() => setPageIndex(index)}
-          >
-            {label}
-          </button>
-          );
-        })}
+        {pages.length > 1
+          ? pages.map((item, index) => {
+              const label =
+                config.canvaPageLabels?.find((page) => page.id === item)?.label ?? `第 ${index + 1} 頁`;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm ${
+                    pageIndex === index ? "bg-ink text-bg" : "bg-surface shadow-card"
+                  }`}
+                  onClick={() => setPageIndex(index)}
+                >
+                  {label}
+                </button>
+              );
+            })
+          : null}
         <button
           type="button"
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface-mint px-4 text-sm"

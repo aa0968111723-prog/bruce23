@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -25,6 +25,23 @@ const SOURCE_FILES = [
 ];
 
 describe("canva content inventory", () => {
+  it("records honest Canva unavailable, eight featured works, and admin CMS in the manifest", () => {
+    const manifest = JSON.parse(readFileSync(join(root, "project-manifest.json"), "utf8"));
+    assert.equal(manifest.featuredCount, 8);
+    assert.equal(manifest.featured.length, 8);
+    assert.equal(manifest.canva.connect, "unavailable");
+    assert.equal(manifest.canva.mcp, "needsAuth");
+    assert.deepEqual(manifest.canva.publicDesignIds, []);
+    assert.equal(manifest.admin.cms, true);
+    assert.equal(manifest.admin.kind, "fail-closed-google-allowlist");
+    assert.equal(existsSync(join(root, "public/og.jpg")), true);
+    assert.equal(existsSync(join(root, "public/icon-192.png")), true);
+    assert.equal(existsSync(join(root, "public/icon-512.png")), true);
+    const site = JSON.parse(readFileSync(join(root, "src/lib/og/site.json"), "utf8"));
+    assert.equal(site.card, "custom");
+    assert.match(site.title, /Luminous Studio/);
+  });
+
   it("finds no real canva.com share or embed URLs in existing content", () => {
     const combined = SOURCE_FILES.map((file) => readFileSync(join(root, file), "utf8")).join("\n");
     assert.deepEqual(collectCanvaUrlsFromText(combined), []);

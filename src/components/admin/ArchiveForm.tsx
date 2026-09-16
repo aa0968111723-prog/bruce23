@@ -176,13 +176,22 @@ export function ArchiveForm({
         value={String(form.sort_order)}
         onChange={(value) => patch("sort_order", Number(value) || 0)}
       />
+      {!(form.canva_share_url ?? "").trim() ? (
+        <p className="rounded-xl bg-surface-blue/70 px-3 py-2 text-xs text-muted">
+          目前沒有 Canva 分享連結。請貼上 canva.com/design/{"{id}"} 公開分享網址（例如
+          https://www.canva.com/design/{"{id}"}/view）。短網址 /d/ 也可以貼，但要等轉到
+          /design/{"{id}"} 才會嵌入。沒有真實分享連結時不要虛構設計編號。
+        </p>
+      ) : null}
       <Field
         label="Canva 分享網址"
         value={form.canva_share_url ?? ""}
+        placeholder="https://www.canva.com/design/{id}/view"
+        emptyHint="空著就不會嵌入、也不能翻頁。請貼公開分享連結，不要發明設計編號。"
         onChange={(value) => patch("canva_share_url", value || null)}
       />
       <p className="text-xs text-muted">
-        只接受 canva.com/design 或 /d/ 短網址。沒有公開 /design/{"{id}"} 時不會嵌入 iframe，也不會虛構設計編號。
+        只接受 canva.com/design/{"{id}"} 或 /d/ 短網址。沒有公開 /design/{"{id}"} 時不會嵌入 iframe，也不會虛構設計編號。
       </p>
       <Field label="Canva 替代文字" value={form.canva_alt ?? ""} onChange={(value) => patch("canva_alt", value || null)} />
       <Field
@@ -197,15 +206,29 @@ export function ArchiveForm({
   );
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  emptyHint,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  emptyHint?: string;
+}) {
   return (
     <label className="grid gap-1 text-sm">
       {label}
       <input
         className="min-h-11 rounded-xl border border-line px-3"
         value={value}
+        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
       />
+      {!value.trim() && emptyHint ? <p className="text-xs text-muted">{emptyHint}</p> : null}
     </label>
   );
 }
