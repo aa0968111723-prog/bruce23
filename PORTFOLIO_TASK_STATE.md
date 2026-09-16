@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: 2 in progress — interactive CMS
+Cycle: 2 — interactive CMS
 Updated: 2026-09-16
 Branch: cursor/portfolio-interactive-cms-da82
 
@@ -13,17 +13,18 @@ Branch: cursor/portfolio-interactive-cms-da82
 - Static seed remains in `src/content/*` and is upserted once into CMS tables
 - `VITE_AUTH_ENABLED=true` in `.grok/app-env.json` (not a `.env` file)
 
-## Done this cycle (implementing)
+## Proven this cycle
 
-- Better Auth routes + Google/X login
+- Better Auth routes + Google/X login (sandbox cannot finish Google OAuth; fail-closed + unit tests)
 - `migrations/0002_portfolio_cms.sql` with product_status vs publication_status
 - Public site reads published CMS rows only
 - Admin CMS routes: /admin, projects, new, edit, archive, settings, preview, integrations
 - Server-side GitHub sync (metadata/README/languages/topics/commit/tree) that does not overwrite narrative
 - Canva public embed allowlist + reserved Connect OAuth
 - ExperiencePanel + per-project experiences
-- Homepage relation space (2D cards / scroller on mobile) including GitHub / Canva / Live Demo nodes
-- Fail-closed admin allowlist, revision restore without CASCADE wipe, embed fallbacks
+- Homepage relation space including GitHub / Canva / Live Demo nodes
+- Serializable CMS types (no `unknown` on server-fn payloads)
+- Gates: typecheck, test, lint, build, check:auth, desktop+mobile smoke, production preview smoke
 
 ## Not done / need from you
 
@@ -33,7 +34,4 @@ Branch: cursor/portfolio-interactive-cms-da82
 - Notion connection
 - Confirm whether `https://ai-os-ten.vercel.app` should stay listed
 - Production env: `PORTFOLIO_ADMIN_EMAILS`, optional `GITHUB_READ_TOKEN`, optional Canva Connect secrets
-
-## Next
-
-- Prove gates: typecheck, test, lint, build, check:auth, smoke
+- Draft GitHub PR: token returned 403 on pull-request create (branch is on origin)

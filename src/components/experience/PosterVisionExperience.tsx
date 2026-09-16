@@ -41,7 +41,6 @@ export function PosterVisionExperience({ note }: { note?: string }) {
 
   useEffect(() => {
     void run(SAMPLES[0].src);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
