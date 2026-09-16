@@ -20,7 +20,7 @@ const publicWork = [
   "平面、攝影與活動紀錄（Archive）",
 ];
 
-export function About() {
+function About() {
   return (
     <div>
       <section className="bg-surface-blue/50">
