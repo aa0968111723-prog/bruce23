@@ -367,7 +367,17 @@ async function proveLiveAdmin(page, request) {
   const liveSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
-  await page.getByRole("tab", { name: "Canva 原作" }).click();
+  const canvaTab = page.locator('[role="tablist"]').first().getByRole("tab", { name: "Canva 原作" });
+  await canvaTab.scrollIntoViewIfNeeded();
+  await canvaTab.click();
+  await page.waitForFunction(
+    () =>
+      [...document.querySelectorAll('[role="tab"]')].some(
+        (el) => el.getAttribute("aria-selected") === "true" && (el.textContent ?? "").includes("Canva"),
+      ),
+    null,
+    { timeout: 8000 },
+  );
   const canvaHtml = await (await request.get(`${ORIGIN}/work/${SLUG}`)).text();
   const iframeSrcs = [...canvaHtml.matchAll(/<iframe[^>]+src="([^"]+)"/gi)].map((row) => row[1]);
   const canvaIframes = iframeSrcs.filter((src) =>
