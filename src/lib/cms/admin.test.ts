@@ -204,31 +204,34 @@ describe("public json-ld and homepage copy", () => {
   });
 
   it("prefers saved zh/en locale and SEO on the public homepage", () => {
-    const copy = resolveHomepageCopy(
-      {
-        nameZh: "柏能",
-        nameEn: "Luminous Studio",
-        person: "Bruce",
-        role: "role",
-        headline: "primary headline",
-        subhead: "primary subhead",
-        narrative: "primary narrative",
-        email: "a@b.c",
-        github: "https://github.com/x",
-        githubHandle: "x",
-        location: "Taipei",
-        seoTitle: "SEO",
-        seoDescription: "desc",
-        homepageHighlightSlugs: ["framelab"],
-        locale: { zh: { headline: "中文", narrative: "敘事", seoTitle: "中 SEO", seoDescription: "中 desc" }, en: { headline: "EN" } },
-      },
-      { nameEn: "fb", person: "fb", headline: "fb", subhead: "fb", narrative: "fb" },
-    );
-    assert.equal(copy.headline, "中文");
-    assert.equal(copy.narrative, "敘事");
-    assert.equal(copy.subhead, "EN");
-    assert.equal(copy.seoTitle, "中 SEO");
-    assert.equal(copy.seoDescription, "中 desc");
+    const site = {
+      nameZh: "柏能",
+      nameEn: "Luminous Studio",
+      person: "Bruce",
+      role: "role",
+      headline: "primary headline",
+      subhead: "primary subhead",
+      narrative: "primary narrative",
+      email: "a@b.c",
+      github: "https://github.com/x",
+      githubHandle: "x",
+      location: "Taipei",
+      seoTitle: "SEO",
+      seoDescription: "desc",
+      homepageHighlightSlugs: ["framelab"],
+      locale: { zh: { headline: "中文", narrative: "敘事", seoTitle: "中 SEO", seoDescription: "中 desc" }, en: { headline: "EN" } },
+    };
+    const fallback = { nameEn: "fb", person: "fb", headline: "fb", subhead: "fb", narrative: "fb" };
+    const zh = resolveHomepageCopy(site, fallback, "zh");
+    assert.equal(zh.headline, "中文");
+    assert.equal(zh.narrative, "敘事");
+    assert.equal(zh.subhead, "primary subhead");
+    assert.equal(zh.seoTitle, "中 SEO");
+    assert.equal(zh.seoDescription, "中 desc");
+    const en = resolveHomepageCopy(site, fallback, "en");
+    assert.equal(en.headline, "EN");
+    assert.equal(en.narrative, "敘事");
+    assert.equal(en.subhead, "primary subhead");
   });
 
   it("applies zh copy and keeps a distinct English title", () => {

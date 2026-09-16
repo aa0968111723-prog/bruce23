@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { productStatusLabel } from "@/lib/cms/status";
+import { useViewerLocale } from "./LocaleProvider";
 
 const tone: Record<string, string> = {
   completed: "bg-surface-mint text-mint-deep",
@@ -10,9 +11,14 @@ const tone: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: { status: string }) {
+  const { ui } = useViewerLocale();
+  const label =
+    ui.productStatus[status as keyof typeof ui.productStatus] ??
+    productStatusLabel[status as keyof typeof productStatusLabel] ??
+    status;
   return (
     <span className={cn("inline-flex h-7 items-center rounded-full px-3 text-xs font-medium", tone[status] ?? tone.prototype)}>
-      {productStatusLabel[status as keyof typeof productStatusLabel] ?? status}
+      {label}
     </span>
   );
 }

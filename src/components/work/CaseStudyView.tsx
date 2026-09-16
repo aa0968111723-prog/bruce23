@@ -2,9 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Github, Globe } from "lucide-react";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { StatusBadge } from "@/components/site/StatusBadge";
+import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/LocaleProvider";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { publishedCreativeWorkJsonLd, serializeJsonLd } from "@/lib/cms/jsonld";
 import { englishTitle } from "@/lib/cms/locale";
+import { overlayProject } from "@/lib/locale/view";
 import { sanitizePublicHref } from "@/lib/safe-href";
 
 export function CaseStudyView({
@@ -18,7 +20,13 @@ export function CaseStudyView({
   backTo?: "work" | "none";
   includeJsonLd?: boolean;
 }) {
-  const enTitle = englishTitle(project.locale, project.title);
+  const { lang, ui } = useViewerLocale();
+  const view = overlayProject(project, lang);
+  const enTitle = lang === "zh" ? englishTitle(project.locale, view.title) : null;
+  useLocaleDocumentTitle(
+    view.seoTitle || `${view.title} · ${lang === "en" ? "Luminous Studio" : "柏能"}`,
+    view.seoDescription || view.summary,
+  );
   return (
     <article className="mx-auto w-full max-w-4xl scroll-mt-20 px-4 py-12 sm:px-6">
       {includeJsonLd ? (
@@ -32,41 +40,41 @@ export function CaseStudyView({
       {backTo === "work" ? (
         <Link to="/work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-ink">
           <ArrowLeft className="size-4" />
-          作品總覽
+          {ui.caseBack}
         </Link>
       ) : null}
 
       <header className="mt-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium tracking-wide text-muted">
-            {project.category} · {project.year}
+            {view.category} · {view.year}
           </span>
-          <StatusBadge status={project.productStatus} />
+          <StatusBadge status={view.productStatus} />
         </div>
-        <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{project.title}</h1>
+        <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{view.title}</h1>
         {enTitle ? (
           <p lang="en" className="mt-1 text-sm text-muted">
             {enTitle}
           </p>
         ) : null}
-        <p className="mt-3 text-lg text-muted">{project.subtitle}</p>
+        <p className="mt-3 text-lg text-muted">{view.subtitle}</p>
       </header>
 
       <div className="mt-8">
-        <ExperiencePanel project={project} variant="page" />
+        <ExperiencePanel project={view} variant="page" />
       </div>
 
       <section className="mt-10">
-        <h2 className="font-display text-xl font-semibold">一句話</h2>
-        <p className="mt-2 text-[0.95rem] leading-relaxed text-ink/85">{project.summary}</p>
+        <h2 className="font-display text-xl font-semibold">{ui.caseSummary}</h2>
+        <p className="mt-2 text-[0.95rem] leading-relaxed text-ink/85">{view.summary}</p>
       </section>
 
       <section className="mt-8 rounded-2xl bg-surface p-5 shadow-card">
-        <h2 className="font-display text-xl font-semibold">來源與證據</h2>
+        <h2 className="font-display text-xl font-semibold">{ui.caseEvidence}</h2>
         <div className="mt-3 flex flex-wrap gap-3">
-          {project.github.url ? (
+          {view.github.url ? (
             <a
-              href={project.github.url}
+              href={view.github.url}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm text-bg"
               rel="noreferrer"
               target="_blank"
@@ -75,30 +83,30 @@ export function CaseStudyView({
               GitHub
             </a>
           ) : null}
-          {project.demo.url ? (
+          {view.demo.url ? (
             <a
-              href={project.demo.url}
+              href={view.demo.url}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface-blue px-5 text-sm"
               rel="noreferrer"
               target="_blank"
             >
               <Globe className="size-4" />
-              {project.demo.label ?? "Demo"}
+              {view.demo.label ?? "Demo"}
             </a>
           ) : null}
-          {project.canva.shareUrl ? (
+          {view.canva.shareUrl ? (
             <a
-              href={project.canva.shareUrl}
+              href={view.canva.shareUrl}
               className="inline-flex min-h-11 items-center rounded-full bg-mint px-5 text-sm font-semibold text-primary-foreground"
               rel="noreferrer"
               target="_blank"
             >
-              Canva 原作
+              {ui.caseOriginal}
             </a>
           ) : null}
         </div>
         <ul className="mt-4 grid gap-2">
-          {project.sourceEvidence.map((item) => (
+          {view.sourceEvidence.map((item) => (
             <li key={`${item.label}-${item.href ?? item.note}`} className="rounded-xl bg-surface-blue/70 px-4 py-3 text-sm">
               <p className="font-medium">{item.label}</p>
               <p className="text-muted">{item.note}</p>
@@ -111,39 +119,42 @@ export function CaseStudyView({
           ))}
         </ul>
         <p className="mt-3 text-xs text-muted">
-          GitHub {project.github.syncStatus} · Demo {project.demo.status} · Canva {project.canva.status}
+          GitHub {view.github.syncStatus} · Demo {view.demo.status} · Canva {view.canva.status}
         </p>
       </section>
 
       <section className="mt-10 grid gap-8">
-        <Block title="問題">{project.problem}</Block>
-        <Block title="我的角色">{project.role}</Block>
-        <ListBlock title="設計決策" items={project.decisions} />
-        <ListBlock title="AI 使用方式 / 多模態" items={project.modalities} />
-        <ListBlock title="流程" items={project.process} />
-        <ListBlock title="產出" items={project.outputs} />
-        <ListBlock title="技術" items={project.stack} />
-        <ListBlock title="限制與尚未完成" items={project.limitations} />
+        <Block title={ui.caseProblem}>{view.problem}</Block>
+        <Block title={ui.caseRole}>{view.role}</Block>
+        <ListBlock title={ui.caseDecisions} items={view.decisions} />
+        <ListBlock title={ui.caseModalities} items={view.modalities} />
+        <ListBlock title={ui.caseProcess} items={view.process} />
+        <ListBlock title={ui.caseOutputs} items={view.outputs} />
+        <ListBlock title={ui.caseStack} items={view.stack} />
+        <ListBlock title={ui.caseLimits} items={view.limitations} />
       </section>
 
       {others.length ? (
         <section className="mt-14 border-t border-line pt-8">
-          <h2 className="font-display text-xl font-semibold">其他作品</h2>
+          <h2 className="font-display text-xl font-semibold">{ui.caseOthers}</h2>
           <ul className="mt-4 grid gap-3">
-            {others.map((item) => (
-              <li key={item.slug}>
-                <Link
-                  to="/work/$slug"
-                  params={{ slug: item.slug }}
-                  className="flex min-h-11 items-center justify-between rounded-2xl bg-surface px-4 py-3 shadow-card"
-                >
-                  <span>
-                    <span className="block font-medium">{item.title}</span>
-                    <span className="text-sm text-muted">{item.subtitle}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {others.map((item) => {
+              const other = overlayProject(item, lang);
+              return (
+                <li key={other.slug}>
+                  <Link
+                    to="/work/$slug"
+                    params={{ slug: other.slug }}
+                    className="flex min-h-11 items-center justify-between rounded-2xl bg-surface px-4 py-3 shadow-card"
+                  >
+                    <span>
+                      <span className="block font-medium">{other.title}</span>
+                      <span className="text-sm text-muted">{other.subtitle}</span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}

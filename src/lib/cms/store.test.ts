@@ -968,36 +968,41 @@ describe("cms persistence", () => {
     assert.equal(settings?.subhead, "RT-SUBHEAD-欄");
     assert.equal(settings?.locale_json.en?.subhead, "RT-EN-SUBHEAD");
     assert.deepEqual(settings?.homepage_json.highlightSlugs, ["round-trip-work"]);
-    const homepage = resolveHomepageCopy(
-      {
-        nameZh: settings!.name_zh,
-        nameEn: settings!.name_en,
-        person: settings!.person,
-        role: settings!.role,
-        headline: settings!.headline,
-        subhead: settings!.subhead,
-        narrative: settings!.narrative,
-        email: settings!.email,
-        github: settings!.github,
-        githubHandle: settings!.github_handle,
-        location: settings!.location,
-        seoTitle: settings!.seo_title,
-        seoDescription: settings!.seo_description,
-        homepageHighlightSlugs: settings!.homepage_json.highlightSlugs ?? [],
-        locale: settings!.locale_json,
-      },
-      {
-        nameEn: "fallback",
-        person: "fallback",
-        headline: "fallback",
-        subhead: "fallback",
-        narrative: "fallback",
-      },
-    );
-    assert.equal(homepage.headline, "RT-ZH-HEADLINE");
-    assert.equal(homepage.subhead, "RT-EN-SUBHEAD");
-    assert.equal(homepage.narrative, "RT-ZH-NARRATIVE");
-    assert.equal(homepage.seoTitle, "RT-ZH-SITE-SEO-T");
+    const publicSite = {
+      nameZh: settings!.name_zh,
+      nameEn: settings!.name_en,
+      person: settings!.person,
+      role: settings!.role,
+      headline: settings!.headline,
+      subhead: settings!.subhead,
+      narrative: settings!.narrative,
+      email: settings!.email,
+      github: settings!.github,
+      githubHandle: settings!.github_handle,
+      location: settings!.location,
+      seoTitle: settings!.seo_title,
+      seoDescription: settings!.seo_description,
+      homepageHighlightSlugs: settings!.homepage_json.highlightSlugs ?? [],
+      locale: settings!.locale_json,
+    };
+    const fallback = {
+      nameEn: "fallback",
+      person: "fallback",
+      headline: "fallback",
+      subhead: "fallback",
+      narrative: "fallback",
+    };
+    const homepageZh = resolveHomepageCopy(publicSite, fallback, "zh");
+    const homepageEn = resolveHomepageCopy(publicSite, fallback, "en");
+    assert.equal(homepageZh.headline, "RT-ZH-HEADLINE");
+    assert.equal(homepageZh.subhead, "RT-ZH-SUBHEAD");
+    assert.equal(homepageZh.narrative, "RT-ZH-NARRATIVE");
+    assert.equal(homepageZh.seoTitle, "RT-ZH-SITE-SEO-T");
+    assert.equal(homepageEn.headline, "RT-EN-HEADLINE");
+    assert.equal(homepageEn.subhead, "RT-EN-SUBHEAD");
+    assert.equal(homepageEn.narrative, "RT-EN-NARRATIVE");
+    assert.equal(homepageEn.seoTitle, "RT-EN-SITE-SEO-T");
+    assert.equal(homepageEn.seoDescription, "RT-EN-SITE-SEO-D");
 
     await upsertArchive(
       sql,

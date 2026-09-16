@@ -1,3 +1,5 @@
+import { pickLocaleField, type ViewerLang } from "../locale/view.ts";
+
 export type PublicSite = {
   nameZh: string;
   nameEn: string;
@@ -28,27 +30,16 @@ export function resolveHomepageCopy(
     subhead: string;
     narrative: string;
   },
+  lang: ViewerLang = "zh",
 ) {
+  const locale = site?.locale;
   return {
     nameEn: site?.nameEn ?? fallback.nameEn,
     person: site?.person ?? fallback.person,
-    headline: site?.locale?.zh?.headline?.trim() || site?.headline || fallback.headline,
-    subhead:
-      site?.locale?.en?.subhead?.trim() ||
-      site?.locale?.zh?.subhead?.trim() ||
-      site?.locale?.en?.headline?.trim() ||
-      site?.subhead ||
-      fallback.subhead,
-    narrative: site?.locale?.zh?.narrative?.trim() || site?.narrative || fallback.narrative,
-    seoTitle:
-      site?.locale?.zh?.seoTitle?.trim() ||
-      site?.locale?.en?.seoTitle?.trim() ||
-      site?.seoTitle?.trim() ||
-      null,
-    seoDescription:
-      site?.locale?.zh?.seoDescription?.trim() ||
-      site?.locale?.en?.seoDescription?.trim() ||
-      site?.seoDescription?.trim() ||
-      null,
+    headline: pickLocaleField(lang, locale, "headline", site?.headline, fallback.headline),
+    subhead: pickLocaleField(lang, locale, "subhead", site?.subhead, fallback.subhead),
+    narrative: pickLocaleField(lang, locale, "narrative", site?.narrative, fallback.narrative),
+    seoTitle: pickLocaleField(lang, locale, "seoTitle", site?.seoTitle, "") || null,
+    seoDescription: pickLocaleField(lang, locale, "seoDescription", site?.seoDescription, "") || null,
   };
 }

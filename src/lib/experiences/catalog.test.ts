@@ -113,7 +113,15 @@ describe("frontend contract", () => {
     const footer = readFileSync(new URL("../../../src/components/site/SiteFooter.tsx", import.meta.url), "utf8");
     assert.match(footer, /min-h-11/);
     const shell = readFileSync(new URL("../../../src/components/site/SiteShell.tsx", import.meta.url), "utf8");
-    assert.match(shell, /跳到內容/);
+    assert.match(shell, /ui\.skip/);
+    assert.match(shell, /LocaleProvider/);
+    const localeView = readFileSync(new URL("../../../src/lib/locale/view.ts", import.meta.url), "utf8");
+    assert.match(localeView, /跳到內容/);
+    const toggle = readFileSync(new URL("../../../src/components/site/LocaleToggle.tsx", import.meta.url), "utf8");
+    assert.match(toggle, /role="radiogroup"/);
+    assert.match(toggle, /min-h-11/);
+    assert.match(toggle, /min-w-11/);
+    assert.match(header, /LocaleToggle/);
     const panel = readFileSync(
       new URL("../../../src/components/experience/ExperiencePanel.tsx", import.meta.url),
       "utf8",
@@ -239,6 +247,10 @@ describe("frontend contract", () => {
     const index = readFileSync(new URL("../../../src/routes/index.tsx", import.meta.url), "utf8");
     assert.match(index, /resolveHomepageCopy/);
     assert.match(index, /seoTitle/);
+    assert.match(index, /resolveHomepageCopy\(site, fallbackSite, lang\)/);
+    assert.match(index, /overlayProject/);
+    assert.match(header, /md:hidden/);
+    assert.doesNotMatch(toggle, /dark:/);
     const about = readFileSync(new URL("../../../src/routes/about.tsx", import.meta.url), "utf8");
     assert.match(about, /getPublicSiteFn/);
     assert.match(about, /resolveHomepageCopy/);
@@ -287,8 +299,9 @@ describe("frontend contract", () => {
     assert.match(archiveForm, /媒體類型/);
     assert.match(archiveForm, /canva_thumbnail_url/);
     const privacy = readFileSync(new URL("../../../src/routes/privacy.tsx", import.meta.url), "utf8");
-    assert.match(privacy, /不會公開的/);
-    assert.match(privacy, /電話/);
+    assert.match(privacy, /privacyHidden/);
+    assert.match(localeView, /不會公開的/);
+    assert.match(localeView, /電話/);
     const siteNav = readFileSync(new URL("../../../src/content/site.ts", import.meta.url), "utf8");
     assert.match(siteNav, /\/privacy/);
     const editor = readFileSync(
@@ -310,13 +323,15 @@ describe("frontend contract", () => {
     );
     assert.match(field, /constellationLayout/);
     assert.match(field, /useRovingTabs/);
-    assert.match(field, /作品與模態/);
+    assert.match(field, /ui\.explorationAria/);
+    assert.match(localeView, /explorationAria: "作品與模態"/);
     assert.match(field, /hidden /);
     assert.match(field, /lg:block/);
     assert.match(field, /overflow-visible/);
     assert.match(field, /availableFilters/);
     assert.doesNotMatch(field, /particle/);
-    assert.match(archive, /尚未提供分享連結/);
+    assert.match(archive, /archiveEmbedNote/);
+    assert.match(localeView, /尚未提供分享連結/);
     assert.match(archive, /parseCanvaDesign/);
     assert.match(archive, /ArchiveLocalCover/);
     assert.match(archive, /pageIds: item.canva.pageIds/);

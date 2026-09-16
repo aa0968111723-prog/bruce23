@@ -492,36 +492,37 @@ export async function runAdminE2E() {
     assert.deepEqual(settings?.homepage_json.highlightSlugs, ["framelab", created.slug]);
     assert.equal(settings?.locale_json.zh?.headline, "中文 headline");
     assert.equal(settings?.locale_json.en?.headline, "EN headline");
-    const homepage = resolveHomepageCopy(
-      {
-        nameZh: settings!.name_zh,
-        nameEn: settings!.name_en,
-        person: settings!.person,
-        role: settings!.role,
-        headline: settings!.headline,
-        subhead: settings!.subhead,
-        narrative: settings!.narrative,
-        email: settings!.email,
-        github: settings!.github,
-        githubHandle: settings!.github_handle,
-        location: settings!.location,
-        seoTitle: settings!.seo_title,
-        seoDescription: settings!.seo_description,
-        homepageHighlightSlugs: settings!.homepage_json.highlightSlugs ?? [],
-        locale: settings!.locale_json,
-      },
-      {
-        nameEn: "fallback",
-        person: "fallback",
-        headline: "fallback headline",
-        subhead: "fallback subhead",
-        narrative: "fallback narrative",
-      },
-    );
-    assert.equal(homepage.headline, "中文 headline");
-    assert.equal(homepage.narrative, "中文 narrative");
-    assert.equal(homepage.subhead, "EN headline");
-    assert.equal(homepage.seoTitle, "E2E SEO");
+    const publicSite = {
+      nameZh: settings!.name_zh,
+      nameEn: settings!.name_en,
+      person: settings!.person,
+      role: settings!.role,
+      headline: settings!.headline,
+      subhead: settings!.subhead,
+      narrative: settings!.narrative,
+      email: settings!.email,
+      github: settings!.github,
+      githubHandle: settings!.github_handle,
+      location: settings!.location,
+      seoTitle: settings!.seo_title,
+      seoDescription: settings!.seo_description,
+      homepageHighlightSlugs: settings!.homepage_json.highlightSlugs ?? [],
+      locale: settings!.locale_json,
+    };
+    const fallback = {
+      nameEn: "fallback",
+      person: "fallback",
+      headline: "fallback headline",
+      subhead: "fallback subhead",
+      narrative: "fallback narrative",
+    };
+    const homepageZh = resolveHomepageCopy(publicSite, fallback, "zh");
+    const homepageEn = resolveHomepageCopy(publicSite, fallback, "en");
+    assert.equal(homepageZh.headline, "中文 headline");
+    assert.equal(homepageZh.narrative, "中文 narrative");
+    assert.equal(homepageEn.headline, "EN headline");
+    assert.equal(homepageEn.narrative, "EN narrative");
+    assert.equal(homepageEn.seoTitle, "E2E SEO");
   });
 
   await step("live /login stays Google-only when the preview server is up", async () => {

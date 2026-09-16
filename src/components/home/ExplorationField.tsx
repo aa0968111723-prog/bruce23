@@ -2,8 +2,10 @@ import { useMemo, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { modalityFilters, projectHubIds } from "@/lib/experiences/catalog";
 import { CONSTELLATION_HEIGHT, CONSTELLATION_WIDTH, constellationLayout } from "@/lib/home/constellation";
+import { chromeHub } from "@/lib/locale/view";
 import { cn } from "@/lib/cn";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { useViewerLocale } from "@/components/site/LocaleProvider";
 
 export function ExplorationField({
   projects,
@@ -14,6 +16,7 @@ export function ExplorationField({
   onOpen: (project: PublicProject) => void;
   highlightSlugs?: string[];
 }) {
+  const { ui } = useViewerLocale();
   const [filter, setFilter] = useState<string | null>(null);
   const ordered = useMemo(() => {
     if (!highlightSlugs?.length) return projects;
@@ -41,15 +44,13 @@ export function ExplorationField({
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-      <h2 className="font-display text-3xl font-semibold">可操作的能力地圖</h2>
-      <p className="mt-2 max-w-2xl text-sm text-muted">
-        約兩成畫面用來畫作品真正接到的模態。其餘八成是可讀的列表與卡片，不是裝飾粒子，也不用拖曳才能找到作品。
-      </p>
+      <h2 className="font-display text-3xl font-semibold">{ui.explorationTitle}</h2>
+      <p className="mt-2 max-w-2xl text-sm text-muted">{ui.explorationBody}</p>
 
       <div
         className="mt-6 flex gap-2 overflow-x-auto pb-2"
         role="tablist"
-        aria-label="作品與模態"
+        aria-label={ui.explorationAria}
         onKeyDown={tabs.onKeyDown}
       >
         <button
@@ -64,7 +65,7 @@ export function ExplorationField({
           )}
           onClick={() => setFilter(null)}
         >
-          全部
+          {ui.all}
         </button>
         {availableFilters.map((item) => (
           <button
@@ -80,7 +81,7 @@ export function ExplorationField({
             )}
             onClick={() => setFilter((value) => (value === item.id ? null : item.id))}
           >
-            {item.label}
+            {chromeHub(ui, item.id)}
           </button>
         ))}
       </div>
@@ -89,11 +90,11 @@ export function ExplorationField({
         <svg
           viewBox={`0 0 ${CONSTELLATION_WIDTH} ${CONSTELLATION_HEIGHT}`}
           role="group"
-          aria-label="作品與模態的空間關係"
+          aria-label={ui.constellationAria}
           className="mx-auto h-auto w-full"
           preserveAspectRatio="xMidYMid meet"
         >
-          <title>作品與模態星圖</title>
+          <title>{ui.constellationTitle}</title>
           {map.edges.map((edge) => {
             const hub = map.hubs.find((item) => item.id === edge.from);
             const node = map.nodes.find((item) => item.slug === edge.to);
@@ -114,7 +115,7 @@ export function ExplorationField({
             <g key={hub.id}>
               <circle cx={hub.x} cy={hub.y} r={24} className="fill-surface-mint stroke-mint/70" strokeWidth={2} />
               <text x={hub.x} y={hub.y + 4} textAnchor="middle" className="fill-ink text-[13px] font-medium">
-                {hub.label}
+                {chromeHub(ui, hub.id)}
               </text>
             </g>
           ))}
@@ -140,7 +141,7 @@ export function ExplorationField({
       </div>
 
       <div className="mt-6 grid gap-3">
-        <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="作品節點">
+        <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label={ui.workNodes}>
           {visible.map((project) => (
             <button
               key={`node-${project.slug}`}

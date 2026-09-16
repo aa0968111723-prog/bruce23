@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: admin field round-trip (not complete)
+Cycle: public zh|en switcher (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -25,6 +25,12 @@ Updated: 2026-09-16
 - Copilot Code Review: **failure** is environment-only monthly quota **402**. Not a code failure. Codex review also quota.
 - Review threads: none.
 - PR comments: Cursor bot, Codex quota, CodeRabbit skip. No human review threads.
+
+## This cycle (public 中英文 switcher)
+
+- Public shell header (desktop nav + mobile cluster next to the menu) has a light-studio `zh | en` radiogroup, ≥44px, keyboard arrows/Home/End. Preference key `luminous-studio-lang` in localStorage only. CMS copy stays in Postgres.
+- Homepage, about, work list, case study (title/summary/problem/role/SEO document title), archive chrome/filters, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` / `seoTitle` / `seoDescription` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
+- Archive item titles/summaries have no `locale_json`, so only chrome/filters switch. Experience playable internals stay zh.
 
 ## This cycle (admin field round-trip)
 
@@ -72,7 +78,7 @@ Updated: 2026-09-16
 - Google login as `aa0968111723@gmail.com` to browser-prove admin as a human
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
-- Full bilingual UI toggle (zh/en fields are stored and read; no language switcher)
+- Public language switcher ships; remaining bilingual gap is CMS English *content* for works/archive (seed en titles often duplicate zh) plus experience-playable internals.
 - Folio still has no public editor-operation screenshot (only og.jpg share card)
 - tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)
 - Platform PWA apple-touch / `__grok` install icon remains Grok chrome (not overwritten)
