@@ -23,12 +23,16 @@ export function ExplorationField({
     const rest = projects.filter((item) => !highlightSlugs.includes(item.slug));
     return [...picked, ...rest];
   }, [highlightSlugs, projects]);
+  const availableFilters = useMemo(
+    () => modalityFilters.filter((item) => ordered.some((project) => item.slugs.includes(project.slug))),
+    [ordered],
+  );
   const visible = useMemo(() => {
     if (!filter) return ordered;
-    const spec = modalityFilters.find((item) => item.id === filter);
+    const spec = availableFilters.find((item) => item.id === filter);
     if (!spec) return ordered;
     return ordered.filter((project) => spec.slugs.includes(project.slug));
-  }, [filter, ordered]);
+  }, [availableFilters, filter, ordered]);
   const map = useMemo(() => constellationLayout(visible), [visible]);
   const bySlug = useMemo(() => new Map(visible.map((item) => [item.slug, item])), [visible]);
 
@@ -40,7 +44,7 @@ export function ExplorationField({
       </p>
 
       <div className="mt-6 flex gap-2 overflow-x-auto pb-2" role="list">
-        {modalityFilters.map((item) => (
+        {availableFilters.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -55,7 +59,7 @@ export function ExplorationField({
         ))}
       </div>
 
-      <div className="constellation mt-8 hidden overflow-hidden rounded-[2rem] bg-surface-blue/70 p-3 shadow-card lg:block">
+      <div className="constellation mt-8 overflow-hidden rounded-[2rem] bg-surface-blue/70 p-3 shadow-card">
         <svg
           viewBox={`0 0 ${CONSTELLATION_WIDTH} ${CONSTELLATION_HEIGHT}`}
           role="group"

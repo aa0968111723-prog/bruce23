@@ -398,10 +398,19 @@ export async function canvaAccessToken(sql: Sql): Promise<string> {
     pending = exchangeToken({
       grant_type: "refresh_token",
       refresh_token: tokens.refresh_token,
-    }).then(async (next) => {
-      await writeTokens(sql, next, "refresh", "connected");
-      return next;
-    });
+    })
+      .then(async (next) => {
+        await writeTokens(sql, next, "refresh", "connected");
+        return next;
+      })
+      .catch(async (err) => {
+        await sql
+          .query(`update integration_secrets set last_status = 'failed', updated_at = now() where id = $1`, [
+            CANVA_TOKEN_ROW_ID,
+          ])
+          .catch(() => undefined);
+        throw err;
+      });
     refreshes.set("current", pending);
   }
   try {
@@ -423,6 +432,19 @@ export async function loadCanvaConnectionStatus(sql: Sql): Promise<CanvaConnecti
       ...base,
       status: "failed",
       message: "已有加密 token 列，但無法解密。請檢查 CANVA_TOKEN_KEY 後重新授權。",
+    };
+  }
+  if (row.last_status === "failed") {
+    return {
+      mode: "oauth",
+      connected: false,
+      status: "failed",
+      credentialsConfigured: true,
+      tokenKeyConfigured: true,
+      canSearch: false,
+      canExport: false,
+      canDisconnect: true,
+      message: "Canva token 刷新失敗。請重新授權。不會標記為已連線。",
     };
   }
   const lastSyncAt =
@@ -450,16 +472,18 @@ export async function disconnectCanva(sql: Sql): Promise<CanvaConnectionStatus> 
   if (row && canvaCredentialsPresent() && canvaTokenKeyPresent()) {
     try {
       const tokens = parseStoredTokens(row);
-      await fetch(`${CANVA_API}/oauth/revoke`, {
-        method: "POST",
-        redirect: "error",
-        signal: AbortSignal.timeout(10_000),
-        headers: {
-          Authorization: basicAuthHeader(),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ token: tokens.refresh_token }),
-      });
+      for (const token of [tokens.refresh_token, tokens.access_token]) {
+        await fetch(`${CANVA_API}/oauth/revoke`, {
+          method: "POST",
+          redirect: "error",
+          signal: AbortSignal.timeout(10_000),
+          headers: {
+            Authorization: basicAuthHeader(),
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ token }),
+        }).catch(() => undefined);
+      }
     } catch {
       // Local disconnect still proceeds; Canva revoke is best-effort.
     }

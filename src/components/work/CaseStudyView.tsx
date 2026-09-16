@@ -26,7 +26,16 @@ export function CaseStudyView({
   return (
     <article className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       {includeJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              ...jsonLd,
+              inLanguage: "zh-Hant",
+              image: project.media[0]?.src?.startsWith("/media/") ? project.media[0].src : undefined,
+            }),
+          }}
+        />
       ) : null}
       {backTo === "work" ? (
         <Link to="/work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-ink">

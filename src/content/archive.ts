@@ -103,6 +103,12 @@ export const archiveItems: ArchiveItem[] = [
     kind: "interactive",
     year: "2026",
     summary: "社博 stroop 挑戰：掃碼、遊玩、看稱號。排行榜只顯示姓名／系級／分數，本站不放任何成績資料。",
+    media: {
+      src: "/media/archive/stroop-challenge.svg",
+      alt: "社博 stroop 挑戰的光線轉譯，不是現場成績畫面",
+      kind: "image",
+      caption: "現場氣氛轉譯 · 本站不放成績資料",
+    },
     href: "https://github.com/aa0968111723-prog/ever-marble-flora-clover",
     originNote: "公開 repo ever-marble-flora-clover。",
   },
@@ -112,6 +118,12 @@ export const archiveItems: ArchiveItem[] = [
     kind: "graphic",
     year: "2025",
     summary: "Google 簡報形式的平面作品整理。原檔留在 Drive，本站不公開整個資料夾。",
+    media: {
+      src: "/media/archive/graphic-portfolio.svg",
+      alt: "平面作品集的紙面與色票轉譯，不是 Drive 原檔",
+      kind: "image",
+      caption: "視覺轉譯 · 原作留在 Drive",
+    },
     originNote: "Drive 檔案「平面設計作品集」僅作來源索引，未把內部資料夾公開。",
   },
 ];

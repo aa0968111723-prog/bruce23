@@ -31,6 +31,16 @@ function yearValue(year: string): number {
   return match ? Number(match[0]) : 2024;
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function slugAngle(slug: string, index: number): number {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i += 1) hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
+  return (hash % 628) / 100 + index * 0.41;
+}
+
 /** Place works by the modalities they actually use, not decorative scatter. */
 export function constellationLayout(projects: PublicProject[]): {
   hubs: ConstellationHub[];
@@ -66,11 +76,13 @@ export function constellationLayout(projects: PublicProject[]): {
     const cy = points.length ? points.reduce((sum, item) => sum + item.y, 0) / points.length : 280 + Math.sin(fallbackAngle) * 60;
     const t = (yearValue(project.year) - minY) / Math.max(maxY - minY, 1);
     const radial = 0.55 + t * 0.45;
+    const angle = slugAngle(project.slug, index);
+    const spread = 40 + (index % 4) * 16;
     return {
       slug: project.slug,
       title: project.title,
-      x: 500 + (cx - 500) * radial,
-      y: 280 + (cy - 280) * radial,
+      x: clamp(500 + (cx - 500) * radial + Math.cos(angle) * spread, 70, 930),
+      y: clamp(280 + (cy - 280) * radial + Math.sin(angle) * spread * 0.72, 48, 512),
       category: project.category,
       year: project.year,
       modalities: linked.map((item) => item.label),

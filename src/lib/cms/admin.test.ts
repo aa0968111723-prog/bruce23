@@ -91,6 +91,8 @@ describe("admin allowlist", () => {
     assert.match(source, /canvaCredentialsPresent/);
     assert.match(source, /startCanvaOAuth/);
     assert.match(source, /searchCanvaDesigns/);
+    assert.match(source, /getCanvaDesign/);
+    assert.match(source, /continuation/);
     assert.doesNotMatch(source, /connected:\s*true/);
     assert.match(source, /authMiddleware/);
     assert.match(source, /previewDraftFn/);

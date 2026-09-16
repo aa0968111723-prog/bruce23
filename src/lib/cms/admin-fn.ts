@@ -425,11 +425,18 @@ export const disconnectCanvaFn = createServerFn({ method: "POST" })
 
 export const searchCanvaDesignsFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .validator((input: unknown) => z.object({ query: z.string().max(150).optional() }).parse(input ?? {}))
+  .validator((input: unknown) =>
+    z
+      .object({
+        query: z.string().max(150).optional(),
+        continuation: z.string().max(500).optional(),
+      })
+      .parse(input ?? {}),
+  )
   .handler(async ({ context, data }) => {
     const { sql } = await adminSql(asAuthed(context));
     const { searchCanvaDesigns } = await import("@/lib/canva/connect.server");
-    return searchCanvaDesigns(sql, data.query ?? "");
+    return searchCanvaDesigns(sql, data.query ?? "", data.continuation);
   });
 
 export const getCanvaDesignFn = createServerFn({ method: "GET" })

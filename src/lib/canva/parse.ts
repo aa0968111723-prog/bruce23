@@ -89,3 +89,12 @@ export function toCanvaEmbedUrl(shareOrEmbed: string | null | undefined): string
   const parsed = parseCanvaDesign(shareOrEmbed);
   return parsed?.embedUrl ?? null;
 }
+
+/** Persist only same-origin media covers. Connect CDN thumbnails expire and must not become the public cover. */
+export function sanitizeStoredCanvaThumbnail(input: string | null | undefined): string | null {
+  const raw = input?.trim() ?? "";
+  if (!raw) return null;
+  if (!raw.startsWith("/media/")) return null;
+  if (raw.includes("..") || raw.includes("//") || raw.includes("\\") || raw.includes("%")) return null;
+  return raw.split("?")[0];
+}

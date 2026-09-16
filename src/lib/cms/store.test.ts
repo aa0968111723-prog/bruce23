@@ -292,6 +292,26 @@ describe("cms persistence", () => {
     assert.ok(published.canva.embedUrl?.includes("embed"));
   });
 
+  it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://evil.example/design/DAGfake/view",
+        canva_thumbnail_url: "https://document-export.canva.com/expired.png",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.shareUrl, null);
+    assert.equal(published.canva.embedUrl, null);
+    assert.equal(published.canva.thumbnailUrl, null);
+    assert.equal(published.canva.status, "failed");
+  });
+
   it("seeds honest Canva fields for every featured work", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

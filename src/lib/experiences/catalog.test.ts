@@ -147,6 +147,11 @@ describe("frontend contract", () => {
     );
     assert.match(field, /constellationLayout/);
     assert.match(field, /作品與模態/);
+    assert.doesNotMatch(field, /hidden lg:block/);
+    const preview = readFileSync(new URL("../../../src/routes/admin/preview.tsx", import.meta.url), "utf8");
+    assert.match(preview, /CaseStudyView/);
+    assert.match(preview, /includeJsonLd=\{false\}/);
+    assert.match(preview, /previewDraftFn/);
     const draft = readFileSync(new URL("../../../src/routes/admin/draft.$slug.tsx", import.meta.url), "utf8");
     assert.match(draft, /CaseStudyView/);
     assert.match(draft, /includeJsonLd=\{false\}/);

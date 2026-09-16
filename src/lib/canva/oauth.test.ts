@@ -11,8 +11,8 @@ import {
   encryptSecret,
   pkcePair,
 } from "./oauth.server.ts";
-import { sanitizeCanvaDesign } from "./connect.server.ts";
-import { isAllowedCanvaMediaUrl } from "./parse.ts";
+import { sanitizeCanvaDesign, isAllowedCanvaApiPath } from "./connect.server.ts";
+import { isAllowedCanvaMediaUrl, sanitizeStoredCanvaThumbnail } from "./parse.ts";
 
 function withEnv(vars: Record<string, string | undefined>, fn: () => void) {
   const previous: Record<string, string | undefined> = {};
@@ -136,6 +136,7 @@ describe("canva connect DTOs", () => {
     });
     assert.equal(card?.id, "DAFVztcvd9z");
     assert.equal(card?.pageCount, 5);
+    assert.deepEqual(card?.pages, ["1", "2", "3", "4", "5"]);
     assert.match(card?.thumbnailUrl ?? "", /document-export\.canva\.com/);
     assert.match(card?.editUrl ?? "", /canva\.com/);
     assert.equal(card?.viewUrl, null);
@@ -144,6 +145,24 @@ describe("canva connect DTOs", () => {
   it("drops non-canva media hosts", () => {
     assert.equal(isAllowedCanvaMediaUrl("https://evil.example/x.png"), false);
     assert.equal(isAllowedCanvaMediaUrl("https://export-download.canva.com/file.pdf"), true);
+  });
+
+  it("allows official Connect paths including colon export ids and continuation", () => {
+    assert.equal(isAllowedCanvaApiPath("/designs"), true);
+    assert.equal(isAllowedCanvaApiPath("/designs?query=poster"), true);
+    assert.equal(isAllowedCanvaApiPath("/designs?continuation=abc"), true);
+    assert.equal(isAllowedCanvaApiPath("/designs/DAFVztcvd9z"), true);
+    assert.equal(isAllowedCanvaApiPath("/exports"), true);
+    assert.equal(isAllowedCanvaApiPath("/exports/e:a11a10b1-8d66-4c0c-9e38-7aa2d76714aa"), true);
+    assert.equal(isAllowedCanvaApiPath("/oauth/token"), false);
+    assert.equal(isAllowedCanvaApiPath("/designs?evil=1"), false);
+    assert.equal(isAllowedCanvaApiPath("https://evil.example/designs"), false);
+  });
+
+  it("refuses to persist expiring Canva CDN thumbnails as public covers", () => {
+    assert.equal(sanitizeStoredCanvaThumbnail("/media/archive/tku-zen-poster.svg"), "/media/archive/tku-zen-poster.svg");
+    assert.equal(sanitizeStoredCanvaThumbnail("https://document-export.canva.com/x.png"), null);
+    assert.equal(sanitizeStoredCanvaThumbnail("/media/../secret.svg"), null);
   });
 
   it("does not keep a hardcoded encryption fallback in source", () => {
@@ -156,5 +175,8 @@ describe("canva connect DTOs", () => {
     assert.match(callback, /completeCanvaOAuth/);
     assert.doesNotMatch(start, /connected:\s*true/);
     assert.doesNotMatch(callback, /access_token/);
+    const connect = readFileSync(new URL("./connect.server.ts", import.meta.url), "utf8");
+    assert.match(connect, /isAllowedCanvaApiPath/);
+    assert.doesNotMatch(connect, /access_token/);
   });
 });

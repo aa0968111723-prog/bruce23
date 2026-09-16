@@ -55,5 +55,7 @@ describe("homepage constellation", () => {
       spaceOnly.hubs.some((hub) => hub.id === "image"),
       false,
     );
+    const unique = new Set(map.nodes.map((node) => `${node.x.toFixed(2)}:${node.y.toFixed(2)}`));
+    assert.equal(unique.size, map.nodes.length);
   });
 });

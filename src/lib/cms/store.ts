@@ -10,7 +10,7 @@ import {
 } from "./privacy.ts";
 import type { IntegrationStatus, PublicationStatus } from "./status.ts";
 import { parseGithubUrl } from "../github/parse.ts";
-import { parseCanvaDesign } from "../canva/parse.ts";
+import { parseCanvaDesign, sanitizeStoredCanvaThumbnail } from "../canva/parse.ts";
 import type { GithubFetchResult } from "../github/client.server.ts";
 
 export function jsonb(value: unknown): string {
@@ -332,12 +332,16 @@ function insertParams(input: ProjectInput, id: string, actor: string | null): un
     input.live_demo_last_verified_at ?? null,
     input.live_demo_status,
     input.live_demo_error ?? null,
-    parsedCanva?.shareUrl ?? input.canva_share_url ?? null,
-    parsedCanva?.embedUrl ?? input.canva_embed_url ?? null,
-    parsedCanva?.designId ?? input.canva_design_id ?? null,
+    parsedCanva?.shareUrl ?? null,
+    parsedCanva?.embedUrl ?? null,
+    parsedCanva?.designId ?? null,
     jsonb(input.canva_page_ids ?? null),
-    input.canva_thumbnail_url ?? null,
-    input.canva_share_url || input.canva_embed_url ? input.canva_status : "not_configured",
+    sanitizeStoredCanvaThumbnail(input.canva_thumbnail_url),
+    parsedCanva
+      ? input.canva_status
+      : input.canva_share_url || input.canva_embed_url
+        ? "failed"
+        : "not_configured",
     input.canva_last_synced_at ?? null,
     input.canva_alt ?? null,
     input.canva_caption ?? null,
@@ -673,12 +677,12 @@ export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: strin
       input.origin_note,
       input.publication_status,
       input.sort_order,
-      parsed?.shareUrl ?? input.canva_share_url ?? null,
-      parsed?.embedUrl ?? input.canva_embed_url ?? null,
-      parsed?.designId ?? input.canva_design_id ?? null,
+      parsed?.shareUrl ?? null,
+      parsed?.embedUrl ?? null,
+      parsed?.designId ?? null,
       jsonb(input.canva_page_ids ?? null),
-      input.canva_thumbnail_url ?? null,
-      input.canva_status,
+      sanitizeStoredCanvaThumbnail(input.canva_thumbnail_url),
+      parsed ? input.canva_status : input.canva_share_url || input.canva_embed_url ? "failed" : input.canva_status,
       input.canva_alt ?? null,
       input.canva_caption ?? null,
       actor,

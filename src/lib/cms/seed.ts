@@ -59,7 +59,8 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
              when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
                then canva_status
              else $8
-           end
+           end,
+           media = coalesce(media, $9::jsonb)
        where slug = $1 or id = $1`,
       [
         item.id,
@@ -70,6 +71,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
         fields.embedUrl,
         fields.designId,
         fields.status,
+        item.media ? JSON.stringify(item.media) : null,
       ],
     );
   }

@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: independent Canva Connect implementation (not complete)
+Cycle: independent Canva Connect path/export + public spatial map (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -11,7 +11,7 @@ Updated: 2026-09-16
 - Canva originals hosted locally: TKU Zen poster + deck pages
 - Notion: disconnected. Adapter stub only.
 - Canva MCP this environment: `needsAuth`; not used. No design list.
-- Public GitHub READMEs / homepages: no live `canva.com/design/{DAG…}` share URLs. Search hits are helper functions and test fixtures (`duigao`, `hermes-console`). Only `ai_os` has homepage `https://ai-os-ten.vercel.app`. healing-studio `canva.com/d/…` is not a public embed.
+- Public GitHub READMEs / homepages: no live `canva.com/design/{DAG…}` share URLs. Re-scanned 11 READMEs 2026-09-16. Search hits are helper functions and test fixtures (`duigao`, `hermes-console`). Only `ai_os` has homepage `https://ai-os-ten.vercel.app`. healing-studio `canva.com/d/…` is not a public embed.
 
 ## Done in product code (still not the full /goal)
 
@@ -20,9 +20,10 @@ Updated: 2026-09-16
 - Admin ProjectForm: narrative, SEO, zh/en, media/video, Canva fields, page ids, structured experience editors, GitHub diff, source_evidence editor
 - Settings persist homepage highlight slugs and locale JSON
 - Canva public-embed paste path + fixture embed test
-- Official Canva Connect/OAuth shape: PKCE start + callback, AES-GCM tokens in `integration_secrets`, search/metadata/export/apply/disconnect. Fail-closed without `CANVA_CLIENT_ID`/`CANVA_CLIENT_SECRET`/`CANVA_TOKEN_KEY`. Connect button does not toast success when unconfigured.
-- Homepage constellation positions works by real modality membership and year
-- Admin draft preview uses public case chrome without JSON-LD
+- Official Canva Connect/OAuth shape: PKCE start + callback, AES-GCM tokens in `integration_secrets`, search/metadata/pages/export/apply/disconnect. Export poll allows Canva `e:uuid` job ids. Search continuation. Select fetches design metadata. Fail-closed without `CANVA_CLIENT_ID`/`CANVA_CLIENT_SECRET`/`CANVA_TOKEN_KEY`. Connect button does not toast success when unconfigured. Refresh failure marks disconnected. Stored covers refuse expiring CDN thumbs. Admin Canva paste drops non-allowlisted URLs.
+- Homepage constellation on all viewports, ≥20vh, hubs/chips only for modalities the visible works use
+- Admin `/admin/preview` is a viewer chrome around CaseStudyView without JSON-LD
+- Archive graphic + stroop have honest local translations (not Drive originals)
 
 ## Not done / blocked
 

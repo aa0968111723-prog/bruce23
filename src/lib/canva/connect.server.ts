@@ -1,24 +1,51 @@
 import type { Sql } from "../db.ts";
 import {
   CANVA_API,
+  CANVA_TOKEN_ROW_ID,
   CanvaConfigError,
   canvaAccessToken,
   loadCanvaConnectionStatus,
 } from "./oauth.server.ts";
 import { canvaStableEditUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign } from "./parse.ts";
 
-const DESIGN_ID_RE = /^[A-Za-z0-9_-]{6,}$/;
+const DESIGN_ID_RE = /^[A-Za-z0-9_-]{6,80}$/;
 
 export type CanvaDesignCard = {
   id: string;
   title: string;
   pageCount: number | null;
+  pages: string[];
   updatedAt: string | null;
   thumbnailUrl: string | null;
   editUrl: string | null;
   viewUrl: string | null;
   temporaryUrls: boolean;
 };
+
+export function isAllowedCanvaApiPath(path: string): boolean {
+  if (!path.startsWith("/")) return false;
+  const qIndex = path.indexOf("?");
+  const pathname = qIndex === -1 ? path : path.slice(0, qIndex);
+  const query = qIndex === -1 ? "" : path.slice(qIndex + 1);
+  if (pathname === "/designs") {
+    if (!query) return true;
+    const params = new URLSearchParams(query);
+    for (const key of params.keys()) {
+      if (key !== "query" && key !== "continuation") return false;
+    }
+    return true;
+  }
+  if (/^\/designs\/[A-Za-z0-9_-]{6,80}$/.test(pathname) && !query) return true;
+  if (pathname === "/exports" && !query) return true;
+  // Canva export job ids look like `e:uuid`.
+  if (/^\/exports\/[A-Za-z0-9:_%-]{6,200}$/.test(pathname) && !query) return true;
+  return false;
+}
+
+function pageIdsFromCount(pageCount: number | null): string[] {
+  if (!pageCount || pageCount < 1) return [];
+  return Array.from({ length: Math.min(pageCount, 40) }, (_, index) => String(index + 1));
+}
 
 function allowlisted(url: string | null | undefined, media = false): string | null {
   if (!url) return null;
@@ -46,6 +73,7 @@ export function sanitizeCanvaDesign(raw: unknown): CanvaDesignCard | null {
     id,
     title: typeof design.title === "string" ? design.title : id,
     pageCount,
+    pages: pageIdsFromCount(pageCount),
     updatedAt: updated,
     thumbnailUrl: allowlisted(typeof thumb.url === "string" ? thumb.url : null, true),
     editUrl: allowlisted(typeof urls.edit_url === "string" ? urls.edit_url : null) ?? canvaStableEditUrl(id),
@@ -54,16 +82,18 @@ export function sanitizeCanvaDesign(raw: unknown): CanvaDesignCard | null {
   };
 }
 
+async function touchCanvaLastSync(sql: Sql): Promise<void> {
+  await sql.query(`update integration_secrets set last_sync_at = now(), updated_at = now() where id = $1`, [
+    CANVA_TOKEN_ROW_ID,
+  ]);
+}
+
 async function canvaJson(
   sql: Sql,
   path: string,
   init: RequestInit = {},
 ): Promise<{ ok: boolean; status: number; json: unknown }> {
-  if (
-    !/^\/(designs(?:\/[A-Za-z0-9_-]+)?(?:\?query=[^#]*)?|exports(?:\/[A-Za-z0-9_-]+)?)$/.test(
-      path,
-    )
-  ) {
+  if (!isAllowedCanvaApiPath(path)) {
     throw new CanvaConfigError("不允許此 Canva 操作。", "canva_path_rejected");
   }
   const access = await canvaAccessToken(sql);
@@ -89,18 +119,21 @@ async function canvaJson(
 export async function searchCanvaDesigns(
   sql: Sql,
   query = "",
+  continuation?: string,
 ): Promise<{ items: CanvaDesignCard[]; continuation?: string }> {
   const status = await loadCanvaConnectionStatus(sql);
   if (!status.connected) {
     throw new CanvaConfigError(status.message, "canva_authorization_required");
   }
-  const path = query.trim()
-    ? `/designs?query=${encodeURIComponent(query.trim().slice(0, 150))}`
-    : "/designs";
-  const result = await canvaJson(sql, path);
+  const params = new URLSearchParams();
+  if (query.trim()) params.set("query", query.trim().slice(0, 150));
+  if (continuation?.trim()) params.set("continuation", continuation.trim().slice(0, 500));
+  const qs = params.toString();
+  const result = await canvaJson(sql, qs ? `/designs?${qs}` : "/designs");
   if (!result.ok) {
     throw new CanvaConfigError("無法讀取 Canva 設計清單。請重新授權後再試。", "canva_search_failed");
   }
+  await touchCanvaLastSync(sql);
   const body = asRecord(result.json);
   const items = Array.isArray(body.items) ? body.items : [];
   return {
@@ -123,6 +156,7 @@ export async function getCanvaDesign(sql: Sql, designId: string): Promise<CanvaD
   }
   const card = sanitizeCanvaDesign(result.json);
   if (!card) throw new CanvaConfigError("Canva 回傳的設計無法使用。", "canva_design_invalid");
+  await touchCanvaLastSync(sql);
   return card;
 }
 
@@ -178,6 +212,7 @@ export async function exportCanvaDesign(
     if (!polled.ok) break;
     job = parseExportJob(polled.json);
   }
+  await touchCanvaLastSync(sql);
   return job;
 }
 
@@ -193,14 +228,11 @@ export async function applyCanvaDesignToProject(
 ): Promise<ApplyCanvaResult> {
   const design = await getCanvaDesign(sql, input.designId);
   const parsedShare = parseCanvaDesign(input.publicShareUrl);
-  const pageIds =
-    design.pageCount && design.pageCount > 0
-      ? Array.from({ length: Math.min(design.pageCount, 40) }, (_, index) => String(index + 1))
-      : null;
+  const pageIds = design.pages.length ? design.pages : null;
   const publicEmbedReady = Boolean(parsedShare);
   const error = publicEmbedReady
     ? null
-    : "已從 Canva Connect 寫入 design id。公開嵌入仍需 canva.com/design 分享網址；Connect 的 view/edit URL 是暫時的、只對授權使用者有效，不會當成訪客 iframe。";
+    : "已從 Canva Connect 寫入 design id 與頁面。公開嵌入仍需 canva.com/design 分享網址；Connect 的 view/edit／縮圖 URL 會過期，不會寫成訪客封面或 iframe。";
   await sql.query(
     `update projects set
        canva_design_id = $2,

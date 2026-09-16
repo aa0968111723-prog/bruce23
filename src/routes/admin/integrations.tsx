@@ -7,6 +7,7 @@ import {
   disconnectCanvaFn,
   exportCanvaDesignFn,
   getCanvaConnectFn,
+  getCanvaDesignFn,
   hydrateGithubFn,
   listIntegrationsFn,
   publishProjectFn,
@@ -31,6 +32,7 @@ function IntegrationsPage() {
   const [canva, setCanva] = useState<CanvaStatus | null>(null);
   const [query, setQuery] = useState("");
   const [designs, setDesigns] = useState<DesignCard[]>([]);
+  const [continuation, setContinuation] = useState<string | null>(null);
   const [searchNote, setSearchNote] = useState<string | null>(null);
   const [selected, setSelected] = useState<DesignCard | null>(null);
   const [projectId, setProjectId] = useState("");
@@ -77,16 +79,32 @@ function IntegrationsPage() {
     }
   }
 
-  async function search() {
+  async function search(next = false) {
     setBusy(true);
     setSearchNote(null);
     try {
-      const result = await searchCanvaDesignsFn({ data: { query } });
-      setDesigns(result.items);
+      const result = await searchCanvaDesignsFn({
+        data: { query, continuation: next ? continuation ?? undefined : undefined },
+      });
+      setDesigns(next ? [...designs, ...result.items] : result.items);
+      setContinuation(result.continuation ?? null);
       setSearchNote(result.items.length ? `找到 ${result.items.length} 件` : "沒有符合的設計");
     } catch (err) {
-      setDesigns([]);
+      if (!next) setDesigns([]);
       setSearchNote(err instanceof Error ? err.message : "搜尋失敗");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function selectDesign(item: DesignCard) {
+    setSelected(item);
+    setBusy(true);
+    try {
+      const detail = await getCanvaDesignFn({ data: { designId: item.id } });
+      setSelected(detail);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "讀取設計失敗");
     } finally {
       setBusy(false);
     }
@@ -111,7 +129,7 @@ function IntegrationsPage() {
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
-            disabled={busy || notConfigured}
+            disabled={busy}
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm disabled:opacity-50"
             onClick={() => void startConnect()}
           >
@@ -154,6 +172,16 @@ function IntegrationsPage() {
               </button>
             </div>
             {searchNote ? <p className="text-xs text-muted">{searchNote}</p> : null}
+            {continuation ? (
+              <button
+                type="button"
+                disabled={busy}
+                className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+                onClick={() => void search(true)}
+              >
+                載入更多
+              </button>
+            ) : null}
             <ul className="grid gap-2">
               {designs.map((item) => (
                 <li key={item.id}>
@@ -162,7 +190,7 @@ function IntegrationsPage() {
                     className={`flex w-full min-h-11 items-center gap-3 rounded-2xl px-3 py-2 text-left ${
                       selected?.id === item.id ? "bg-surface-mint" : "bg-surface-blue/60"
                     }`}
-                    onClick={() => setSelected(item)}
+                    onClick={() => void selectDesign(item)}
                   >
                     {item.thumbnailUrl ? (
                       <img src={item.thumbnailUrl} alt="" className="size-12 rounded-lg object-cover" />
@@ -188,7 +216,9 @@ function IntegrationsPage() {
                 <p className="font-medium">{selected.title}</p>
                 <p className="mt-1 text-xs text-muted">
                   {selected.pageCount ? `${selected.pageCount} 頁` : "頁數未知"}
+                  {selected.pages?.length ? ` · ${selected.pages.join(" / ")}` : ""}
                   {selected.updatedAt ? ` · 更新 ${selected.updatedAt.slice(0, 10)}` : ""}
+                  {selected.thumbnailUrl ? " · 暫時縮圖" : ""}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {selected.editUrl ? (
