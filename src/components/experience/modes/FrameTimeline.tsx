@@ -3,6 +3,7 @@ import type { TimelineFrame } from "@/lib/cms/schema";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
+import { joinSentences } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 const KIND_LABEL: Record<TimelineFrame["kind"], string> = {
@@ -88,9 +89,7 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.timelineAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? ex.timelineDefaultIntro}
-        {config.timeline?.demoDisclaimer ?? ""}
-        {ex.timelineKeyboard}
+        {joinSentences(config.intro ?? ex.timelineDefaultIntro, config.timeline?.demoDisclaimer, ex.timelineKeyboard)}
       </p>
       <div className={`mt-4 grid gap-3 ${compare ? "md:grid-cols-2" : ""}`}>
         <figure>

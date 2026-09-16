@@ -6,6 +6,24 @@ export function fillChrome(template: string, vars: Record<string, string | numbe
   return template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? `{${key}}`));
 }
 
+/** Join chrome sentences so EN does not jam `console.Left`. */
+export function joinSentences(...parts: Array<string | undefined | null>): string {
+  return parts
+    .map((part) => (typeof part === "string" ? part.trim() : ""))
+    .filter(Boolean)
+    .join(" ");
+}
+
+/** Label/value chrome: ASCII colon in en, fullwidth in zh. */
+export function labeledLine(lang: ViewerLang, label: string, value: string): string {
+  return lang === "en" ? `${label}: ${value}` : `${label}：${value}`;
+}
+
+export function wrapPathNote(lang: ViewerLang, line: string, path?: string): string {
+  if (!path) return line;
+  return lang === "en" ? `${line} (${path})` : `${line}（${path}）`;
+}
+
 export const experienceChrome = {
   zh: {
     tabPlay: "立即體驗",

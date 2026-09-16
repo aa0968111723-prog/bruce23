@@ -5,8 +5,11 @@ import { experienceCatalog } from "../experiences/catalog.ts";
 import { howItWorksSteps } from "../experiences/resolve.ts";
 import {
   experienceChromeFor,
+  joinSentences,
+  labeledLine,
   overlayExperienceConfig,
   PORTFOLIO_DEMO_EN,
+  wrapPathNote,
 } from "./experience.ts";
 
 describe("experience playable chrome", () => {
@@ -113,7 +116,8 @@ describe("experience playable chrome", () => {
       { slug: "ai-director-os", experienceConfig: stored, interactionSteps: [], process: [] },
       "en",
     );
-    assert.ok(howEn.some((step) => step.startsWith("Studio Project：")));
+    assert.ok(howEn.some((step) => step.startsWith("Studio Project: ")));
+    assert.doesNotMatch(howEn.join("\n"), /：|（|）/);
   });
 
   it("falls back from empty saved en to dictionary then zh", () => {
@@ -158,11 +162,32 @@ describe("experience playable chrome", () => {
     );
     assert.ok(zh.some((step) => step.includes("畫布")));
     assert.ok(en.some((step) => step.includes("Canvas")));
-    assert.ok(en.some((step) => step.includes("src/components/editor/canvas-stage.tsx")));
+    assert.ok(en.some((step) => step.includes("(src/components/editor/canvas-stage.tsx)")));
+    assert.doesNotMatch(en.join("\n"), /：|（|）/);
     const director = howItWorksSteps(
       { slug: "ai-director-os", experienceConfig: {}, interactionSteps: [], process: [] },
       "en",
     );
-    assert.ok(director.some((step) => step.startsWith("Project：")));
+    assert.ok(director.some((step) => step.startsWith("Project: ")));
+    const directorZh = howItWorksSteps(
+      { slug: "ai-director-os", experienceConfig: {}, interactionSteps: [], process: [] },
+      "zh",
+    );
+    assert.ok(directorZh.some((step) => step.startsWith("專案：")));
+  });
+
+  it("joins chrome sentences with a space and labels with lang punctuation", () => {
+    assert.equal(
+      joinSentences("Not a live product console.", "Left and right keys move between nodes."),
+      "Not a live product console. Left and right keys move between nodes.",
+    );
+    assert.equal(
+      joinSentences("不是線上產品控制台。", "鍵盤左右鍵可換節點。"),
+      "不是線上產品控制台。 鍵盤左右鍵可換節點。",
+    );
+    assert.equal(labeledLine("en", "GitHub source", "README.md"), "GitHub source: README.md");
+    assert.equal(labeledLine("zh", "GitHub 來源", "README.md"), "GitHub 來源：README.md");
+    assert.equal(wrapPathNote("en", "Canvas: body", "src/a.tsx"), "Canvas: body (src/a.tsx)");
+    assert.equal(wrapPathNote("zh", "畫布：說明", "src/a.tsx"), "畫布：說明（src/a.tsx）");
   });
 });

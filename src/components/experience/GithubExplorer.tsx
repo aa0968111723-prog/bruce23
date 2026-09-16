@@ -2,6 +2,7 @@ import { ChevronDown, ChevronRight, ExternalLink, FileText, Folder } from "lucid
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
+import { labeledLine } from "@/lib/locale/experience";
 import { useExperienceView } from "./useExperienceView";
 
 type Node = { path: string; type: "file" | "dir"; size?: number };
@@ -56,7 +57,7 @@ function flattenVisible(
 }
 
 export function GithubExplorer({ project }: { project: PublicProject }) {
-  const { ex, config } = useExperienceView(project);
+  const { lang, ex, config } = useExperienceView(project);
   const github = project.github;
   const hints = config.fileHints ?? [];
   const hintMap = new Map(hints.map((item) => [item.path, item]));
@@ -171,7 +172,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
               {hintMap.get(selected.path)?.purpose ?? ex.defaultPurpose}
             </p>
             <p className="mt-1 text-xs text-mint-deep">
-              {ex.stageLabel}：{hintMap.get(selected.path)?.stage ?? ex.defaultStage}
+              {labeledLine(lang, ex.stageLabel, hintMap.get(selected.path)?.stage ?? ex.defaultStage)}
             </p>
             {owner && repo ? (
               <a

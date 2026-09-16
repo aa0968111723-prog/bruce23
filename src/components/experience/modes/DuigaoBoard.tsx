@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { fillChrome } from "@/lib/locale/experience";
+import { fillChrome, joinSentences } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 type Pin = { id: string; x: number; y: number; note: string };
@@ -27,8 +27,7 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
   return (
     <div>
       <p className="text-sm text-muted">
-        {config.intro ?? ex.duigaoDefaultIntro}
-        {ex.duigaoPrivateNote}
+        {joinSentences(config.intro ?? ex.duigaoDefaultIntro, ex.duigaoPrivateNote)}
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {versions.map((item) => (

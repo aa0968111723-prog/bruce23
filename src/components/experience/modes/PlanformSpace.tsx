@@ -2,6 +2,7 @@ import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
+import { joinSentences, labeledLine } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 type Prop = {
@@ -14,7 +15,7 @@ type Prop = {
 };
 
 export function PlanformSpace({ project }: { project?: PublicProject }) {
-  const { ex, config } = useExperienceView(project);
+  const { lang, ex, config } = useExperienceView(project);
   const catalog = (config.spatial?.objects ?? []) as Prop[];
   const [move, setMove] = useState<Record<string, { x: number; y: number }>>({});
   const props = catalog.map((item) => ({
@@ -72,9 +73,11 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.planformAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? ex.planformDefaultIntro}
-        {config.spatial?.complianceDisclaimer ?? ""}
-        {ex.planformKeyboard}
+        {joinSentences(
+          config.intro ?? ex.planformDefaultIntro,
+          config.spatial?.complianceDisclaimer,
+          ex.planformKeyboard,
+        )}
       </p>
       <label className="mt-3 flex items-center gap-3 text-sm">
         {ex.rotate}
@@ -132,8 +135,8 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
       {current ? (
         <div className="mt-4 rounded-2xl bg-surface p-4 text-sm shadow-card">
           <p className="font-display text-lg">{current.label}</p>
-          <p className="mt-1">{ex.useLabel}：{current.use}</p>
-          <p>{ex.sizeLabel}：{current.size}</p>
+          <p className="mt-1">{labeledLine(lang, ex.useLabel, current.use)}</p>
+          <p>{labeledLine(lang, ex.sizeLabel, current.size)}</p>
           <p className="mt-2 text-muted">
             {config.spatial?.circulationNote ?? ""}
           </p>

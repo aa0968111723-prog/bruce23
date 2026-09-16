@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { fillChrome, type ExperienceChrome } from "@/lib/locale/experience";
+import { fillChrome, joinSentences, type ExperienceChrome } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 type Region = { id: string; label: string; x: number; y: number; w: number; h: number };
@@ -125,10 +125,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
 
   return (
     <div>
-      <p className="text-sm text-muted">
-        {config.intro ?? ""}
-        {disclaimer}
-      </p>
+      <p className="text-sm text-muted">{joinSentences(config.intro, disclaimer)}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <label className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
           {ex.uploadPoster}

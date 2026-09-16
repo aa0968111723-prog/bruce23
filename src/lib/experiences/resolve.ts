@@ -1,6 +1,6 @@
 import type { ExperienceConfig } from "../cms/schema.ts";
 import type { PublicProject } from "../cms/privacy.ts";
-import { overlayExperienceConfig } from "../locale/experience.ts";
+import { labeledLine, overlayExperienceConfig, wrapPathNote } from "../locale/experience.ts";
 import type { ViewerLang } from "../locale/view.ts";
 import { mergeExperienceConfig } from "./defaults.ts";
 
@@ -24,13 +24,13 @@ export function howItWorksSteps(
   const walkthrough = config.walkthrough ?? [];
   if (walkthrough.length) {
     return walkthrough.map((step) => {
-      const line = step.body?.trim() ? `${step.title}：${step.body}` : step.title;
-      return step.path ? `${line}（${step.path}）` : line;
+      const line = step.body?.trim() ? labeledLine(lang, step.title, step.body) : step.title;
+      return wrapPathNote(lang, line, step.path);
     });
   }
   const nodes = config.processNodes ?? [];
   if (nodes.length) {
-    return nodes.map((node) => `${node.label}：${node.summary}`);
+    return nodes.map((node) => labeledLine(lang, node.label, node.summary));
   }
   return project.process;
 }

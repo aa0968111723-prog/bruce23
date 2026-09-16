@@ -3,10 +3,11 @@ import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { joinSentences, labeledLine } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 export function ProcessMap({ project }: { project: PublicProject }) {
-  const { ex, config } = useExperienceView(project);
+  const { lang, ex, config } = useExperienceView(project);
   const nodes = config.processNodes ?? [];
   const ids = nodes.map((node) => node.id);
   const [active, setActive] = useState(nodes[0]?.id ?? "");
@@ -24,8 +25,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
   return (
     <div>
       <p className="text-sm text-muted">
-        {config.intro ?? ex.processDefaultIntro}
-        {ex.processKeyboard}
+        {joinSentences(config.intro ?? ex.processDefaultIntro, ex.processKeyboard)}
       </p>
       <div
         className="mt-4 flex gap-2 overflow-x-auto md:flex"
@@ -64,7 +64,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
           <p className="text-xs text-mint-deep">{current.stage}</p>
           <h3 className="mt-1 font-display text-xl font-semibold">{current.label}</h3>
           <p className="mt-2 text-sm leading-relaxed">{current.summary}</p>
-          <p className="mt-3 text-sm text-muted">{ex.githubSource}：{current.githubPath}</p>
+          <p className="mt-3 text-sm text-muted">{labeledLine(lang, ex.githubSource, current.githubPath)}</p>
           <p className="text-sm text-muted">{current.purpose}</p>
           {owner && repo ? (
             <a

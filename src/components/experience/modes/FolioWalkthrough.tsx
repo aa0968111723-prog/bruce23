@@ -3,7 +3,7 @@ import type { WalkthroughStep } from "@/lib/cms/schema";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { walkthroughStageKind, type WalkthroughStageKind } from "@/lib/experiences/walkthrough";
 import { githubBlobUrl } from "@/lib/github/parse";
-import type { ExperienceChrome } from "@/lib/locale/experience";
+import { joinSentences, type ExperienceChrome } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
 export function FolioWalkthrough({ project }: { project: PublicProject }) {
@@ -36,8 +36,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.walkAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? ex.folioDefaultIntro}
-        {ex.folioNotCounter}
+        {joinSentences(config.intro ?? ex.folioDefaultIntro, ex.folioNotCounter)}
       </p>
       <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label={ex.walkStepsAria}>
         {steps.map((item, stepIndex) => (
