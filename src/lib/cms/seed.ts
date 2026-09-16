@@ -119,6 +119,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshArchiveHonesty(sql);
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
+  await clearUncustomizedHowSteps(sql);
 }
 
 export async function ensureSeed(
@@ -234,7 +235,7 @@ export async function ensureSeed(
       canva_status: canva.status,
       experience_mode: catalog?.mode ?? "github-explorer",
       experience_config: defaultExperienceConfig(project.slug),
-      interaction_steps: project.process,
+      interaction_steps: [],
       source_evidence: project.sourceReferences.map((ref) => ({
         label: ref.label,
         href: ref.href,
@@ -342,6 +343,15 @@ function asEvidenceList(value: unknown): Array<{ label: string; href?: string; n
   return value.filter((item): item is { label: string; href?: string; note: string; kind: string } => {
     return Boolean(item && typeof item === "object" && "label" in item);
   });
+}
+
+/** Seed used to copy process into interaction_steps, which hid saved experience_config. */
+async function clearUncustomizedHowSteps(sql: Sql): Promise<void> {
+  await sql.query(
+    `update projects
+     set interaction_steps = '[]'::jsonb, updated_at = now()
+     where interaction_steps = process`,
+  );
 }
 
 /** GitHub homepage that currently serves a JS bundle, not HTML. Seed live URLs replace it. */

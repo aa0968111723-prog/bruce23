@@ -140,7 +140,7 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
                 <span key={item.path}>
                   {index > 0 ? " · " : null}
                   <a
-                    className="text-mint-deep"
+                    className="inline-flex min-h-11 items-center text-mint-deep"
                     href={githubBlobUrl(owner, repo, branch, item.path)}
                     rel="noreferrer"
                     target="_blank"

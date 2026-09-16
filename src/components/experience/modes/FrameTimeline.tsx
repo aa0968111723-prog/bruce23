@@ -148,7 +148,7 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
               <>
                 {" "}
                 <a
-                  className="text-mint-deep"
+                  className="inline-flex min-h-11 items-center text-mint-deep"
                   href={githubBlobUrl(owner, repo, branch, item.path)}
                   rel="noreferrer"
                   target="_blank"

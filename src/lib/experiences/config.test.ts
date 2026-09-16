@@ -206,5 +206,14 @@ describe("experience config merge", () => {
     });
     assert.ok(nodes.some((step) => step.includes("專案")));
     assert.notEqual(nodes[0], "fallback");
+
+    const uncustomizedSeed = howItWorksSteps({
+      slug: "folio",
+      experienceConfig: {},
+      interactionSteps: ["在畫布建立文字／形狀／元件", "設計檢查（對比、溢出、安全區）"],
+      process: ["在畫布建立文字／形狀／元件", "設計檢查（對比、溢出、安全區）"],
+    });
+    assert.ok(uncustomizedSeed.some((step) => step.includes("畫布")));
+    assert.ok(uncustomizedSeed[0]?.includes("文件模型") || uncustomizedSeed[0]?.includes("畫布"));
   });
 });

@@ -7,10 +7,16 @@ export function resolveExperienceConfig(project: Pick<PublicProject, "slug" | "e
 }
 
 /** Public 「如何運作」tab: saved CMS steps, then experience_config, then catalog process copy. */
+function sameSteps(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((step, index) => step === right[index]);
+}
+
 export function howItWorksSteps(
   project: Pick<PublicProject, "slug" | "experienceConfig" | "interactionSteps" | "process">,
 ): string[] {
-  if (project.interactionSteps.length) return project.interactionSteps;
+  const customized =
+    project.interactionSteps.length > 0 && !sameSteps(project.interactionSteps, project.process);
+  if (customized) return project.interactionSteps;
   const config = resolveExperienceConfig(project);
   const walkthrough = config.walkthrough ?? [];
   if (walkthrough.length) {

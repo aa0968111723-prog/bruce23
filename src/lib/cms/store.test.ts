@@ -22,6 +22,7 @@ import { projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
 import { projectCanvaInventory } from "../canva/inventory.ts";
+import { howItWorksSteps } from "../experiences/resolve.ts";
 
 function sqlFrom(pg: PGlite): Sql {
   const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
@@ -329,6 +330,20 @@ describe("cms persistence", () => {
     assert.equal(zen?.canva.status, "unavailable");
     assert.equal(zen?.canva.shareUrl, null);
     assert.match(zen?.summary ?? "", /SVG 轉譯/);
+  });
+
+  it("seeded how-it-works uses experience_config instead of duplicating process", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set interaction_steps = process`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const published = await listPublishedProjects(sql);
+    const folio = published.find((item) => item.slug === "folio");
+    const director = published.find((item) => item.slug === "ai-director-os");
+    const folioHow = howItWorksSteps(folio!);
+    assert.ok(folioHow.some((step) => step.includes("畫布") && step.includes("文件模型")));
+    assert.ok(howItWorksSteps(director!).some((step) => step.includes("專案")));
+    assert.notEqual(folioHow[0], folio?.process[0]);
   });
 
   it("rewrites already-seeded archive copy that claimed live Canva or original photos", async () => {

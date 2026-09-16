@@ -55,7 +55,12 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs text-muted">
         <span>Live Demo · 狀態 {demo.status}</span>
         {demo.url ? (
-          <a href={demo.url} className="text-mint-deep" rel="noreferrer" target="_blank">
+          <a
+            href={demo.url}
+            className="inline-flex min-h-11 items-center text-mint-deep"
+            rel="noreferrer"
+            target="_blank"
+          >
             開原站
           </a>
         ) : null}

@@ -99,6 +99,7 @@ describe("frontend contract", () => {
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
     assert.match(panel, /howItWorksSteps/);
+    assert.match(panel, /inline-flex min-h-11 items-center font-medium text-mint-deep/);
     assert.match(header, /mobile-nav/);
     const roving = readFileSync(
       new URL("../../../src/components/site/useRovingTabs.ts", import.meta.url),

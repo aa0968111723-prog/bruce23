@@ -147,7 +147,12 @@ export function ExperiencePanel({
               {project.sourceEvidence.map((ref) => (
                 <li key={ref.label} className="rounded-2xl bg-surface-blue/70 px-4 py-3 text-sm">
                   {ref.href ? (
-                    <a href={ref.href} className="font-medium text-mint-deep" rel="noreferrer" target="_blank">
+                    <a
+                      href={ref.href}
+                      className="inline-flex min-h-11 items-center font-medium text-mint-deep"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
                       {ref.label}
                     </a>
                   ) : (
