@@ -45,6 +45,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
+/** Hook lives next to the provider; Fast Refresh warning is expected for this pair. */
 export function useLocale() {
   return useContext(LocaleContext);
 }
