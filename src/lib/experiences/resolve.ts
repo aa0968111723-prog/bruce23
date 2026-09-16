@@ -1,5 +1,7 @@
 import type { ExperienceConfig } from "../cms/schema.ts";
 import type { PublicProject } from "../cms/privacy.ts";
+import { overlayExperienceConfig } from "../locale/experience.ts";
+import type { ViewerLang } from "../locale/view.ts";
 import { mergeExperienceConfig } from "./defaults.ts";
 
 export function resolveExperienceConfig(project: Pick<PublicProject, "slug" | "experienceConfig">): ExperienceConfig {
@@ -13,11 +15,12 @@ function sameSteps(left: string[], right: string[]): boolean {
 
 export function howItWorksSteps(
   project: Pick<PublicProject, "slug" | "experienceConfig" | "interactionSteps" | "process">,
+  lang: ViewerLang = "zh",
 ): string[] {
   const customized =
     project.interactionSteps.length > 0 && !sameSteps(project.interactionSteps, project.process);
   if (customized) return project.interactionSteps;
-  const config = resolveExperienceConfig(project);
+  const config = overlayExperienceConfig(resolveExperienceConfig(project), project.slug, lang);
   const walkthrough = config.walkthrough ?? [];
   if (walkthrough.length) {
     return walkthrough.map((step) => {

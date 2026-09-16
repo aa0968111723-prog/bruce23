@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { fillChrome, type ExperienceChrome } from "@/lib/locale/experience";
+import { useExperienceView } from "../useExperienceView";
 
 type Region = { id: string; label: string; x: number; y: number; w: number; h: number };
 
@@ -12,9 +13,13 @@ type Analysis = {
   regions: Region[];
 };
 
-function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
+function analyze(
+  image: HTMLImageElement,
+  canvas: HTMLCanvasElement,
+  labels: Pick<ExperienceChrome, "canvasUnavailable" | "regionCenter" | "regionBright" | "regionText">,
+): Analysis {
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return { areaBright: 0, contrast: 0, textRegions: 0, note: "畫布不可用", regions: [] };
+  if (!ctx) return { areaBright: 0, contrast: 0, textRegions: 0, note: labels.canvasUnavailable, regions: [] };
   const w = 160;
   const h = Math.max(1, Math.round((image.height / image.width) * w));
   canvas.width = w;
@@ -49,15 +54,15 @@ function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
     .map((count, y) => ({ y, count }))
     .filter((row) => row.count > w * 0.18);
   const regions: Region[] = [
-    { id: "center", label: "中央顯著性（推估）", x: 28, y: 22, w: 44, h: 48 },
-    { id: "bright", label: "高亮面積（推估）", x: 8, y: 8, w: 28, h: 22 },
+    { id: "center", label: labels.regionCenter, x: 28, y: 22, w: 44, h: 48 },
+    { id: "bright", label: labels.regionBright, x: 8, y: 8, w: 28, h: 22 },
   ];
   if (textRows.length) {
     const first = textRows[0].y / h;
     const last = textRows[textRows.length - 1].y / h;
     regions.push({
       id: "text",
-      label: "文字帶（推估）",
+      label: labels.regionText,
       x: 10,
       y: Math.round(first * 100),
       w: 80,
@@ -68,15 +73,15 @@ function analyze(image: HTMLImageElement, canvas: HTMLCanvasElement): Analysis {
     areaBright: Math.round((bright / n) * 100),
     contrast: Math.round(contrast),
     textRegions: textRows.length,
-    note: "熱圖與區域是像素對比推估，不是眼動追蹤。",
+    note: labels.canvasUnavailable,
     regions,
   };
 }
 
 export function PosterVision({ project }: { project?: PublicProject }) {
-  const config = project ? resolveExperienceConfig(project) : {};
+  const { ex, config } = useExperienceView(project);
   const sampleSrc = config.comparison?.sampleSrc || "/media/samples/poster.svg";
-  const disclaimer = config.comparison?.estimateDisclaimer ?? "熱圖與區域是像素對比推估，不是眼動追蹤。";
+  const disclaimer = config.comparison?.estimateDisclaimer ?? ex.estimateDisclaimer;
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heatRef = useRef<HTMLCanvasElement>(null);
@@ -88,7 +93,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
     const canvas = canvasRef.current;
     const heat = heatRef.current;
     if (!image || !canvas || !image.naturalWidth) return;
-    const result = analyze(image, canvas);
+    const result = analyze(image, canvas, ex);
     result.note = disclaimer;
     setAnalysis(result);
     if (heat) {
@@ -112,7 +117,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
       }
       ctx.putImageData(out, 0, 0);
     }
-  }, [disclaimer]);
+  }, [disclaimer, ex]);
 
   useEffect(() => {
     if (imgRef.current?.complete) run();
@@ -121,12 +126,12 @@ export function PosterVision({ project }: { project?: PublicProject }) {
   return (
     <div>
       <p className="text-sm text-muted">
-        {config.intro ?? "上傳或使用樣本海報。面積、對比、文字帶是本機像素運算。"}
+        {config.intro ?? ""}
         {disclaimer}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <label className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
-          上傳海報
+          {ex.uploadPoster}
           <input
             type="file"
             accept="image/*"
@@ -147,21 +152,21 @@ export function PosterVision({ project }: { project?: PublicProject }) {
             setAnalysis(null);
           }}
         >
-          樣本海報
+          {ex.samplePoster}
         </button>
         <button
           type="button"
           className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
           onClick={run}
         >
-          分析
+          {ex.analyze}
         </button>
       </div>
       <div className="relative mt-4 overflow-hidden rounded-2xl bg-surface shadow-card">
         <img
           ref={imgRef}
           src={src}
-          alt="待分析海報"
+          alt={ex.posterAltPending}
           className="w-full"
           onLoad={() => {
             run();
@@ -186,13 +191,19 @@ export function PosterVision({ project }: { project?: PublicProject }) {
       <canvas ref={canvasRef} className="hidden" />
       {analysis ? (
         <ul className="mt-4 grid gap-2 text-sm">
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">高亮面積約 {analysis.areaBright}%（推估）</li>
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">對比（標準差）{analysis.contrast}（推估）</li>
-          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">疑似文字列 {analysis.textRegions} 帶（推估）</li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">
+            {fillChrome(ex.brightArea, { n: analysis.areaBright })}
+          </li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">
+            {fillChrome(ex.contrastStat, { n: analysis.contrast })}
+          </li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card">
+            {fillChrome(ex.textBands, { n: analysis.textRegions })}
+          </li>
           <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted">{analysis.note}</li>
         </ul>
       ) : (
-        <p className="mt-3 text-sm text-muted">樣本載入後會自動畫熱圖。也可再按分析。計算有解析度上限，細節會被縮小。</p>
+        <p className="mt-3 text-sm text-muted">{ex.posterLoading}</p>
       )}
     </div>
   );

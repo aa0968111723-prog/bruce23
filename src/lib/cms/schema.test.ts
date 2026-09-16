@@ -423,7 +423,7 @@ describe("privacy", () => {
     assert.ok(demo.indexOf('if (state === "empty")') < demoIframe);
     assert.ok(demo.indexOf('if (state === "fallback")') < demoIframe);
     assert.ok(demo.indexOf('if (state === "embed" && demo.url') < demoIframe);
-    assert.match(demo, /不會放空白 iframe/);
+    assert.match(demo, /ex\.noEmbedUrl|不會放空白 iframe/);
     const caseRoute = readFileSync(new URL("../../routes/work/$slug.tsx", import.meta.url), "utf8");
     assert.match(caseRoute, /getPublishedProjectFn/);
     assert.match(caseRoute, /CaseStudyView/);

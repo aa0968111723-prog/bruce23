@@ -1,12 +1,13 @@
 import { useState, type KeyboardEvent } from "react";
 import type { WalkthroughStep } from "@/lib/cms/schema";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { walkthroughStageKind, type WalkthroughStageKind } from "@/lib/experiences/walkthrough";
 import { githubBlobUrl } from "@/lib/github/parse";
+import type { ExperienceChrome } from "@/lib/locale/experience";
+import { useExperienceView } from "../useExperienceView";
 
 export function FolioWalkthrough({ project }: { project: PublicProject }) {
-  const config = resolveExperienceConfig(project);
+  const { ex, config } = useExperienceView(project);
   const steps = config.walkthrough ?? [];
   const [index, setIndex] = useState(0);
   const step = steps[index];
@@ -30,14 +31,15 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
     }
   }
 
-  if (!step) return <p className="text-sm text-muted">尚未設定走查步驟。</p>;
+  if (!step) return <p className="text-sm text-muted">{ex.emptyWalkthrough}</p>;
 
   return (
-    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label="Folio 走查">
+    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.walkAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? "依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。"}左右鍵換步驟。畫面依儲存的走查步驟繪製，不是空白計數器。
+        {config.intro ?? ex.folioDefaultIntro}
+        {ex.folioNotCounter}
       </p>
-      <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label="走查步驟">
+      <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label={ex.walkStepsAria}>
         {steps.map((item, stepIndex) => (
           <button
             key={`${item.title}-${item.path ?? stepIndex}`}
@@ -58,7 +60,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
         data-walkthrough-stage={kind}
         data-walkthrough-path={step.path ?? ""}
       >
-        <FolioStage step={step} kind={kind} index={index} total={steps.length} />
+        <FolioStage step={step} kind={kind} index={index} total={steps.length} ex={ex} />
       </div>
       <div className="mt-4 rounded-2xl bg-surface p-5 shadow-card">
         <p className="text-xs text-mint-deep">
@@ -74,7 +76,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
             rel="noreferrer"
             target="_blank"
           >
-            開原始檔
+            {ex.openSource}
           </a>
         ) : null}
       </div>
@@ -85,7 +87,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
           onClick={() => go(index - 1)}
           disabled={index === 0}
         >
-          上一步
+          {ex.prevStep}
         </button>
         <button
           type="button"
@@ -93,7 +95,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
           onClick={() => go(index + 1)}
           disabled={index === steps.length - 1}
         >
-          下一步
+          {ex.nextStep}
         </button>
       </div>
     </div>
@@ -105,40 +107,42 @@ function FolioStage({
   kind,
   index,
   total,
+  ex,
 }: {
   step: WalkthroughStep;
   kind: WalkthroughStageKind;
   index: number;
   total: number;
+  ex: ExperienceChrome;
 }) {
   const file = step.path?.split("/").pop() ?? step.path ?? "document";
   return (
     <div className="bg-surface-blue/70 p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between gap-2 text-[11px] text-muted">
-        <span>Folio 示範畫布 · 不是線上編輯器</span>
+        <span>{ex.folioDemoCanvas}</span>
         <span>
           {index + 1}/{total}
         </span>
       </div>
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface shadow-card">
-        {kind === "canvas" ? <CanvasStage file={file} /> : null}
-        {kind === "command" ? <CommandStage file={file} /> : null}
-        {kind === "audit" ? <AuditStage file={file} /> : null}
-        {kind === "mcp" ? <McpStage file={file} /> : null}
+        {kind === "canvas" ? <CanvasStage file={file} ex={ex} /> : null}
+        {kind === "command" ? <CommandStage file={file} ex={ex} /> : null}
+        {kind === "audit" ? <AuditStage file={file} ex={ex} /> : null}
+        {kind === "mcp" ? <McpStage file={file} ex={ex} /> : null}
         {kind === "document" ? <DocumentStage title={step.title} file={file} /> : null}
       </div>
     </div>
   );
 }
 
-function CanvasStage({ file }: { file: string }) {
+function CanvasStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label="畫布：文字、形狀與元件同一文件模型">
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioSameModel}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="18" y="16" width="284" height="168" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="28" y="26" width="88" height="22" rx="4" className="fill-surface-mint" />
       <text x="34" y="41" className="fill-ink" fontSize="9">
-        文字
+        {ex.folioText}
       </text>
       <rect x="28" y="56" width="72" height="72" rx="8" className="fill-mint" />
       <rect x="112" y="56" width="86" height="48" rx="8" className="fill-surface-blue" />
@@ -147,21 +151,21 @@ function CanvasStage({ file }: { file: string }) {
         {file}
       </text>
       <text x="34" y="166" className="fill-muted" fontSize="8">
-        同一文件模型 · 文字／形狀／元件
+        {ex.folioSameModel}
       </text>
     </svg>
   );
 }
 
-function CommandStage({ file }: { file: string }) {
+function CommandStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label="指令層：命令面板寫入同一 command layer">
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioCommand}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="18" y="16" width="284" height="168" rx="10" className="fill-surface" opacity="0.55" />
       <rect x="48" y="36" width="224" height="128" rx="12" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="60" y="48" width="200" height="22" rx="6" className="fill-surface-mint" />
       <text x="68" y="63" className="fill-ink" fontSize="9">
-        ⌘K 指令
+        {ex.folioCommand}
       </text>
       <rect x="60" y="78" width="200" height="18" rx="4" className="fill-mint" />
       <text x="68" y="91" className="fill-primary-foreground" fontSize="8">
@@ -179,9 +183,9 @@ function CommandStage({ file }: { file: string }) {
   );
 }
 
-function AuditStage({ file }: { file: string }) {
+function AuditStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label="設計檢查：對比、溢出與安全區">
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioAudit}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="18" y="16" width="176" height="168" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="32" y="32" width="148" height="18" rx="3" className="fill-ink" opacity="0.12" />
@@ -189,16 +193,16 @@ function AuditStage({ file }: { file: string }) {
       <rect x="28" y="28" width="156" height="144" fill="none" className="stroke-alert" strokeDasharray="4 3" />
       <rect x="204" y="16" width="98" height="168" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <text x="214" y="36" className="fill-ink" fontSize="8">
-        檢查
+        {ex.folioAudit}
       </text>
       <text x="214" y="56" className="fill-alert" fontSize="8">
-        對比不足
+        {ex.folioContrast}
       </text>
       <text x="214" y="74" className="fill-alert" fontSize="8">
-        文字溢出
+        {ex.folioOverflow}
       </text>
       <text x="214" y="92" className="fill-mint-deep" fontSize="8">
-        安全區
+        {ex.folioSafe}
       </text>
       <text x="214" y="168" className="fill-muted" fontSize="7">
         {file}
@@ -207,17 +211,17 @@ function AuditStage({ file }: { file: string }) {
   );
 }
 
-function McpStage({ file }: { file: string }) {
+function McpStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label="MCP 邊界：寫入預設 dry-run">
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioNotPublicMcp}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="18" y="16" width="176" height="168" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="32" y="32" width="148" height="88" rx="8" className="fill-surface-mint" />
       <text x="40" y="54" className="fill-ink" fontSize="9">
-        未發布文件
+        {ex.folioUnpublished}
       </text>
       <text x="40" y="72" className="fill-muted" fontSize="8">
-        不出現在公開 MCP
+        {ex.folioNotPublicMcp}
       </text>
       <rect x="204" y="16" width="98" height="168" rx="10" className="fill-ink" />
       <text x="214" y="40" className="fill-bg" fontSize="8">
@@ -227,7 +231,7 @@ function McpStage({ file }: { file: string }) {
         dry-run
       </text>
       <text x="214" y="78" className="fill-bg" fontSize="7">
-        未寫入
+        {ex.folioNotWritten}
       </text>
       <text x="214" y="168" className="fill-muted" fontSize="7">
         {file}

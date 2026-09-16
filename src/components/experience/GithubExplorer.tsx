@@ -2,7 +2,7 @@ import { ChevronDown, ChevronRight, ExternalLink, FileText, Folder } from "lucid
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { useExperienceView } from "./useExperienceView";
 
 type Node = { path: string; type: "file" | "dir"; size?: number };
 
@@ -56,8 +56,8 @@ function flattenVisible(
 }
 
 export function GithubExplorer({ project }: { project: PublicProject }) {
+  const { ex, config } = useExperienceView(project);
   const github = project.github;
-  const config = resolveExperienceConfig(project);
   const hints = config.fileHints ?? [];
   const hintMap = new Map(hints.map((item) => [item.path, item]));
   const tree = useMemo(() => github.fileTree ?? [], [github.fileTree]);
@@ -68,7 +68,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
   if (!github.url) {
     return (
       <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
-        還沒有公開 GitHub 來源。不會顯示虛構架構圖。
+        {ex.noGithub}
       </p>
     );
   }
@@ -82,10 +82,10 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
       {config.githubIntro ? <p className="text-sm text-muted lg:col-span-2">{config.githubIntro}</p> : null}
       <div className="rounded-2xl bg-surface p-4 shadow-card">
         <p className="font-display text-lg font-semibold">{github.name ?? repo}</p>
-        <p className="mt-1 text-sm text-muted">{github.description || "尚無公開 description。"}</p>
+        <p className="mt-1 text-sm text-muted">{github.description || ex.noDescription}</p>
         <dl className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
-          <div>更新 {github.updatedAt ? github.updatedAt.slice(0, 10) : "尚未同步"}</div>
-          <div>狀態 {github.syncStatus}</div>
+          <div>{ex.updated} {github.updatedAt ? github.updatedAt.slice(0, 10) : ex.notSynced}</div>
+          <div>{ex.status} {github.syncStatus}</div>
         </dl>
         {github.languages ? (
           <ul className="mt-3 flex flex-wrap gap-2">
@@ -108,11 +108,11 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             ))}
           </ul>
         ) : (
-          <p className="mt-2 text-xs text-muted">這個儲存庫目前沒有 GitHub topics。</p>
+          <p className="mt-2 text-xs text-muted">{ex.noTopics}</p>
         )}
         {github.latestCommit ? (
           <p className="mt-3 text-xs text-muted">
-            最新提交 {github.latestCommit.sha.slice(0, 7)} · {github.latestCommit.message}
+            {ex.latestCommit} {github.latestCommit.sha.slice(0, 7)} · {github.latestCommit.message}
           </p>
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             rel="noreferrer"
             target="_blank"
           >
-            開 GitHub
+            {ex.openGithub}
           </a>
           <a
             className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
@@ -136,14 +136,14 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
       </div>
 
       <div className="rounded-2xl bg-surface p-4 shadow-card">
-        <p className="text-sm font-semibold">有限檔案樹</p>
+        <p className="text-sm font-semibold">{ex.treeTitle}</p>
         {tree.length === 0 ? (
           <p className="mt-3 text-sm text-muted">
             {github.syncStatus === "pending" || github.syncStatus === "stale"
-              ? "檔案樹還在從公開 GitHub REST 同步。沒有寫入金鑰；完成前不會顯示虛構路徑。"
+              ? ex.treePending
               : github.syncStatus === "failed"
-                ? "這次公開同步失敗。不會顯示虛構檔案樹。"
-                : "這次沒有讀到可公開的檔案樹。不會顯示虛構路徑。"}
+                ? ex.treeFailed
+                : ex.treeEmpty}
           </p>
         ) : (
           <KeyboardTree
@@ -152,6 +152,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             setOpen={setOpen}
             onSelect={setSelected}
             selected={selected?.path}
+            ariaLabel={ex.treeAria}
           />
         )}
         {tree.length === 0 && hints.length > 0 ? (
@@ -159,16 +160,18 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
             hints={hints}
             selected={selected?.path}
             onSelect={(path) => setSelected({ path, type: "file" })}
+            hintNote={ex.hintNote}
+            ariaLabel={ex.hintTreeAria}
           />
         ) : null}
         {selected ? (
           <div className="mt-4 rounded-xl bg-surface-blue/80 p-3 text-sm">
             <p className="font-medium">{selected.path}</p>
             <p className="mt-1 text-muted">
-              {hintMap.get(selected.path)?.purpose ?? "公開儲存庫路徑，用途以 README 與檔名為準。"}
+              {hintMap.get(selected.path)?.purpose ?? ex.defaultPurpose}
             </p>
             <p className="mt-1 text-xs text-mint-deep">
-              流程階段：{hintMap.get(selected.path)?.stage ?? "來源"}
+              {ex.stageLabel}：{hintMap.get(selected.path)?.stage ?? ex.defaultStage}
             </p>
             {owner && repo ? (
               <a
@@ -177,7 +180,7 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
                 rel="noreferrer"
                 target="_blank"
               >
-                在 GitHub 開啟
+                {ex.openOnGithub}
                 <ExternalLink className="size-4" />
               </a>
             ) : null}
@@ -188,14 +191,14 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
       <div className="rounded-2xl bg-surface-mint/60 p-4 lg:col-span-2">
         <p className="inline-flex items-center gap-2 text-sm font-semibold">
           <FileText className="size-4" />
-          README 摘要
+          {ex.readmeSummary}
         </p>
         {github.readme ? (
           <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap font-sans text-sm leading-relaxed text-ink/85">
             {github.readme}
           </pre>
         ) : (
-          <p className="mt-3 text-sm text-muted">README 尚未同步，或這個儲存庫沒有公開 README。</p>
+          <p className="mt-3 text-sm text-muted">{ex.readmeMissing}</p>
         )}
       </div>
     </div>
@@ -208,12 +211,14 @@ function KeyboardTree({
   setOpen,
   onSelect,
   selected,
+  ariaLabel,
 }: {
   nested: ReturnType<typeof nest>;
   open: Record<string, boolean>;
   setOpen: (value: Record<string, boolean>) => void;
   onSelect: (node: Node) => void;
   selected?: string;
+  ariaLabel: string;
 }) {
   const visible = useMemo(() => flattenVisible(nested, open), [nested, open]);
   const [focusPath, setFocusPath] = useState(visible[0]?.path ?? "");
@@ -272,7 +277,7 @@ function KeyboardTree({
   }
 
   return (
-    <ul className="mt-3 grid gap-1" role="tree" aria-label="有限檔案樹" onKeyDown={onKeyDown}>
+    <ul className="mt-3 grid gap-1" role="tree" aria-label={ariaLabel} onKeyDown={onKeyDown}>
       {visible.map((item) => {
         const name = item.path.split("/").pop() ?? item.path;
         const expanded = item.type === "dir" ? Boolean(open[item.path]) : undefined;
@@ -321,10 +326,14 @@ function HintTree({
   hints,
   selected,
   onSelect,
+  hintNote,
+  ariaLabel,
 }: {
   hints: Array<{ path: string; purpose: string; stage: string }>;
   selected?: string;
   onSelect: (path: string) => void;
+  hintNote: string;
+  ariaLabel: string;
 }) {
   const [focusPath, setFocusPath] = useState(hints[0]?.path ?? "");
   const itemRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -337,11 +346,11 @@ function HintTree({
 
   return (
     <div className="mt-3">
-      <p className="text-xs text-muted">來源路徑提示，不是即時 repo 內容。</p>
+      <p className="text-xs text-muted">{hintNote}</p>
       <ul
         className="mt-2 grid gap-1"
         role="tree"
-        aria-label="來源路徑"
+        aria-label={ariaLabel}
         onKeyDown={(event) => {
           if (!hints.length) return;
           keyboardNav.current = true;

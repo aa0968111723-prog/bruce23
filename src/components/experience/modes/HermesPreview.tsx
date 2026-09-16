@@ -1,17 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { fillChrome } from "@/lib/locale/experience";
+import { useExperienceView } from "../useExperienceView";
 
 export function HermesPreview({ project }: { project: PublicProject }) {
-  const config = resolveExperienceConfig(project);
+  const { lang, ex, config } = useExperienceView(project);
   const conversation = config.conversation;
   const replies = conversation?.replies ?? [];
-  const starter =
-    conversation?.starter ?? "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。";
+  const starter = conversation?.starter ?? ex.hermesStarter;
   const [log, setLog] = useState<Array<{ role: "you" | "console"; text: string }>>([
     { role: "console", text: starter },
   ]);
   const [text, setText] = useState("");
+
+  useEffect(() => {
+    setLog((list) => {
+      if (list.length === 1 && list[0]?.role === "console") return [{ role: "console", text: starter }];
+      return list;
+    });
+  }, [lang, starter]);
 
   function send(raw: string) {
     const value = raw.trim();
@@ -19,7 +26,7 @@ export function HermesPreview({ project }: { project: PublicProject }) {
     const matched = replies.find((item) => item.match && value.includes(item.match));
     const reply = matched
       ? matched.reply
-      : `收到「${value}」。沒有雲端模型，也不會假裝工具已執行。來源：${project.github.repo ?? "hermes-console"}。`;
+      : fillChrome(ex.hermesUnmatched, { value, repo: project.github.repo ?? "hermes-console" });
     setLog((list) => [
       ...list,
       { role: "you", text: value },
@@ -31,7 +38,7 @@ export function HermesPreview({ project }: { project: PublicProject }) {
   return (
     <div>
       <p className="text-sm text-muted">
-        {config.intro ?? conversation?.sourceNote ?? "未連線。任何回覆都是本地說明，不是 Agent 執行結果。"}
+        {config.intro ?? conversation?.sourceNote ?? ""}
       </p>
       {conversation?.disclaimer ? <p className="mt-2 text-xs text-mint-deep">{conversation.disclaimer}</p> : null}
       <div className="mt-4 grid gap-2 rounded-2xl bg-surface p-4 shadow-card">
@@ -55,13 +62,13 @@ export function HermesPreview({ project }: { project: PublicProject }) {
           value={text}
           onChange={(event) => setText(event.target.value)}
           className="min-h-11 flex-1 rounded-full border border-line bg-surface px-4 text-sm"
-          placeholder={conversation?.placeholder ?? "輸入一句話"}
+          placeholder={conversation?.placeholder ?? ex.hermesPlaceholder}
         />
         <button
           type="submit"
           className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm text-bg"
         >
-          送出
+          {ex.send}
         </button>
       </form>
     </div>

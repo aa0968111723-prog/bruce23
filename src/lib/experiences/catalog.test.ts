@@ -131,6 +131,10 @@ describe("frontend contract", () => {
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
+    const experienceLocale = readFileSync(
+      new URL("../../../src/lib/locale/experience.ts", import.meta.url),
+      "utf8",
+    );
     const explorer = readFileSync(
       new URL("../../../src/components/experience/GithubExplorer.tsx", import.meta.url),
       "utf8",
@@ -143,10 +147,14 @@ describe("frontend contract", () => {
     assert.match(explorer, /itemRefs/);
     assert.match(explorer, /aria-expanded/);
     assert.match(explorer, /role="tree"/);
-    assert.match(explorer, /來源路徑/);
+    assert.match(explorer, /ex\.hintTreeAria|ex\.hintNote/);
+    assert.match(experienceLocale, /來源路徑/);
+    assert.match(experienceLocale, /Limited file tree/);
     assert.match(css, /animation:\s*none/);
     assert.match(css, /--color-mat/);
     assert.match(panel, /howItWorksSteps/);
+    assert.match(panel, /useExperienceView/);
+    assert.match(panel, /ex\.tabPlay/);
     assert.match(panel, /galleryNote/);
     assert.match(panel, /MediaFrame/);
     assert.match(panel, /github-exports/);
@@ -184,10 +192,13 @@ describe("frontend contract", () => {
       new URL("../../../src/components/experience/CanvaStage.tsx", import.meta.url),
       "utf8",
     );
-    assert.match(stage, /沒有公開分享連結/);
-    assert.match(stage, /空白 iframe/);
-    assert.match(stage, /全螢幕/);
-    assert.match(stage, /在 Canva 開啟原作/);
+    assert.match(experienceLocale, /沒有公開分享連結/);
+    assert.match(experienceLocale, /空白 iframe/);
+    assert.match(experienceLocale, /全螢幕/);
+    assert.match(experienceLocale, /在 Canva 開啟原作/);
+    assert.match(experienceLocale, /The Canva original cannot be publicly embedded/);
+    assert.match(experienceLocale, /not claiming Connect is linked/);
+    assert.match(stage, /ex\.noShareTitle|ex\.unavailableTitle/);
     assert.match(stage, /publicCanvaEmbedUrl/);
     assert.match(stage, /pages.length > 1/);
     assert.doesNotMatch(stage, /\["cover"\]/);
@@ -203,13 +214,20 @@ describe("frontend contract", () => {
     );
     assert.match(processMap, /ArrowRight|useRovingTabs/);
     assert.match(processMap, /node.githubPath/);
-    assert.match(processMap, /不是線上產品控制台/);
+    assert.match(processMap, /ex\.processDefaultIntro|useExperienceView/);
+    assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
       "utf8",
     );
-    assert.match(timeline, /示範/);
-    assert.match(timeline, /不是 GPU/);
+    assert.match(timeline, /ex\.onionSkin|useExperienceView/);
+    assert.match(experienceLocale, /Onion skin/);
+    assert.match(experienceLocale, /not GPU model output/);
+    const defaultsSrc = readFileSync(
+      new URL("../../../src/lib/experiences/defaults.ts", import.meta.url),
+      "utf8",
+    );
+    assert.match(defaultsSrc, /不是 GPU 模型輸出/);
     const folioWalk = readFileSync(
       new URL("../../../src/components/experience/modes/FolioWalkthrough.tsx", import.meta.url),
       "utf8",
@@ -217,7 +235,8 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /data-walkthrough-stage/);
     assert.match(folioWalk, /walkthroughStageKind/);
     assert.match(folioWalk, /CanvasStage/);
-    assert.match(folioWalk, /不是空白計數器/);
+    assert.match(folioWalk, /不是空白計數器|ex\.folioNotCounter/);
+    assert.match(experienceLocale, /不是空白計數器/);
     const canvas = readFileSync(
       new URL("../../../src/components/experience/ExperienceCanvas.tsx", import.meta.url),
       "utf8",
@@ -229,14 +248,17 @@ describe("frontend contract", () => {
       new URL("../../../src/components/experience/modes/PosterVision.tsx", import.meta.url),
       "utf8",
     );
-    assert.match(poster, /推估/);
+    assert.match(poster, /regionCenter/);
     assert.match(poster, /onLoad/);
-    assert.match(poster, /自動畫熱圖/);
+    assert.match(poster, /posterLoading/);
+    assert.match(experienceLocale, /不是眼動追蹤/);
+    assert.match(experienceLocale, /not eye-tracking/);
     const planform = readFileSync(
       new URL("../../../src/components/experience/modes/PlanformSpace.tsx", import.meta.url),
       "utf8",
     );
-    assert.match(planform, /法規符合|規範符合/);
+    assert.match(planform, /法規符合|規範符合|ex\.planformAria|complianceDisclaimer/);
+    assert.match(experienceLocale, /not a code-compliance calculation/);
     const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
     assert.doesNotMatch(settings, /homepage_json: \{\}/);
     assert.match(settings, /highlightSlugs/);
@@ -354,6 +376,7 @@ describe("frontend contract", () => {
     assert.match(field, /availableFilters/);
     assert.doesNotMatch(field, /particle/);
     assert.match(archive, /overlayArchive/);
+    assert.match(archive, /CanvaStage/);
     assert.match(archive, /archiveEmbedNote/);
     assert.match(localeView, /尚未提供分享連結/);
     assert.match(archive, /parseCanvaDesign/);

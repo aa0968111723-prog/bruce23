@@ -1,7 +1,17 @@
 import type { ExperienceConfig } from "../cms/schema.ts";
 import { experienceCatalog } from "./catalog.ts";
 
-const PORTFOLIO_DEMO = "作品集互動展示";
+export const PORTFOLIO_DEMO = "作品集互動展示";
+
+/** Canonical Chinese defaults. English overlays live in `src/lib/locale/experience.ts`. */
+export const DEFAULT_EXPERIENCE_NOTES = {
+  githubIntro: "檔案樹來自伺服器同步的公開 GitHub 中繼資料。沒有讀到的路徑不會虛構。",
+  canvaNote:
+    "目前是公開嵌入模式。沒有公開 /design/{id} 或伺服器可轉址的 /d/ 短網址就不會嵌入空白 iframe。短網址成功轉到設計後才嵌入，不會標成已驗證，也不會宣稱 Connect 已連線。",
+  demoNote: "沒有已驗證的公開 Demo 時，不會放假的產品畫面。",
+  galleryNote:
+    "只顯示已發布媒體。標成 GitHub 匯出的是公開 repo 檔的複本；工作室 SVG 是轉譯。沒有公開 Canva /design/{id} 就不嵌入。",
+} as const;
 
 const DEFAULT_FRAMES: NonNullable<ExperienceConfig["timeline"]>["frames"] = [
   { i: 0, kind: "key", x: 24, y: 110 },
@@ -31,12 +41,10 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     processNodes: catalog?.processNodes ?? [],
     walkthrough: catalog?.walkthrough ?? [],
     fileHints: catalog?.fileHints ?? [],
-    githubIntro: "檔案樹來自伺服器同步的公開 GitHub 中繼資料。沒有讀到的路徑不會虛構。",
-    canvaNote:
-      "目前是公開嵌入模式。沒有公開 /design/{id} 或伺服器可轉址的 /d/ 短網址就不會嵌入空白 iframe。短網址成功轉到設計後才嵌入，不會標成已驗證，也不會宣稱 Connect 已連線。",
-    demoNote: "沒有已驗證的公開 Demo 時，不會放假的產品畫面。",
-    galleryNote:
-      "只顯示已發布媒體。標成 GitHub 匯出的是公開 repo 檔的複本；工作室 SVG 是轉譯。沒有公開 Canva /design/{id} 就不嵌入。",
+    githubIntro: DEFAULT_EXPERIENCE_NOTES.githubIntro,
+    canvaNote: DEFAULT_EXPERIENCE_NOTES.canvaNote,
+    demoNote: DEFAULT_EXPERIENCE_NOTES.demoNote,
+    galleryNote: DEFAULT_EXPERIENCE_NOTES.galleryNote,
   };
 
   if (slug === "framelab") {

@@ -1,19 +1,20 @@
-import { useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { useState } from "react";
 import { demoViewerState, type PublicProject } from "@/lib/cms/privacy";
 import { isSafeHttpUrl } from "@/lib/safe-href";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { fillChrome } from "@/lib/locale/experience";
+import { useExperienceView } from "./useExperienceView";
 
 export function LiveDemoStage({ project }: { project: PublicProject }) {
+  const { ex, config } = useExperienceView(project);
   const demo = project.demo;
-  const config = resolveExperienceConfig(project);
   const [failed, setFailed] = useState(false);
   const state = demoViewerState(demo, failed);
 
   if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
-        {config.demoNote ?? "沒有已驗證的公開 Demo。GitHub 仍可展開，但這裡不會放假的產品畫面。"}
+        {config.demoNote ?? ex.emptyDemo}
       </div>
     );
   }
@@ -21,12 +22,9 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
   if (state === "fallback") {
     return (
       <div className="rounded-2xl bg-surface p-5 shadow-card">
-        <p className="font-medium">{demo.label ?? "公開網址"}</p>
+        <p className="font-medium">{demo.label ?? ex.publicUrl}</p>
         <p className="mt-2 text-sm text-muted">
-          {demo.error ||
-            (demo.status === "pending"
-              ? "這個網址還沒驗證能不能嵌入。"
-              : "無法在頁內嵌入。請開新分頁查看，狀態可能隨部署變動。")}
+          {demo.error || (demo.status === "pending" ? ex.pendingEmbed : ex.cannotEmbed)}
         </p>
         {demo.url && isSafeHttpUrl(demo.url) ? (
           <a
@@ -35,7 +33,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
             rel="noreferrer"
             target="_blank"
           >
-            開新分頁
+            {ex.newTab}
             <ExternalLink className="size-4" />
           </a>
         ) : null}
@@ -55,14 +53,14 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
           onError={() => setFailed(true)}
         />
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs text-muted">
-          <span>Live Demo · 狀態 {demo.status}</span>
+          <span>{fillChrome(ex.liveStatus, { status: demo.status })}</span>
           <a
             href={demo.url}
             className="inline-flex min-h-11 items-center text-mint-deep"
             rel="noreferrer"
             target="_blank"
           >
-            開原站
+            {ex.openSite}
           </a>
         </div>
         {config.demoNote ? <p className="px-4 pb-3 text-xs text-muted">{config.demoNote}</p> : null}
@@ -72,8 +70,8 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
 
   return (
     <div className="rounded-2xl bg-surface p-5 shadow-card">
-      <p className="font-medium">{demo.label ?? "公開網址"}</p>
-      <p className="mt-2 text-sm text-muted">沒有可嵌入的網址。不會放空白 iframe。</p>
+      <p className="font-medium">{demo.label ?? ex.publicUrl}</p>
+      <p className="mt-2 text-sm text-muted">{ex.noEmbedUrl}</p>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { experienceChromeFor, type ExperienceChrome } from "@/lib/locale/experience";
 import {
   parseViewerLang,
   readStoredViewerLang,
@@ -12,12 +13,14 @@ type LocaleContextValue = {
   lang: ViewerLang;
   setLang: (lang: ViewerLang) => void;
   ui: ChromeCopy;
+  ex: ExperienceChrome;
 };
 
 const LocaleContext = createContext<LocaleContextValue>({
   lang: "zh",
   setLang: () => undefined,
   ui: chromeFor("zh"),
+  ex: experienceChromeFor("zh"),
 });
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
@@ -42,6 +45,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       lang,
       setLang,
       ui: chromeFor(lang),
+      ex: experienceChromeFor(lang),
     }),
     [lang, setLang],
   );

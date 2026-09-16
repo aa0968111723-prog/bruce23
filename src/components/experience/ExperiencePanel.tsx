@@ -9,18 +9,11 @@ import { LiveDemoStage } from "./LiveDemoStage";
 import { ExperienceCanvas } from "./ExperienceCanvas";
 import { MediaFrame } from "@/components/site/MediaFrame";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
-import { howItWorksSteps, resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { howItWorksSteps } from "@/lib/experiences/resolve";
+import { useExperienceView } from "./useExperienceView";
 
-const TABS = [
-  { id: "play", label: "立即體驗" },
-  { id: "visual", label: "視覺展示" },
-  { id: "github", label: "GitHub 專案" },
-  { id: "canva", label: "Canva 原作" },
-  { id: "how", label: "如何運作" },
-  { id: "source", label: "技術來源" },
-] as const;
-
-type TabId = (typeof TABS)[number]["id"];
+const TAB_IDS = ["play", "visual", "github", "canva", "how", "source"] as const;
+type TabId = (typeof TAB_IDS)[number];
 
 export function ExperiencePanel({
   project,
@@ -31,17 +24,22 @@ export function ExperiencePanel({
   onClose?: () => void;
   variant?: "overlay" | "page";
 }) {
+  const { lang, ex, config } = useExperienceView(project);
   const [tab, setTab] = useState<TabId>("play");
-  const tabs = useRovingTabs(
-    TABS.map((item) => item.id) as TabId[],
-    tab,
-    (next) => setTab(next),
+  const tabs = useRovingTabs(TAB_IDS, tab, setTab);
+  const honesty = config.honestyLabel || null;
+  const galleryNote = config.galleryNote;
+  const tabItems = useMemo(
+    () => [
+      { id: "play" as const, label: ex.tabPlay },
+      { id: "visual" as const, label: ex.tabVisual },
+      { id: "github" as const, label: ex.tabGithub },
+      { id: "canva" as const, label: ex.tabCanva },
+      { id: "how" as const, label: ex.tabHow },
+      { id: "source" as const, label: ex.tabSource },
+    ],
+    [ex],
   );
-  const honesty = useMemo(() => {
-    const config = resolveExperienceConfig(project);
-    return config.honestyLabel || null;
-  }, [project]);
-  const galleryNote = useMemo(() => resolveExperienceConfig(project).galleryNote, [project]);
 
   useEffect(() => {
     if (!onClose) return;
@@ -72,7 +70,7 @@ export function ExperiencePanel({
             onClick={onClose}
           >
             <X className="size-5" />
-            <span className="sr-only">關閉體驗</span>
+            <span className="sr-only">{ex.closeExperience}</span>
           </button>
         ) : null}
       </div>
@@ -80,10 +78,10 @@ export function ExperiencePanel({
       <div
         className="flex gap-1 overflow-x-auto px-3 pt-3"
         role="tablist"
-        aria-label="作品體驗"
+        aria-label={ex.tabsAria}
         onKeyDown={tabs.onKeyDown}
       >
-        {TABS.map((item) => {
+        {tabItems.map((item) => {
           const active = item.id === tab;
           return (
             <button
@@ -131,9 +129,7 @@ export function ExperiencePanel({
                 ))}
               </div>
             ) : (
-              <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
-                這件作品還沒有已發布的媒體。不會放空白畫面。
-              </p>
+              <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">{ex.emptyMedia}</p>
             )}
             <LiveDemoStage project={project} />
             <p className="text-sm leading-relaxed text-ink/85">{project.summary}</p>
@@ -143,7 +139,7 @@ export function ExperiencePanel({
         {tab === "canva" ? <CanvaStage project={project} /> : null}
         {tab === "how" ? (
           <ol className="grid gap-3">
-            {howItWorksSteps(project).map((step, index) => (
+            {howItWorksSteps(project, lang).map((step, index) => (
               <li key={`${index}-${step}`} className="rounded-2xl bg-surface px-4 py-3 shadow-card">
                 <p className="text-xs text-mint-deep">{String(index + 1).padStart(2, "0")}</p>
                 <p className="mt-1 text-sm leading-relaxed">{step}</p>
@@ -176,9 +172,7 @@ export function ExperiencePanel({
               })}
             </ul>
           ) : (
-            <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
-              尚未登錄技術來源。公開 GitHub 仍可在「GitHub 專案」分頁打開。
-            </p>
+            <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">{ex.emptySource}</p>
           )
         ) : null}
       </div>

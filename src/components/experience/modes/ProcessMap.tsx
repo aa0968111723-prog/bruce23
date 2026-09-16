@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { useExperienceView } from "../useExperienceView";
 
 export function ProcessMap({ project }: { project: PublicProject }) {
-  const config = resolveExperienceConfig(project);
+  const { ex, config } = useExperienceView(project);
   const nodes = config.processNodes ?? [];
   const ids = nodes.map((node) => node.id);
   const [active, setActive] = useState(nodes[0]?.id ?? "");
@@ -18,19 +18,19 @@ export function ProcessMap({ project }: { project: PublicProject }) {
   const tabs = useRovingTabs(ids, (active || ids[0] || "") as string, setActive);
 
   if (!nodes.length) {
-    return <p className="text-sm text-muted">尚未設定流程節點。</p>;
+    return <p className="text-sm text-muted">{ex.emptyNodes}</p>;
   }
 
   return (
     <div>
       <p className="text-sm text-muted">
-        {config.intro ?? "這是作品集互動展示，把公開 repo 的流程串成可點的節點。不是線上產品控制台。"}
-        鍵盤左右鍵可換節點。
+        {config.intro ?? ex.processDefaultIntro}
+        {ex.processKeyboard}
       </p>
       <div
         className="mt-4 flex gap-2 overflow-x-auto md:flex"
         role="tablist"
-        aria-label="流程節點"
+        aria-label={ex.nodesAria}
         onKeyDown={tabs.onKeyDown}
       >
         {nodes.map((node, index) => (
@@ -64,7 +64,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
           <p className="text-xs text-mint-deep">{current.stage}</p>
           <h3 className="mt-1 font-display text-xl font-semibold">{current.label}</h3>
           <p className="mt-2 text-sm leading-relaxed">{current.summary}</p>
-          <p className="mt-3 text-sm text-muted">GitHub 來源：{current.githubPath}</p>
+          <p className="mt-3 text-sm text-muted">{ex.githubSource}：{current.githubPath}</p>
           <p className="text-sm text-muted">{current.purpose}</p>
           {owner && repo ? (
             <a
@@ -73,10 +73,10 @@ export function ProcessMap({ project }: { project: PublicProject }) {
               rel="noreferrer"
               target="_blank"
             >
-              開啟原始檔
+              {ex.openSourceFile}
             </a>
           ) : null}
-          {reduced ? <p className="mt-3 text-xs text-muted">已依系統設定關閉多餘動態。</p> : null}
+          {reduced ? <p className="mt-3 text-xs text-muted">{ex.reducedMotion}</p> : null}
         </div>
       ) : null}
     </div>

@@ -1,8 +1,8 @@
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
+import { useExperienceView } from "../useExperienceView";
 
 type Prop = {
   id: string;
@@ -14,10 +14,15 @@ type Prop = {
 };
 
 export function PlanformSpace({ project }: { project?: PublicProject }) {
-  const config = project ? resolveExperienceConfig(project) : {};
-  const initial = (config.spatial?.objects ?? []) as Prop[];
-  const [props, setProps] = useState<Prop[]>(initial);
-  const [selected, setSelected] = useState<string>(initial[0]?.id ?? "");
+  const { ex, config } = useExperienceView(project);
+  const catalog = (config.spatial?.objects ?? []) as Prop[];
+  const [move, setMove] = useState<Record<string, { x: number; y: number }>>({});
+  const props = catalog.map((item) => ({
+    ...item,
+    x: move[item.id]?.x ?? item.x,
+    y: move[item.id]?.y ?? item.y,
+  }));
+  const [selected, setSelected] = useState<string>(catalog[0]?.id ?? "");
   const [tilt, setTilt] = useState(config.spatial?.tiltDefault ?? 18);
   const current = props.find((item) => item.id === selected);
   const reduced = usePrefersReducedMotion();
@@ -26,19 +31,20 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
   const branch = project?.github.branch ?? "main";
   const sources = config.fileHints?.slice(0, 2) ?? [];
 
+  function place(id: string, x: number, y: number) {
+    setMove((value) => ({
+      ...value,
+      [id]: { x: Math.min(88, Math.max(8, x)), y: Math.min(78, Math.max(18, y)) },
+    }));
+  }
+
   function onDrag(id: string, event: PointerEvent<HTMLButtonElement>) {
     const parent = event.currentTarget.parentElement;
     if (!parent) return;
     const rect = parent.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
-    setProps((list) =>
-      list.map((item) =>
-        item.id === id
-          ? { ...item, x: Math.min(88, Math.max(8, x)), y: Math.min(78, Math.max(18, y)) }
-          : item,
-      ),
-    );
+    place(id, x, y);
   }
 
   function onKey(event: KeyboardEvent<HTMLDivElement>) {
@@ -51,29 +57,27 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
     } else if (["ArrowLeft", "ArrowRight"].includes(event.key) && (event.shiftKey || event.altKey)) {
       event.preventDefault();
       const dx = event.key === "ArrowRight" ? 3 : -3;
-      setProps((list) =>
-        list.map((item) =>
-          item.id === selected ? { ...item, x: Math.min(88, Math.max(8, item.x + dx)) } : item,
-        ),
-      );
+      const item = props.find((prop) => prop.id === selected);
+      if (!item) return;
+      place(selected, item.x + dx, item.y);
     }
   }
 
   const tiltValue = reduced ? 0 : tilt;
 
   if (!props.length) {
-    return <p className="text-sm text-muted">尚未設定空間物件。</p>;
+    return <p className="text-sm text-muted">{ex.emptyObjects}</p>;
   }
 
   return (
-    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label="PLANFORM 場佈">
+    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.planformAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? "等角場佈示意：旋轉、拖動物件、看用途與尺寸。"}
-        {config.spatial?.complianceDisclaimer ?? "這是作品集空間預覽，不做容留或消防法規符合計算。"}
-        上下鍵旋轉，Shift＋左右移動選取物件。
+        {config.intro ?? ex.planformDefaultIntro}
+        {config.spatial?.complianceDisclaimer ?? ""}
+        {ex.planformKeyboard}
       </p>
       <label className="mt-3 flex items-center gap-3 text-sm">
-        旋轉
+        {ex.rotate}
         <input
           type="range"
           min={-40}
@@ -128,14 +132,14 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
       {current ? (
         <div className="mt-4 rounded-2xl bg-surface p-4 text-sm shadow-card">
           <p className="font-display text-lg">{current.label}</p>
-          <p className="mt-1">用途：{current.use}</p>
-          <p>尺寸：{current.size}</p>
+          <p className="mt-1">{ex.useLabel}：{current.use}</p>
+          <p>{ex.sizeLabel}：{current.size}</p>
           <p className="mt-2 text-muted">
-            {config.spatial?.circulationNote ?? "薄荷色曲線是示意動線，不是法定避難寬度，也不做規範符合計算。"}
+            {config.spatial?.circulationNote ?? ""}
           </p>
           {owner && repo && sources.length ? (
             <p className="mt-2 text-xs text-muted">
-              來源{" "}
+              {ex.sourceLabel}{" "}
               {sources.map((item, index) => (
                 <span key={item.path}>
                   {index > 0 ? " · " : null}

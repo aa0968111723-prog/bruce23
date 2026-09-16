@@ -1,9 +1,9 @@
 import { useMemo, useState, type KeyboardEvent } from "react";
 import type { TimelineFrame } from "@/lib/cms/schema";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
+import { useExperienceView } from "../useExperienceView";
 
 const KIND_LABEL: Record<TimelineFrame["kind"], string> = {
   key: "Key",
@@ -55,7 +55,7 @@ function BallStrip({
 }
 
 export function FrameTimeline({ project }: { project: PublicProject }) {
-  const config = resolveExperienceConfig(project);
+  const { ex, config } = useExperienceView(project);
   const frames = config.timeline?.frames ?? [];
   const [index, setIndex] = useState(0);
   const [onion, setOnion] = useState(config.timeline?.onionDefault ?? true);
@@ -82,31 +82,31 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
   }
 
   if (!frame) {
-    return <p className="text-sm text-muted">尚未設定時間軸幀。</p>;
+    return <p className="text-sm text-muted">{ex.emptyFrames}</p>;
   }
 
   return (
-    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label="FrameLab 時間軸">
+    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.timelineAria}>
       <p className="text-sm text-muted">
-        {config.intro ?? "作品集示範時間軸。"}
-        {config.timeline?.demoDisclaimer ?? "標成「示範」的畫面不是 GPU 模型輸出。"}
-        左右鍵換幀，O 切 onion-skin，C 比較。
+        {config.intro ?? ex.timelineDefaultIntro}
+        {config.timeline?.demoDisclaimer ?? ""}
+        {ex.timelineKeyboard}
       </p>
       <div className={`mt-4 grid gap-3 ${compare ? "md:grid-cols-2" : ""}`}>
         <figure>
           <BallStrip frames={frames} index={index} onion={onion} reduced={reduced} />
           <figcaption className="mt-2 text-xs text-muted">
-            示範 · F{frame.i} {KIND_LABEL[frame.kind]}
+            {ex.demoMark} · F{frame.i} {KIND_LABEL[frame.kind]}
           </figcaption>
         </figure>
         {compare ? (
           <figure>
             <BallStrip frames={frames} index={Math.max(0, index - 1)} onion={false} reduced={reduced} />
-            <figcaption className="mt-2 text-xs text-muted">比較 · 前一幀（示範，不是真實輸出）</figcaption>
+            <figcaption className="mt-2 text-xs text-muted">{ex.comparePrev}</figcaption>
           </figure>
         ) : null}
       </div>
-      <div className="mt-3 flex flex-wrap gap-1" role="group" aria-label="幀">
+      <div className="mt-3 flex flex-wrap gap-1" role="group" aria-label={ex.framesAria}>
         {frames.map((item, frameIndex) => (
           <button
             key={`f-${item.i}-${frameIndex}`}
@@ -126,19 +126,19 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
           className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
           onClick={() => setOnion((value) => !value)}
         >
-          Onion skin {onion ? "開" : "關"}
+          {ex.onionSkin} {onion ? ex.on : ex.off}
         </button>
         <button
           type="button"
           className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
           onClick={() => setCompare((value) => !value)}
         >
-          幀比較 {compare ? "開" : "關"}
+          {ex.frameCompare} {compare ? ex.on : ex.off}
         </button>
       </div>
       <p className="mt-3 text-sm">
-        目前 F{frame.i} · {KIND_LABEL[frame.kind]}
-        {frame.problem ? " · 接觸點不穩，概念上只重產這一窗，不重跑整段。" : ""}
+        {ex.currentFrame} F{frame.i} · {KIND_LABEL[frame.kind]}
+        {frame.problem ? ` · ${ex.problemNote}` : ""}
       </p>
       <ul className="mt-4 grid gap-1 text-xs text-muted">
         {sourcePaths.map((item) => (

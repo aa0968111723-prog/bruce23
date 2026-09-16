@@ -2,11 +2,12 @@ import { useRef, useState } from "react";
 import { Expand, ExternalLink } from "lucide-react";
 import { canvaViewerState, publicCanvaEmbedUrl, type PublicProject } from "@/lib/cms/privacy";
 import { canvaEmbedSrc, canvaOpenOriginalUrl } from "@/lib/canva/embed";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
+import { fillChrome } from "@/lib/locale/experience";
+import { useExperienceView } from "./useExperienceView";
 
 export function CanvaStage({ project }: { project: PublicProject }) {
+  const { ex, config } = useExperienceView(project);
   const canva = project.canva;
-  const config = resolveExperienceConfig(project);
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const frameRef = useRef<HTMLIFrameElement>(null);
@@ -31,8 +32,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   if (state === "empty") {
     return (
       <div className="rounded-2xl bg-surface-blue px-4 py-8 text-sm text-muted">
-        {config.canvaNote ??
-          "這件作品還沒有公開的 Canva 分享或嵌入網址。目前是公開嵌入模式，沒有 Canva Connect 憑證，不會顯示空白 iframe，也不會假裝已連上 Canva API。後台可貼 canva.com/design 或 /d/ 短網址；短網址由伺服器跟隨轉址後才嵌入。"}
+        {config.canvaNote ?? ex.canvaEmptyNote}
       </div>
     );
   }
@@ -43,13 +43,9 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         {thumb}
         <div className="space-y-2 p-4 text-sm">
           <p className="font-medium">
-            {canva.status === "unavailable" ? "Canva 原作目前無法公開嵌入" : "Canva 原作沒有公開分享連結"}
+            {canva.status === "unavailable" ? ex.unavailableTitle : ex.noShareTitle}
           </p>
-          <p className="text-muted">
-            {canva.status === "unavailable"
-              ? "可能需要登入、權限不是公開分享，或短網址沒有轉到 /design/{id}。站內只放縮圖，不嵌入空白 iframe。"
-              : "站內只放已匯出的縮圖。沒有 canva.com 分享／嵌入網址，所以不嵌入空白 iframe。"}
-          </p>
+          <p className="text-muted">{canva.status === "unavailable" ? ex.unavailableBody : ex.noShareBody}</p>
           {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
           {original ? (
             <a
@@ -58,11 +54,11 @@ export function CanvaStage({ project }: { project: PublicProject }) {
               rel="noreferrer"
               target="_blank"
             >
-              在 Canva 開啟原作
+              {ex.openOriginal}
               <ExternalLink className="size-4" />
             </a>
           ) : null}
-          <p className="text-xs text-muted">來源標記：公開嵌入模式 · 狀態 {canva.status} · 未宣稱 Connect 已連線</p>
+          <p className="text-xs text-muted">{fillChrome(ex.sourcePublicEmbed, { status: canva.status })}</p>
         </div>
       </div>
     );
@@ -74,14 +70,10 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         {thumb}
         <div className="space-y-2 p-4 text-sm">
           <p className="font-medium">
-            {canva.status === "pending" && !embed
-              ? "Canva 短網址還沒有公開設計可嵌入"
-              : "Canva 嵌入無法顯示"}
+            {canva.status === "pending" && !embed ? ex.pendingTitle : ex.embedFailTitle}
           </p>
           <p className="text-muted">
-            {canva.status === "pending" && !embed
-              ? "伺服器還沒有從 canva.com 轉址得到 /design/{id}。不會嵌入空白 iframe，也不會標成已驗證。"
-              : "可能是失效短網址、Cloudflare 驗證頁、登入牆，或瀏覽器擋住嵌入。沒有空白 iframe。"}
+            {canva.status === "pending" && !embed ? ex.pendingBody : ex.embedFailBody}
           </p>
           {original ? (
             <a
@@ -90,7 +82,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
               rel="noreferrer"
               target="_blank"
             >
-              在 Canva 開啟原作
+              {ex.openOriginal}
               <ExternalLink className="size-4" />
             </a>
           ) : null}
@@ -108,7 +100,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         <iframe
           ref={frameRef}
           key={embedSrc}
-          title={canva.alt ?? `${project.title} Canva 原作`}
+          title={canva.alt ?? fillChrome(ex.iframeTitle, { title: project.title })}
           src={embedSrc}
           className="aspect-[4/3] w-full bg-surface-blue"
           loading="lazy"
@@ -121,7 +113,8 @@ export function CanvaStage({ project }: { project: PublicProject }) {
         {pages.length > 1
           ? pages.map((item, index) => {
               const label =
-                config.canvaPageLabels?.find((page) => page.id === item)?.label ?? `第 ${index + 1} 頁`;
+                config.canvaPageLabels?.find((pageItem) => pageItem.id === item)?.label ??
+                fillChrome(ex.pageN, { n: index + 1 });
               return (
                 <button
                   key={item}
@@ -151,7 +144,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
           }}
         >
           <Expand className="size-4" />
-          全螢幕
+          {ex.fullscreen}
         </button>
         {original ? (
           <a
@@ -160,12 +153,12 @@ export function CanvaStage({ project }: { project: PublicProject }) {
             rel="noreferrer"
             target="_blank"
           >
-            在 Canva 開啟原作
+            {ex.openOriginal}
             <ExternalLink className="size-4" />
           </a>
         ) : null}
       </div>
-      <p className="text-xs text-muted">來源標記：Canva 公開嵌入 · 狀態 {canva.status} · 未宣稱 Connect 已連線</p>
+      <p className="text-xs text-muted">{fillChrome(ex.sourceCanvaEmbed, { status: canva.status })}</p>
       {config.canvaNote ? <p className="text-sm text-muted">{config.canvaNote}</p> : null}
       {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
     </div>

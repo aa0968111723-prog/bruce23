@@ -1,5 +1,4 @@
 import type { PublicProject } from "@/lib/cms/privacy";
-import { resolveExperienceConfig } from "@/lib/experiences/resolve";
 import { ProcessMap } from "./modes/ProcessMap";
 import { FrameTimeline } from "./modes/FrameTimeline";
 import { PosterVision } from "./modes/PosterVision";
@@ -12,10 +11,11 @@ import { LiveDemoStage } from "./LiveDemoStage";
 import { CanvaStage } from "./CanvaStage";
 import { GithubExplorer } from "./GithubExplorer";
 import { MediaFrame } from "@/components/site/MediaFrame";
+import { useExperienceView } from "./useExperienceView";
 
 export function ExperienceCanvas({ project }: { project: PublicProject }) {
   const mode = project.experienceMode;
-  const config = resolveExperienceConfig(project);
+  const { ex, config } = useExperienceView(project);
   if (mode === "process-map") return <ProcessMap project={project} />;
   if (mode === "timeline") return <FrameTimeline project={project} />;
   if (mode === "spatial-preview") {
@@ -63,9 +63,7 @@ export function ExperienceCanvas({ project }: { project: PublicProject }) {
             ))}
           </div>
         ) : (
-          <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
-            這件作品還沒有已發布的媒體。不會放空白畫面。
-          </p>
+          <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">{ex.emptyMedia}</p>
         )}
       </div>
     );

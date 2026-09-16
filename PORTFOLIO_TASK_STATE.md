@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: archive 中英文 (not complete)
+Cycle: experience playable 中英文 (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -36,13 +36,20 @@ Updated: 2026-09-16
 
 - `migrations/0003_archive_locale.sql` adds `archive_items.locale_json` (0002 untouched). Overlays: title, summary, caption, alt, originNote.
 - Seed English for all eight archive cards. Public `overlayArchive` switches cards; Admin ArchiveForm edits zh/en overlays. Honesty copy (no public Canva share URL / cannot page) stays accurate in chrome and English item copy.
-- Still zh-only: GitHub/Canva technical fields, JSON-LD (canonical zh), experience playable internals.
+- Still zh-only: GitHub/Canva technical fields, JSON-LD (canonical zh), GitHub file paths.
+- Experience playable UI chrome (tabs, FrameLab onion-skin, Canva unavailable, GitHub tab chrome, process/PLANFORM/對稿/Zen chrome) now follows the public zh|en preference. Saved Chinese `experience_config` node labels overlay from a parallel English map; missing en falls back to zh.
+
+## This cycle (experience playable 中英文)
+
+- `src/lib/locale/experience.ts` holds a zh|en chrome dictionary plus `experienceCopyEn` overlays. Catalog/defaults Chinese copy is unchanged.
+- Public ExperiencePanel tabs, honesty labels, FrameLab onion-skin/compare, process-map stages, PLANFORM object labels, 對稿 version labels, Zen disclaimer, Canva unavailable fallback (including archive CanvaStage), and GitHub tab chrome switch with `luminous-studio-lang`.
+- GitHub paths stay untranslated. JSON-LD stays canonical zh. Canva is still public-embed / unavailable — Connect is not claimed linked.
 
 ## This cycle (public 中英文 switcher)
 
 - Public shell header (desktop nav + mobile cluster next to the menu) has a light-studio `zh | en` radiogroup, ≥44px, keyboard arrows/Home/End. Preference key `luminous-studio-lang` in localStorage only. CMS copy stays in Postgres.
 - Homepage, about, work list, case study (title/summary/problem/role/decisions/process/outputs/limitations/modalities/stack/SEO document title), archive chrome/filters **and archive card titles/summaries/captions**, exploration headings/hubs/aria, privacy, 404, nav, footer switch via `locale_json` and chrome dictionaries. Empty English falls back to zh. JSON-LD stays canonical zh. Admin `/admin` and `/login` stay bare (no toggle). No dark mode. Grok branding untouched.
-- Experience playable internals stay zh.
+- Experience playable chrome now follows the same toggle (see experience cycle above).
 
 ## This cycle (admin field round-trip)
 
@@ -90,7 +97,7 @@ Updated: 2026-09-16
 - Google login as `aa0968111723@gmail.com` to browser-prove admin as a human
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
-- Public language switcher ships with real English overlays for site, eight works, and archive cards. Experience-playable internals stay zh.
+- JSON-LD stays canonical zh (intentional). GitHub file paths stay untranslated (intentional).
 - Folio still has no public editor-operation screenshot (only og.jpg share card)
 - tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)
 - Platform PWA apple-touch / `__grok` install icon remains Grok chrome (not overwritten)
