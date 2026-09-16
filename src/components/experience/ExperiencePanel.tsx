@@ -95,7 +95,6 @@ export function ExperiencePanel({
                 active ? "bg-ink text-bg" : "bg-surface text-muted shadow-card",
               )}
               onClick={() => setTab(item.id)}
-              onKeyDown={tabs.onKeyDown}
             >
               {item.label}
             </button>

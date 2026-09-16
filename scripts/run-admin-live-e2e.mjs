@@ -249,13 +249,26 @@ async function proveLiveAdmin(page, request) {
   await gotoReady(page, `${ORIGIN}/work/framelab`);
   await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
   const play = page.getByRole("tab", { name: "立即體驗" });
+  await play.click();
   await play.focus();
-  await play.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   const visual = page.getByRole("tab", { name: "視覺展示" });
-  await visual.waitFor({ state: "visible" });
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes("視覺展示") ??
+      false,
+    null,
+    { timeout: 5000 },
+  );
   assert((await visual.getAttribute("aria-selected")) === "true", "ArrowRight did not move ExperiencePanel tabs");
-  await visual.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   const github = page.getByRole("tab", { name: "GitHub 專案" });
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.includes("GitHub") ?? false,
+    null,
+    { timeout: 5000 },
+  );
   assert((await github.getAttribute("aria-selected")) === "true", "ArrowRight did not reach the GitHub tab");
   const tree = page.getByRole("tree").first();
   await tree.waitFor({ timeout: 10000 });
