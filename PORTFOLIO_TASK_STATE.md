@@ -2,7 +2,19 @@
 
 Cycle: HermesPreview typecheck + process-map numbers + studio heatmap + Folio document i18n (not complete)
 Updated: 2026-09-16
-HEAD: fc94029d7c3c4c149219bab7b337a69911ac56a8
+HEAD: eb95eacbaad9d73f85a190c02377e6c9b324170d
+
+## Gates this cycle (2026-09-16, after fc94029 / eb95eac)
+
+- `npm run typecheck` pass
+- `npm test` pass (207 script + 245 src, fail 0; admin session E2E ok; admin live E2E ok)
+- `npm run lint` pass (0 errors, 3 existing warnings)
+- `npm run build` pass
+- `npm run check:auth` pass (sign-in on)
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no console/page errors; no overflow
+- `npm run preview:restart` + smoke vs baseline: `divergesFromBaseline: false`
+- Interactive: numbered AI Director pipeline, studio heatmap honesty badge, Folio editor-shell, Zen local chat, Planform isometric, 對稿 pins, unsigned `/admin` Google-only, zh|en overlay
+- GitHub `update_pull_request` on PR #4 returned 403 (token cannot PATCH). No fake PR-body success.
 
 ## Source of truth
 
