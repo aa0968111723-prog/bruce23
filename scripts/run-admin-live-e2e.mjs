@@ -315,7 +315,6 @@ async function proveLiveAdmin(page, request) {
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
-  await page.waitForLoadState("networkidle");
 
   const share = page.getByLabel(/Canva 分享/);
   await share.waitFor({ timeout: 15000 });
@@ -373,7 +372,6 @@ async function proveLiveAdmin(page, request) {
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
   await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
-  await page.waitForLoadState("networkidle");
   await page.evaluate(() => {
     const list = document.querySelector('[role="tablist"][aria-label="作品體驗"]');
     const tab = [...(list?.querySelectorAll('[role="tab"]') ?? [])].find((el) =>
@@ -459,7 +457,7 @@ async function proveLiveAdmin(page, request) {
 
   const a11y = await page.context().newPage();
   try {
-    await a11y.goto(`${ORIGIN}/work/framelab`, { waitUntil: "networkidle", timeout: 30000 });
+    await a11y.goto(`${ORIGIN}/work/framelab`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await a11y.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
     const play = a11y.getByRole("tab", { name: "立即體驗" });
     await play.focus();

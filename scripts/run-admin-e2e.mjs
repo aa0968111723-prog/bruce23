@@ -33,7 +33,7 @@ async function proveUnauthenticatedAdminBrowser() {
   const browser = await chromium.launch({ args: ["--no-sandbox", "--disable-dev-shm-usage"] });
   try {
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    await page.goto(`${origin}/admin`, { waitUntil: "networkidle", timeout: 20000 });
+    await page.goto(`${origin}/admin`, { waitUntil: "domcontentloaded", timeout: 20000 });
     await page.waitForSelector("text=後台登入", { timeout: 15000 });
     const html = await page.content();
     if (/type=["']password["']/.test(html)) {
