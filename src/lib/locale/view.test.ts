@@ -6,6 +6,7 @@ import {
   featuredProjectLocaleEn,
   FEATURED_WORK_SLUGS,
   localeZhFromProject,
+  mergeSeedEnglish,
   siteLocaleEn,
   siteLocaleZh,
 } from "../../content/locale-en.ts";
@@ -290,5 +291,16 @@ describe("viewer locale", () => {
       assert.equal(view.seoTitle, en.seoTitle);
       assert.equal(view.seoDescription, en.seoDescription);
     }
+  });
+
+  it("does not clobber distinct admin English when merging seed overlays", () => {
+    const merged = mergeSeedEnglish(
+      { title: "Admin EN title", summary: "FrameLab" },
+      { title: "FrameLab", summary: "不是剪輯軟體" },
+      { title: "FrameLab: a visual-first frame-by-frame workstation", summary: "Not an NLE" },
+      ["FrameLab"],
+    );
+    assert.equal(merged.title, "Admin EN title");
+    assert.equal(merged.summary, "Not an NLE");
   });
 });

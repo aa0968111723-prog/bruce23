@@ -166,3 +166,20 @@ export function localeZhFromProject(slug: string): LocaleCopy | undefined {
     seoDescription: project.summary,
   };
 }
+
+/** Fill empty English, or English that is still a zh/row duplicate. Never clobber distinct admin copy. */
+export function mergeSeedEnglish(
+  existingEn: Record<string, string> | undefined,
+  existingZh: Record<string, string> | undefined,
+  seedEn: Record<string, string>,
+  staleValues: string[] = [],
+): Record<string, string> {
+  const stale = new Set(staleValues.map((item) => item.trim()).filter(Boolean));
+  const next: Record<string, string> = { ...(existingEn ?? {}) };
+  for (const [key, value] of Object.entries(seedEn)) {
+    const now = (next[key] ?? "").trim();
+    const zh = (existingZh?.[key] ?? "").trim();
+    if (!now || now === zh || stale.has(now)) next[key] = value;
+  }
+  return next;
+}

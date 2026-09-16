@@ -482,8 +482,8 @@ export async function runAdminE2E() {
         seo_description: "E2E description",
         homepage_json: { highlightSlugs: ["framelab", created.slug] },
         locale_json: {
-          zh: { headline: "中文 headline", narrative: "中文 narrative" },
-          en: { headline: "EN headline", narrative: "EN narrative" },
+          zh: { headline: "中文 headline", narrative: "中文 narrative", seoTitle: "E2E ZH SEO" },
+          en: { headline: "EN headline", narrative: "EN narrative", seoTitle: "E2E EN SEO" },
         },
       });
     });
@@ -520,9 +520,10 @@ export async function runAdminE2E() {
     const homepageEn = resolveHomepageCopy(publicSite, fallback, "en");
     assert.equal(homepageZh.headline, "中文 headline");
     assert.equal(homepageZh.narrative, "中文 narrative");
+    assert.equal(homepageZh.seoTitle, "E2E ZH SEO");
     assert.equal(homepageEn.headline, "EN headline");
     assert.equal(homepageEn.narrative, "EN narrative");
-    assert.equal(homepageEn.seoTitle, "E2E SEO");
+    assert.equal(homepageEn.seoTitle, "E2E EN SEO");
   });
 
   await step("live /login stays Google-only when the preview server is up", async () => {

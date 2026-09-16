@@ -1,6 +1,6 @@
 import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
-import { localeEnForSlug, localeZhFromProject, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
+import { localeEnForSlug, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
@@ -477,48 +477,50 @@ async function fillProjectMediaGaps(sql: Sql): Promise<void> {
   }
 }
 
+function asLocaleBag(value: unknown): { zh?: Record<string, string>; en?: Record<string, string> } {
+  if (!value || typeof value !== "object") return {};
+  const bag = value as { zh?: Record<string, string>; en?: Record<string, string> };
+  return {
+    zh: bag.zh && typeof bag.zh === "object" ? bag.zh : undefined,
+    en: bag.en && typeof bag.en === "object" ? bag.en : undefined,
+  };
+}
+
 async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
   for (const project of projects) {
-    const zh = localeZhFromProject(project.slug) ?? {};
-    const en = localeEnForSlug(project.slug);
-    if (!en) continue;
-    // Existing zh wins so admin Chinese is not overwritten. Seed English wins so duplicate-zh en copies are replaced.
-    await sql.query(
-      `update projects
-       set locale_json = jsonb_set(
-         jsonb_set(
-           coalesce(locale_json, '{}'::jsonb),
-           '{zh}',
-           $2::jsonb || coalesce(locale_json->'zh', '{}'::jsonb),
-           true
-         ),
-         '{en}',
-         coalesce(locale_json->'en', '{}'::jsonb) || $3::jsonb,
-         true
-       ),
-       updated_at = now()
-       where slug = $1`,
-      [project.slug, JSON.stringify(zh), JSON.stringify(en)],
+    const seedEn = localeEnForSlug(project.slug);
+    if (!seedEn) continue;
+    const rows = await sql.query<{ locale_json: unknown }>(
+      `select locale_json from projects where slug = $1 limit 1`,
+      [project.slug],
     );
+    if (!rows[0]) continue;
+    const current = asLocaleBag(rows[0].locale_json);
+    const zh = { ...(localeZhFromProject(project.slug) ?? {}), ...(current.zh ?? {}) };
+    const en = mergeSeedEnglish(current.en, zh, seedEn as Record<string, string>, [
+      project.title,
+      project.subtitle,
+      project.summary,
+      project.problem,
+      project.role,
+    ]);
+    await sql.query(`update projects set locale_json = $2::jsonb, updated_at = now() where slug = $1`, [
+      project.slug,
+      JSON.stringify({ zh, en }),
+    ]);
   }
 }
 
 async function fillSiteLocaleGaps(sql: Sql): Promise<void> {
+  const rows = await sql.query<{ locale_json: unknown }>(
+    `select locale_json from site_settings where id = 'default' limit 1`,
+  );
+  if (!rows[0]) return;
+  const current = asLocaleBag(rows[0].locale_json);
+  const zh = { ...siteLocaleZh, ...(current.zh ?? {}) };
+  const en = mergeSeedEnglish(current.en, zh, siteLocaleEn, [site.headline, site.subhead, site.narrative]);
   await sql.query(
-    `update site_settings
-     set locale_json = jsonb_set(
-       jsonb_set(
-         coalesce(locale_json, '{}'::jsonb),
-         '{zh}',
-         $1::jsonb || coalesce(locale_json->'zh', '{}'::jsonb),
-         true
-       ),
-       '{en}',
-       coalesce(locale_json->'en', '{}'::jsonb) || $2::jsonb,
-       true
-     ),
-     updated_at = now()
-     where id = 'default'`,
-    [JSON.stringify(siteLocaleZh), JSON.stringify(siteLocaleEn)],
+    `update site_settings set locale_json = $1::jsonb, updated_at = now() where id = 'default'`,
+    [JSON.stringify({ zh, en })],
   );
 }
