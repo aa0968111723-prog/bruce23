@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ExternalLink, Maximize2 } from "lucide-react";
 import { canvaEmbedAllowed } from "@/lib/canva/urls";
+import { canvaViewMode } from "@/lib/experience/embed-fallback";
 
 export function CanvaEmbed({
   embedUrl,
@@ -19,17 +20,19 @@ export function CanvaEmbed({
 }) {
   const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const trusted = embedUrl && canvaEmbedAllowed(embedUrl);
   const pages = pageIds?.filter(Boolean) ?? [];
+  const mode = canvaViewMode(embedUrl, failed);
   const src = useMemo(() => {
-    if (!trusted || !embedUrl) return null;
+    if (mode !== "embed" || !trusted || !embedUrl) return null;
     if (!pages.length) return embedUrl;
     const url = new URL(embedUrl);
     url.searchParams.set("page", pages[page] ?? "1");
     return url.toString();
-  }, [embedUrl, page, pages, trusted]);
+  }, [embedUrl, page, pages, trusted, mode]);
 
-  if (!trusted || failed || !src) {
+  if (mode === "fallback" || !src) {
     return (
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         {thumbnailUrl ? (
@@ -59,7 +62,7 @@ export function CanvaEmbed({
 
   return (
     <figure className="overflow-hidden rounded-2xl bg-surface shadow-card">
-      <div className="relative aspect-[16/10] bg-surface-blue">
+      <div ref={wrapRef} className="relative aspect-[16/10] bg-surface-blue">
         <iframe
           title={alt ?? "Canva 原作"}
           src={src}
@@ -85,6 +88,17 @@ export function CanvaEmbed({
                 </button>
               ))
             : null}
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center gap-1 rounded-full bg-surface-blue px-3 text-sm"
+            onClick={() => {
+              const node = wrapRef.current;
+              if (node && node.requestFullscreen) void node.requestFullscreen();
+            }}
+          >
+            <Maximize2 className="size-3.5" />
+            全螢幕
+          </button>
           {shareUrl ? (
             <a
               href={shareUrl}
@@ -92,7 +106,6 @@ export function CanvaEmbed({
               rel="noreferrer"
               target="_blank"
             >
-              <Maximize2 className="size-3.5" />
               開啟原作
             </a>
           ) : null}

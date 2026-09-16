@@ -11,6 +11,7 @@ Branch: cursor/portfolio-interactive-cms-da82
 - Auth ON, Database ON (PGLite preview / Neon deploy)
 - Admin allowlist: `PORTFOLIO_ADMIN_EMAILS` (fail closed if unset)
 - Static seed remains in `src/content/*` and is upserted once into CMS tables
+- `VITE_AUTH_ENABLED=true` in `.grok/app-env.json` (not a `.env` file)
 
 ## Done this cycle (implementing)
 
@@ -21,7 +22,8 @@ Branch: cursor/portfolio-interactive-cms-da82
 - Server-side GitHub sync (metadata/README/languages/topics/commit/tree) that does not overwrite narrative
 - Canva public embed allowlist + reserved Connect OAuth
 - ExperiencePanel + per-project experiences
-- Homepage relation space (2D cards / scroller on mobile)
+- Homepage relation space (2D cards / scroller on mobile) including GitHub / Canva / Live Demo nodes
+- Fail-closed admin allowlist, revision restore without CASCADE wipe, embed fallbacks
 
 ## Not done / need from you
 

@@ -9,8 +9,8 @@ import {
   projectCategorySchema,
   projectMutationSchema,
   publicationStatusSchema,
+  siteSettingsSchema,
 } from "./schema";
-import { parseGithubRepoUrl } from "@/lib/github/parse";
 import { parseCanvaShareUrl, parseCanvaEmbedSnippet } from "@/lib/canva/urls";
 
 async function boot() {
@@ -149,10 +149,8 @@ export const restoreRevisionFn = createServerFn({ method: "POST" })
 
 export const saveSiteSettingsFn = createServerFn({ method: "POST" })
   .middleware([adminMiddleware])
-  .validator((data) => data)
-  .handler(async ({ data, context }) => {
-    const { siteSettingsSchema } = await import("./schema");
-    const parsed = siteSettingsSchema.parse(data);
+  .validator((data) => siteSettingsSchema.parse(data))
+  .handler(async ({ data: parsed, context }) => {
     const sql = await boot();
     await sql.query(
       `insert into site_settings (id, profile, homepage, seo, i18n, updated_by, updated_at)
@@ -234,49 +232,21 @@ export const previewGithubSyncFn = createServerFn({ method: "POST" })
   .validator((data) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const sql = await boot();
-    const { getAdminProject } = await import("./queries");
-    const project = await getAdminProject(sql, data.id);
-    if (!project) throw new Error("找不到專案");
-    const parsed = parseGithubRepoUrl(project.githubUrl);
-    if (!parsed) throw new Error("尚未設定有效 GitHub 網址");
-    const { fetchPublicGithubSnapshot, diffGithubFields } = await import("@/lib/github/client");
-    const { githubHttp } = await import("./github-http.server");
-    const http = await githubHttp(sql);
-    const result = await fetchPublicGithubSnapshot(parsed.owner, parsed.repo, http);
-    if (!result.ok) {
-      return {
-        ok: false as const,
-        error: result.error,
-        rateLimited: result.rateLimited,
-        lastSync: project.githubLastSyncedAt,
-        changes: [],
-      };
-    }
-    const changes = diffGithubFields(
-      {
-        github_branch: project.githubBranch,
-        github_metadata: project.githubMetadata,
-        github_languages: project.githubLanguages,
-        github_topics: project.githubTopics,
-        github_latest_commit: project.githubLatestCommit,
-        github_readme: project.githubReadme,
-        github_is_private: project.githubIsPrivate,
-      },
-      result.snapshot,
-    );
+    const { previewGithubForProject } = await import("./github-sync");
+    const preview = await previewGithubForProject(sql, data.id);
+    if (!preview.ok) return preview;
     return {
-      ok: true as const,
+      ...preview,
       snapshot: {
-        description: result.snapshot.description,
-        updatedAt: result.snapshot.updatedAt,
-        defaultBranch: result.snapshot.defaultBranch,
-        isPrivate: result.snapshot.isPrivate,
-        topics: result.snapshot.topics,
-        latestCommit: result.snapshot.latestCommit,
+        description: preview.snapshot.description,
+        updatedAt: preview.snapshot.updatedAt,
+        defaultBranch: preview.snapshot.defaultBranch,
+        isPrivate: preview.snapshot.isPrivate,
+        topics: preview.snapshot.topics,
+        latestCommit: preview.snapshot.latestCommit,
+        readme: preview.snapshot.readme,
+        fileTree: preview.snapshot.fileTree,
       },
-      changes,
-      lastSync: project.githubLastSyncedAt,
-      narrativeUntouched: true,
     };
   });
 
@@ -285,77 +255,24 @@ export const applyGithubSyncFn = createServerFn({ method: "POST" })
   .validator((data) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data, context }) => {
     const sql = await boot();
-    const preview = await previewGithubSyncFn({ data: { id: data.id } });
-    if (!preview.ok) {
-      await sql.query(
-        `update projects set github_sync_status='failed', updated_at=now(), updated_by=$2 where id=$1`,
-        [data.id, context.userId],
-      );
-      return preview;
-    }
-    const { getAdminProject } = await import("./queries");
-    const project = await getAdminProject(sql, data.id);
-    const parsed = parseGithubRepoUrl(project?.githubUrl);
-    if (!parsed) throw new Error("GitHub 網址無效");
-    const { fetchPublicGithubSnapshot } = await import("@/lib/github/client");
-    const { githubHttp } = await import("./github-http.server");
-    const result = await fetchPublicGithubSnapshot(parsed.owner, parsed.repo, await githubHttp(sql));
-    if (!result.ok) {
-      await sql.query(
-        `update projects set github_sync_status='failed', updated_at=now() where id=$1`,
-        [data.id],
-      );
-      return { ok: false as const, error: result.error };
-    }
-    const snap = result.snapshot;
-    const status = snap.isPrivate ? "connected" : "verified";
-    await sql.query(
-      `update projects set
-        github_owner=$2, github_repo=$3, github_branch=$4,
-        github_metadata=$5::jsonb, github_readme=$6, github_file_tree=$7::jsonb,
-        github_languages=$8::jsonb, github_topics=$9::jsonb, github_latest_commit=$10::jsonb,
-        github_is_private=$11, github_sync_status=$12, github_last_synced_at=now(),
-        updated_at=now(), updated_by=$13
-       where id=$1`,
-      [
-        data.id,
-        snap.owner,
-        snap.repo,
-        snap.defaultBranch,
-        JSON.stringify({
-          description: snap.description,
-          homepage: snap.homepage,
-          updated_at: snap.updatedAt,
-          html_url: snap.htmlUrl,
-          archived: snap.archived,
-        }),
-        snap.readme,
-        JSON.stringify(snap.fileTree),
-        JSON.stringify(snap.languages),
-        JSON.stringify(snap.topics),
-        JSON.stringify(snap.latestCommit),
-        snap.isPrivate,
-        status,
-        context.userId,
-      ],
-    );
-    return { ok: true as const, status };
+    const { applyGithubForProject } = await import("./github-sync");
+    return applyGithubForProject(sql, data.id, context.userId);
   });
 
 export const verifyReadmeFn = createServerFn({ method: "POST" })
   .middleware([adminMiddleware])
   .validator((data) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
-    const preview = await previewGithubSyncFn({ data: { id: data.id } });
+    const sql = await boot();
+    const { previewGithubForProject } = await import("./github-sync");
+    const preview = await previewGithubForProject(sql, data.id);
     if (!preview.ok) {
-      return { ok: false as const, status: "failed", error: preview.error };
+      return { ok: false as const, status: "failed" as const, error: preview.error };
     }
-    const hasReadme = preview.changes.some((c) => c.field === "github_readme")
-      ? Boolean(preview.changes.find((c) => c.field === "github_readme")?.to)
-      : true;
+    const hasReadme = Boolean(preview.snapshot.readme);
     return {
       ok: hasReadme,
-      status: hasReadme ? "verified" : "unavailable",
+      status: hasReadme ? ("verified" as const) : ("unavailable" as const),
       error: hasReadme ? null : "GitHub 沒有 README",
     };
   });
@@ -442,12 +359,12 @@ export const getIntegrationsOverviewFn = createServerFn({ method: "GET" })
         },
         canva: {
           status: p.canva?.status ?? "not_configured",
-          lastSync: null,
+          lastSync: p.canvaLastSyncedAt,
           error: p.canvaError,
         },
         demo: {
           status: p.demo?.status ?? "not_configured",
-          lastVerify: null,
+          lastVerify: p.liveDemoLastVerifiedAt,
           error: p.liveDemoError,
           url: p.demo?.url ?? null,
         },

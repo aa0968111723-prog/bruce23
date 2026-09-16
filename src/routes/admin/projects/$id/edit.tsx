@@ -62,7 +62,9 @@ function ProjectEditor({
     title: project.title,
     title_en: project.titleEn ?? "",
     subtitle: project.subtitle,
+    subtitle_en: project.subtitleEn ?? "",
     summary: project.summary,
+    summary_en: project.summaryEn ?? "",
     problem: project.problem,
     role: project.role,
     decisions: listField(project.decisions),
@@ -77,8 +79,10 @@ function ProjectEditor({
     featured: project.featured,
     sort_order: project.sortOrder,
     cover_image: project.media[0]?.src ?? "",
+    video_url: project.videoUrl ?? "",
     github_url: project.githubUrl ?? "",
     github_sync_enabled: project.githubSyncEnabled,
+    github_public_approved: project.githubPublicApproved,
     live_demo_url: project.demo?.url ?? "",
     live_demo_label: project.demo?.label ?? "",
     live_demo_embed_enabled: project.demo?.embedEnabled ?? false,
@@ -87,6 +91,9 @@ function ProjectEditor({
     canva_alt: project.canva?.alt ?? "",
     canva_caption: project.canva?.caption ?? "",
     experience_mode: project.experienceMode,
+    source_evidence: project.sourceEvidence
+      .map((s) => [s.label, s.note, s.href ?? "", s.path ?? ""].join(" | "))
+      .join("\n"),
     seo_title: project.seo.title ?? "",
     seo_description: project.seo.description ?? "",
   });
@@ -108,7 +115,9 @@ function ProjectEditor({
       title: form.title,
       title_en: form.title_en || null,
       subtitle: form.subtitle,
+      subtitle_en: form.subtitle_en || null,
       summary: form.summary,
+      summary_en: form.summary_en || null,
       problem: form.problem,
       role: form.role,
       decisions: form.decisions.split("\n").map((s) => s.trim()).filter(Boolean),
@@ -125,8 +134,10 @@ function ProjectEditor({
       media: form.cover_image
         ? [{ src: form.cover_image, alt: form.title, kind: "image" as const }]
         : project.media,
+      video_url: form.video_url || null,
       github_url: form.github_url || null,
       github_sync_enabled: form.github_sync_enabled,
+      github_public_approved: form.github_public_approved,
       live_demo_url: form.live_demo_url || null,
       live_demo_label: form.live_demo_label || null,
       live_demo_type: form.live_demo_url ? ("link" as const) : ("none" as const),
@@ -138,7 +149,19 @@ function ProjectEditor({
       experience_mode: form.experience_mode,
       experience_config: project.experienceConfig,
       interaction_steps: project.interactionSteps,
-      source_evidence: project.sourceEvidence,
+      source_evidence: form.source_evidence
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [label, note, href, path] = line.split("|").map((s) => s.trim());
+          return {
+            label: label || "來源",
+            note: note || "",
+            href: href || undefined,
+            path: path || undefined,
+          };
+        }),
       seo: { title: form.seo_title, description: form.seo_description },
     }),
     [form, project],
@@ -217,6 +240,9 @@ function ProjectEditor({
           <button type="button" className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card" onClick={() => void publish("archived")}>
             封存
           </button>
+          <button type="button" className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card" onClick={() => void publish("draft")}>
+            還原為草稿
+          </button>
           <Link to="/admin/preview" search={{ slug: project.slug }} className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
             預覽草稿
           </Link>
@@ -242,6 +268,7 @@ function ProjectEditor({
           {field("title_en", "Title (EN)")}
           {field("slug", "Slug")}
           {field("subtitle", "副標")}
+          {field("subtitle_en", "Subtitle (EN)")}
           {field("year", "年份")}
           <label className="block text-sm">
             分類
@@ -286,7 +313,9 @@ function ProjectEditor({
             精選
           </label>
           {field("cover_image", "封面圖")}
+          {field("video_url", "影片網址")}
           {field("summary", "摘要", true)}
+          {field("summary_en", "Summary (EN)", true)}
           {field("problem", "問題", true)}
           {field("role", "角色", true)}
           {field("decisions", "決策（一行一項）", true)}
@@ -297,6 +326,7 @@ function ProjectEditor({
           {field("limitations", "限制", true)}
           {field("seo_title", "SEO 標題")}
           {field("seo_description", "SEO 描述", true)}
+          {field("source_evidence", "來源（label | note | href | path）", true)}
         </div>
       ) : null}
 
@@ -305,6 +335,28 @@ function ProjectEditor({
           <section className="rounded-2xl bg-surface p-5 shadow-card">
             <h2 className="font-display text-xl">GitHub</h2>
             {field("github_url", "儲存庫網址")}
+            <label className="mt-2 flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.github_sync_enabled}
+                onChange={(e) => {
+                  setDirty(true);
+                  setForm((f) => ({ ...f, github_sync_enabled: e.target.checked }));
+                }}
+              />
+              啟用 GitHub 同步
+            </label>
+            <label className="mt-2 flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.github_public_approved}
+                onChange={(e) => {
+                  setDirty(true);
+                  setForm((f) => ({ ...f, github_public_approved: e.target.checked }));
+                }}
+              />
+              核准公開顯示 GitHub 技術資料
+            </label>
             <p className="mt-2 text-xs text-muted">
               上次同步：{project.githubLastSyncedAt ?? "尚未"} · 狀態 {project.githubSyncStatus}
             </p>
@@ -356,6 +408,17 @@ function ProjectEditor({
             <h2 className="font-display text-xl">Live Demo</h2>
             {field("live_demo_url", "Demo 網址")}
             {field("live_demo_label", "按鈕文字")}
+            <label className="mt-2 flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.live_demo_embed_enabled}
+                onChange={(e) => {
+                  setDirty(true);
+                  setForm((f) => ({ ...f, live_demo_embed_enabled: e.target.checked }));
+                }}
+              />
+              允許 iframe 嵌入（需先通過可用性測試）
+            </label>
             <button
               type="button"
               className="mt-3 min-h-11 rounded-full bg-surface-blue px-4 text-sm"

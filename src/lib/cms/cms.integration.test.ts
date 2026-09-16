@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { PGlite } from "@electric-sql/pglite";
-import { createProject, saveProject, setPublication } from "./mutate.ts";
+import { createProject, restoreRevision, saveProject, setPublication } from "./mutate.ts";
 import { ensureSeeded } from "./seed.ts";
 import { getPublishedProject, listPublishedProjects, sitemapSlugs } from "./queries.ts";
 import type { Sql } from "../db.ts";
@@ -103,5 +103,44 @@ describe("portfolio CMS persistence", () => {
     assert.equal(row[0].title, "FrameLab Draft Title");
     const pub = await getPublishedProject(sql, "framelab");
     assert.equal(pub?.title, "FrameLab Draft Title");
+  });
+
+  it("restores a revision without dropping history", async () => {
+    const { sql } = await boot();
+    await ensureSeeded(sql);
+    const existing = await sql.query<{ id: string; title: string }>(
+      `select id, title from projects where slug = 'framelab'`,
+    );
+    const original = existing[0].title;
+    await saveProject(
+      sql,
+      existing[0].id,
+      {
+        slug: "framelab",
+        title: "FrameLab Restored Candidate",
+        category: "Multimodal",
+        product_status: "prototype",
+        experience_mode: "timeline",
+        subtitle: "x",
+        summary: "candidate",
+      },
+      "admin-1",
+    );
+    const revs = await sql.query<{ id: string }>(
+      `select id from project_revisions where project_id = $1 order by created_at asc`,
+      [existing[0].id],
+    );
+    assert.ok(revs.length >= 1);
+    await restoreRevision(sql, existing[0].id, revs[0].id, "admin-1");
+    const after = await sql.query<{ title: string }>(
+      `select title from projects where id = $1`,
+      [existing[0].id],
+    );
+    assert.equal(after[0].title, original);
+    const still = await sql.query<{ n: string }>(
+      `select count(*)::text as n from project_revisions where project_id = $1`,
+      [existing[0].id],
+    );
+    assert.ok(Number(still[0].n) >= 2);
   });
 });

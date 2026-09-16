@@ -144,6 +144,8 @@ export type AdminProject = Omit<PublicProject, "publicationStatus" | "github"> &
   createdAt: string | null;
   updatedBy: string | null;
   github: PublicGithub | null;
+  canvaLastSyncedAt: string | null;
+  liveDemoLastVerifiedAt: string | null;
 };
 
 export const PRIVATE_ROW_KEYS = [

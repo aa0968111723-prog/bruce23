@@ -151,12 +151,13 @@ function PlayTab({ project }: { project: PublicProject }) {
       />
     );
   }
-  if (project.slug === "poster-vision-ai" || project.experienceMode === "image-comparison" && project.slug !== "duigao") {
-    if (project.slug === "poster-vision-ai") {
-      return <PosterVisionExperience note={note} />;
-    }
+  if (project.experienceMode === "image-comparison" && project.slug === "poster-vision-ai") {
+    return <PosterVisionExperience note={note} />;
   }
-  if (project.slug === "duigao") {
+  if (project.slug === "poster-vision-ai") {
+    return <PosterVisionExperience note={note} />;
+  }
+  if (project.slug === "duigao" || project.experienceMode === "image-comparison") {
     return <DuigaoExperience note={note} />;
   }
   if (project.experienceMode === "spatial-preview") {

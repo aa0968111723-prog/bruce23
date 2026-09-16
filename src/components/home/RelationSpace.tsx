@@ -1,25 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { PublicProject } from "@/lib/cms/public-types";
 import { cn } from "@/lib/cn";
-
-const NODES = [
-  { id: "圖像", match: ["圖像", "海報", "熱圖", "畫布"] },
-  { id: "影片", match: ["影片", "影像序列", "時間軸", "分鏡"] },
-  { id: "空間", match: ["3D", "空間", "動線", "平面圖"] },
-  { id: "文宣", match: ["圖像", "註記", "OCR"] },
-  { id: "互動", match: ["互動", "對話", "MCP", "註記"] },
-] as const;
-
-function related(projects: PublicProject[], nodeId: string) {
-  const node = NODES.find((n) => n.id === nodeId);
-  if (!node) return [];
-  return projects.filter((p) =>
-    p.modalities.some((m) => node.match.some((k) => m.includes(k))) ||
-    (nodeId === "空間" && p.category === "Spatial Design") ||
-    (nodeId === "文宣" && (p.slug === "duigao" || p.slug === "poster-vision-ai" || p.slug === "folio")) ||
-    (nodeId === "互動" && (p.category === "Interaction" || p.slug === "tku-zen-ai")),
-  );
-}
+import { RELATION_NODES, relatedProjects } from "@/lib/home/relations";
 
 export function RelationSpace({
   projects,
@@ -33,11 +15,11 @@ export function RelationSpace({
       <div className="hidden md:block">
         <div className="relative mx-auto h-[28rem] max-w-5xl [perspective:1400px]">
           <div className="absolute inset-0 origin-center relation-space">
-            {NODES.map((node, idx) => {
-              const angle = (idx / NODES.length) * Math.PI * 2 - Math.PI / 2;
+            {RELATION_NODES.filter((n) => !["GitHub", "Canva", "Live Demo"].includes(n.id)).map((node, idx, list) => {
+              const angle = (idx / list.length) * Math.PI * 2 - Math.PI / 2;
               const x = 50 + Math.cos(angle) * 34;
               const y = 46 + Math.sin(angle) * 28;
-              const hits = related(projects, node.id);
+              const hits = relatedProjects(projects, node.id);
               return (
                 <div
                   key={node.id}
@@ -61,12 +43,29 @@ export function RelationSpace({
             </div>
           </div>
         </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {(["GitHub", "Canva", "Live Demo"] as const).map((id) => {
+            const hits = relatedProjects(projects, id);
+            return (
+              <div key={id} className="rounded-2xl bg-surface p-4 shadow-card">
+                <h3 className="font-display text-lg font-semibold">{id}</h3>
+                <ul className="mt-3 grid gap-2">
+                  {hits.slice(0, 4).map((p) => (
+                    <li key={p.slug}>
+                      <ProjectChip project={p} onSelect={onSelect} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="md:hidden">
         <div className="flex snap-x gap-3 overflow-x-auto pb-3">
-          {NODES.map((node) => {
-            const hits = related(projects, node.id);
+          {RELATION_NODES.map((node) => {
+            const hits = relatedProjects(projects, node.id);
             return (
               <div key={node.id} className="w-[78%] shrink-0 snap-start rounded-2xl bg-surface p-4 shadow-card">
                 <h3 className="font-display text-xl font-semibold">{node.id}</h3>
@@ -110,5 +109,5 @@ function ProjectChip({
   );
 }
 
-export const modalityNodes = NODES;
-export { related as relatedProjects };
+export const modalityNodes = RELATION_NODES;
+export { relatedProjects };

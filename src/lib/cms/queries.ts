@@ -23,15 +23,11 @@ function stringList(value: unknown): string[] {
 function publicGithub(row: ProjectRow, forAdmin: boolean): PublicGithub | null {
   const isPrivate = asBoolean(row.github_is_private);
   const approved = asBoolean(row.github_public_approved);
-  if (isPrivate && !forAdmin) return null;
-  if (!approved && !forAdmin) return null;
+  if (!forAdmin && (isPrivate || !approved)) return null;
   const url = typeof row.github_url === "string" ? row.github_url : null;
   const owner = typeof row.github_owner === "string" ? row.github_owner : null;
   const repo = typeof row.github_repo === "string" ? row.github_repo : null;
   if (!url || !owner || !repo) return null;
-  if (isPrivate && forAdmin) {
-    return null;
-  }
   const meta = parseJson<Record<string, unknown>>(row.github_metadata, {});
   return {
     url,
@@ -144,7 +140,9 @@ export function toAdminProject(row: ProjectRow): AdminProject {
     copyEn: parseJson(row.copy_en, {}),
     createdAt: toIso(row.created_at),
     updatedBy: typeof row.updated_by === "string" ? row.updated_by : null,
-    github: publicGithub({ ...row, github_is_private: false, github_public_approved: true }, true),
+    github: publicGithub(row, true),
+    canvaLastSyncedAt: toIso(row.canva_last_synced_at),
+    liveDemoLastVerifiedAt: toIso(row.live_demo_last_verified_at),
   };
 }
 

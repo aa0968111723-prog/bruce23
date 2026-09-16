@@ -214,6 +214,94 @@ export async function setPublication(
   return getAdminProject(sql, id);
 }
 
+const RESTORE_COLUMNS = [
+  "slug",
+  "title",
+  "title_en",
+  "subtitle",
+  "subtitle_en",
+  "summary",
+  "summary_en",
+  "problem",
+  "role",
+  "decisions",
+  "modalities",
+  "process",
+  "outputs",
+  "stack",
+  "limitations",
+  "category",
+  "year",
+  "product_status",
+  "publication_status",
+  "featured",
+  "sort_order",
+  "cover_image",
+  "media",
+  "video_url",
+  "github_url",
+  "github_owner",
+  "github_repo",
+  "github_branch",
+  "github_sync_enabled",
+  "github_sync_status",
+  "github_last_synced_at",
+  "github_metadata",
+  "github_readme",
+  "github_file_tree",
+  "github_languages",
+  "github_topics",
+  "github_latest_commit",
+  "github_is_private",
+  "github_public_approved",
+  "live_demo_url",
+  "live_demo_label",
+  "live_demo_type",
+  "live_demo_embed_enabled",
+  "live_demo_last_verified_at",
+  "live_demo_status",
+  "live_demo_error",
+  "canva_share_url",
+  "canva_embed_url",
+  "canva_design_id",
+  "canva_page_ids",
+  "canva_thumbnail_url",
+  "canva_alt",
+  "canva_caption",
+  "canva_status",
+  "canva_last_synced_at",
+  "canva_error",
+  "experience_mode",
+  "experience_config",
+  "interaction_steps",
+  "source_evidence",
+  "seo",
+  "copy_zh",
+  "copy_en",
+] as const;
+
+const RESTORE_JSON = new Set([
+  "decisions",
+  "modalities",
+  "process",
+  "outputs",
+  "stack",
+  "limitations",
+  "media",
+  "github_metadata",
+  "github_file_tree",
+  "github_languages",
+  "github_topics",
+  "github_latest_commit",
+  "canva_page_ids",
+  "experience_config",
+  "interaction_steps",
+  "source_evidence",
+  "seo",
+  "copy_zh",
+  "copy_en",
+]);
+
 export async function restoreRevision(sql: Sql, projectId: string, revisionId: string, actor: string) {
   const rows = await sql.query<{ snapshot: unknown }>(
     `select snapshot from project_revisions where id = $1 and project_id = $2`,
@@ -222,23 +310,26 @@ export async function restoreRevision(sql: Sql, projectId: string, revisionId: s
   if (!rows[0]) throw new Error("找不到版本");
   const snap = parseJson<Record<string, unknown>>(rows[0].snapshot, {});
   await insertRevision(sql, projectId, actor, "還原版本");
-  const keepId = projectId;
-  await sql.query(`delete from projects where id = $1`, [keepId]);
-  const cols = Object.keys(snap).filter((k) => k !== "payload_encrypted");
-  const placeholders = cols.map((c, idx) =>
-    typeof snap[c] === "object" && snap[c] !== null ? `$${idx + 1}::jsonb` : `$${idx + 1}`,
-  );
-  const values = cols.map((c) =>
-    typeof snap[c] === "object" && snap[c] !== null ? JSON.stringify(snap[c]) : snap[c],
-  );
-  await sql.query(
-    `insert into projects (${cols.join(",")}) values (${placeholders.join(",")})`,
-    values,
-  );
-  await sql.query(`update projects set updated_by = $1, updated_at = now() where id = $2`, [
-    actor,
-    projectId,
-  ]);
+  const sets: string[] = [];
+  const params: unknown[] = [];
+  let i = 1;
+  for (const col of RESTORE_COLUMNS) {
+    if (!(col in snap)) continue;
+    let value = snap[col];
+    if (RESTORE_JSON.has(col) && value !== null && typeof value === "object") {
+      value = JSON.stringify(value);
+      sets.push(`${col} = $${i}::jsonb`);
+    } else {
+      sets.push(`${col} = $${i}`);
+    }
+    params.push(value ?? null);
+    i += 1;
+  }
+  sets.push(`updated_at = now()`);
+  sets.push(`updated_by = $${i++}`);
+  params.push(actor);
+  params.push(projectId);
+  await sql.query(`update projects set ${sets.join(", ")} where id = $${i}`, params);
   return getAdminProject(sql, projectId);
 }
 

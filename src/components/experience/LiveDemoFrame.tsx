@@ -1,6 +1,7 @@
 import { ImageOff } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { demoViewMode } from "@/lib/experience/embed-fallback";
 
 export function LiveDemoFrame({
   url,
@@ -16,7 +17,7 @@ export function LiveDemoFrame({
   error?: string | null;
 }) {
   const [failed, setFailed] = useState(false);
-  const blocked = !embedEnabled || failed || status === "failed";
+  const blocked = demoViewMode({ embedEnabled, failed, status }) === "fallback";
 
   if (blocked) {
     return (

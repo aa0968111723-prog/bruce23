@@ -4,13 +4,27 @@ import type { FileTreeNode } from "@/lib/cms/schema";
 import type { PublicGithub } from "@/lib/cms/public-types";
 import { cn } from "@/lib/cn";
 
-function Node({ node, depth = 0 }: { node: FileTreeNode; depth?: number }) {
+function Node({
+  node,
+  depth = 0,
+  onSelect,
+  selectedPath,
+}: {
+  node: FileTreeNode;
+  depth?: number;
+  onSelect?: (node: FileTreeNode) => void;
+  selectedPath?: string;
+}) {
   const [open, setOpen] = useState(depth < 1);
   const isDir = node.type === "dir";
+  const selected = selectedPath === node.path;
   return (
     <li>
       <div
-        className="flex min-h-11 items-start gap-2 rounded-xl px-2 py-1.5 hover:bg-surface-blue"
+        className={cn(
+          "flex min-h-11 items-start gap-2 rounded-xl px-2 py-1.5 hover:bg-surface-blue",
+          selected && "bg-surface-mint",
+        )}
         style={{ paddingLeft: 8 + depth * 12 }}
       >
         {isDir ? (
@@ -27,7 +41,11 @@ function Node({ node, depth = 0 }: { node: FileTreeNode; depth?: number }) {
             <FileText className="size-4 text-muted" />
           </span>
         )}
-        <div className="min-w-0 flex-1">
+        <button
+          type="button"
+          className="min-w-0 flex-1 text-left"
+          onClick={() => onSelect?.(node)}
+        >
           <p className="truncate text-sm font-medium text-ink">{node.path}</p>
           {node.purpose ? (
             <p className="text-xs text-muted">
@@ -35,7 +53,7 @@ function Node({ node, depth = 0 }: { node: FileTreeNode; depth?: number }) {
               {node.stage ? ` · ${node.stage}` : ""}
             </p>
           ) : null}
-        </div>
+        </button>
         {node.githubUrl ? (
           <a
             href={node.githubUrl}
@@ -51,7 +69,13 @@ function Node({ node, depth = 0 }: { node: FileTreeNode; depth?: number }) {
       {isDir && open && node.children?.length ? (
         <ul>
           {node.children.map((child) => (
-            <Node key={child.path} node={child} depth={depth + 1} />
+            <Node
+              key={child.path}
+              node={child}
+              depth={depth + 1}
+              onSelect={onSelect}
+              selectedPath={selectedPath}
+            />
           ))}
         </ul>
       ) : null}
@@ -60,6 +84,8 @@ function Node({ node, depth = 0 }: { node: FileTreeNode; depth?: number }) {
 }
 
 export function GithubExplorer({ github, demoUrl }: { github: PublicGithub; demoUrl?: string | null }) {
+  const [selected, setSelected] = useState<FileTreeNode | null>(github.fileTree?.[0] ?? null);
+
   return (
     <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
       <div>
@@ -110,6 +136,25 @@ export function GithubExplorer({ github, demoUrl }: { github: PublicGithub; demo
         ) : (
           <p className="mt-4 text-sm text-muted">尚未同步 README，或儲存庫沒有 README。</p>
         )}
+        {selected ? (
+          <div className="mt-4 rounded-2xl bg-surface p-4 shadow-card">
+            <p className="font-mono text-xs">{selected.path}</p>
+            <p className="mt-2 text-sm text-muted">
+              {selected.purpose ?? "用途待同步標註"}
+              {selected.stage ? ` · 流程階段：${selected.stage}` : ""}
+            </p>
+            {selected.githubUrl ? (
+              <a
+                href={selected.githubUrl}
+                className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
+                rel="noreferrer"
+                target="_blank"
+              >
+                在 GitHub 開啟這個檔案
+              </a>
+            ) : null}
+          </div>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={github.url}
@@ -147,7 +192,7 @@ export function GithubExplorer({ github, demoUrl }: { github: PublicGithub; demo
         {github.fileTree?.length ? (
           <ul>
             {github.fileTree.map((node) => (
-              <Node key={node.path} node={node} />
+              <Node key={node.path} node={node} onSelect={setSelected} selectedPath={selected?.path} />
             ))}
           </ul>
         ) : (
@@ -157,3 +202,4 @@ export function GithubExplorer({ github, demoUrl }: { github: PublicGithub; demo
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { PRIVATE_ROW_KEYS } from "./public-types.ts";
 import { toPublicProject } from "./queries.ts";
 
 describe("public projection", () => {
@@ -42,6 +43,7 @@ describe("public projection", () => {
     assert.equal(pub.github, null);
     assert.equal(JSON.stringify(pub).includes("secret readme"), false);
     assert.equal(JSON.stringify(pub).includes("payload_encrypted"), false);
+    assert.equal(JSON.stringify(pub).includes("private-repo"), false);
   });
 
   it("keeps approved public GitHub metadata", () => {
@@ -81,5 +83,10 @@ describe("public projection", () => {
     });
     assert.equal(pub.github?.repo, "ai_os");
     assert.ok(pub.github?.readmeSummary);
+  });
+
+  it("lists secret column names that public projection must never emit", () => {
+    assert.ok(PRIVATE_ROW_KEYS.includes("payload_encrypted"));
+    assert.ok(PRIVATE_ROW_KEYS.includes("canva_access_token"));
   });
 });

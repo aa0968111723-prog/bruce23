@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { estimatePoster, type PosterEstimate } from "@/lib/experiences/poster-estimate";
 
 const SAMPLES = [
@@ -39,7 +39,10 @@ export function PosterVisionExperience({ note }: { note?: string }) {
     setBusy(false);
   }
 
-  return (
+  useEffect(() => {
+    void run(SAMPLES[0].src);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
     <div>
       <p className="text-sm font-medium text-mint-deep">Poster Vision · 像素推估</p>
       {note ? <p className="mt-1 text-sm text-muted">{note}</p> : null}
