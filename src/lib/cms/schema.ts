@@ -171,6 +171,7 @@ export const conversationConfigSchema = z.object({
   placeholder: z.string().max(80).optional(),
   sourceNote: z.string().max(240).optional(),
   replies: z.array(conversationReplySchema).max(24).optional(),
+  suggestions: z.array(z.string().min(1).max(80)).max(8).optional(),
 });
 
 export const canvaPageLabelSchema = z.object({
@@ -255,6 +256,7 @@ export const experienceLocaleOverlaySchema = z.object({
       placeholder: z.string().max(80).optional(),
       sourceNote: z.string().max(240).optional(),
       replies: z.array(experienceLocaleReplySchema).max(24).optional(),
+      suggestions: z.array(z.string().max(80)).max(8).optional(),
     })
     .optional(),
   canvaPageLabels: z

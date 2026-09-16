@@ -1050,6 +1050,39 @@ function ConversationFields({
         }
         multiline
       />
+      <Field
+        label="建議句（一行一句）"
+        value={(conversation.suggestions ?? []).join("\n")}
+        onChange={(value) =>
+          patch({
+            conversation: {
+              ...conversation,
+              suggestions: value
+                .split("\n")
+                .map((item) => item.trim())
+                .filter(Boolean),
+            },
+          })
+        }
+        multiline
+      />
+      <EnField
+        label="英文建議句（一行一句）"
+        value={(en.conversation?.suggestions ?? []).join("\n")}
+        onChange={(value) =>
+          patchEn((current) => ({
+            ...current,
+            conversation: {
+              ...current.conversation,
+              suggestions: value
+                .split("\n")
+                .map((item) => item.trim())
+                .filter(Boolean),
+            },
+          }))
+        }
+        multiline
+      />
       {replies.map((reply, index) => (
         <div key={`reply-${index}`} className="grid gap-2 rounded-2xl border border-line p-3">
           <Field

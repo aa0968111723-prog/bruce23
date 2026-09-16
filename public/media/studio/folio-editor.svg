@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Folio editor-shell reconstruction in Luminous Studio light tokens">
+  <title>Folio editor reconstruction aligned with canva2 editor-shell.tsx - not an operation screenshot</title>
+  <rect width="1200" height="750" fill="#F7FBFF"/>
+  <rect x="0" y="0" width="1200" height="56" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <rect x="16" y="14" width="28" height="28" rx="8" fill="#EAF6FF"/>
+  <path d="M24 22 L36 34 M36 22 L24 34" stroke="#59748A" stroke-width="1.6" stroke-linecap="round"/>
+  <text x="56" y="28" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="15" font-weight="600">Untitled document</text>
+  <text x="56" y="44" fill="#59748A" font-family="ui-monospace, SFMono-Regular, monospace" font-size="10">Draft · editor-shell.tsx</text>
+  <rect x="860" y="14" width="28" height="28" rx="8" fill="#EAF6FF"/>
+  <rect x="896" y="14" width="28" height="28" rx="8" fill="#EAF6FF"/>
+  <text x="936" y="33" fill="#59748A" font-family="ui-monospace, SFMono-Regular, monospace" font-size="12">100%</text>
+  <rect x="990" y="14" width="72" height="28" rx="8" fill="#EAF6FF"/>
+  <text x="1006" y="33" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Preview</text>
+  <rect x="1072" y="12" width="112" height="32" rx="8" fill="#63E6BE"/>
+  <text x="1102" y="33" fill="#073528" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13" font-weight="600">Publish</text>
+  <rect x="0" y="56" width="56" height="654" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <rect x="12" y="76" width="32" height="32" rx="8" fill="#EFFFF7"/>
+  <rect x="18" y="84" width="20" height="3" rx="1" fill="#17324D"/>
+  <rect x="18" y="90" width="14" height="3" rx="1" fill="#72B7FF"/>
+  <rect x="12" y="120" width="32" height="32" rx="8" fill="#EAF6FF"/>
+  <rect x="18" y="128" width="20" height="16" rx="3" fill="#63E6BE"/>
+  <rect x="12" y="164" width="32" height="32" rx="8" fill="#EAF6FF"/>
+  <circle cx="28" cy="180" r="8" fill="#72B7FF"/>
+  <rect x="12" y="208" width="32" height="32" rx="8" fill="#EAF6FF"/>
+  <rect x="18" y="218" width="20" height="12" rx="2" fill="#FFD166"/>
+  <rect x="56" y="56" width="868" height="654" fill="#EAF6FF"/>
+  <rect x="148" y="108" width="684" height="500" rx="18" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <rect x="188" y="148" width="280" height="36" rx="8" fill="#EFFFF7"/>
+  <text x="204" y="172" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">Text, shapes, components</text>
+  <rect x="188" y="204" width="168" height="168" rx="18" fill="#63E6BE"/>
+  <rect x="376" y="204" width="200" height="112" rx="16" fill="#EAF6FF"/>
+  <circle cx="680" cy="268" r="64" fill="#72B7FF"/>
+  <rect x="188" y="400" width="420" height="12" rx="4" fill="#D9EAF2"/>
+  <rect x="188" y="428" width="320" height="12" rx="4" fill="#D9EAF2"/>
+  <text x="188" y="560" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13">canvas-stage.tsx · one document model</text>
+  <rect x="924" y="56" width="276" height="654" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="944" y="92" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14" font-weight="600">Inspector</text>
+  <rect x="944" y="108" width="72" height="28" rx="14" fill="#63E6BE"/>
+  <text x="960" y="127" fill="#073528" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Props</text>
+  <rect x="1024" y="108" width="72" height="28" rx="14" fill="#EAF6FF"/>
+  <text x="1040" y="127" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Audit</text>
+  <rect x="944" y="160" width="236" height="18" rx="6" fill="#EAF6FF"/>
+  <rect x="944" y="190" width="188" height="18" rx="6" fill="#EFFFF7"/>
+  <text x="944" y="240" fill="#C45C4A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Low contrast</text>
+  <text x="944" y="262" fill="#C45C4A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Text overflow</text>
+  <text x="944" y="284" fill="#2BB894" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Safe area ok</text>
+  <rect x="944" y="320" width="236" height="88" rx="12" fill="#EFFFF7"/>
+  <text x="960" y="356" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">MCP defaults to dry-run</text>
+  <text x="960" y="378" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="11">Unpublished docs stay off public MCP</text>
+  <rect x="56" y="710" width="1144" height="40" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="76" y="735" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Studio reconstruction · not an operation screenshot · canva2 has no product PNG</text>
+</svg>

@@ -157,6 +157,24 @@ export const experienceChrome = {
     folioUnpublished: "未發布文件",
     folioNotPublicMcp: "不出現在公開 MCP",
     folioNotWritten: "未寫入",
+    zenLocalBadge: "本地引擎 · 無網路",
+    zenTitle: "TKU Zen AI",
+    zenSubtitle: "給忙碌心智的本地禪意陪伴",
+    zenBreath: "呼吸",
+    hermesDisconnected: "尚未連線",
+    hermesWorkspace: "工作區預覽",
+    frameKindKey: "關鍵幀",
+    frameKindBreakdown: "中間幀",
+    frameKindGenerated: "生成幀",
+    heatmapBadge: "像素推估 · 非眼動儀",
+    pinIndex: "{n}",
+    processPipelineAria: "流程地圖",
+    folioBack: "回到文件櫃",
+    folioPublish: "發布",
+    folioSaved: "暫存",
+    folioInsertText: "插入文字區塊",
+    folioAddShape: "加入形狀",
+    folioPreview: "預覽",
   },
   en: {
     tabPlay: "Play",
@@ -295,6 +313,24 @@ export const experienceChrome = {
     folioUnpublished: "Unpublished document",
     folioNotPublicMcp: "Not on public MCP",
     folioNotWritten: "Not written",
+    zenLocalBadge: "Local engine · no network",
+    zenTitle: "TKU Zen AI",
+    zenSubtitle: "A calm companion for a busy mind",
+    zenBreath: "Breath",
+    hermesDisconnected: "Not connected",
+    hermesWorkspace: "Workspace preview",
+    frameKindKey: "Key",
+    frameKindBreakdown: "Breakdown",
+    frameKindGenerated: "Generated",
+    heatmapBadge: "Pixel estimate · not eye-tracking",
+    pinIndex: "{n}",
+    processPipelineAria: "Process map",
+    folioBack: "Back to cabinet",
+    folioPublish: "Publish",
+    folioSaved: "Draft",
+    folioInsertText: "Insert text block",
+    folioAddShape: "Add shape",
+    folioPreview: "Preview",
   },
 } as const;
 
@@ -353,6 +389,7 @@ export type ExperienceCopyEn = {
     placeholder?: string;
     sourceNote?: string;
     replies?: ReplyEn[];
+    suggestions?: string[];
   };
   canvaPageLabels?: Array<{ id: string; label: string }>;
 };
@@ -547,6 +584,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       starter: "This is a portfolio interactive demo; it is not connected to the Hermes runtime. Type a keyword for a note.",
       placeholder: "Type a line",
       sourceNote: "Offline. Every reply is a local note, not an agent execution result.",
+      suggestions: ["Poster", "Connection", "Task"],
       replies: [
         {
           matchZh: "海報",
@@ -599,6 +637,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       starter: "This is a local reply engine, not a cloud LLM. The same line gets the same replies.",
       placeholder: "Type a mood line",
       sourceNote: "Aligned with tku-zen-ai src/lib/zen.ts. No network calls.",
+      suggestions: ["I feel stressed about my exams", "Help me focus", "I can't sleep", "Thank you"],
     },
     fileHints: [
       { path: "src/lib/zen.ts", purpose: "Reproducible local engine", stage: "Talk" },
@@ -714,6 +753,18 @@ function overlayWalk(
       path: item.path,
     };
   });
+}
+
+function overlayStringList(
+  current: string[] | undefined,
+  saved: string[] | undefined,
+  dict: string[] | undefined,
+): string[] | undefined {
+  const savedList = (saved ?? []).map((item) => item.trim()).filter(Boolean);
+  if (savedList.length) return savedList;
+  const dictList = (dict ?? []).map((item) => item.trim()).filter(Boolean);
+  if (dictList.length) return dictList;
+  return current;
 }
 
 function replyHit(rows: Array<{ matchZh?: string; match?: string; reply?: string }> | undefined, match: string) {
@@ -873,6 +924,11 @@ export function overlayExperienceConfig(
         slugEn.conversation?.sourceNote,
       ),
       replies: overlayReplies(config.conversation?.replies, savedEn.conversation?.replies, slugEn.conversation?.replies),
+      suggestions: overlayStringList(
+        config.conversation?.suggestions,
+        savedEn.conversation?.suggestions,
+        slugEn.conversation?.suggestions,
+      ),
     };
   }
   return next;

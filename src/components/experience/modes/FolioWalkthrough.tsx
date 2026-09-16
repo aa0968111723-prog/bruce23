@@ -136,20 +136,53 @@ function FolioStage({
 
 function CanvasStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioSameModel}>
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={ex.folioSameModel} data-folio-shell="true">
       <rect width="320" height="200" className="fill-surface-blue" />
-      <rect x="18" y="16" width="284" height="168" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
-      <rect x="28" y="26" width="88" height="22" rx="4" className="fill-surface-mint" />
-      <text x="34" y="41" className="fill-ink" fontSize="9">
+      <rect x="0" y="0" width="320" height="22" className="fill-surface stroke-line" />
+      <text x="8" y="15" className="fill-muted" fontSize="7">
+        {ex.folioBack}
+      </text>
+      <text x="92" y="15" className="fill-ink" fontSize="7">
+        {ex.folioSaved}
+      </text>
+      <rect x="248" y="4" width="28" height="14" rx="4" className="fill-surface-blue" />
+      <text x="252" y="14" className="fill-ink" fontSize="6">
+        {ex.folioPreview}
+      </text>
+      <rect x="280" y="4" width="34" height="14" rx="4" className="fill-mint" />
+      <text x="286" y="14" className="fill-primary-foreground" fontSize="6">
+        {ex.folioPublish}
+      </text>
+      <rect x="0" y="22" width="22" height="166" className="fill-surface stroke-line" />
+      <rect x="5" y="30" width="12" height="12" rx="2" className="fill-surface-mint" />
+      <rect x="5" y="46" width="12" height="12" rx="2" className="fill-mint" />
+      <circle cx="11" cy="70" r="6" className="fill-sky" />
+      <rect x="22" y="22" width="214" height="166" className="fill-surface-blue" />
+      <rect x="36" y="34" width="186" height="140" rx="8" className="fill-surface stroke-line" strokeWidth="1" />
+      <rect x="46" y="46" width="88" height="16" rx="3" className="fill-surface-mint" />
+      <text x="50" y="57" className="fill-ink" fontSize="8">
         {ex.folioText}
       </text>
-      <rect x="28" y="56" width="72" height="72" rx="8" className="fill-mint" />
-      <rect x="112" y="56" width="86" height="48" rx="8" className="fill-surface-blue" />
-      <circle cx="248" cy="92" r="28" className="fill-sky" />
-      <text x="34" y="148" className="fill-muted" fontSize="8">
+      <rect x="46" y="70" width="56" height="56" rx="8" className="fill-mint" />
+      <rect x="110" y="70" width="64" height="36" rx="6" className="fill-surface-blue" />
+      <circle cx="198" cy="92" r="18" className="fill-sky" />
+      <text x="46" y="154" className="fill-muted" fontSize="7">
         {file}
       </text>
-      <text x="34" y="166" className="fill-muted" fontSize="8">
+      <rect x="236" y="22" width="84" height="166" className="fill-surface stroke-line" />
+      <text x="244" y="40" className="fill-ink" fontSize="7">
+        {ex.folioAudit}
+      </text>
+      <text x="244" y="56" className="fill-alert" fontSize="7">
+        {ex.folioContrast}
+      </text>
+      <text x="244" y="70" className="fill-alert" fontSize="7">
+        {ex.folioOverflow}
+      </text>
+      <text x="244" y="84" className="fill-mint-deep" fontSize="7">
+        {ex.folioSafe}
+      </text>
+      <text x="8" y="196" className="fill-muted" fontSize="7">
         {ex.folioSameModel}
       </text>
     </svg>
@@ -168,11 +201,11 @@ function CommandStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
       </text>
       <rect x="60" y="78" width="200" height="18" rx="4" className="fill-mint" />
       <text x="68" y="91" className="fill-primary-foreground" fontSize="8">
-        Insert text block
+        {ex.folioInsertText}
       </text>
       <rect x="60" y="100" width="200" height="18" rx="4" className="fill-surface-blue" />
       <text x="68" y="113" className="fill-ink" fontSize="8">
-        Add shape
+        {ex.folioAddShape}
       </text>
       <rect x="60" y="122" width="200" height="18" rx="4" className="fill-surface-blue" />
       <text x="68" y="135" className="fill-ink" fontSize="8">
@@ -222,14 +255,14 @@ function McpStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
       <text x="40" y="72" className="fill-muted" fontSize="8">
         {ex.folioNotPublicMcp}
       </text>
-      <rect x="204" y="16" width="98" height="168" rx="10" className="fill-ink" />
-      <text x="214" y="40" className="fill-bg" fontSize="8">
+      <rect x="204" y="16" width="98" height="168" rx="10" className="fill-surface-mint stroke-line" strokeWidth="1" />
+      <text x="214" y="40" className="fill-ink" fontSize="8">
         MCP
       </text>
-      <text x="214" y="60" className="fill-mint" fontSize="8">
+      <text x="214" y="60" className="fill-mint-deep" fontSize="8">
         dry-run
       </text>
-      <text x="214" y="78" className="fill-bg" fontSize="7">
+      <text x="214" y="78" className="fill-muted" fontSize="7">
         {ex.folioNotWritten}
       </text>
       <text x="214" y="168" className="fill-muted" fontSize="7">

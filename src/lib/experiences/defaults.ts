@@ -112,6 +112,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
         starter: "這是本地回應引擎，不是雲端 LLM。同一句話會得到同一組回覆。",
         placeholder: "輸入一句心情",
         sourceNote: "來源對齊 tku-zen-ai 的 src/lib/zen.ts。全程無網路呼叫。",
+        suggestions: ["考試好有壓力", "幫我專注", "睡不著", "謝謝"],
       },
     };
   }
@@ -126,6 +127,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
         starter: "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。",
         placeholder: "輸入一句話",
         sourceNote: "未連線。任何回覆都是本地說明，不是 Agent 執行結果。",
+        suggestions: ["海報", "連線", "任務"],
         replies: [
           {
             match: "海報",
@@ -201,7 +203,7 @@ export function mergeExperienceConfig(slug: string, stored: ExperienceConfig | n
     timeline: mergeObject(fallback.timeline, current.timeline, ["frames"]),
     spatial: mergeObject(fallback.spatial, current.spatial, ["objects"]),
     comparison: mergeObject(fallback.comparison, current.comparison, ["versions", "seedPins"]),
-    conversation: mergeObject(fallback.conversation, current.conversation, ["replies"]),
+    conversation: mergeObject(fallback.conversation, current.conversation, ["replies", "suggestions"]),
     // Saved EN overlays stay as stored. Do not fill locale.en from the dictionary.
     locale: current.locale,
   };

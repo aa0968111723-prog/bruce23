@@ -47,6 +47,9 @@ describe("experience catalog", () => {
     assert.match(source, /desktop-dashboard\.png/);
     assert.match(source, /"og.jpg"/);
     assert.match(source, /"club-illustration.jpg"/);
+    assert.match(source, /\/media\/studio\/folio-editor\.svg/);
+    assert.match(source, /\/media\/studio\/tku-zen-chat\.svg/);
+    assert.match(source, /光域工作室重建/);
     assert.match(source, /公開 GitHub 匯出/);
     assert.doesNotMatch(source, /drive\.google\.com\/file/);
   });
@@ -218,12 +221,14 @@ describe("frontend contract", () => {
     assert.match(processMap, /node.githubPath/);
     assert.match(processMap, /ex\.processDefaultIntro|useExperienceView/);
     assert.match(processMap, /min-w-0 max-w-full gap-2 overflow-x-auto/);
+    assert.match(processMap, /data-process-pipeline/);
     assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
       "utf8",
     );
     assert.match(timeline, /ex\.onionSkin|useExperienceView/);
+    assert.match(timeline, /frameKindKey/);
     assert.match(experienceLocale, /Onion skin/);
     assert.match(experienceLocale, /not GPU model output/);
     const defaultsSrc = readFileSync(
@@ -238,6 +243,8 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /data-walkthrough-stage/);
     assert.match(folioWalk, /walkthroughStageKind/);
     assert.match(folioWalk, /CanvasStage/);
+    assert.match(folioWalk, /data-folio-shell/);
+    assert.match(folioWalk, /folioInsertText/);
     assert.match(folioWalk, /不是空白計數器|ex\.folioNotCounter/);
     assert.match(experienceLocale, /不是空白計數器/);
     const canvas = readFileSync(
@@ -254,6 +261,7 @@ describe("frontend contract", () => {
     assert.match(poster, /regionCenter/);
     assert.match(poster, /onLoad/);
     assert.match(poster, /posterLoading/);
+    assert.match(poster, /heatmapBadge/);
     assert.match(experienceLocale, /不是眼動追蹤/);
     assert.match(experienceLocale, /not eye-tracking/);
     const planform = readFileSync(
@@ -261,7 +269,27 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(planform, /法規符合|規範符合|ex\.planformAria|complianceDisclaimer/);
+    assert.match(planform, /data-iso-booth/);
     assert.match(experienceLocale, /not a code-compliance calculation/);
+    const zenTalk = readFileSync(
+      new URL("../../../src/components/experience/modes/ZenTalk.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(zenTalk, /data-zen-chat/);
+    assert.match(zenTalk, /suggestions/);
+    assert.match(zenTalk, /zenLocalBadge/);
+    assert.match(zenTalk, /engine.breath/);
+    const duigao = readFileSync(
+      new URL("../../../src/components/experience/modes/DuigaoBoard.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(duigao, /data-pin-index/);
+    const hermes = readFileSync(
+      new URL("../../../src/components/experience/modes/HermesPreview.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(hermes, /data-hermes-preview/);
+    assert.match(hermes, /hermesDisconnected/);
     const settings = readFileSync(new URL("../../../src/routes/admin/settings.tsx", import.meta.url), "utf8");
     assert.doesNotMatch(settings, /homepage_json: \{\}/);
     assert.match(settings, /highlightSlugs/);
@@ -376,6 +404,7 @@ describe("frontend contract", () => {
     assert.match(editor, /英文用途/);
     assert.match(editor, /英文版本標籤/);
     assert.match(editor, /英文開場白/);
+    assert.match(editor, /英文建議句（一行一句）/);
     assert.match(editor, /英文免責／誠實聲明/);
     assert.match(editor, /英文走查說明/);
     assert.match(editor, /patchEn/);
@@ -384,6 +413,7 @@ describe("frontend contract", () => {
     assert.match(form, /toast\.success/);
     assert.match(form, /有未儲存的修改/);
     assert.match(schemaSource, /experienceLocaleOverlaySchema/);
+    assert.match(schemaSource, /suggestions: z.array/);
     const defaultsSource = readFileSync(new URL("../../../src/lib/experiences/defaults.ts", import.meta.url), "utf8");
     assert.match(defaultsSource, /locale: current.locale/);
     const field = readFileSync(

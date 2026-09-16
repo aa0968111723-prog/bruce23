@@ -1,7 +1,8 @@
 # Portfolio Task State
 
-Cycle: admin EN experience chrome overlays (not complete)
+Cycle: source-aligned Folio/Zen reconstructions + playable experience quality (not complete)
 Updated: 2026-09-16
+HEAD: 56f91830c5ab4719d93d502e33b3f7ece6ccc9d2
 
 ## Source of truth
 
@@ -79,6 +80,14 @@ Updated: 2026-09-16
 - AI Director OS nodes show GitHub source paths on the chips, plus process summary in the panel.
 - Planform / 對稿 live demos stay iframe-only when hydrate marks them verified+embeddable (Zeabur HTML, no frame-bust). AI Director OS and Hermes remain open-in-new-tab (`frame-ancestors none`).
 
+## This cycle (honest visual evidence + playable quality)
+
+- Folio visual tab now includes `/media/studio/folio-editor.svg`: a Luminous Studio reconstruction aligned with public canva2 `editor-shell.tsx` (top bar, tool rail, canvas, inspector, publish). Caption and source evidence say it is not an operation screenshot. `og.jpg` remains the only public raster from canva2.
+- TKU Zen visual tab now includes `/media/studio/tku-zen-chat.svg`: a light-studio reconstruction aligned with public `src/app/page.tsx` + `src/lib/zen.ts` (header, bubbles, suggestion chips, breath, composer). Caption says the original UI is dark and this is a translation, not a product screenshot. Club illustration remains the only related public raster.
+- Playable upgrades (still labeled portfolio demos): AI Director process pipeline SVG; FrameLab localized key/breakdown/generated labels; Poster Vision heatmap honesty badge on the overlay; PLANFORM isometric booth glyphs; 對稿 numbered pins; Zen/Hermes chat chrome with suggestion chips and breath/disconnected badges; Folio canvas stage drawn as editor-shell, command labels localized, MCP panel stays light.
+- Admin ExperienceEditor can edit zh/en suggestion lines. `experience_config.conversation.suggestions` is schema-backed and overlays with `lang=en`.
+- No public `canva.com/design/{id}` invented. Canva Connect still fail-closed.
+
 ## This cycle (CODE leftovers)
 
 - Admin `/admin/projects` list: loading vs empty vs error; live E2E waits for `/edit` links, not the 新增 button; duplicate-slug create recovers by opening the existing row.
@@ -105,6 +114,6 @@ Updated: 2026-09-16
 - `GITHUB_READ_TOKEN` for private repos
 - Notion connection
 - JSON-LD stays canonical zh (intentional). GitHub file paths stay untranslated (intentional).
-- Folio still has no public editor-operation screenshot (only og.jpg share card)
-- tku-zen-ai still has no public chat-UI screenshot (wired related club illustration only)
+- Folio still has no public editor-operation screenshot (og.jpg share card + labeled studio reconstruction from editor-shell.tsx)
+- tku-zen-ai still has no public chat-UI screenshot (club illustration + labeled light reconstruction from page.tsx; original UI is dark)
 - Platform PWA apple-touch / `__grok` install icon remains Grok chrome (not overwritten)

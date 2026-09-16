@@ -62,6 +62,12 @@ describe("experience playable chrome", () => {
     assert.match(planEn.honestyLabel ?? "", /not a code-compliance/i);
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
+    assert.deepEqual(zenEn.conversation?.suggestions, [
+      "I feel stressed about my exams",
+      "Help me focus",
+      "I can't sleep",
+      "Thank you",
+    ]);
     const zenZh = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "zh");
     assert.match(zenZh.honestyLabel ?? "", /不是雲端/);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");

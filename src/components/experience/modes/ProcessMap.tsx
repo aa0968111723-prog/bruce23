@@ -22,11 +22,51 @@ export function ProcessMap({ project }: { project: PublicProject }) {
     return <p className="text-sm text-muted">{ex.emptyNodes}</p>;
   }
 
+  const width = Math.max(320, nodes.length * 92);
+
   return (
     <div>
       <p className="text-sm text-muted">
         {joinSentences(config.intro ?? ex.processDefaultIntro, ex.processKeyboard)}
       </p>
+      <svg
+        viewBox={`0 0 ${width} 78`}
+        className="mt-4 w-full min-w-0 max-w-full"
+        role="img"
+        aria-label={ex.processPipelineAria}
+        data-process-pipeline="true"
+      >
+        <rect width={width} height="78" className="fill-surface-blue" rx="16" />
+        {nodes.map((node, index) => {
+          const x = 46 + index * 92;
+          const selected = current?.id === node.id;
+          return (
+            <g key={`pipe-${node.id}`}>
+              {index > 0 ? (
+                <line
+                  x1={x - 46}
+                  y1="30"
+                  x2={x - 16}
+                  y2="30"
+                  className="stroke-mint"
+                  strokeWidth="2"
+                  opacity={reduced ? 0.4 : 1}
+                />
+              ) : null}
+              <circle cx={x} cy="30" r={selected ? 14 : 11} className={selected ? "fill-mint" : "fill-surface"} />
+              <text
+                x={x}
+                y="58"
+                textAnchor="middle"
+                className={selected ? "fill-ink" : "fill-muted"}
+                fontSize="10"
+              >
+                {node.label}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
       <div
         className="mt-4 flex min-w-0 max-w-full gap-2 overflow-x-auto md:flex"
         role="tablist"

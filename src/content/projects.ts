@@ -26,6 +26,21 @@ function githubExportEvidence(repo: string, note: string): SourceReference {
   };
 }
 
+function studioReconstruction(
+  file: string,
+  alt: string,
+  source: string,
+  extra = "",
+): ProjectMedia {
+  return {
+    src: `/media/studio/${file}`,
+    alt,
+    kind: "image",
+    caption:
+      `光域工作室重建（對齊公開 ${source}）。不是產品操作截圖，不是 Canva 嵌入，也不是 Drive 私有檔。${extra}`.trim(),
+  };
+}
+
 export const statusLabel: Record<ProjectStatus, string> = {
   completed: "已完成",
   "in-progress": "開發中",
@@ -528,6 +543,12 @@ export const projects: Project[] = [
         "public/og.jpg",
         "這是 og.jpg 分享卡／字標，不是 Folio 編輯器操作截圖，也不是 Canva 嵌入。canva2 沒有產品操作 PNG。",
       ),
+      studioReconstruction(
+        "folio-editor.svg",
+        "Folio 編輯器光域重建：頂列、工具軌、畫布與檢查器",
+        "canva2 src/components/editor/editor-shell.tsx",
+        "結構對齊桌面編輯器外殼（回到文件櫃、暫存、預覽、發布、工具軌、畫布、屬性／檢查）。canva2 公開 repo 沒有編輯器操作 PNG。",
+      ),
     ],
     sourceReferences: [
       {
@@ -539,6 +560,11 @@ export const projects: Project[] = [
         "canva2",
         "本站 /media/github-exports/folio/og.jpg 複製自公開 repo public/og.jpg。是分享卡／字標，不是編輯器截圖，不是 Canva 原作。",
       ),
+      {
+        label: "光域重建 · Folio editor-shell",
+        href: "https://github.com/aa0968111723-prog/canva2/blob/main/src/components/editor/editor-shell.tsx",
+        note: "本站 /media/studio/folio-editor.svg 依公開 editor-shell.tsx 桌面結構重建。不是操作截圖。",
+      },
     ],
     visibility: "public",
   },
@@ -664,6 +690,12 @@ export const projects: Project[] = [
         "attachments/淡江大學 禪學社 (1).png",
         "本站為公開 PNG 的壓縮 JPEG。這是社團插畫，不是 tku-zen-ai 對話截圖，不是 Canva 原作。tku-zen-ai 公開 repo 沒有產品操作畫面。",
       ),
+      studioReconstruction(
+        "tku-zen-chat.svg",
+        "TKU Zen AI 對話光域重建：標題、氣泡、建議句、呼吸提示與輸入列",
+        "tku-zen-ai src/app/page.tsx 與 src/lib/zen.ts",
+        "結構對齊公開對話頁（歡迎句、左右氣泡、建議句、呼吸提示、送出）。原作是深色介面，這裡是亮色轉譯。tku-zen-ai 沒有對話操作 PNG。",
+      ),
     ],
     sourceReferences: [
       {
@@ -675,6 +707,11 @@ export const projects: Project[] = [
         "urban-green-rose-pixel",
         "本站 /media/github-exports/tku-zen-ai/club-illustration.jpg 壓縮自公開 PNG attachments/淡江大學 禪學社 (1).png。是社團插畫，不是對話 UI，不是 Canva 嵌入。",
       ),
+      {
+        label: "光域重建 · TKU Zen 對話",
+        href: "https://github.com/aa0968111723-prog/tku-zen-ai/blob/main/src/app/page.tsx",
+        note: "本站 /media/studio/tku-zen-chat.svg 依公開 page.tsx／zen.ts 對話結構重建。亮色轉譯，不是產品截圖。",
+      },
     ],
     visibility: "public",
   },

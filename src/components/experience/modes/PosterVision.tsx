@@ -170,6 +170,12 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           }}
         />
         <canvas ref={heatRef} className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply" />
+        <p
+          className="pointer-events-none absolute left-3 top-3 max-w-[80%] rounded-full bg-surface/90 px-3 py-1 text-[11px] text-mint-deep shadow-card"
+          data-heatmap-honesty="true"
+        >
+          {ex.heatmapBadge}
+        </p>
         {analysis?.regions.map((region) => (
           <div
             key={region.id}

@@ -116,7 +116,7 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
             <button
               key={item.id}
               type="button"
-              className={`absolute min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 rounded-xl px-2 text-xs shadow-card ${
+              className={`absolute min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 rounded-xl px-2 py-1 text-xs shadow-card ${
                 selected === item.id ? "bg-mint" : "bg-surface"
               }`}
               style={{ left: `${item.x}%`, top: `${item.y}%` }}
@@ -127,6 +127,11 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
                 onDrag(item.id, event);
               }}
             >
+              <svg viewBox="0 0 48 40" className="mx-auto h-8 w-10" aria-hidden data-iso-booth={item.id}>
+                <polygon points="24,4 44,14 24,24 4,14" className={selected === item.id ? "fill-surface" : "fill-mint"} />
+                <polygon points="4,14 24,24 24,36 4,26" className="fill-sky" opacity="0.85" />
+                <polygon points="24,24 44,14 44,26 24,36" className="fill-surface-mint" />
+              </svg>
               {item.label}
             </button>
           ))}

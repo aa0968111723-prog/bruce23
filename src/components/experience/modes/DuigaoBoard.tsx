@@ -99,9 +99,9 @@ export function DuigaoBoard({ project }: { project: PublicProject }) {
         <p className="mt-3 text-sm text-muted">{ex.clickToAnnotate}</p>
       )}
       <ul className="mt-4 grid gap-2">
-        {pins.map((pin) => (
+        {pins.map((pin, index) => (
           <li key={pin.id} className="rounded-xl bg-surface px-4 py-3 text-sm shadow-card">
-            {pin.note}
+            {index + 1}. {pin.note}
           </li>
         ))}
       </ul>
@@ -138,12 +138,15 @@ function PosterLayer({
         }}
       >
         <img src={src} alt={alt} className="aspect-[4/3] w-full object-cover" style={{ filter }} />
-        {pins.map((pin) => (
+        {pins.map((pin, index) => (
           <span
             key={pin.id}
-            className="absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mint ring-2 ring-white"
+            className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-mint text-[10px] font-semibold text-primary-foreground ring-2 ring-white"
             style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
-          />
+            data-pin-index={index + 1}
+          >
+            {index + 1}
+          </span>
         ))}
       </button>
       <figcaption className="mt-2 text-xs text-muted">{label}</figcaption>

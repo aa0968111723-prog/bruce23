@@ -6,11 +6,14 @@ import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 import { joinSentences } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
-const KIND_LABEL: Record<TimelineFrame["kind"], string> = {
-  key: "Key",
-  breakdown: "Breakdown",
-  generated: "Generated",
-};
+function kindLabel(
+  kind: TimelineFrame["kind"],
+  ex: { frameKindKey: string; frameKindBreakdown: string; frameKindGenerated: string },
+) {
+  if (kind === "key") return ex.frameKindKey;
+  if (kind === "breakdown") return ex.frameKindBreakdown;
+  return ex.frameKindGenerated;
+}
 
 function BallStrip({
   frames,
@@ -95,7 +98,7 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
         <figure>
           <BallStrip frames={frames} index={index} onion={onion} reduced={reduced} />
           <figcaption className="mt-2 text-xs text-muted">
-            {ex.demoMark} · F{frame.i} {KIND_LABEL[frame.kind]}
+            {ex.demoMark} · F{frame.i} {kindLabel(frame.kind, ex)}
           </figcaption>
         </figure>
         {compare ? (
@@ -135,8 +138,8 @@ export function FrameTimeline({ project }: { project: PublicProject }) {
           {ex.frameCompare} {compare ? ex.on : ex.off}
         </button>
       </div>
-      <p className="mt-3 text-sm">
-        {ex.currentFrame} F{frame.i} · {KIND_LABEL[frame.kind]}
+      <p className="mt-3 text-sm" data-frame-kind={frame.kind}>
+        {ex.currentFrame} F{frame.i} · {kindLabel(frame.kind, ex)}
         {frame.problem ? ` · ${ex.problemNote}` : ""}
       </p>
       <ul className="mt-4 grid gap-1 text-xs text-muted">

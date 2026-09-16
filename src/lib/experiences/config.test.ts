@@ -205,6 +205,16 @@ describe("experience config merge", () => {
     assert.equal(stale.comparison?.sampleSrc, "/media/github-exports/poster-vision-ai/demo-event.png");
   });
 
+  it("seeds local chat suggestions for Zen and Hermes", () => {
+    const zen = defaultExperienceConfig("tku-zen-ai");
+    assert.equal(zen.conversation?.suggestions?.length, 4);
+    assert.ok(zen.conversation?.suggestions?.includes("考試好有壓力"));
+    const hermes = defaultExperienceConfig("hermes-console");
+    assert.ok(hermes.conversation?.suggestions?.includes("海報"));
+    const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
+    assert.equal(filled.conversation?.suggestions?.length, 4);
+  });
+
   it("how-it-works reads saved steps, then experience_config, then process copy", () => {
     assert.deepEqual(
       howItWorksSteps({

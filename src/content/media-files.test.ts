@@ -26,6 +26,14 @@ describe("github export media", () => {
     const zenExport = zen?.media.find((item) => item.src === "/media/github-exports/tku-zen-ai/club-illustration.jpg");
     assert.ok(folioExport);
     assert.ok(zenExport);
+    const folioStudio = folio?.media.find((item) => item.src === "/media/studio/folio-editor.svg");
+    const zenStudio = zen?.media.find((item) => item.src === "/media/studio/tku-zen-chat.svg");
+    assert.ok(folioStudio);
+    assert.ok(zenStudio);
+    assert.match(folioStudio?.caption ?? "", /光域工作室重建/);
+    assert.match(folioStudio?.caption ?? "", /不是產品操作截圖/);
+    assert.match(zenStudio?.caption ?? "", /亮色轉譯|不是產品操作截圖/);
+    assert.match(zenStudio?.caption ?? "", /不是產品操作截圖|不是產品截圖|tku-zen-ai 沒有對話操作 PNG/);
     assert.match(folioExport?.caption ?? "", /分享卡/);
     assert.match(folioExport?.caption ?? "", /不是 Folio 編輯器操作截圖/);
     assert.match(zenExport?.caption ?? "", /社團插畫/);

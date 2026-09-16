@@ -829,6 +829,8 @@ describe("cms persistence", () => {
     assert.ok(folio.media.some((item) => item.src === "/media/github-exports/folio/og.jpg"));
     const zen = await getPublishedProject(sql, "tku-zen-ai");
     assert.ok(zen.media.some((item) => item.src === "/media/github-exports/tku-zen-ai/club-illustration.jpg"));
+    assert.ok(folio.media.some((item) => item.src === "/media/studio/folio-editor.svg"));
+    assert.ok(zen.media.some((item) => item.src === "/media/studio/tku-zen-chat.svg"));
   });
 
   it("round-trips distinctive admin field groups to admin, public, and homepage slices", async () => {
