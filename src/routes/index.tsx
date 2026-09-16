@@ -1,8 +1,10 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, Github } from "lucide-react";
+import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
+import { RelationSpace } from "@/components/home/RelationSpace";
 import { LightField } from "@/components/site/LightField";
-import { MediaFrame } from "@/components/site/MediaFrame";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/LocaleProvider";
 import { ExplorationField } from "@/components/home/ExplorationField";
@@ -74,6 +76,13 @@ function Home() {
             <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">{copy.subhead}</p>
             <p className="mt-3 max-w-lg text-sm text-ink/80">{copy.narrative}</p>
             <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="#explore"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card"
+              >
+                開始探索
+                <ArrowRight className="size-4" />
+              </a>
               <Link
                 to="/work"
                 className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card"
@@ -177,6 +186,15 @@ function Home() {
       </section>
 
       {open ? <ExperiencePanel project={overlayProject(open, lang)} onClose={() => setOpen(null)} /> : null}
+    </div>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-surface p-4 shadow-card">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 text-sm font-medium">{value}</p>
     </div>
   );
 }

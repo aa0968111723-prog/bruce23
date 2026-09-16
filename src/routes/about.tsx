@@ -56,7 +56,6 @@ function About() {
           <p className="mt-3 leading-relaxed text-ink/85">{copy.narrative}</p>
           <p className="mt-3 leading-relaxed text-muted">{ui.aboutAudience}</p>
         </div>
-
         <div>
           <h2 className="font-display text-2xl font-semibold">{ui.aboutWhy}</h2>
           <p className="mt-3 leading-relaxed text-muted">{ui.aboutWhyBody}</p>
@@ -75,7 +74,6 @@ function About() {
             ))}
           </ul>
         </div>
-
         <div>
           <h2 className="font-display text-2xl font-semibold">{ui.aboutWork}</h2>
           <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -85,6 +83,9 @@ function About() {
               </li>
             ))}
           </ul>
+          <Link to="/work" className="mt-5 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
+            看作品
+          </Link>
         </div>
 
         <div className="rounded-2xl bg-surface p-6 shadow-card">
