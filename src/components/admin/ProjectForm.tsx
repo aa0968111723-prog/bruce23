@@ -92,7 +92,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           key === "role") &&
         typeof value === "string"
       ) {
-        const localeKey = key;
+        const localeKey: "title" | "subtitle" | "summary" | "problem" | "role" = key;
         const prev = String(current[key] ?? "");
         const zh = current.locale_json?.zh ?? {};
         const zhVal = zh[localeKey];

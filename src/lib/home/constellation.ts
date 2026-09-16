@@ -100,10 +100,23 @@ function pushNodeFromHub(node: ConstellationNode, hub: ConstellationHub): boolea
   const ox = NODE_HALF_W + HUB_HALF_W + gap - Math.abs(node.x - hub.x);
   const oy = NODE_HALF_H + HUB_HALF_H + gap - Math.abs(node.y - hub.y);
   if (ox <= 0 || oy <= 0) return false;
-  if (ox < oy) {
-    node.x += (node.x >= hub.x ? 1 : -1) * (ox + 2);
+  const minX = NODE_HALF_W + 16;
+  const maxX = CONSTELLATION_WIDTH - NODE_HALF_W - 16;
+  const minY = NODE_HALF_H + 16;
+  const maxY = CONSTELLATION_HEIGHT - NODE_HALF_H - 16;
+  const tryX = node.x + (node.x >= hub.x ? 1 : -1) * (ox + 2);
+  const tryY = node.y + (node.y >= hub.y ? 1 : -1) * (oy + 2);
+  const xIn = tryX >= minX && tryX <= maxX;
+  const yIn = tryY >= minY && tryY <= maxY;
+  if (ox < oy && xIn) {
+    node.x = tryX;
+  } else if (yIn) {
+    node.y = tryY;
+  } else if (xIn) {
+    node.x = tryX;
   } else {
-    node.y += (node.y >= hub.y ? 1 : -1) * (oy + 2);
+    node.x = clamp(tryX, minX, maxX);
+    node.y = clamp(tryY, minY, maxY);
   }
   return true;
 }
@@ -134,7 +147,7 @@ function resolveCollisions(hubs: ConstellationHub[], nodes: ConstellationNode[])
   const minY = NODE_HALF_H + 16;
   const maxY = CONSTELLATION_HEIGHT - NODE_HALF_H - 16;
 
-  for (let iter = 0; iter < 220; iter += 1) {
+  for (let iter = 0; iter < 320; iter += 1) {
     let moved = false;
     for (let i = 0; i < placed.length; i += 1) {
       for (let j = i + 1; j < placed.length; j += 1) {
@@ -165,8 +178,8 @@ export function constellationLayout(projects: PublicProject[]): {
   const hubs: ConstellationHub[] = activeFilters.map((item, index) => {
     const count = Math.max(activeFilters.length, 1);
     const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
-    const radiusX = count <= 2 ? 240 : 430;
-    const radiusY = count <= 2 ? 180 : 270;
+    const radiusX = count <= 2 ? 240 : 410;
+    const radiusY = count <= 2 ? 170 : 230;
     return {
       id: item.id,
       label: item.label,
@@ -205,13 +218,13 @@ export function constellationLayout(projects: PublicProject[]): {
     const uy = (gy - cy0) / away;
     const px = -uy;
     const py = ux;
-    const along = n === 1 ? 168 + t * 18 : 78 + t * 16;
-    const spread = (k - (n - 1) / 2) * 118;
+    const along = n === 1 ? 132 + t * 18 : 86 + t * 16;
+    const spread = (k - (n - 1) / 2) * 128;
     return {
       slug: project.slug,
       title: project.title,
-      x: gx + ux * along + px * spread,
-      y: gy + uy * along + py * spread,
+      x: gx - ux * along + px * spread,
+      y: gy - uy * along + py * spread,
       category: project.category,
       year: project.year,
       modalities: linked.map((item) => item.label),
