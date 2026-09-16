@@ -34,10 +34,10 @@ describe("archive honesty", () => {
     }).join("\n");
     assert.doesNotMatch(combined, /directly pageable/i);
     assert.doesNotMatch(combined, /original photo embed/i);
-    assert.match(archiveLocaleEn["landscape-series"].summary, /not the original photo/i);
-    assert.match(archiveLocaleEn["tku-zen-poster"].summary, /cannot page/);
-    assert.match(archiveLocaleEn["graphic-portfolio"].summary, /not a scan/i);
-    assert.match(archiveLocaleEn["stroop-challenge"].summary, /not a live-score screenshot/i);
+    assert.match(archiveLocaleEn["landscape-series"].summary ?? "", /not the original photo/i);
+    assert.match(archiveLocaleEn["tku-zen-poster"].summary ?? "", /cannot page/);
+    assert.match(archiveLocaleEn["graphic-portfolio"].summary ?? "", /not a scan/i);
+    assert.match(archiveLocaleEn["stroop-challenge"].summary ?? "", /not a live-score screenshot/i);
   });
 
   it("keeps archive SVG labels readable instead of garbled bytes", () => {

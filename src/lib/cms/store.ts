@@ -692,7 +692,11 @@ export async function listAdminArchive(sql: Sql): Promise<AdminArchiveItem[]> {
   }));
 }
 
-export async function upsertArchive(sql: Sql, input: ArchiveInput & { id?: string }, actor: string) {
+export async function upsertArchive(
+  sql: Sql,
+  input: Omit<ArchiveInput, "locale_json"> & { id?: string; locale_json?: ArchiveInput["locale_json"] },
+  actor: string,
+) {
   const id = input.id ?? crypto.randomUUID();
   const canvaShape = canvaPersistFromFields(input.canva_share_url, input.canva_embed_url);
   const canvaStatus = canvaStatusForPersist(canvaShape, input.canva_status);
