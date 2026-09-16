@@ -265,11 +265,3 @@ test("looksLikeDevProcess matches npm run dev and vite dev, not preview", () => 
   assert.equal(looksLikeDevProcess(argv("node", "/workspace/node_modules/.bin/vite", "preview")), false);
   assert.equal(looksLikeDevProcess(argv("node", "scripts/preview.mjs", "restart")), false);
 });
-
-  const argv = (...parts) => parts.join("\u0000");
-  assert.equal(looksLikeDevProcess(argv("node", "/usr/lib/node_modules/npm/bin/npm-cli.js", "run", "dev")), true);
-  assert.equal(looksLikeDevProcess(argv("node", "/workspace/node_modules/.bin/vite", "dev", "--host", "0.0.0.0")), true);
-  assert.equal(looksLikeDevProcess("node /workspace/node_modules/.bin/vite dev --host 0.0.0.0 --port 8080"), true);
-  assert.equal(looksLikeDevProcess(argv("node", "/workspace/node_modules/.bin/vite", "preview")), false);
-  assert.equal(looksLikeDevProcess(argv("node", "scripts/preview.mjs", "restart")), false);
-});
