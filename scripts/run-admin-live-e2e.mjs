@@ -187,6 +187,29 @@ async function gotoReady(page, url) {
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 }
 
+/** Vite never reaches networkidle; retry until React hydration owns the tablist. */
+async function selectExperienceTab(page, name) {
+  const list = page.getByRole("tablist", { name: "作品體驗" });
+  await list.waitFor({ timeout: 20000 });
+  const tab = list.getByRole("tab", { name });
+  await tab.waitFor({ timeout: 15000 });
+  const deadline = Date.now() + 15000;
+  let last = "not clicked";
+  while (Date.now() < deadline) {
+    try {
+      await tab.click({ timeout: 2000 });
+    } catch (err) {
+      last = err instanceof Error ? err.message : "click failed";
+      await new Promise((r) => setTimeout(r, 250));
+      continue;
+    }
+    if ((await tab.getAttribute("aria-selected")) === "true") return;
+    last = "click did not select";
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`experience tab ${String(name)} did not select (${last})`);
+}
+
 async function proveIntegrationsDesk(page) {
   await gotoReady(page, `${ORIGIN}/admin/integrations`);
   await page.getByRole("heading", { name: "已發布作品" }).waitFor({ timeout: 20000 });
@@ -371,24 +394,7 @@ async function proveLiveAdmin(page, request) {
   const liveSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
-  await page.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
-  await page.evaluate(() => {
-    const list = document.querySelector('[role="tablist"][aria-label="作品體驗"]');
-    const tab = [...(list?.querySelectorAll('[role="tab"]') ?? [])].find((el) =>
-      (el.textContent ?? "").includes("Canva"),
-    );
-    if (!(tab instanceof HTMLElement)) throw new Error("Canva experience tab missing");
-    tab.scrollIntoView({ inline: "nearest", block: "nearest" });
-    tab.click();
-  });
-  await page.waitForFunction(
-    () =>
-      [...document.querySelectorAll('[role="tab"]')].some(
-        (el) => el.getAttribute("aria-selected") === "true" && (el.textContent ?? "").includes("Canva"),
-      ),
-    null,
-    { timeout: 8000 },
-  );
+  await selectExperienceTab(page, /Canva/);
   const canvaHtml = await (await request.get(`${ORIGIN}/work/${SLUG}`)).text();
   const iframeSrcs = [...canvaHtml.matchAll(/<iframe[^>]+src="([^"]+)"/gi)].map((row) => row[1]);
   const canvaIframes = iframeSrcs.filter((src) =>
@@ -458,8 +464,9 @@ async function proveLiveAdmin(page, request) {
   const a11y = await page.context().newPage();
   try {
     await a11y.goto(`${ORIGIN}/work/framelab`, { waitUntil: "domcontentloaded", timeout: 30000 });
-    await a11y.getByRole("tablist", { name: "作品體驗" }).waitFor({ timeout: 20000 });
-    const play = a11y.getByRole("tab", { name: "立即體驗" });
+    await selectExperienceTab(a11y, /視覺展示/);
+    await selectExperienceTab(a11y, /立即體驗/);
+    const play = a11y.getByRole("tablist", { name: "作品體驗" }).getByRole("tab", { name: "立即體驗" });
     await play.focus();
     await a11y.keyboard.press("ArrowRight");
     const visual = a11y.getByRole("tab", { name: "視覺展示" });
