@@ -1,6 +1,6 @@
 # Portfolio Task State
 
-Cycle: experience playable 中英文 (not complete)
+Cycle: admin EN experience chrome overlays (not complete)
 Updated: 2026-09-16
 
 ## Source of truth
@@ -30,7 +30,14 @@ Updated: 2026-09-16
 
 - Seed writes distinct `locale_json.en` for site headline/subhead/narrative/SEO and all eight featured works (title, subtitle, summary, problem, role, seoTitle, seoDescription, decisions, process, outputs, limitations, modalities, stack). Faithful translations of existing Chinese; product names expanded so en title ≠ zh title.
 - `fillLocaleJsonGaps` / `fillArchiveLocaleGaps` / `fillSiteLocaleGaps` merge onto existing rows: existing zh wins, seed English fills empty or zh-duplicate fields only. Chinese row copy and GitHub/Canva/publication fields are not rewritten.
-- Public `en` toggle overlays case-study lists via `pickLocaleList` / `overlayProject`. Admin ProjectForm edits zh/en list overlays in SEO / 語系. ExperienceEditor has no locale_json fields.
+- Public `en` toggle overlays case-study lists via `pickLocaleList` / `overlayProject`. Admin ProjectForm edits zh/en list overlays in SEO / 語系.
+
+## This cycle (admin EN experience chrome)
+
+- ExperienceEditor now has structured EN overlay fields (not a primary JSON textarea). JSON stays a read-only 進階 preview. EN fields write `experience_config.locale.en` only; Chinese source fields stay Chinese. Empty EN falls through.
+- Overlay order for public `lang=en`: saved `experience_config.locale.en` → dictionary `experienceCopyEn[slug]` → zh. `mergeExperienceConfig` preserves stored `locale` and does not fill it from the dictionary. No 0001/0002/0003 edit.
+- Admin can save EN for: honesty/intro/Demo/Canva/GitHub/廊 notes, process node label/summary/purpose/stage, FrameLab demoDisclaimer, PLANFORM object name/use + circulation/compliance, 對稿 version labels + prompt/estimate, Zen/Hermes starter/disclaimer/placeholder/sourceNote, walkthrough title/body, existing Canva page labels. GitHub paths stay untranslated. Canva add-page still must not invent DAG ids.
+- ProjectForm still dirties on `patch("experience_config")`, shows 有未儲存的修改, beforeunload, and sonner toasts. Tap targets stay ≥44px (`min-h-11`) on a light studio surface.
 
 ## This cycle (archive 中英文)
 

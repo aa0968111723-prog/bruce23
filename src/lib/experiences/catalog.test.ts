@@ -314,6 +314,7 @@ describe("frontend contract", () => {
     assert.match(seedSource, /fillLocaleJsonGaps/);
     assert.match(seedSource, /fillArchiveLocaleGaps/);
     assert.match(seedSource, /fillSiteLocaleGaps/);
+    assert.doesNotMatch(seedSource, /experienceCopyEn/);
     const schemaSource = readFileSync(new URL("../../../src/lib/cms/schema.ts", import.meta.url), "utf8");
     assert.match(schemaSource, /localeListSchema/);
     assert.match(schemaSource, /decisions: localeListSchema/);
@@ -354,7 +355,7 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(editor, /互動展示內容/);
-    assert.match(editor, /進階 JSON/);
+    assert.match(editor, /進階 JSON（只讀預覽）/);
     assert.match(editor, /FrameLab 時間軸/);
     assert.match(editor, /PLANFORM 物件與動線/);
     assert.match(editor, /不要加頁面標籤或虛構頁面 ID/);
@@ -362,6 +363,24 @@ describe("frontend contract", () => {
     assert.match(editor, /Canva 說明/);
     assert.match(editor, /GitHub 說明/);
     assert.match(editor, /廊說明/);
+    assert.match(editor, /英文 overlay/);
+    assert.match(editor, /英文標籤/);
+    assert.match(editor, /英文 Canva 說明/);
+    assert.match(editor, /英文示範說明/);
+    assert.match(editor, /英文名稱/);
+    assert.match(editor, /英文用途/);
+    assert.match(editor, /英文版本標籤/);
+    assert.match(editor, /英文開場白/);
+    assert.match(editor, /英文免責／誠實聲明/);
+    assert.match(editor, /英文走查說明/);
+    assert.match(editor, /patchEn/);
+    assert.match(editor, /locale\?\.en/);
+    assert.match(form, /beforeunload/);
+    assert.match(form, /toast\.success/);
+    assert.match(form, /有未儲存的修改/);
+    assert.match(schemaSource, /experienceLocaleOverlaySchema/);
+    const defaultsSource = readFileSync(new URL("../../../src/lib/experiences/defaults.ts", import.meta.url), "utf8");
+    assert.match(defaultsSource, /locale: current.locale/);
     const field = readFileSync(
       new URL("../../../src/components/home/ExplorationField.tsx", import.meta.url),
       "utf8",

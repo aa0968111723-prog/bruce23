@@ -494,6 +494,37 @@ describe("project schema", () => {
     assert.equal(parsed.title, "風景");
   });
 
+  it("keeps experience_config.locale.en overlays without rewriting Chinese", () => {
+    const parsed = projectInputSchema.parse({
+      slug: "demo-work",
+      title: "Demo",
+      category: "AI Product",
+      year: "2026",
+      product_status: "prototype",
+      experience_config: {
+        processNodes: [
+          {
+            id: "engine",
+            label: "引擎",
+            summary: "時間軸引擎",
+            githubPath: "src/lib/domain/timeline-engine.ts",
+            purpose: "時間軸",
+            stage: "時間軸",
+          },
+        ],
+        locale: {
+          en: {
+            processNodes: [{ id: "engine", label: "Engine desk" }],
+            canvaNote: "Public embed only. Connect is not claimed as linked.",
+          },
+        },
+      },
+    });
+    assert.equal(parsed.experience_config.processNodes?.[0]?.label, "引擎");
+    assert.equal(parsed.experience_config.locale?.en?.processNodes?.[0]?.label, "Engine desk");
+    assert.match(parsed.experience_config.locale?.en?.canvaNote ?? "", /not claimed as linked/i);
+  });
+
   it("rejects invalid nested experience_config", () => {
     assert.throws(() =>
       projectInputSchema.parse({

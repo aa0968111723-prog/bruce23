@@ -202,6 +202,8 @@ export function mergeExperienceConfig(slug: string, stored: ExperienceConfig | n
     spatial: mergeObject(fallback.spatial, current.spatial, ["objects"]),
     comparison: mergeObject(fallback.comparison, current.comparison, ["versions", "seedPins"]),
     conversation: mergeObject(fallback.conversation, current.conversation, ["replies"]),
+    // Saved EN overlays stay as stored. Do not fill locale.en from the dictionary.
+    locale: current.locale,
   };
   if (
     slug === "poster-vision-ai" &&

@@ -680,6 +680,54 @@ describe("cms persistence", () => {
     assert.deepEqual(published.interactionSteps, ["看幀", "開 onion-skin"]);
   });
 
+  it("publishes saved experience_config.locale.en so public en can read it", async () => {
+    const { overlayExperienceConfig } = await import("../locale/experience.ts");
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        experience_mode: "process-map",
+        experience_config: {
+          honestyLabel: "作品集互動展示",
+          processNodes: [
+            {
+              id: "engine",
+              label: "引擎",
+              summary: "時間軸引擎",
+              githubPath: "src/lib/domain/timeline-engine.ts",
+              purpose: "時間軸",
+              stage: "時間軸",
+            },
+          ],
+          locale: {
+            en: {
+              processNodes: [{ id: "engine", label: "Engine desk" }],
+            },
+          },
+        },
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.experienceConfig.processNodes?.[0]?.label, "引擎");
+    assert.equal(published.experienceConfig.locale?.en?.processNodes?.[0]?.label, "Engine desk");
+    const en = overlayExperienceConfig(published.experienceConfig, created.slug, "en");
+    assert.equal(en.processNodes?.[0]?.label, "Engine desk");
+    const empty = overlayExperienceConfig(
+      {
+        ...published.experienceConfig,
+        locale: { en: { processNodes: [{ id: "engine", label: "" }] } },
+      },
+      created.slug,
+      "en",
+    );
+    assert.equal(empty.processNodes?.[0]?.label, "引擎");
+    const zh = overlayExperienceConfig(published.experienceConfig, created.slug, "zh");
+    assert.equal(zh.processNodes?.[0]?.label, "引擎");
+  });
+
   it("fills missing nested experience keys on seed complement without overwriting saved copy", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
@@ -815,6 +863,13 @@ describe("cms persistence", () => {
             onionDefault: true,
             demoDisclaimer: "RT-TIMELINE-DISCLAIMER",
           },
+          locale: {
+            en: {
+              processNodes: [{ id: "engine", label: "RT-EN-NODE-LABEL" }],
+              canvaNote: "RT-EN-CANVA-NOTE",
+              timeline: { demoDisclaimer: "RT-EN-TIMELINE-DISCLAIMER" },
+            },
+          },
         },
         interaction_steps: ["RT-STEP-A"],
         source_evidence: [
@@ -862,6 +917,7 @@ describe("cms persistence", () => {
     assert.equal(admin.experience_config.honestyLabel, "RT-HONESTY-標籤");
     assert.equal(admin.experience_config.demoNote, "RT-DEMO-NOTE");
     assert.equal(admin.experience_config.canvaPageLabels?.[0]?.label, "RT-PAGE-LABEL");
+    assert.equal(admin.experience_config.locale?.en?.processNodes?.[0]?.label, "RT-EN-NODE-LABEL");
     assert.deepEqual(admin.interaction_steps, ["RT-STEP-A"]);
     assert.equal(admin.source_evidence[0]?.note, "RT-EVIDENCE-NOTE");
 

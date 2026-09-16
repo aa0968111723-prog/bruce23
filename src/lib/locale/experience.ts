@@ -1,4 +1,4 @@
-import type { ExperienceConfig } from "../cms/schema.ts";
+import type { ExperienceConfig, ExperienceLocaleOverlay } from "../cms/schema.ts";
 import { DEFAULT_EXPERIENCE_NOTES, PORTFOLIO_DEMO } from "../experiences/defaults.ts";
 import type { ViewerLang } from "./view.ts";
 
@@ -594,34 +594,55 @@ function trimEn(value: string | undefined): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function overlayField(current: string | undefined, en: string | undefined): string | undefined {
-  const next = trimEn(en);
-  if (next) return next;
-  return current;
+function firstEn(...values: Array<string | undefined>): string {
+  for (const value of values) {
+    const next = trimEn(value);
+    if (next) return next;
+  }
+  return "";
 }
 
-function overlayCommonNote(current: string | undefined, zhDefault: string, enDefault: string, slugEn?: string): string | undefined {
-  const fromSlug = trimEn(slugEn);
-  if (fromSlug) return fromSlug;
+/** Saved overlay, then dictionary, then zh. Empty saved strings fall through. */
+function overlayField(zh: string | undefined, saved?: string, dict?: string): string | undefined {
+  return firstEn(saved, dict) || zh;
+}
+
+function overlayCommonNote(
+  current: string | undefined,
+  zhDefault: string,
+  enDefault: string,
+  saved?: string,
+  dict?: string,
+): string | undefined {
+  const picked = firstEn(saved, dict);
+  if (picked) return picked;
   if (!current || current === zhDefault) return enDefault;
   return current;
 }
 
+type OverlayRow = { id: string } & Record<string, string | undefined>;
+
 function overlayNodes<T extends { id: string }>(
   current: T[] | undefined,
-  en: Array<{ id: string } & Record<string, string | undefined>> | undefined,
+  saved: OverlayRow[] | undefined,
+  dict: OverlayRow[] | undefined,
   fields: (keyof T)[],
 ): T[] | undefined {
   if (!current?.length) return current;
-  if (!en?.length) return current;
-  const map = new Map(en.map((item) => [item.id, item]));
+  if (!saved?.length && !dict?.length) return current;
+  const savedMap = new Map((saved ?? []).map((item) => [item.id, item]));
+  const dictMap = new Map((dict ?? []).map((item) => [item.id, item]));
   return current.map((item) => {
-    const hit = map.get(item.id);
-    if (!hit) return item;
+    const savedHit = savedMap.get(item.id);
+    const dictHit = dictMap.get(item.id);
+    if (!savedHit && !dictHit) return item;
     const next = { ...item };
     for (const field of fields) {
       if (field === "id") continue;
-      const value = trimEn(hit[field as string] as string | undefined);
+      const value = firstEn(
+        savedHit?.[field as string],
+        dictHit?.[field as string],
+      );
       if (value) (next as Record<string, unknown>)[field as string] = value;
     }
     return next;
@@ -630,55 +651,73 @@ function overlayNodes<T extends { id: string }>(
 
 function overlayHints(
   current: NonNullable<ExperienceConfig["fileHints"]> | undefined,
-  en: HintEn[] | undefined,
+  saved: HintEn[] | undefined,
+  dict: HintEn[] | undefined,
 ): ExperienceConfig["fileHints"] {
   if (!current?.length) return current;
-  if (!en?.length) return current;
-  const map = new Map(en.map((item) => [item.path, item]));
+  if (!saved?.length && !dict?.length) return current;
+  const savedMap = new Map((saved ?? []).map((item) => [item.path, item]));
+  const dictMap = new Map((dict ?? []).map((item) => [item.path, item]));
   return current.map((item) => {
-    const hit = map.get(item.path);
-    if (!hit) return item;
+    const savedHit = savedMap.get(item.path);
+    const dictHit = dictMap.get(item.path);
+    if (!savedHit && !dictHit) return item;
     return {
       ...item,
       path: item.path,
-      purpose: trimEn(hit.purpose) || item.purpose,
-      stage: trimEn(hit.stage) || item.stage,
+      purpose: firstEn(savedHit?.purpose, dictHit?.purpose) || item.purpose,
+      stage: firstEn(savedHit?.stage, dictHit?.stage) || item.stage,
     };
   });
+}
+
+type WalkOverlay = { title?: string; body?: string; path?: string };
+
+function walkHit(rows: WalkOverlay[] | undefined, item: WalkOverlay, index: number): WalkOverlay | undefined {
+  if (!rows?.length) return undefined;
+  return (item.path ? rows.find((row) => row.path === item.path) : undefined) ?? rows[index];
 }
 
 function overlayWalk(
   current: NonNullable<ExperienceConfig["walkthrough"]> | undefined,
-  en: WalkEn[] | undefined,
+  saved: WalkOverlay[] | undefined,
+  dict: WalkOverlay[] | undefined,
 ): ExperienceConfig["walkthrough"] {
   if (!current?.length) return current;
-  if (!en?.length) return current;
-  const byPath = new Map(en.filter((item) => item.path).map((item) => [item.path, item]));
+  if (!saved?.length && !dict?.length) return current;
   return current.map((item, index) => {
-    const hit = (item.path ? byPath.get(item.path) : undefined) ?? en[index];
-    if (!hit) return item;
+    const savedHit = walkHit(saved, item, index);
+    const dictHit = walkHit(dict, item, index);
+    if (!savedHit && !dictHit) return item;
     return {
       ...item,
-      title: trimEn(hit.title) || item.title,
-      body: trimEn(hit.body) || item.body,
+      title: firstEn(savedHit?.title, dictHit?.title) || item.title,
+      body: firstEn(savedHit?.body, dictHit?.body) || item.body,
       path: item.path,
     };
   });
 }
 
+function replyHit(rows: Array<{ matchZh?: string; match?: string; reply?: string }> | undefined, match: string) {
+  if (!rows?.length) return undefined;
+  return rows.find((row) => row.matchZh === match) ?? rows.find((row) => row.match === match);
+}
+
 function overlayReplies(
   current: NonNullable<NonNullable<ExperienceConfig["conversation"]>["replies"]> | undefined,
-  en: ReplyEn[] | undefined,
+  saved: Array<{ matchZh?: string; match?: string; reply?: string }> | undefined,
+  dict: ReplyEn[] | undefined,
 ) {
   if (!current?.length) return current;
-  if (!en?.length) return current;
+  if (!saved?.length && !dict?.length) return current;
   return current.map((item) => {
-    const hit = en.find((row) => row.matchZh === item.match);
-    if (!hit) return item;
+    const savedHit = replyHit(saved, item.match);
+    const dictHit = replyHit(dict, item.match);
+    if (!savedHit && !dictHit) return item;
     return {
       ...item,
-      match: trimEn(hit.match) || item.match,
-      reply: trimEn(hit.reply) || item.reply,
+      match: firstEn(savedHit?.match, dictHit?.match) || item.match,
+      reply: firstEn(savedHit?.reply, dictHit?.reply) || item.reply,
     };
   });
 }
@@ -690,79 +729,132 @@ export function overlayExperienceConfig(
   lang: ViewerLang,
 ): ExperienceConfig {
   if (lang !== "en") return config;
+  const savedEn: ExperienceLocaleOverlay = config.locale?.en ?? {};
   const slugEn = experienceCopyEn[slug] ?? {};
   const honesty =
-    trimEn(slugEn.honestyLabel) ||
+    firstEn(savedEn.honestyLabel, slugEn.honestyLabel) ||
     (config.honestyLabel === PORTFOLIO_DEMO ? commonExperienceCopyEn.honestyLabel : config.honestyLabel);
 
   const next: ExperienceConfig = {
     ...config,
     honestyLabel: honesty,
-    intro: overlayField(config.intro, slugEn.intro),
+    intro: overlayField(config.intro, savedEn.intro, slugEn.intro),
     githubIntro: overlayCommonNote(
       config.githubIntro,
       DEFAULT_EXPERIENCE_NOTES.githubIntro,
       commonExperienceCopyEn.githubIntro,
+      savedEn.githubIntro,
       slugEn.githubIntro,
     ),
     canvaNote: overlayCommonNote(
       config.canvaNote,
       DEFAULT_EXPERIENCE_NOTES.canvaNote,
       commonExperienceCopyEn.canvaNote,
+      savedEn.canvaNote,
       slugEn.canvaNote,
     ),
     demoNote: overlayCommonNote(
       config.demoNote,
       DEFAULT_EXPERIENCE_NOTES.demoNote,
       commonExperienceCopyEn.demoNote,
+      savedEn.demoNote,
       slugEn.demoNote,
     ),
     galleryNote: overlayCommonNote(
       config.galleryNote,
       DEFAULT_EXPERIENCE_NOTES.galleryNote,
       commonExperienceCopyEn.galleryNote,
+      savedEn.galleryNote,
       slugEn.galleryNote,
     ),
-    processNodes: overlayNodes(config.processNodes, slugEn.processNodes, ["label", "summary", "purpose", "stage"]),
-    walkthrough: overlayWalk(config.walkthrough, slugEn.walkthrough),
-    fileHints: overlayHints(config.fileHints, slugEn.fileHints),
-    canvaPageLabels: overlayNodes(config.canvaPageLabels, slugEn.canvaPageLabels, ["label"]),
+    processNodes: overlayNodes(
+      config.processNodes,
+      savedEn.processNodes,
+      slugEn.processNodes,
+      ["label", "summary", "purpose", "stage"],
+    ),
+    walkthrough: overlayWalk(config.walkthrough, savedEn.walkthrough, slugEn.walkthrough),
+    fileHints: overlayHints(config.fileHints, savedEn.fileHints, slugEn.fileHints),
+    canvaPageLabels: overlayNodes(config.canvaPageLabels, savedEn.canvaPageLabels, slugEn.canvaPageLabels, ["label"]),
   };
 
-  if (config.timeline || slugEn.timeline) {
+  if (config.timeline || savedEn.timeline || slugEn.timeline) {
     next.timeline = {
       ...config.timeline,
       frames: config.timeline?.frames ?? [],
-      demoDisclaimer: overlayField(config.timeline?.demoDisclaimer, slugEn.timeline?.demoDisclaimer),
+      demoDisclaimer: overlayField(
+        config.timeline?.demoDisclaimer,
+        savedEn.timeline?.demoDisclaimer,
+        slugEn.timeline?.demoDisclaimer,
+      ),
     };
   }
-  if (config.spatial || slugEn.spatial) {
+  if (config.spatial || savedEn.spatial || slugEn.spatial) {
     next.spatial = {
       ...config.spatial,
-      objects: overlayNodes(config.spatial?.objects, slugEn.spatial?.objects, ["label", "use", "size"]) ??
+      objects:
+        overlayNodes(config.spatial?.objects, savedEn.spatial?.objects, slugEn.spatial?.objects, [
+          "label",
+          "use",
+          "size",
+        ]) ??
         config.spatial?.objects ??
         [],
-      circulationNote: overlayField(config.spatial?.circulationNote, slugEn.spatial?.circulationNote),
-      complianceDisclaimer: overlayField(config.spatial?.complianceDisclaimer, slugEn.spatial?.complianceDisclaimer),
+      circulationNote: overlayField(
+        config.spatial?.circulationNote,
+        savedEn.spatial?.circulationNote,
+        slugEn.spatial?.circulationNote,
+      ),
+      complianceDisclaimer: overlayField(
+        config.spatial?.complianceDisclaimer,
+        savedEn.spatial?.complianceDisclaimer,
+        slugEn.spatial?.complianceDisclaimer,
+      ),
     };
   }
-  if (config.comparison || slugEn.comparison) {
+  if (config.comparison || savedEn.comparison || slugEn.comparison) {
     next.comparison = {
       ...config.comparison,
-      versions: overlayNodes(config.comparison?.versions, slugEn.comparison?.versions, ["label"]),
-      seedPins: overlayNodes(config.comparison?.seedPins, slugEn.comparison?.seedPins, ["note"]),
-      prompt: overlayField(config.comparison?.prompt, slugEn.comparison?.prompt),
-      estimateDisclaimer: overlayField(config.comparison?.estimateDisclaimer, slugEn.comparison?.estimateDisclaimer),
+      versions: overlayNodes(
+        config.comparison?.versions,
+        savedEn.comparison?.versions,
+        slugEn.comparison?.versions,
+        ["label"],
+      ),
+      seedPins: overlayNodes(
+        config.comparison?.seedPins,
+        savedEn.comparison?.seedPins,
+        slugEn.comparison?.seedPins,
+        ["note"],
+      ),
+      prompt: overlayField(config.comparison?.prompt, savedEn.comparison?.prompt, slugEn.comparison?.prompt),
+      estimateDisclaimer: overlayField(
+        config.comparison?.estimateDisclaimer,
+        savedEn.comparison?.estimateDisclaimer,
+        slugEn.comparison?.estimateDisclaimer,
+      ),
     };
   }
-  if (config.conversation || slugEn.conversation) {
+  if (config.conversation || savedEn.conversation || slugEn.conversation) {
     next.conversation = {
       ...config.conversation,
-      disclaimer: overlayField(config.conversation?.disclaimer, slugEn.conversation?.disclaimer),
-      starter: overlayField(config.conversation?.starter, slugEn.conversation?.starter),
-      placeholder: overlayField(config.conversation?.placeholder, slugEn.conversation?.placeholder),
-      sourceNote: overlayField(config.conversation?.sourceNote, slugEn.conversation?.sourceNote),
-      replies: overlayReplies(config.conversation?.replies, slugEn.conversation?.replies),
+      disclaimer: overlayField(
+        config.conversation?.disclaimer,
+        savedEn.conversation?.disclaimer,
+        slugEn.conversation?.disclaimer,
+      ),
+      starter: overlayField(config.conversation?.starter, savedEn.conversation?.starter, slugEn.conversation?.starter),
+      placeholder: overlayField(
+        config.conversation?.placeholder,
+        savedEn.conversation?.placeholder,
+        slugEn.conversation?.placeholder,
+      ),
+      sourceNote: overlayField(
+        config.conversation?.sourceNote,
+        savedEn.conversation?.sourceNote,
+        slugEn.conversation?.sourceNote,
+      ),
+      replies: overlayReplies(config.conversation?.replies, savedEn.conversation?.replies, slugEn.conversation?.replies),
     };
   }
   return next;

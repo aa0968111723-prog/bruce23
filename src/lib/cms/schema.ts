@@ -178,6 +178,96 @@ export const canvaPageLabelSchema = z.object({
   label: z.string().min(1).max(80),
 });
 
+/** Admin-saved English overlays. Empty strings fall back to the dictionary, then zh. */
+export const experienceLocaleNodeSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().max(80).optional(),
+  summary: z.string().max(400).optional(),
+  purpose: z.string().max(240).optional(),
+  stage: z.string().max(80).optional(),
+});
+
+export const experienceLocaleWalkSchema = z.object({
+  title: z.string().max(120).optional(),
+  body: z.string().max(600).optional(),
+  path: z.string().max(240).optional(),
+});
+
+export const experienceLocaleHintSchema = z.object({
+  path: z.string().min(1).max(240),
+  purpose: z.string().max(240).optional(),
+  stage: z.string().max(80).optional(),
+});
+
+export const experienceLocaleObjectSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().max(80).optional(),
+  use: z.string().max(160).optional(),
+  size: z.string().max(80).optional(),
+});
+
+export const experienceLocaleVersionSchema = z.object({
+  id: z.string().min(1).max(80),
+  label: z.string().max(80).optional(),
+});
+
+export const experienceLocalePinSchema = z.object({
+  id: z.string().min(1).max(80),
+  note: z.string().max(240).optional(),
+});
+
+export const experienceLocaleReplySchema = z.object({
+  matchZh: z.string().max(80).optional(),
+  match: z.string().max(80).optional(),
+  reply: z.string().max(400).optional(),
+});
+
+export const experienceLocaleOverlaySchema = z.object({
+  honestyLabel: z.string().max(160).optional(),
+  intro: z.string().max(400).optional(),
+  githubIntro: z.string().max(400).optional(),
+  canvaNote: z.string().max(400).optional(),
+  demoNote: z.string().max(400).optional(),
+  galleryNote: z.string().max(400).optional(),
+  processNodes: z.array(experienceLocaleNodeSchema).max(16).optional(),
+  walkthrough: z.array(experienceLocaleWalkSchema).max(16).optional(),
+  fileHints: z.array(experienceLocaleHintSchema).max(24).optional(),
+  timeline: z.object({ demoDisclaimer: z.string().max(400).optional() }).optional(),
+  spatial: z
+    .object({
+      objects: z.array(experienceLocaleObjectSchema).max(24).optional(),
+      circulationNote: z.string().max(240).optional(),
+      complianceDisclaimer: z.string().max(240).optional(),
+    })
+    .optional(),
+  comparison: z
+    .object({
+      versions: z.array(experienceLocaleVersionSchema).max(8).optional(),
+      seedPins: z.array(experienceLocalePinSchema).max(24).optional(),
+      prompt: z.string().max(160).optional(),
+      estimateDisclaimer: z.string().max(240).optional(),
+    })
+    .optional(),
+  conversation: z
+    .object({
+      disclaimer: z.string().max(400).optional(),
+      starter: z.string().max(400).optional(),
+      placeholder: z.string().max(80).optional(),
+      sourceNote: z.string().max(240).optional(),
+      replies: z.array(experienceLocaleReplySchema).max(24).optional(),
+    })
+    .optional(),
+  canvaPageLabels: z
+    .array(
+      z.object({
+        id: z.string().min(1).max(80),
+        label: z.string().max(80).optional(),
+      }),
+    )
+    .max(12)
+    .optional(),
+});
+
 export const experienceConfigSchema = z
   .object({
     honestyLabel: z.string().max(160).optional(),
@@ -194,6 +284,11 @@ export const experienceConfigSchema = z
     spatial: spatialConfigSchema.optional(),
     comparison: comparisonConfigSchema.optional(),
     conversation: conversationConfigSchema.optional(),
+    locale: z
+      .object({
+        en: experienceLocaleOverlaySchema.optional(),
+      })
+      .optional(),
   })
   .default({});
 
@@ -335,6 +430,7 @@ export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
 export type SourceEvidence = z.infer<typeof sourceEvidenceSchema>;
 export type ProjectMedia = z.infer<typeof mediaSchema>;
 export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
+export type ExperienceLocaleOverlay = z.infer<typeof experienceLocaleOverlaySchema>;
 export type LocaleCopy = z.infer<typeof localeCopySchema>;
 export type GithubMetadata = z.infer<typeof githubMetadataSchema>;
 export type ProcessNode = z.infer<typeof processNodeSchema>;

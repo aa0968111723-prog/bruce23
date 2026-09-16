@@ -99,6 +99,54 @@ describe("experience playable chrome", () => {
     assert.equal(en.processNodes?.[0]?.githubPath, "server/custom.ts");
   });
 
+  it("prefers a saved locale.en process node label over the dictionary", () => {
+    const stored = mergeExperienceConfig("ai-director-os", {
+      locale: { en: { processNodes: [{ id: "project", label: "Studio Project" }] } },
+    });
+    assert.equal(stored.processNodes?.find((node) => node.id === "project")?.label, "專案");
+    assert.equal(stored.locale?.en?.processNodes?.[0]?.label, "Studio Project");
+    const en = overlayExperienceConfig(stored, "ai-director-os", "en");
+    assert.equal(en.processNodes?.find((node) => node.id === "project")?.label, "Studio Project");
+    const zh = overlayExperienceConfig(stored, "ai-director-os", "zh");
+    assert.equal(zh.processNodes?.find((node) => node.id === "project")?.label, "專案");
+    const howEn = howItWorksSteps(
+      { slug: "ai-director-os", experienceConfig: stored, interactionSteps: [], process: [] },
+      "en",
+    );
+    assert.ok(howEn.some((step) => step.startsWith("Studio Project：")));
+  });
+
+  it("falls back from empty saved en to dictionary then zh", () => {
+    const stored = mergeExperienceConfig("ai-director-os", {
+      locale: { en: { processNodes: [{ id: "project", label: "   " }] } },
+    });
+    const en = overlayExperienceConfig(stored, "ai-director-os", "en");
+    assert.equal(en.processNodes?.find((node) => node.id === "project")?.label, "Project");
+
+    const custom = mergeExperienceConfig("ai-director-os", {
+      processNodes: [
+        {
+          id: "only-zh",
+          label: "自訂節點",
+          summary: "沒有英文",
+          githubPath: "server/custom.ts",
+          purpose: "測",
+          stage: "測",
+        },
+      ],
+      locale: { en: { processNodes: [{ id: "only-zh", label: "" }] } },
+    });
+    const emptySaved = overlayExperienceConfig(custom, "ai-director-os", "en");
+    assert.equal(emptySaved.processNodes?.[0]?.label, "自訂節點");
+    assert.equal(emptySaved.processNodes?.[0]?.githubPath, "server/custom.ts");
+  });
+
+  it("does not copy dictionary English into stored locale.en on merge", () => {
+    const merged = mergeExperienceConfig("ai-director-os", { honestyLabel: "kept" });
+    assert.equal(merged.locale, undefined);
+    assert.equal(merged.processNodes?.find((node) => node.id === "project")?.label, "專案");
+  });
+
   it("overlays how-it-works steps for English without translating paths", () => {
     const zh = howItWorksSteps(
       { slug: "folio", experienceConfig: {}, interactionSteps: [], process: [] },

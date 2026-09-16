@@ -60,6 +60,11 @@ const MODE_FIXTURES: Record<(typeof EXPERIENCE_MODES)[number], unknown> = {
         stage: "專案",
       },
     ],
+    locale: {
+      en: {
+        processNodes: [{ id: "project", label: "Project" }],
+      },
+    },
   },
   "spatial-preview": {
     spatial: {
@@ -178,6 +183,17 @@ describe("experience config merge", () => {
 
     const emptyNodes = mergeExperienceConfig("ai-director-os", { processNodes: [] });
     assert.ok((emptyNodes.processNodes?.length ?? 0) > 0);
+  });
+
+  it("keeps saved locale.en overlays and does not seed dictionary English", () => {
+    const withSaved = mergeExperienceConfig("ai-director-os", {
+      locale: { en: { processNodes: [{ id: "project", label: "Studio Project" }] } },
+    });
+    assert.equal(withSaved.locale?.en?.processNodes?.[0]?.label, "Studio Project");
+    assert.equal(withSaved.processNodes?.find((node) => node.id === "project")?.label, "專案");
+
+    const without = mergeExperienceConfig("framelab", { honestyLabel: "saved-label" });
+    assert.equal(without.locale, undefined);
   });
 
   it("points Poster Vision sample at the public GitHub fixture", () => {

@@ -1,4 +1,4 @@
-import type { ExperienceConfig } from "@/lib/cms/schema";
+import type { ExperienceConfig, ExperienceLocaleOverlay } from "@/lib/cms/schema";
 import { EXPERIENCE_MODE_LABEL } from "@/lib/cms/status";
 import type { ExperienceMode as Mode } from "@/lib/cms/status";
 
@@ -77,6 +77,62 @@ function RemoveButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+function EnField({
+  label,
+  value,
+  onChange,
+  multiline,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  multiline?: boolean;
+}) {
+  return (
+    <label className="grid gap-1 text-sm">
+      <span className="text-muted">{label}</span>
+      {multiline ? (
+        <textarea
+          className="min-h-24 rounded-xl border border-line bg-surface-blue/70 px-3 py-2"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      ) : (
+        <input
+          className="min-h-11 rounded-xl border border-line bg-surface-blue/70 px-3"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
+    </label>
+  );
+}
+
+function localeEn(config: ExperienceConfig): ExperienceLocaleOverlay {
+  return config.locale?.en ?? {};
+}
+
+function withEn(
+  config: ExperienceConfig,
+  updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay,
+): ExperienceConfig {
+  return { ...config, locale: { ...config.locale, en: updater(localeEn(config)) } };
+}
+
+function upsertById<T extends { id: string }>(rows: T[] | undefined, id: string, patch: Partial<T>): T[] {
+  const list = [...(rows ?? [])];
+  const index = list.findIndex((row) => row.id === id);
+  if (index === -1) return [...list, { id, ...patch } as T];
+  list[index] = { ...list[index], ...patch };
+  return list;
+}
+
+function fieldById<T extends { id: string }>(rows: T[] | undefined, id: string, key: keyof T): string {
+  const hit = rows?.find((row) => row.id === id);
+  const value = hit?.[key];
+  return typeof value === "string" ? value : "";
+}
+
 export function ExperienceEditor({
   mode,
   config,
@@ -93,6 +149,12 @@ export function ExperienceEditor({
   function patch(partial: Partial<ExperienceConfig>) {
     onConfig({ ...config, ...partial });
   }
+
+  function patchEn(updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) {
+    onConfig(withEn(config, updater));
+  }
+
+  const en = localeEn(config);
 
   return (
     <fieldset className="grid gap-4 rounded-2xl bg-surface p-5 shadow-card">
@@ -113,6 +175,49 @@ export function ExperienceEditor({
       />
       <Field label="廊說明" value={config.galleryNote ?? ""} onChange={(value) => patch({ galleryNote: value })} multiline />
 
+      <div className="grid gap-3 rounded-2xl bg-surface-blue/50 p-4">
+        <p className="text-sm font-medium">英文 overlay</p>
+        <p className="text-xs text-muted">
+          公開 en 優先用這裡存下來的字。空白則用內建字典，再沒有才回中文。不會覆寫中文欄位。Canva
+          只編說明與已有頁面標籤，不要虛構頁面 ID。
+        </p>
+        <EnField
+          label="英文誠實標籤"
+          value={en.honestyLabel ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, honestyLabel: value }))}
+        />
+        <EnField
+          label="英文體驗引言"
+          value={en.intro ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, intro: value }))}
+          multiline
+        />
+        <EnField
+          label="英文 Demo 說明"
+          value={en.demoNote ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, demoNote: value }))}
+          multiline
+        />
+        <EnField
+          label="英文 Canva 說明"
+          value={en.canvaNote ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, canvaNote: value }))}
+          multiline
+        />
+        <EnField
+          label="英文 GitHub 說明"
+          value={en.githubIntro ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, githubIntro: value }))}
+          multiline
+        />
+        <EnField
+          label="英文廊說明"
+          value={en.galleryNote ?? ""}
+          onChange={(value) => patchEn((current) => ({ ...current, galleryNote: value }))}
+          multiline
+        />
+      </div>
+
       <div className="grid gap-2">
         <p className="text-sm font-medium">如何運作（互動步驟）</p>
         {steps.map((step, index) => (
@@ -129,13 +234,17 @@ export function ExperienceEditor({
       </div>
 
       {mode === "process-map" || mode === "interactive-walkthrough" ? (
-        <ProcessAndWalk config={config} patch={patch} />
+        <ProcessAndWalk config={config} onConfig={onConfig} patch={patch} patchEn={patchEn} />
       ) : null}
-      {mode === "timeline" ? <TimelineFields config={config} patch={patch} /> : null}
-      {mode === "spatial-preview" ? <SpatialFields config={config} patch={patch} /> : null}
-      {mode === "image-comparison" ? <ComparisonFields config={config} patch={patch} /> : null}
-      {mode === "conversation-preview" ? <ConversationFields config={config} patch={patch} /> : null}
-      {mode === "canva-embed" ? <CanvaFields config={config} patch={patch} /> : null}
+      {mode === "timeline" ? <TimelineFields config={config} patch={patch} patchEn={patchEn} /> : null}
+      {mode === "spatial-preview" ? (
+        <SpatialFields config={config} onConfig={onConfig} patch={patch} patchEn={patchEn} />
+      ) : null}
+      {mode === "image-comparison" ? (
+        <ComparisonFields config={config} onConfig={onConfig} patch={patch} patchEn={patchEn} />
+      ) : null}
+      {mode === "conversation-preview" ? <ConversationFields config={config} patch={patch} patchEn={patchEn} /> : null}
+      {mode === "canva-embed" ? <CanvaFields config={config} onConfig={onConfig} patch={patch} patchEn={patchEn} /> : null}
 
       <FileHintFields config={config} patch={patch} />
 
@@ -151,13 +260,18 @@ export function ExperienceEditor({
 
 function ProcessAndWalk({
   config,
+  onConfig,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
+  onConfig: (next: ExperienceConfig) => void;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const nodes = config.processNodes ?? [];
   const steps = config.walkthrough ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
@@ -168,9 +282,23 @@ function ProcessAndWalk({
               <Field
                 label="id"
                 value={node.id}
-                onChange={(value) =>
-                  patch({ processNodes: nodes.map((item, i) => (i === index ? { ...item, id: value } : item)) })
-                }
+                onChange={(value) => {
+                  const prevId = node.id;
+                  onConfig(
+                    withEn(
+                      {
+                        ...config,
+                        processNodes: nodes.map((item, i) => (i === index ? { ...item, id: value } : item)),
+                      },
+                      (current) => ({
+                        ...current,
+                        processNodes: (current.processNodes ?? []).map((row) =>
+                          row.id === prevId ? { ...row, id: value } : row,
+                        ),
+                      }),
+                    ),
+                  );
+                }}
               />
               <Field
                 label="標籤"
@@ -179,11 +307,31 @@ function ProcessAndWalk({
                   patch({ processNodes: nodes.map((item, i) => (i === index ? { ...item, label: value } : item)) })
                 }
               />
+              <EnField
+                label="英文標籤"
+                value={fieldById(en.processNodes, node.id, "label")}
+                onChange={(value) =>
+                  patchEn((current) => ({
+                    ...current,
+                    processNodes: upsertById(current.processNodes, node.id, { label: value }),
+                  }))
+                }
+              />
               <Field
                 label="階段"
                 value={node.stage}
                 onChange={(value) =>
                   patch({ processNodes: nodes.map((item, i) => (i === index ? { ...item, stage: value } : item)) })
+                }
+              />
+              <EnField
+                label="英文階段"
+                value={fieldById(en.processNodes, node.id, "stage")}
+                onChange={(value) =>
+                  patchEn((current) => ({
+                    ...current,
+                    processNodes: upsertById(current.processNodes, node.id, { stage: value }),
+                  }))
                 }
               />
               <Field
@@ -201,6 +349,16 @@ function ProcessAndWalk({
                 patch({ processNodes: nodes.map((item, i) => (i === index ? { ...item, purpose: value } : item)) })
               }
             />
+            <EnField
+              label="英文用途"
+              value={fieldById(en.processNodes, node.id, "purpose")}
+              onChange={(value) =>
+                patchEn((current) => ({
+                  ...current,
+                  processNodes: upsertById(current.processNodes, node.id, { purpose: value }),
+                }))
+              }
+            />
             <Field
               label="說明"
               value={node.summary}
@@ -209,7 +367,30 @@ function ProcessAndWalk({
               }
               multiline
             />
-            <RemoveButton onClick={() => patch({ processNodes: nodes.filter((_, i) => i !== index) })} />
+            <EnField
+              label="英文說明"
+              value={fieldById(en.processNodes, node.id, "summary")}
+              onChange={(value) =>
+                patchEn((current) => ({
+                  ...current,
+                  processNodes: upsertById(current.processNodes, node.id, { summary: value }),
+                }))
+              }
+              multiline
+            />
+            <RemoveButton
+              onClick={() =>
+                onConfig(
+                  withEn(
+                    { ...config, processNodes: nodes.filter((_, i) => i !== index) },
+                    (current) => ({
+                      ...current,
+                      processNodes: (current.processNodes ?? []).filter((row) => row.id !== node.id),
+                    }),
+                  ),
+                )
+              }
+            />
           </div>
         ))}
         <AddButton
@@ -235,11 +416,36 @@ function ProcessAndWalk({
                 patch({ walkthrough: steps.map((item, i) => (i === index ? { ...item, title: value } : item)) })
               }
             />
+            <EnField
+              label="英文標題"
+              value={en.walkthrough?.[index]?.title ?? ""}
+              onChange={(value) =>
+                patchEn((current) => {
+                  const rows = [...(current.walkthrough ?? [])];
+                  while (rows.length <= index) rows.push({});
+                  rows[index] = { ...rows[index], path: step.path, title: value };
+                  return { ...current, walkthrough: rows };
+                })
+              }
+            />
             <Field
               label="說明"
               value={step.body}
               onChange={(value) =>
                 patch({ walkthrough: steps.map((item, i) => (i === index ? { ...item, body: value } : item)) })
+              }
+              multiline
+            />
+            <EnField
+              label="英文走查說明"
+              value={en.walkthrough?.[index]?.body ?? ""}
+              onChange={(value) =>
+                patchEn((current) => {
+                  const rows = [...(current.walkthrough ?? [])];
+                  while (rows.length <= index) rows.push({});
+                  rows[index] = { ...rows[index], path: step.path, body: value };
+                  return { ...current, walkthrough: rows };
+                })
               }
               multiline
             />
@@ -250,7 +456,19 @@ function ProcessAndWalk({
                 patch({ walkthrough: steps.map((item, i) => (i === index ? { ...item, path: value } : item)) })
               }
             />
-            <RemoveButton onClick={() => patch({ walkthrough: steps.filter((_, i) => i !== index) })} />
+            <RemoveButton
+              onClick={() =>
+                onConfig(
+                  withEn(
+                    { ...config, walkthrough: steps.filter((_, i) => i !== index) },
+                    (current) => ({
+                      ...current,
+                      walkthrough: (current.walkthrough ?? []).filter((_, i) => i !== index),
+                    }),
+                  ),
+                )
+              }
+            />
           </div>
         ))}
         <AddButton
@@ -265,12 +483,15 @@ function ProcessAndWalk({
 function TimelineFields({
   config,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const timeline = config.timeline ?? { frames: [], onionDefault: true, compareDefault: false, demoDisclaimer: "" };
   const frames = timeline.frames ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-2">
       <p className="text-sm font-medium">FrameLab 時間軸</p>
@@ -278,6 +499,14 @@ function TimelineFields({
         label="示範說明"
         value={timeline.demoDisclaimer ?? ""}
         onChange={(value) => patch({ timeline: { ...timeline, demoDisclaimer: value } })}
+        multiline
+      />
+      <EnField
+        label="英文示範說明"
+        value={en.timeline?.demoDisclaimer ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, timeline: { ...current.timeline, demoDisclaimer: value } }))
+        }
         multiline
       />
       <label className="flex min-h-11 items-center gap-2 text-sm">
@@ -380,13 +609,18 @@ function TimelineFields({
 
 function SpatialFields({
   config,
+  onConfig,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
+  onConfig: (next: ExperienceConfig) => void;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const spatial = config.spatial ?? { objects: [], circulationNote: "", complianceDisclaimer: "", tiltDefault: 18 };
   const objects = spatial.objects ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-2">
       <p className="text-sm font-medium">PLANFORM 物件與動線</p>
@@ -396,10 +630,26 @@ function SpatialFields({
         onChange={(value) => patch({ spatial: { ...spatial, circulationNote: value } })}
         multiline
       />
+      <EnField
+        label="英文動線說明"
+        value={en.spatial?.circulationNote ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, spatial: { ...current.spatial, circulationNote: value } }))
+        }
+        multiline
+      />
       <Field
         label="法規／符合聲明（必須誠實）"
         value={spatial.complianceDisclaimer ?? ""}
         onChange={(value) => patch({ spatial: { ...spatial, complianceDisclaimer: value } })}
+        multiline
+      />
+      <EnField
+        label="英文法規／符合聲明"
+        value={en.spatial?.complianceDisclaimer ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, spatial: { ...current.spatial, complianceDisclaimer: value } }))
+        }
         multiline
       />
       <NumberField
@@ -425,11 +675,37 @@ function SpatialFields({
               patch({ spatial: { ...spatial, objects: objects.map((row, i) => (i === index ? { ...row, label: value } : row)) } })
             }
           />
+          <EnField
+            label="英文名稱"
+            value={fieldById(en.spatial?.objects, item.id, "label")}
+            onChange={(value) =>
+              patchEn((current) => ({
+                ...current,
+                spatial: {
+                  ...current.spatial,
+                  objects: upsertById(current.spatial?.objects, item.id, { label: value }),
+                },
+              }))
+            }
+          />
           <Field
             label="用途"
             value={item.use}
             onChange={(value) =>
               patch({ spatial: { ...spatial, objects: objects.map((row, i) => (i === index ? { ...row, use: value } : row)) } })
+            }
+          />
+          <EnField
+            label="英文用途"
+            value={fieldById(en.spatial?.objects, item.id, "use")}
+            onChange={(value) =>
+              patchEn((current) => ({
+                ...current,
+                spatial: {
+                  ...current.spatial,
+                  objects: upsertById(current.spatial?.objects, item.id, { use: value }),
+                },
+              }))
             }
           />
           <Field
@@ -458,7 +734,20 @@ function SpatialFields({
             }
           />
           <RemoveButton
-            onClick={() => patch({ spatial: { ...spatial, objects: objects.filter((_, i) => i !== index) } })}
+            onClick={() =>
+              onConfig(
+                withEn(
+                  { ...config, spatial: { ...spatial, objects: objects.filter((_, i) => i !== index) } },
+                  (current) => ({
+                    ...current,
+                    spatial: {
+                      ...current.spatial,
+                      objects: (current.spatial?.objects ?? []).filter((row) => row.id !== item.id),
+                    },
+                  }),
+                ),
+              )
+            }
           />
         </div>
       ))}
@@ -479,14 +768,19 @@ function SpatialFields({
 
 function ComparisonFields({
   config,
+  onConfig,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
+  onConfig: (next: ExperienceConfig) => void;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const comparison = config.comparison ?? { variant: "annotate", versions: [], seedPins: [] };
   const versions = comparison.versions ?? [];
   const pins = comparison.seedPins ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-2">
       <p className="text-sm font-medium">圖像比較／對稿</p>
@@ -508,6 +802,13 @@ function ComparisonFields({
         value={comparison.prompt ?? ""}
         onChange={(value) => patch({ comparison: { ...comparison, prompt: value } })}
       />
+      <EnField
+        label="英文註記提示"
+        value={en.comparison?.prompt ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, comparison: { ...current.comparison, prompt: value } }))
+        }
+      />
       <Field
         label="樣本圖"
         value={comparison.sampleSrc ?? ""}
@@ -517,6 +818,14 @@ function ComparisonFields({
         label="推估聲明"
         value={comparison.estimateDisclaimer ?? ""}
         onChange={(value) => patch({ comparison: { ...comparison, estimateDisclaimer: value } })}
+        multiline
+      />
+      <EnField
+        label="英文推估聲明"
+        value={en.comparison?.estimateDisclaimer ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, comparison: { ...current.comparison, estimateDisclaimer: value } }))
+        }
         multiline
       />
       {versions.map((version, index) => (
@@ -545,6 +854,19 @@ function ComparisonFields({
               })
             }
           />
+          <EnField
+            label="英文版本標籤"
+            value={fieldById(en.comparison?.versions, version.id, "label")}
+            onChange={(value) =>
+              patchEn((current) => ({
+                ...current,
+                comparison: {
+                  ...current.comparison,
+                  versions: upsertById(current.comparison?.versions, version.id, { label: value }),
+                },
+              }))
+            }
+          />
           <Field
             label="CSS filter"
             value={version.filter}
@@ -558,7 +880,23 @@ function ComparisonFields({
             }
           />
           <RemoveButton
-            onClick={() => patch({ comparison: { ...comparison, versions: versions.filter((_, i) => i !== index) } })}
+            onClick={() =>
+              onConfig(
+                withEn(
+                  {
+                    ...config,
+                    comparison: { ...comparison, versions: versions.filter((_, i) => i !== index) },
+                  },
+                  (current) => ({
+                    ...current,
+                    comparison: {
+                      ...current.comparison,
+                      versions: (current.comparison?.versions ?? []).filter((row) => row.id !== version.id),
+                    },
+                  }),
+                ),
+              )
+            }
           />
         </div>
       ))}
@@ -631,12 +969,15 @@ function ComparisonFields({
 function ConversationFields({
   config,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const conversation = config.conversation ?? { engine: "hermes-preview", disclaimer: "", replies: [] };
   const replies = conversation.replies ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-2">
       <p className="text-sm font-medium">對話預覽（TKU Zen／Hermes）</p>
@@ -661,10 +1002,26 @@ function ConversationFields({
         onChange={(value) => patch({ conversation: { ...conversation, disclaimer: value } })}
         multiline
       />
+      <EnField
+        label="英文免責／誠實聲明"
+        value={en.conversation?.disclaimer ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, conversation: { ...current.conversation, disclaimer: value } }))
+        }
+        multiline
+      />
       <Field
         label="開場白"
         value={conversation.starter ?? ""}
         onChange={(value) => patch({ conversation: { ...conversation, starter: value } })}
+        multiline
+      />
+      <EnField
+        label="英文開場白"
+        value={en.conversation?.starter ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, conversation: { ...current.conversation, starter: value } }))
+        }
         multiline
       />
       <Field
@@ -672,10 +1029,25 @@ function ConversationFields({
         value={conversation.placeholder ?? ""}
         onChange={(value) => patch({ conversation: { ...conversation, placeholder: value } })}
       />
+      <EnField
+        label="英文輸入提示"
+        value={en.conversation?.placeholder ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, conversation: { ...current.conversation, placeholder: value } }))
+        }
+      />
       <Field
         label="來源說明"
         value={conversation.sourceNote ?? ""}
         onChange={(value) => patch({ conversation: { ...conversation, sourceNote: value } })}
+        multiline
+      />
+      <EnField
+        label="英文來源說明"
+        value={en.conversation?.sourceNote ?? ""}
+        onChange={(value) =>
+          patchEn((current) => ({ ...current, conversation: { ...current.conversation, sourceNote: value } }))
+        }
         multiline
       />
       {replies.map((reply, index) => (
@@ -731,12 +1103,17 @@ function ConversationFields({
 
 function CanvaFields({
   config,
+  onConfig,
   patch,
+  patchEn,
 }: {
   config: ExperienceConfig;
+  onConfig: (next: ExperienceConfig) => void;
   patch: (partial: Partial<ExperienceConfig>) => void;
+  patchEn: (updater: (en: ExperienceLocaleOverlay) => ExperienceLocaleOverlay) => void;
 }) {
   const pages = config.canvaPageLabels ?? [];
+  const en = localeEn(config);
   return (
     <div className="grid gap-2">
       {pages.length === 0 ? (
@@ -760,7 +1137,29 @@ function CanvaFields({
               patch({ canvaPageLabels: pages.map((item, i) => (i === index ? { ...item, label: value } : item)) })
             }
           />
-          <RemoveButton onClick={() => patch({ canvaPageLabels: pages.filter((_, i) => i !== index) })} />
+          <EnField
+            label="英文頁面標籤"
+            value={fieldById(en.canvaPageLabels, page.id, "label")}
+            onChange={(value) =>
+              patchEn((current) => ({
+                ...current,
+                canvaPageLabels: upsertById(current.canvaPageLabels, page.id, { label: value }),
+              }))
+            }
+          />
+          <RemoveButton
+            onClick={() =>
+              onConfig(
+                withEn(
+                  { ...config, canvaPageLabels: pages.filter((_, i) => i !== index) },
+                  (current) => ({
+                    ...current,
+                    canvaPageLabels: (current.canvaPageLabels ?? []).filter((row) => row.id !== page.id),
+                  }),
+                ),
+              )
+            }
+          />
         </div>
       ))}
       <AddButton
