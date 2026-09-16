@@ -112,23 +112,9 @@ async function dumpFailure(page, name) {
 }
 
 async function attachSession(context, page, session) {
-  try {
-    await context.addCookies([
-      {
-        name: session.cookieName || SESSION_TOKEN_COOKIE,
-        value: session.token,
-        url: ORIGIN,
-        httpOnly: true,
-        secure: true,
-        sameSite: "Lax",
-      },
-    ]);
-  } catch (err) {
-    console.warn(
-      "HttpOnly cookie inject failed; continuing with bearer sessionStorage",
-      err instanceof Error ? err.message : err,
-    );
-  }
+  // `__Host-` cookies require a secure transport. Chromium rejects injecting
+  // them onto http://127.0.0.1, so live E2E uses the same bearer path the
+  // partitioned live-preview iframe already uses (`grok-auth.bearer-token`).
   await page.addInitScript(
     ({ token, key }) => {
       try {
@@ -139,6 +125,36 @@ async function attachSession(context, page, session) {
     },
     { token: session.token, key: BEARER_STORAGE_KEY },
   );
+}
+
+async function waitForProjectList(page) {
+  await page.getByRole("heading", { name: "作品" }).waitFor({ timeout: 20000 });
+  await page.locator('a[href*="/admin/projects/"]').first().waitFor({ timeout: 20000 });
+}
+
+async function openOrCreateWork(page) {
+  await gotoReady(page, `${ORIGIN}/admin/projects`);
+  await waitForProjectList(page);
+  const existing = page.getByText(SLUG, { exact: true });
+  if (await existing.count()) {
+    await existing.first().click();
+  } else {
+    await page.getByRole("link", { name: "新增", exact: true }).click();
+    await page.getByRole("heading", { name: "新增作品" }).waitFor({ timeout: 15000 });
+    await page.getByLabel("標題", { exact: true }).fill(TITLE);
+    await page.getByLabel("slug", { exact: true }).fill(SLUG);
+    await page.getByRole("button", { name: "建立草稿" }).click();
+  }
+  try {
+    await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+  } catch (err) {
+    await gotoReady(page, `${ORIGIN}/admin/projects`);
+    await waitForProjectList(page);
+    const retry = page.getByText(SLUG, { exact: true });
+    if (!(await retry.count())) throw err;
+    await retry.first().click();
+    await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+  }
 }
 
 async function gotoReady(page, url) {
@@ -171,24 +187,7 @@ async function proveLiveAdmin(page, request) {
   mkdirSync(SHOTS, { recursive: true });
   await page.screenshot({ path: resolve(SHOTS, "admin-live-home.png"), fullPage: true });
 
-  await gotoReady(page, `${ORIGIN}/admin/projects`);
-  await page.getByRole("heading", { name: "作品" }).waitFor({ timeout: 20000 });
-  const existing = page.getByText(SLUG, { exact: true });
-  if (await existing.count()) {
-    await existing.first().click();
-  } else {
-    await page.getByRole("link", { name: "新增" }).click();
-    await page.getByRole("heading", { name: "新增作品" }).waitFor({ timeout: 15000 });
-    await page.getByLabel("標題", { exact: true }).fill(TITLE);
-    await page.getByLabel("slug", { exact: true }).fill(SLUG);
-    await page.getByRole("button", { name: "建立草稿" }).click();
-  }
-  try {
-    await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
-  } catch (err) {
-    await dumpFailure(page, "admin-live-edit-failed.png");
-    throw err;
-  }
+  await openOrCreateWork(page);
   await page.getByLabel("摘要", { exact: true }).fill(MARKER);
   await page.getByRole("button", { name: "存成草稿" }).click();
   await page.getByText("存成草稿成功").first().waitFor({ timeout: 20000 });
@@ -219,6 +218,7 @@ async function proveLiveAdmin(page, request) {
   await page.screenshot({ path: resolve(SHOTS, "admin-live-preview.png"), fullPage: true });
 
   await gotoReady(page, `${ORIGIN}/admin/projects`);
+  await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
   await page.getByRole("button", { name: "發布", exact: true }).click();
@@ -238,6 +238,7 @@ async function proveLiveAdmin(page, request) {
   assert(liveSitemap.includes(`/work/${SLUG}`), "published slug missing from sitemap.xml");
 
   await gotoReady(page, `${ORIGIN}/admin/projects`);
+  await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "取消發布", exact: true }).click();
   await page.getByText("取消發布成功").first().waitFor({ timeout: 20000 });
@@ -283,6 +284,7 @@ async function proveLiveAdmin(page, request) {
 
 try {
   console.log(`using PGLITE_DATA_DIR=${process.env.PGLITE_DATA_DIR || DEFAULT_PGLITE_DATA_DIR}`);
+  console.log(`session cookie ${SESSION_TOKEN_COOKIE}; live HTTP uses ${BEARER_STORAGE_KEY} bearer`);
   await stopDev8080();
   await new Promise((r) => setTimeout(r, 400));
   let mintedError;
