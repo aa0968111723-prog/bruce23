@@ -2,11 +2,11 @@
 
 Cycle: final wrap-up — CODE closed on this branch; OWNER blockers remain (not complete)
 Updated: 2026-09-16
-HEAD: 617762dba5005745405a19d6c8678323d6b3b2de
+HEAD: a6ef72e5e427d7d63c4a099600263b01cd18dfc4
 
 ## Wrap-up (2026-09-16)
 
-Wrap-up owns from 5695b30 onward. Confirmed actual HEAD before this recording: `617762dba5005745405a19d6c8678323d6b3b2de` (not the stale 6fb52a7 note). Code SHA for homepage alts + §13 public-path tests: `5695b304ef5e9fa3a41acebad7825d079d9bfef5`. Last gate-record commit: `617762d`.
+Wrap-up owns from 5695b30 onward. Recording commit: `a6ef72e5e427d7d63c4a099600263b01cd18dfc4`. Confirmed prior HEAD: `617762dba5005745405a19d6c8678323d6b3b2de` (not the stale 6fb52a7 note). Code SHA for homepage alts + §13 public-path tests: `5695b304ef5e9fa3a41acebad7825d079d9bfef5`. Last gate-record commit: `617762d`.
 
 No owner-provided `canva.com/design/{id}` exists in production content. `project-manifest.json` `publicDesignIds` is `[]`. Healing-studio `/d/` shorts stay honest unavailable fallback (browser follow stays on `/d/`, 404). Fixture DAG ids (`DAGfixtureEmbedShape`, `DAGroundTrip1`, …) stay in tests / `live-e2e-work` only.
 
