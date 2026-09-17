@@ -32,12 +32,17 @@ function hasGlobbedMigrations(root: string): boolean {
  */
 /** Nitro bundles `@electric-sql/pglite` but not sibling `pglite.data` / `.wasm`. */
 function copyPgliteNitroAssets(): void {
-  const destDir = join(process.cwd(), ".vercel/output/functions/__server.func/_libs");
-  if (!existsSync(destDir)) return;
+  const destDirs = [
+    join(process.cwd(), ".vercel/output/functions/__server.func/_libs"),
+    join(process.cwd(), ".output/server/_libs"),
+  ];
   const srcDir = join(process.cwd(), "node_modules/@electric-sql/pglite/dist");
-  for (const name of ["pglite.data", "pglite.wasm", "initdb.wasm"]) {
-    const src = join(srcDir, name);
-    if (existsSync(src)) copyFileSync(src, join(destDir, name));
+  for (const destDir of destDirs) {
+    if (!existsSync(destDir)) continue;
+    for (const name of ["pglite.data", "pglite.wasm", "initdb.wasm"]) {
+      const src = join(srcDir, name);
+      if (existsSync(src)) copyFileSync(src, join(destDir, name));
+    }
   }
 }
 
@@ -164,6 +169,19 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+/**
+ * Vercel remains the default deploy-target contract.
+ * Zeabur zbpack sets NITRO_PRESET=node-server (and ZEABUR=1) and starts
+ * /src/.output/server/index.mjs — honor that so the file actually exists.
+ * An explicit preset: "vercel" is NOT overridden by NITRO_PRESET.
+ */
+function resolveNitroPreset(): string {
+  const explicit = process.env.NITRO_PRESET?.trim();
+  if (explicit) return explicit;
+  if (process.env.ZEABUR) return "node-server";
+  return "vercel";
+}
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
@@ -193,7 +211,7 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "vercel",
+            preset: resolveNitroPreset(),
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.

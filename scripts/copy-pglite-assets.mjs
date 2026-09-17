@@ -4,6 +4,7 @@
  * `pglite.data` / `pglite.wasm` next to it. PGLite then ENOENTs on
  * `new URL("./pglite.data")` during `vite preview` (no DATABASE_URL).
  * Vercel with Neon never constructs PGLite, but local production QA does.
+ * Zeabur node-server output lives under `.output/` instead of `.vercel/output`.
  */
 import { copyFileSync, existsSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -45,6 +46,10 @@ export function copyPgliteData(outputRoot = join(ROOT, ".vercel/output")) {
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
-  const result = copyPgliteData();
-  console.log(`[pglite-assets] copied ${result.copied} PGLite asset(s)`);
+  let copied = 0;
+  for (const root of [join(ROOT, ".vercel/output"), join(ROOT, ".output")]) {
+    const result = copyPgliteData(root);
+    copied += result.copied;
+  }
+  console.log(`[pglite-assets] copied ${copied} PGLite asset(s)`);
 }
