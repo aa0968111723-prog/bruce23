@@ -14,7 +14,7 @@ import {
 } from "./github-url.ts";
 import { parseCanvaInput, isAllowedCanvaHost, extractUrlFromEmbedCode, canvaFallbackMessage } from "./canva-url.ts";
 import { interpretDemoResponse, isSafeHttpsUrl, isPublicHttpsUrl, demoFallbackCopy } from "./demo-url.ts";
-import { assertAdminAccess, parseAdminEmails, readAdminAllowlist } from "./admin-access.ts";
+import { assertAdminAccess, parseAdminEmails } from "./admin-access.ts";
 import { httpsUrl } from "./schema.ts";
 import { assertNoSecrets, toPublicProject } from "./privacy.ts";
 import { localZenReply } from "./zen-engine.ts";
