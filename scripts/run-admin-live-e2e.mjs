@@ -187,9 +187,16 @@ async function gotoReady(page, url) {
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 }
 
-/** Vite never reaches networkidle; retry until React hydration owns the tablist. */
+/** Vite never reaches networkidle; wait until leftover SSR shells are gone. */
 async function selectExperienceTab(page, name) {
-  const list = page.getByRole("tablist", { name: "作品體驗" });
+  await page.waitForFunction(
+    () =>
+      document.documentElement.dataset.luminousHydrated === "1" &&
+      document.querySelectorAll("[data-experience-tabs]").length === 1,
+    null,
+    { timeout: 20000 },
+  );
+  const list = page.locator("[data-experience-tabs]");
   await list.waitFor({ timeout: 20000 });
   const tab = list.getByRole("tab", { name });
   await tab.waitFor({ timeout: 15000 });
@@ -489,7 +496,7 @@ async function proveLiveAdmin(page, request) {
     await a11y.goto(`${ORIGIN}/work/framelab`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await selectExperienceTab(a11y, /視覺展示/);
     await selectExperienceTab(a11y, /立即體驗/);
-    const play = a11y.getByRole("tablist", { name: "作品體驗" }).getByRole("tab", { name: "立即體驗" });
+    const play = a11y.locator("[data-experience-tabs]").getByRole("tab", { name: "立即體驗" });
     await play.focus();
     await a11y.keyboard.press("ArrowRight");
     const visual = a11y.getByRole("tab", { name: "視覺展示" });

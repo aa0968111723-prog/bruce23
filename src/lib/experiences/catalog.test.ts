@@ -138,6 +138,7 @@ describe("frontend contract", () => {
     assert.match(shell, /ui\.skip/);
     assert.match(shell, /LocaleProvider/);
     assert.match(shell, /min-w-0 flex-1/);
+    assert.match(shell, /data-luminous-shell/);
     const localeView = readFileSync(new URL("../../../src/lib/locale/view.ts", import.meta.url), "utf8");
     assert.match(localeView, /跳到內容/);
     const toggle = readFileSync(new URL("../../../src/components/site/LocaleToggle.tsx", import.meta.url), "utf8");
@@ -150,11 +151,24 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.match(panel, /role="tab"/);
+    assert.match(panel, /data-experience-tabs/);
     assert.match(panel, /tabIndex/);
     assert.match(panel, /useRovingTabs/);
     assert.match(panel, /onKeyDown/);
     assert.match(panel, /Escape/);
     assert.match(panel, /min-w-0 max-w-full gap-1 overflow-x-auto/);
+    const dedup = readFileSync(
+      new URL("../../../src/components/site/DedupHydratedShells.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(dedup, /keepLastMatches/);
+    assert.match(dedup, /data-luminous-shell/);
+    assert.match(dedup, /luminousHydrated/);
+    const rootDocShell = readFileSync(new URL("../../../src/routes/__root.tsx", import.meta.url), "utf8");
+    assert.match(rootDocShell, /DedupHydratedShells/);
+    const defaultsMerge = readFileSync(new URL("../../../src/lib/experiences/defaults.ts", import.meta.url), "utf8");
+    assert.match(defaultsMerge, /currentMap.get\(key\) \?\? item/);
+    assert.match(defaultsMerge, /for \(const item of fallback\)/);
     const experienceLocale = readFileSync(
       new URL("../../../src/lib/locale/experience.ts", import.meta.url),
       "utf8",

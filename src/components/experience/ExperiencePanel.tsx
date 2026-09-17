@@ -79,6 +79,7 @@ export function ExperiencePanel({
         className="flex min-w-0 max-w-full gap-1 overflow-x-auto px-3 pt-3"
         role="tablist"
         aria-label={ex.tabsAria}
+        data-experience-tabs=""
         onKeyDown={tabs.onKeyDown}
       >
         {tabItems.map((item) => {

@@ -20,7 +20,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 function PublicFrame({ children }: { children: ReactNode }) {
   const { ui } = useViewerLocale();
   return (
-    <div className="flex min-h-dvh min-w-0 flex-col bg-bg text-ink">
+    <div className="flex min-h-dvh min-w-0 flex-col bg-bg text-ink" data-luminous-shell="">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2"

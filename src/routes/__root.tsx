@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { DedupHydratedShells } from "@/components/site/DedupHydratedShells";
 import { SiteShell } from "@/components/site/SiteShell";
 import { Toaster } from "sonner";
 import { NotFoundView } from "@/components/site/NotFoundView";
@@ -60,6 +61,7 @@ function RootDocument() {
       </head>
       <body className="bg-bg text-ink">
         <PreviewHostBridge />
+        <DedupHydratedShells />
         <AuthProvider>
           <SiteShell>
             <Outlet />
