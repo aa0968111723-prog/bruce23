@@ -1,8 +1,8 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Github } from "lucide-react";
 import { useState } from "react";
 import { LightField } from "@/components/site/LightField";
-import { MediaFrame } from "@/components/site/MediaFrame";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { ExplorationMap, type ExploreId } from "@/components/experience/ExplorationMap";
 import { listPublicProjects, getPublicSite } from "@/lib/portfolio/server-public";
@@ -86,7 +86,7 @@ function Home() {
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
           <div>
             <p className="text-sm font-medium tracking-wide text-mint-deep">
-              {site.nameEn} · {site.person}
+              {siteContent.profile.nameEn} · {siteContent.profile.person}
             </p>
             <h1 className="mt-4 max-w-xl font-display text-4xl font-semibold text-ink sm:text-5xl lg:text-6xl">
               {headline}
@@ -96,9 +96,16 @@ function Home() {
             </p>
             <p className="mt-3 max-w-lg text-sm text-ink/80">{narrative}</p>
             <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="#explore"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card"
+              >
+                開始探索
+                <ArrowRight className="size-4" />
+              </a>
               <Link
                 to="/work"
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card transition-transform duration-150 active:scale-[0.96]"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface px-6 text-sm font-semibold text-ink shadow-card"
               >
                 看精選作品
                 <ArrowRight className="size-4" />
@@ -216,12 +223,12 @@ function Home() {
           <div>
             <h2 className="font-display text-3xl font-semibold">公開簡介</h2>
             <p className="mt-3 max-w-xl text-sm text-muted">
-              {site.role}。GitHub 是專案真實性來源。本站不放電話、住址或內部帳號。
+              {siteContent.profile.role}。GitHub 是專案真實性來源。本站不放電話、住址或內部帳號。
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <a
-              href={site.github}
+              href={siteContent.profile.github}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg"
               rel="noreferrer"
               target="_blank"
@@ -229,15 +236,18 @@ function Home() {
               <Github className="size-4" />
               GitHub
             </a>
-            <a
-              href={`mailto:${site.email}`}
-              className="inline-flex min-h-11 items-center rounded-full bg-surface px-5 text-sm font-medium shadow-card"
-            >
-              {site.email}
-            </a>
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-surface p-4 shadow-card">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 text-sm font-medium">{value}</p>
     </div>
   );
 }
