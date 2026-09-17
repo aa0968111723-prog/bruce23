@@ -2,7 +2,7 @@
 
 Cycle: private admin CMS + privacy/JSON-LD/Canva honesty vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: c2c18c88f744393716b64d53f041d5b8c05ab67f (recording). Code SHA: d9c6dd2 (CMS restore / privacy / JSON-LD / Canva honesty) + `c2c18c8` (catalog test binding). Prior pin: `87287eb`.
+HEAD: 70d90c4cb37d1bb98ccd24a70a45f39efff106cf (recording). Code SHA: d9c6dd2 (CMS restore / privacy / JSON-LD / Canva honesty) + `c2c18c8` (catalog test binding). Prior pin: `87287eb`.
 
 ## This cycle (2026-09-17, deliverable 1 + leftover 8)
 
@@ -57,7 +57,7 @@ Drafts stay off sitemap/JSON-LD/public APIs (`getPublishedProject` 404; `public-
 
 Owner public Canva DAG, Connect, human Google as `aa0968111723@gmail.com`, `GITHUB_READ_TOKEN`, Notion, Folio/Zen **product** operation shots, Drive media still required.
 
-ManagePullRequest: **not in this environment**. `GitHub.create_pull_request` draft vs `main` returned **403**. Do not merge. Parent SHA `c2c18c88f744393716b64d53f041d5b8c05ab67f`.
+ManagePullRequest: **not in this environment**. `GitHub.create_pull_request` draft vs `main` returned **403**. Do not merge. Parent SHA `70d90c4cb37d1bb98ccd24a70a45f39efff106cf`.
 
 Should parent mark goal complete? **KEEP OPEN.**
 
