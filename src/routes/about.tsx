@@ -52,14 +52,17 @@ function About() {
           </ul>
         </div>
         <div>
-          <h2 className="font-display text-2xl font-semibold">公開工作面向</h2>
-          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <h2 className="font-display text-2xl font-semibold">公開工作範圍</h2>
+          <ul className="mt-4 grid gap-2 text-sm text-muted">
             {publicWork.map((item) => (
               <li key={item} className="rounded-xl bg-surface-mint/70 px-4 py-3 text-sm">
                 {item}
               </li>
             ))}
           </ul>
+          <Link to="/work" className="mt-5 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
+            看作品
+          </Link>
         </div>
         <div className="rounded-2xl bg-surface p-6 shadow-card">
           <h2 className="font-display text-2xl font-semibold">聯絡</h2>

@@ -4,6 +4,17 @@ import type { PublicProject } from "@/lib/portfolio/types";
 import { MediaFrame } from "./MediaFrame";
 import { StatusBadge } from "./StatusBadge";
 
+export type CardProject = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  summary: string;
+  media: ProjectMedia[];
+  productStatus?: ProjectStatus;
+  status?: ProjectStatus;
+};
+
 export function ProjectCard({
   project,
   featured = false,
@@ -11,6 +22,7 @@ export function ProjectCard({
   project: PublicProject;
   featured?: boolean;
 }) {
+  const status = project.productStatus ?? project.status ?? "prototype";
   return (
     <Link
       to="/work/$slug"
