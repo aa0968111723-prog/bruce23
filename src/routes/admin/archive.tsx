@@ -1,87 +1,98 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { listAdminArchiveFn, restoreProjectFn, upsertArchiveFn } from "@/lib/portfolio/cms-fns";
-import { listAdminProjectsFn } from "@/lib/portfolio/cms-fns";
-import type { AdminArchiveItem, AdminProject } from "@/lib/portfolio/types";
+import {
+  listAdminArchiveItems,
+  saveAdminArchiveItem,
+} from "@/lib/portfolio/server-admin";
 
 export const Route = createFileRoute("/admin/archive")({
   component: AdminArchive,
 });
 
 function AdminArchive() {
-  const [items, setItems] = useState<AdminArchiveItem[]>([]);
-  const [archived, setArchived] = useState<AdminProject[]>([]);
+  const [rows, setRows] = useState<Awaited<ReturnType<typeof listAdminArchiveItems>>>([]);
   useEffect(() => {
-    void listAdminArchiveFn().then(setItems);
-    void listAdminProjectsFn().then((projects) =>
-      setArchived(projects.filter((p) => p.publicationStatus === "archived")),
-    );
+    listAdminArchiveItems().then(setRows).catch(() => setRows([]));
   }, []);
+
   return (
-    <div className="grid gap-8">
-      <h1 className="font-display text-3xl font-semibold">Archive 與封存</h1>
-      <section>
-        <h2 className="font-display text-xl font-semibold">視覺 Archive</h2>
-        <ul className="mt-4 grid gap-3">
-          {items.map((item) => (
-            <li key={String(item.id)} className="rounded-2xl bg-surface p-4 shadow-card">
-              <p className="font-medium">{String(item.title)}</p>
-              <p className="text-xs text-muted">
-                {String(item.kind)} · {String(item.publicationStatus)}
-              </p>
-              <button
-                type="button"
-                className="mt-2 min-h-11 text-sm text-mint-deep"
-                onClick={async () => {
-                  await upsertArchiveFn({
+    <div>
+      <h1 className="font-display text-3xl font-semibold">Archive</h1>
+      <ul className="mt-6 grid gap-4">
+        {rows.map((row) => (
+          <li key={String(row.id)} className="rounded-2xl bg-surface p-4 shadow-card">
+            <p className="font-medium">{String(row.title)}</p>
+            <p className="text-xs text-muted">
+              {String(row.kind)} · {String(row.publication_status)}
+            </p>
+            <label className="mt-3 grid gap-1 text-sm">
+              Canva 分享 URL
+              <input
+                className="min-h-11 rounded-xl border border-line px-3"
+                defaultValue={String(row.canva_share_url ?? "")}
+                onBlur={async (event) => {
+                  await saveAdminArchiveItem({
                     data: {
-                      id: String(item.id),
-                      title: String(item.title),
-                      kind: item.kind,
-                      year: String(item.year ?? ""),
-                      summary: String(item.summary ?? ""),
-                      originNote: String(item.originNote ?? ""),
-                      media: item.media,
-                      href: item.href,
-                      canvaShareUrl: item.canva?.shareUrl ?? null,
-                      canvaEmbedUrl: item.canva?.embedUrl ?? null,
-                      canvaDesignId: item.canva?.designId,
-                      canvaThumbnailUrl: item.canva?.thumbnailUrl,
-                      publicationStatus:
-                        item.publicationStatus === "published" ? "unpublished" : "published",
-                      sortOrder: Number(item.sortOrder ?? 0),
+                      id: String(row.id),
+                      title: String(row.title),
+                      kind: row.kind as
+                        | "photography"
+                        | "graphic"
+                        | "social"
+                        | "event"
+                        | "video"
+                        | "club-visual"
+                        | "interactive",
+                      year: String(row.year),
+                      summary: String(row.summary ?? ""),
+                      origin_note: String(row.origin_note ?? ""),
+                      canva_share_url: event.target.value || undefined,
+                      publication_status:
+                        row.publication_status === "draft" ? "draft" : "published",
+                      sort_order: Number(row.sort_order ?? 0),
                     },
                   });
-                  toast.success("已更新 Archive 發布狀態");
+                  toast.success("Archive 已更新");
                 }}
-              >
-                切換發布
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section>
-        <h2 className="font-display text-xl font-semibold">已封存作品</h2>
-        <ul className="mt-4 grid gap-3">
-          {archived.map((project) => (
-            <li key={project.id} className="flex items-center justify-between rounded-2xl bg-surface p-4 shadow-card">
-              <span>{project.title}</span>
+              />
+            </label>
+            <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
-                className="min-h-11 text-sm text-mint-deep"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
                 onClick={async () => {
-                  await restoreProjectFn({ data: { id: project.id } });
-                  toast.success("已還原為草稿");
+                  const next = row.publication_status === "published" ? "draft" : "published";
+                  await saveAdminArchiveItem({
+                    data: {
+                      id: String(row.id),
+                      title: String(row.title),
+                      kind: row.kind as
+                        | "photography"
+                        | "graphic"
+                        | "social"
+                        | "event"
+                        | "video"
+                        | "club-visual"
+                        | "interactive",
+                      year: String(row.year),
+                      summary: String(row.summary ?? ""),
+                      origin_note: String(row.origin_note ?? ""),
+                      canva_share_url: row.canva_share_url || undefined,
+                      publication_status: next,
+                      sort_order: Number(row.sort_order ?? 0),
+                    },
+                  });
+                  toast.success(next === "published" ? "已恢復公開" : "已從公開列表移除");
+                  setRows(await listAdminArchiveItems());
                 }}
               >
-                還原
+                {row.publication_status === "published" ? "取消公開" : "恢復公開"}
               </button>
-            </li>
-          ))}
-        </ul>
-      </section>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

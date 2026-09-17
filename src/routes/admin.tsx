@@ -1,6 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AdminShell } from "@/components/admin/AdminShell";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { getViewerFlags } from "@/lib/portfolio/server-public";
 
 export const Route = createFileRoute("/admin")({
-  component: AdminShell,
+  beforeLoad: async ({ location }) => {
+    const flags = await getViewerFlags();
+    if (!flags.signedIn) {
+      throw redirect({
+        to: "/login",
+        search: { next: location.pathname || "/admin" },
+      });
+    }
+  },
+  component: AdminLayout,
 });

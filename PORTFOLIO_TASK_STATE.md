@@ -1,32 +1,33 @@
 # Portfolio Task State
 
-Cycle: 3 complete (gates verified)
+Cycle: 2 CMS + interactive experiences
 Updated: 2026-09-16
 Branch: cursor/portfolio-interactive-cms-da82
 
 ## Source of truth
 
 - GitHub user: `aa0968111723-prog` (Bruce / 陳柏能)
-- Public site reads published CMS rows (seeded from static content)
-- Admin writes are allowlisted (`PORTFOLIO_ADMIN_EMAILS`)
+- Featured repos: `ai_os`, `FrameLab`, `poster-vision-ai`, `planform-iso`, `duigao`, `canva2`, `hermes-console`, `tku-zen-ai`
+- Static TypeScript files in `src/content/` are seed only
+- Public site reads published CMS rows only
 
 ## Done this cycle
 
-- Auth ON + Neon/PGLite schema `0002_portfolio_cms.sql`
-- Public work/case/archive/home read published data
-- ExperiencePanel + per-project operable exhibits
-- Admin CMS: projects, archive, settings, preview, integrations
-- Server-side GitHub / Canva embed test / Demo verify / README verify
-- Nested GitHub file tree, homepage exploration nodes, custom share card
-- Tests for privacy, allowlist, github/canva/demo, seed, publish round-trip
-- `/sitemap.xml` via dotted TanStack filename
-- Local production preview copies `pglite.data` + `pglite.wasm` + `initdb.wasm`
-- Gates: typecheck, test (92), lint (0 errors), build, check:auth, desktop+mobile smoke, production smoke non-diverging
+- Auth ON + Postgres CMS (`migrations/0002_portfolio_cms.sql`)
+- Admin routes, draft/publish/archive/revisions
+- Server-only GitHub sync with ETag cache; narrative fields never auto-overwritten
+- Canva public embed + reserved Connect API (no fake OAuth)
+- ExperiencePanel on case pages; 8 projects kept
+- Homepage exploration nodes from real published data
 
-## Not done / honest gaps
+## Owner config (do not put secrets in the repo)
 
-- Canva Connect OAuth is reserved: public-embed mode works; full Connect search/export/edit-in-app is not live until client id/secret exist and OAuth is finished
-- Original large photos/videos still not on a public CDN
-- GitHub sync metadata fills after an admin clicks 同步 (seed has repo URLs, not REST payloads)
-- Archive Canva items currently have thumbnails + notes; share/embed URLs can be added in admin
-- GitHub MCP cannot create the PR (403 on personal access token); compare URL is used instead
+- `PORTFOLIO_ADMIN_EMAILS` (required in production; fail-closed if missing)
+- `GITHUB_READ_TOKEN` (optional, private repos / higher rate limit)
+- `CANVA_CLIENT_ID` + `CANVA_CLIENT_SECRET` (optional Connect API)
+
+## Still needs from you
+
+- Original photography / event photos on a public CDN
+- Additional Canva share URLs for 美食地圖、淡水生存指南
+- Confirm whether `https://ai-os-ten.vercel.app` should stay listed

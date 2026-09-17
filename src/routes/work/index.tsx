@@ -2,20 +2,52 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { workCategories } from "@/content/projects";
-import type { ProjectCategory } from "@/content/types";
-import { listPublicProjectsFn } from "@/lib/portfolio/public-fns";
+import type { Project, ProjectCategory } from "@/content/types";
 import { cn } from "@/lib/cn";
+import { listPublicProjects } from "@/lib/portfolio/server-public";
+import type { PublicProject } from "@/lib/portfolio/public";
+import { pickCopy } from "@/lib/portfolio/i18n";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export const Route = createFileRoute("/work/")({
-  loader: () => listPublicProjectsFn(),
+  loader: () => listPublicProjects(),
   component: WorkIndex,
 });
 
+function toCard(project: PublicProject, locale: "zh" | "en"): Project {
+  return {
+    slug: project.slug,
+    title: pickCopy(locale, project.title, project.title_en),
+    subtitle: pickCopy(locale, project.subtitle, project.subtitle_en),
+    category: project.category as Project["category"],
+    year: project.year,
+    status: project.product_status as Project["status"],
+    featured: project.featured,
+    summary: pickCopy(locale, project.summary, project.summary_en),
+    problem: pickCopy(locale, project.problem, project.problem_en),
+    role: pickCopy(locale, project.role, project.role_en),
+    decisions: project.decisions,
+    modalities: project.modalities,
+    process: project.process,
+    outputs: project.outputs,
+    stack: project.stack,
+    limitations: project.limitations,
+    links: { github: project.github?.url, live: project.live_demo?.url },
+    media: project.media,
+    sourceReferences: project.source_evidence,
+    visibility: "public",
+  };
+}
+
 function WorkIndex() {
   const projects = Route.useLoaderData();
+  const { locale } = useLocale();
   const [category, setCategory] = useState<"All" | ProjectCategory>("All");
   const visible = useMemo(
-    () => (category === "All" ? projects : projects.filter((p) => p.category === category)),
+    () =>
+      category === "All"
+        ? projects
+        : projects.filter((project) => project.category === category),
     [category, projects],
   );
 
@@ -23,7 +55,7 @@ function WorkIndex() {
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">作品總覽</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        只列出已發布作品。草稿不會出現在這裡。分類可篩選，狀態沒有寫成已完成的，就還不是已完成。
+        依 GitHub 真實儲存庫挑選。分類可篩選，狀態沒有寫成已完成的，就還不是已完成。
       </p>
       <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="作品分類">
         {workCategories.map((item) => {
@@ -35,8 +67,8 @@ function WorkIndex() {
               role="tab"
               aria-selected={active}
               className={cn(
-                "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium transition-colors duration-150",
-                active ? "bg-ink text-bg" : "bg-surface text-muted shadow-card hover:text-ink",
+                "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium",
+                active ? "bg-ink text-bg" : "bg-surface text-muted shadow-card",
               )}
               onClick={() => setCategory(item)}
             >
@@ -50,7 +82,7 @@ function WorkIndex() {
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+            <ProjectCard key={project.slug} project={toCard(project, locale)} />
           ))}
         </div>
       )}

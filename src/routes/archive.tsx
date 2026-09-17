@@ -2,32 +2,31 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MediaFrame } from "@/components/site/MediaFrame";
 import { archiveKinds } from "@/content/archive";
-import { listPublicArchiveFn } from "@/lib/portfolio/public-fns";
-import { parseCanvaInput } from "@/lib/portfolio/canva-url";
 import { cn } from "@/lib/cn";
-import type { PublicArchiveItem } from "@/lib/portfolio/types";
+import { listPublicArchive } from "@/lib/portfolio/server-public";
+import { CanvaBoard } from "@/components/experience/CanvaBoard";
 
 export const Route = createFileRoute("/archive")({
-  loader: () => listPublicArchiveFn(),
+  loader: () => listPublicArchive(),
   component: Archive,
 });
 
 function Archive() {
-  const archiveItems = Route.useLoaderData();
+  const items = Route.useLoaderData();
   const [kind, setKind] = useState<(typeof archiveKinds)[number]["id"]>("all");
   const visible = useMemo(() => {
-    if (kind === "all") return archiveItems;
+    if (kind === "all") return items;
     if (kind === "graphic") {
-      return archiveItems.filter((item) => item.kind === "graphic" || item.kind === "social");
+      return items.filter((item) => item.kind === "graphic" || item.kind === "social");
     }
-    return archiveItems.filter((item) => item.kind === kind);
-  }, [kind, archiveItems]);
+    return items.filter((item) => item.kind === kind);
+  }, [kind, items]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">Archive</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        攝影、平面、活動、社團文宣與招生活動互動。草稿與私人 Drive 不會出現。能放 Canva 原作的會用嵌入，而不是只放截圖。
+        攝影、平面、活動、社團文宣與招生活動互動。有 Canva 公開嵌入就用原作，沒有就誠實標示。
       </p>
       <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Archive 分類">
         {archiveKinds.map((item) => {
@@ -52,7 +51,14 @@ function Archive() {
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((item) => (
           <article key={item.id} className="overflow-hidden rounded-2xl bg-surface shadow-card">
-            {item.media ? (
+            {item.canvaEmbedUrl ? (
+              <CanvaBoard
+                shareUrl={item.canvaShareUrl}
+                embedUrl={item.canvaEmbedUrl}
+                thumbnailUrl={item.media?.src}
+                alt={item.media?.alt}
+              />
+            ) : item.media ? (
               <div className="aspect-[4/3] overflow-hidden bg-surface-blue">
                 <MediaFrame media={item.media} />
               </div>
@@ -66,9 +72,13 @@ function Archive() {
               <h2 className="mt-1 font-display text-xl font-semibold">{item.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">{item.summary}</p>
               <p className="mt-3 text-xs text-muted">{item.originNote}</p>
-              {item.canva ? <ArchiveCanva item={item} /> : null}
               {item.href ? (
-                <a href={item.href} className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep" rel="noreferrer" target="_blank">
+                <a
+                  href={item.href}
+                  className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
+                  rel="noreferrer"
+                  target="_blank"
+                >
                   GitHub
                 </a>
               ) : null}
@@ -76,52 +86,6 @@ function Archive() {
           </article>
         ))}
       </div>
-    </div>
-  );
-}
-
-function ArchiveCanva({ item }: { item: PublicArchiveItem }) {
-  const [open, setOpen] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const parsed = parseCanvaInput(item.canva?.embedUrl || item.canva?.shareUrl || "");
-  if (!parsed.ok) {
-    return item.canva?.shareUrl ? (
-      <a
-        href={item.canva.shareUrl}
-        className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
-        rel="noreferrer"
-        target="_blank"
-      >
-        Canva 原作
-      </a>
-    ) : null;
-  }
-  return (
-    <div className="mt-3">
-      <div className="flex flex-wrap gap-2">
-        <button type="button" className="min-h-11 rounded-full bg-surface-mint px-4 text-sm" onClick={() => setOpen(true)}>
-          看嵌入
-        </button>
-        <a
-          href={parsed.value.shareUrl}
-          className="inline-flex min-h-11 items-center text-sm font-medium text-mint-deep"
-          rel="noreferrer"
-          target="_blank"
-        >
-          在 Canva 開啟
-        </a>
-      </div>
-      {open && !failed ? (
-        <iframe
-          title={`${item.title} Canva`}
-          src={parsed.value.embedUrl}
-          className="mt-3 aspect-[16/10] w-full rounded-xl"
-          allow="fullscreen"
-          referrerPolicy="no-referrer"
-          onError={() => setFailed(true)}
-        />
-      ) : null}
-      {failed ? <p className="mt-2 text-xs text-muted">這個設計可能需要權限。</p> : null}
     </div>
   );
 }

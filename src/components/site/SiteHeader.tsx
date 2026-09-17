@@ -1,36 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { getPublicSiteFn } from "@/lib/portfolio/public-fns";
-import { nav, site as fallbackSite } from "@/content/site";
-import type { PublicSiteSettings } from "@/lib/portfolio/types";
+import { nav, site } from "@/content/site";
 import { cn } from "@/lib/cn";
-import { getAdminContextFn } from "@/lib/portfolio/cms-fns";
+import { getViewerFlags } from "@/lib/portfolio/server-public";
 import { SignedIn, UserButton } from "@/lib/auth/gates";
+import { useLocale } from "@/lib/portfolio/locale";
 
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const { locale, setLocale } = useLocale();
   const [admin, setAdmin] = useState(false);
-  const [site, setSite] = useState<PublicSiteSettings>({
-    ...fallbackSite,
-    seoTitle: null,
-    seoDescription: null,
-    homepageContent: {},
-    localeZh: {},
-    localeEn: {},
-  });
 
   useEffect(() => {
-    void getAdminContextFn()
-      .then((ctx) => setAdmin(Boolean(ctx.admin)))
+    getViewerFlags()
+      .then((flags) => setAdmin(flags.isAdmin))
       .catch(() => setAdmin(false));
-    void getPublicSiteFn()
-      .then((next) => {
-        if (next?.nameZh) setSite({ ...fallbackSite, ...next });
-      })
-      .catch(() => undefined);
   }, []);
+
+  const setLang = (next: "zh" | "en") => {
+    setLocale(next);
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/80 backdrop-blur-md">
@@ -40,7 +31,7 @@ export function SiteHeader() {
             <span className="size-2.5 rounded-full bg-mint" />
           </span>
           <span className="font-display text-base font-semibold tracking-tight text-ink">
-            {site.nameZh}
+            {locale === "en" ? site.nameEn : site.nameZh}
           </span>
         </Link>
 
@@ -81,6 +72,13 @@ export function SiteHeader() {
               後台
             </Link>
           ) : null}
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center rounded-xl px-3 text-sm"
+            onClick={() => setLang(locale === "zh" ? "en" : "zh")}
+          >
+            {locale === "zh" ? "EN" : "中文"}
+          </button>
           <SignedIn>
             <UserButton />
           </SignedIn>
@@ -130,13 +128,22 @@ export function SiteHeader() {
               <li>
                 <Link
                   to="/admin"
-                  className="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium text-ink"
+                  className="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium"
                   onClick={() => setOpen(false)}
                 >
                   後台
                 </Link>
               </li>
             ) : null}
+            <li>
+              <button
+                type="button"
+                className="flex min-h-11 w-full items-center rounded-xl px-3 text-sm font-medium text-ink"
+                onClick={() => setLang(locale === "zh" ? "en" : "zh")}
+              >
+                {locale === "zh" ? "English" : "中文"}
+              </button>
+            </li>
           </ul>
         </nav>
       ) : null}

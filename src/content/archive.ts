@@ -1,4 +1,4 @@
-import type { ArchiveItem } from "./types";
+import type { ArchiveItem } from "./types.ts";
 
 export const archiveKinds = [
   { id: "all", label: "全部" },

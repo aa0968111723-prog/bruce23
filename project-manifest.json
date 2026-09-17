@@ -16,5 +16,6 @@
   "content": "postgres-cms",
   "dataLayer": "neon-pglite",
   "theme": "light-only",
-  "auth": "allowlist-admin"
+  "auth": "better-auth-google",
+  "admin": "PORTFOLIO_ADMIN_EMAILS"
 }

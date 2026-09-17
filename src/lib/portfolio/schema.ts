@@ -1,93 +1,26 @@
 import { z } from "zod";
-import type { JsonValue } from "./types";
+import {
+  EXPERIENCE_MODES,
+  INTEGRATION_STATUSES,
+  LIVE_DEMO_TYPES,
+  PRODUCT_STATUSES,
+  PROJECT_CATEGORIES,
+  PUBLICATION_STATUSES,
+} from "./constants.ts";
 
-export const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
-  z.union([
-    z.string(),
-    z.number(),
-    z.boolean(),
-    z.null(),
-    z.array(jsonValueSchema),
-    z.record(z.string(), jsonValueSchema),
-  ]),
-);
-
-export const jsonObjectSchema = z.record(z.string(), jsonValueSchema);
-
-export const productStatusSchema = z.enum([
-  "completed",
-  "in-progress",
-  "prototype",
-  "concept",
-  "planned",
-]);
-
-export const publicationStatusSchema = z.enum([
-  "draft",
-  "published",
-  "unpublished",
-  "archived",
-]);
-
-export const projectCategorySchema = z.enum([
-  "AI Product",
-  "Multimodal",
-  "Interaction",
-  "Visual AI",
-  "Spatial Design",
-  "Creative Tool",
-  "Real-world Experience",
-]);
-
-export const experienceModeSchema = z.enum([
-  "live-demo",
-  "github-explorer",
-  "canva-embed",
-  "interactive-walkthrough",
-  "image-comparison",
-  "timeline",
-  "process-map",
-  "spatial-preview",
-  "conversation-preview",
-  "media-gallery",
-]);
-
-export const integrationStatusSchema = z.enum([
-  "connected",
-  "pending",
-  "unavailable",
-  "failed",
-  "not_configured",
-  "verified",
-  "stale",
-]);
-
-const emptyToNull = (value: unknown) => {
-  if (value === undefined) return undefined;
-  if (value === null) return null;
-  if (typeof value === "string" && value.trim() === "") return null;
+const emptyToUndef = (value: unknown) => {
+  if (value === "" || value === null) return undefined;
   return value;
 };
 
-export const httpsUrl = z
-  .string()
-  .url()
-  .refine((url) => {
-    try {
-      return new URL(url).protocol === "https:";
-    } catch {
-      return false;
-    }
-  }, "Only https URLs are allowed");
-
-export const optionalHttpsUrl = z.preprocess(emptyToNull, z.union([z.null(), httpsUrl]).optional());
-
-export const slugSchema = z
-  .string()
-  .trim()
-  .min(1)
-  .max(80)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase kebab-case");
+export const optionalHttpsUrl = z.preprocess(
+  emptyToUndef,
+  z
+    .string()
+    .url()
+    .refine((value) => value.startsWith("https://"), "must be https")
+    .optional(),
+);
 
 export const mediaSchema = z.object({
   src: z.string().min(1),
@@ -101,29 +34,101 @@ export const sourceEvidenceSchema = z.object({
   label: z.string().min(1),
   href: optionalHttpsUrl,
   note: z.string().min(1),
-  kind: z.enum(["github", "canva", "demo", "readme", "other"]).optional(),
+  kind: z.enum(["github", "canva", "demo", "other"]).optional(),
 });
 
-export const interactionStepSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  body: z.string().min(1),
-  githubPath: z.string().optional(),
-  workflowStage: z.string().optional(),
+export const fileTreeNodeSchema: z.ZodType<FileTreeNode> = z.lazy(() =>
+  z.object({
+    path: z.string(),
+    type: z.enum(["file", "dir"]),
+    purpose: z.string().optional(),
+    stage: z.string().optional(),
+    children: z.array(fileTreeNodeSchema).optional(),
+  }),
+);
+
+export type FileTreeNode = {
+  path: string;
+  type: "file" | "dir";
+  purpose?: string;
+  stage?: string;
+  children?: FileTreeNode[];
+};
+
+export const githubCommitSchema = z.object({
+  sha: z.string(),
+  message: z.string(),
+  htmlUrl: z.string(),
+  date: z.string().optional(),
+  author: z.string().optional(),
+});
+
+export const githubMetadataSchema = z.object({
+  name: z.string(),
+  description: z.string().nullable(),
+  htmlUrl: z.string(),
+  defaultBranch: z.string(),
+  updatedAt: z.string(),
+  private: z.boolean(),
+  archived: z.boolean().optional(),
+  homepage: z.string().nullable().optional(),
+  language: z.string().nullable().optional(),
+});
+
+export const seoSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  ogAlt: z.string().optional(),
+});
+
+export const experienceConfigSchema = z.object({
+  showcaseLabel: z.string().optional(),
+  isProduct: z.boolean().optional(),
+  nodes: z
+    .array(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        githubPath: z.string().optional(),
+        note: z.string().optional(),
+      }),
+    )
+    .optional(),
+  steps: z
+    .array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        body: z.string(),
+      }),
+    )
+    .optional(),
+  filePurpose: z.record(z.string(), z.string()).optional(),
+  pipelineStage: z.record(z.string(), z.string()).optional(),
 });
 
 export const projectWriteSchema = z.object({
-  slug: slugSchema,
-  title: z.string().trim().min(1).max(120),
+  slug: z
+    .string()
+    .min(1)
+    .max(80)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug must be lowercase kebab-case"),
+  title: z.string().min(1).max(120),
+  title_en: z.string().optional(),
   subtitle: z.string().max(200).default(""),
-  category: projectCategorySchema,
-  year: z.string().max(40).default(""),
-  productStatus: productStatusSchema,
+  subtitle_en: z.string().optional(),
+  category: z.enum(PROJECT_CATEGORIES),
+  year: z.string().min(1).max(32),
+  product_status: z.enum(PRODUCT_STATUSES),
+  publication_status: z.enum(PUBLICATION_STATUSES).optional(),
   featured: z.boolean().default(false),
-  sortOrder: z.number().int().min(0).max(9999).default(0),
+  sort_order: z.number().int().min(0).max(9999).default(0),
   summary: z.string().default(""),
+  summary_en: z.string().optional(),
   problem: z.string().default(""),
+  problem_en: z.string().optional(),
   role: z.string().default(""),
+  role_en: z.string().optional(),
   decisions: z.array(z.string()).default([]),
   modalities: z.array(z.string()).default([]),
   process: z.array(z.string()).default([]),
@@ -131,67 +136,75 @@ export const projectWriteSchema = z.object({
   stack: z.array(z.string()).default([]),
   limitations: z.array(z.string()).default([]),
   media: z.array(mediaSchema).default([]),
-  sourceEvidence: z.array(sourceEvidenceSchema).default([]),
-  localeZh: jsonObjectSchema.default({}),
-  localeEn: jsonObjectSchema.default({}),
-  seoTitle: z.string().max(80).nullable().optional(),
-  seoDescription: z.string().max(200).nullable().optional(),
-  githubUrl: optionalHttpsUrl,
-  githubOwner: z.string().max(100).optional(),
-  githubRepo: z.string().max(100).optional(),
-  githubBranch: z.string().max(200).optional(),
-  githubSyncEnabled: z.boolean().default(false),
-  liveDemoUrl: optionalHttpsUrl,
-  liveDemoLabel: z.string().max(80).optional(),
-  liveDemoType: z.enum(["iframe", "link", "none"]).optional(),
-  liveDemoEmbedEnabled: z.boolean().default(false),
-  canvaShareUrl: optionalHttpsUrl,
-  canvaEmbedUrl: optionalHttpsUrl,
-  canvaDesignId: z.string().max(120).optional(),
-  canvaPageIds: z.array(z.string()).default([]),
-  canvaThumbnailUrl: optionalHttpsUrl,
-  canvaAlt: z.string().max(200).optional(),
-  canvaDescription: z.string().max(400).optional(),
-  experienceMode: experienceModeSchema.nullable().optional(),
-  experienceConfig: jsonObjectSchema.default({}),
-  interactionSteps: z.array(interactionStepSchema).default([]),
+  source_evidence: z.array(sourceEvidenceSchema).default([]),
+  seo: seoSchema.optional(),
+  github_url: optionalHttpsUrl,
+  github_owner: z.string().optional(),
+  github_repo: z.string().optional(),
+  github_branch: z.string().optional(),
+  github_sync_enabled: z.boolean().default(true),
+  live_demo_url: optionalHttpsUrl,
+  live_demo_label: z.string().optional(),
+  live_demo_type: z.enum(LIVE_DEMO_TYPES).optional(),
+  live_demo_embed_enabled: z.boolean().default(false),
+  canva_share_url: optionalHttpsUrl,
+  canva_embed_url: optionalHttpsUrl,
+  canva_design_id: z.string().optional(),
+  canva_page_ids: z.array(z.string()).default([]),
+  canva_thumbnail_url: z.string().optional(),
+  canva_alt: z.string().optional(),
+  canva_caption: z.string().optional(),
+  experience_mode: z.enum(EXPERIENCE_MODES).default("github-explorer"),
+  experience_config: experienceConfigSchema.default({}),
+  interaction_steps: z
+    .array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        body: z.string(),
+      }),
+    )
+    .default([]),
+  experience_label: z.string().optional(),
 });
 
-export const projectCreateSchema = projectWriteSchema.extend({
-  publicationStatus: publicationStatusSchema.default("draft"),
+export type ProjectWrite = z.infer<typeof projectWriteSchema>;
+export type ExperienceConfig = z.infer<typeof experienceConfigSchema>;
+
+export const siteSettingsSchema = z.object({
+  profile: z.object({
+    nameZh: z.string(),
+    nameEn: z.string(),
+    person: z.string(),
+    role: z.string(),
+    headline: z.string(),
+    headlineEn: z.string().optional(),
+    subhead: z.string(),
+    narrative: z.string(),
+    narrativeEn: z.string().optional(),
+    email: z.string().email(),
+    github: z.string(),
+    githubHandle: z.string(),
+    location: z.string(),
+  }),
+  homepage: z.object({
+    featuredIntro: z.string().optional(),
+    featuredIntroEn: z.string().optional(),
+    processTitle: z.string().optional(),
+  }),
+  seo: seoSchema,
+  i18n: z
+    .object({
+      defaultLocale: z.enum(["zh", "en"]).default("zh"),
+    })
+    .default({ defaultLocale: "zh" }),
 });
 
-export const projectUpdateSchema = projectWriteSchema.partial().extend({
-  id: z.string().min(1),
-});
-
-export const publicationActionSchema = z.object({
-  id: z.string().min(1),
-  note: z.string().max(200).optional(),
-});
-
-export const siteSettingsWriteSchema = z.object({
-  nameZh: z.string().min(1).max(80),
-  nameEn: z.string().min(1).max(80),
-  person: z.string().min(1).max(80),
-  role: z.string().max(160),
-  headline: z.string().max(200),
-  subhead: z.string().max(240),
-  narrative: z.string().max(800),
-  email: z.string().email(),
-  github: httpsUrl,
-  githubHandle: z.string().max(80),
-  location: z.string().max(80),
-  seoTitle: z.string().max(80).nullable().optional(),
-  seoDescription: z.string().max(200).nullable().optional(),
-  homepageContent: jsonObjectSchema.default({}),
-  localeZh: jsonObjectSchema.default({}),
-  localeEn: jsonObjectSchema.default({}),
-});
+export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 
 export const archiveWriteSchema = z.object({
   id: z.string().min(1).optional(),
-  title: z.string().min(1).max(120),
+  title: z.string().min(1),
   kind: z.enum([
     "photography",
     "graphic",
@@ -201,21 +214,24 @@ export const archiveWriteSchema = z.object({
     "club-visual",
     "interactive",
   ]),
-  year: z.string().max(40).default(""),
+  year: z.string().min(1),
   summary: z.string().default(""),
   media: mediaSchema.optional(),
   href: optionalHttpsUrl,
-  originNote: z.string().default(""),
-  publicationStatus: publicationStatusSchema.default("draft"),
-  sortOrder: z.number().int().min(0).max(9999).default(0),
-  canvaShareUrl: optionalHttpsUrl,
-  canvaEmbedUrl: optionalHttpsUrl,
-  canvaDesignId: z.string().max(120).optional(),
-  canvaThumbnailUrl: optionalHttpsUrl,
+  origin_note: z.string().default(""),
+  canva_share_url: optionalHttpsUrl,
+  canva_embed_url: optionalHttpsUrl,
+  publication_status: z.enum(PUBLICATION_STATUSES).default("published"),
+  sort_order: z.number().int().min(0).max(9999).default(0),
 });
 
-export type ProjectWrite = z.infer<typeof projectWriteSchema>;
-export type ProjectCreate = z.infer<typeof projectCreateSchema>;
-export type ProjectUpdate = z.infer<typeof projectUpdateSchema>;
-export type SiteSettingsWrite = z.infer<typeof siteSettingsWriteSchema>;
 export type ArchiveWrite = z.infer<typeof archiveWriteSchema>;
+
+export const integrationStatusSchema = z.enum(INTEGRATION_STATUSES);
+
+export const idSchema = z.object({ id: z.string().min(1) });
+export const slugSchema = z.object({ slug: z.string().min(1) });
+export const previewQuerySchema = z.object({
+  slug: z.string().min(1),
+  previewDraft: z.boolean().optional(),
+});

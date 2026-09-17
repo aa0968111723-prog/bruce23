@@ -1,250 +1,279 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { EXPERIENCE_MODES } from "@/lib/portfolio/constants";
 import {
-  applyGithubSyncFn,
-  canvaConnectStatusFn,
-  connectCanvaApiFn,
-  disconnectCanvaApiFn,
-  listIntegrationsFn,
-  previewGithubSyncFn,
-  publishProjectFn,
-  setExperienceModeFn,
-  unpublishProjectFn,
-  verifyCanvaFn,
-  verifyDemoFn,
-  verifyReadmeFn,
-} from "@/lib/portfolio/cms-fns";
-import type { ExperienceMode } from "@/lib/portfolio/types";
-
-const MODES: Array<ExperienceMode | ""> = [
-  "",
-  "live-demo",
-  "github-explorer",
-  "canva-embed",
-  "interactive-walkthrough",
-  "image-comparison",
-  "timeline",
-  "process-map",
-  "spatial-preview",
-  "conversation-preview",
-  "media-gallery",
-];
+  disconnectCanvaApi,
+  getCanvaConnectStatus,
+  listIntegrations,
+  searchCanvaDesigns,
+  setAdminPublication,
+  startCanvaConnect,
+  syncGithubProject,
+  testCanvaEmbed,
+  updateAdminIntegration,
+  verifyGithubReadme,
+  verifyLiveDemoProject,
+} from "@/lib/portfolio/server-admin";
 
 export const Route = createFileRoute("/admin/integrations")({
   component: Integrations,
 });
 
-type Preview = Awaited<ReturnType<typeof previewGithubSyncFn>>;
-
 function Integrations() {
-  const [data, setData] = useState<Awaited<ReturnType<typeof listIntegrationsFn>> | null>(null);
-  const [canva, setCanva] = useState<Awaited<ReturnType<typeof canvaConnectStatusFn>> | null>(null);
-  const [previews, setPreviews] = useState<Record<string, Preview>>({});
+  const [data, setData] = useState<Awaited<ReturnType<typeof listIntegrations>> | null>(null);
+  const [canva, setCanva] = useState<Awaited<ReturnType<typeof getCanvaConnectStatus>> | null>(null);
+  const [designs, setDesigns] = useState<Array<{ id: string; title?: string; viewUrl?: string }>>([]);
+  const [canvaUrl, setCanvaUrl] = useState<Record<string, string>>({});
+  const [cover, setCover] = useState<Record<string, string>>({});
 
-  async function refresh() {
-    const [next, connect] = await Promise.all([listIntegrationsFn(), canvaConnectStatusFn()]);
-    setData(next);
-    setCanva(connect);
-  }
+  const reload = () => {
+    listIntegrations().then(setData);
+    getCanvaConnectStatus().then(setCanva);
+  };
+
   useEffect(() => {
-    void refresh();
+    reload();
   }, []);
-  if (!data) return <p className="text-sm text-muted">載入中…</p>;
+
+  if (!data) return <p className="text-sm text-muted">載入整合狀態…</p>;
+
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold">整合</h1>
+      <h1 className="font-display text-3xl font-semibold">Integrations</h1>
       <p className="mt-2 text-sm text-muted">
-        Canva 模式：{data.canvaMode}。Connect API {data.canvaConnectConfigured ? "憑證存在" : "未設定"}，沒有憑證就不會假裝已連接。
+        Canva：{canva?.mode === "public_embed" ? "公開嵌入模式" : canva?.status}。
+        GitHub token：{data.githubTokenConfigured ? "已在伺服器設定" : "未設定（公開庫仍可讀）"}。
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
-          className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+          className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
           onClick={async () => {
-            const result = await connectCanvaApiFn();
-            toast[result.ok ? "success" : "message"](result.ok ? "已連接" : result.error);
-            await refresh();
+            const result = await startCanvaConnect();
+            if ("authorizeUrl" in result && result.authorizeUrl) {
+              window.location.href = result.authorizeUrl;
+              return;
+            }
+            toast.message(
+              result.mode === "public_embed" ? "公開嵌入模式（未設定 Connect API）" : String(result.status),
+            );
           }}
         >
           連接 Canva API
         </button>
         <button
           type="button"
-          className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+          className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
           onClick={async () => {
-            await disconnectCanvaApiFn();
-            toast.success("已中斷 Canva token（若有）");
-            await refresh();
+            const result = await searchCanvaDesigns({ data: {} });
+            if (result.mode === "public_embed") {
+              toast.message("公開嵌入模式，沒有站內 Canva 編輯。");
+              return;
+            }
+            setDesigns(result.designs);
+            toast.message(result.status === "connected" ? `找到 ${result.designs.length} 件` : "尚未連線或搜尋失敗");
           }}
         >
-          中斷 Canva
+          搜尋 Canva 設計
+        </button>
+        <button
+          type="button"
+          className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
+          onClick={async () => {
+            await disconnectCanvaApi();
+            toast.success("已中斷 Connect（公開嵌入仍可用）");
+            reload();
+          }}
+        >
+          中斷 Connect
         </button>
       </div>
-      {canva ? (
-        <p className="mt-2 text-xs text-muted">
-          Connect 狀態：{canva.status} · 憑證 {canva.credentialsPresent ? "有" : "無"} · 加密 {canva.encryptReady ? "就緒" : "未就緒"}
-        </p>
+      {designs.length > 0 ? (
+        <ul className="mt-4 grid gap-2 text-sm">
+          {designs.map((item) => (
+            <li key={item.id} className="rounded-xl bg-surface px-3 py-2 shadow-card">
+              {item.title ?? item.id}
+              {item.viewUrl ? (
+                <a href={item.viewUrl} className="ml-2 text-mint-deep" rel="noreferrer" target="_blank">
+                  開啟
+                </a>
+              ) : null}
+            </li>
+          ))}
+        </ul>
       ) : null}
       <div className="mt-6 grid gap-4">
         {data.projects.map((project) => (
           <article key={project.id} className="rounded-2xl bg-surface p-5 shadow-card">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-display text-xl font-semibold">{project.title}</h2>
-              <p className="text-xs text-muted">{project.public ? "公開" : "未公開"} · 體驗 {project.showExperience ? "開" : "關"}</p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-xl">{project.title}</h2>
+                <p className="text-xs text-muted">
+                  {project.slug} · 公開頁 {project.publication_status === "published" ? "會顯示" : "不會顯示"} · 體驗{" "}
+                  {project.showExperience ? "開" : "關"}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  to="/admin/projects/$id/edit"
+                  params={{ id: project.id }}
+                  className="inline-flex min-h-11 items-center text-sm text-mint-deep"
+                >
+                  編輯
+                </Link>
+                <Link
+                  to="/work/$slug"
+                  params={{ slug: project.slug }}
+                  className="inline-flex min-h-11 items-center text-sm text-muted"
+                >
+                  預覽公開頁
+                </Link>
+                <Link
+                  to="/admin/preview"
+                  search={{ slug: project.slug }}
+                  className="inline-flex min-h-11 items-center text-sm text-muted"
+                >
+                  草稿預覽
+                </Link>
+              </div>
             </div>
-            <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-3">
-              <StatusBlock title="GitHub" status={project.github.status} extra={project.github.lastSyncedAt} error={project.github.error} />
-              <StatusBlock title="Canva" status={project.canva.status} extra={project.canva.lastSyncedAt} error={project.canva.error} />
-              <StatusBlock title="Demo" status={project.demo.status} extra={project.demo.lastVerifiedAt} error={project.demo.error} />
-            </dl>
-            <label className="mt-4 grid max-w-xs gap-1 text-sm">
-              <span>體驗模式</span>
-              <select
-                className="input"
-                value={project.experienceMode ?? ""}
-                onChange={(event) => {
-                  void setExperienceModeFn({
-                    data: {
-                      id: project.id,
-                      experienceMode: (event.target.value || null) as ExperienceMode | null,
-                    },
-                  }).then(() => {
-                    toast.success("已更新體驗模式");
-                    return refresh();
-                  });
-                }}
-              >
-                {MODES.map((item) => (
-                  <option key={item || "none"} value={item}>
-                    {item || "（未選）"}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <ul className="mt-3 grid gap-1 text-sm sm:grid-cols-3">
+              <li>
+                GitHub {String(project.github.status)}
+                {project.github.public ? " · 公開" : " · 非公開"}
+                {project.github.lastSyncedAt ? ` · ${String(project.github.lastSyncedAt)}` : ""}
+                {project.github.error ? ` · ${String(project.github.error)}` : ""}
+              </li>
+              <li>
+                Canva {String(project.canva.status)}
+                {project.canva.lastSyncedAt ? ` · ${String(project.canva.lastSyncedAt)}` : ""}
+                {project.canva.error ? ` · ${String(project.canva.error)}` : ""}
+              </li>
+              <li>
+                Demo {String(project.demo.status)}
+                {project.demo.lastVerifiedAt ? ` · ${String(project.demo.lastVerifiedAt)}` : ""}
+                {project.demo.error ? ` · ${String(project.demo.error)}` : ""}
+              </li>
+            </ul>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <label className="grid gap-1 text-sm">
+                體驗模式
+                <select
+                  className="min-h-11 rounded-xl border border-line px-3"
+                  defaultValue={project.experience_mode}
+                  onChange={async (event) => {
+                    await updateAdminIntegration({
+                      data: {
+                        id: project.id,
+                        experience_mode: event.target.value as (typeof EXPERIENCE_MODES)[number],
+                      },
+                    });
+                    toast.success("體驗模式已更新");
+                    reload();
+                  }}
+                >
+                  {EXPERIENCE_MODES.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-1 text-sm">
+                Canva 分享連結
+                <input
+                  className="min-h-11 rounded-xl border border-line px-3"
+                  value={canvaUrl[project.id] ?? String(project.canva.embedUrl ?? "")}
+                  onChange={(event) => setCanvaUrl((current) => ({ ...current, [project.id]: event.target.value }))}
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                更新封面 URL
+                <input
+                  className="min-h-11 rounded-xl border border-line px-3"
+                  value={cover[project.id] ?? ""}
+                  onChange={(event) => setCover((current) => ({ ...current, [project.id]: event.target.value }))}
+                />
+              </label>
+            </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
                 type="button"
-                className="min-h-11 rounded-full bg-surface-blue px-4 text-sm"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
                 onClick={async () => {
-                  const result = await previewGithubSyncFn({ data: { projectId: project.id } });
-                  setPreviews((current) => ({ ...current, [project.id]: result }));
-                  toast.message(result.ok ? `將變更 ${result.changingFields.length} 欄` : result.error);
-                }}
-              >
-                預覽 GitHub
-              </button>
-              <button
-                type="button"
-                className="min-h-11 rounded-full bg-ink px-4 text-sm text-bg"
-                onClick={async () => {
-                  const result = await applyGithubSyncFn({ data: { projectId: project.id } });
-                  toast[result.ok ? "success" : "error"](result.ok ? "已同步技術資料" : result.error);
-                  await refresh();
+                  const result = await syncGithubProject({ data: { id: project.id, apply: true } });
+                  toast.message(result.ok ? "GitHub 已同步" : result.error);
+                  reload();
                 }}
               >
                 同步 GitHub
               </button>
               <button
                 type="button"
-                className="min-h-11 rounded-full bg-surface-mint px-4 text-sm"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
                 onClick={async () => {
-                  const result = await verifyReadmeFn({ data: { projectId: project.id } });
-                  toast.message(result.ok ? "README 已核對" : result.error ?? "README 失敗");
-                  await refresh();
+                  const result = await verifyGithubReadme({ data: { id: project.id } });
+                  toast.message(result.ok ? "README 可讀" : "README 失敗");
                 }}
               >
-                核對 README
+                驗證 README
               </button>
               <button
                 type="button"
-                className="min-h-11 rounded-full bg-surface-mint px-4 text-sm"
-                onClick={() => void verifyDemoFn({ data: { projectId: project.id } }).then((r) => toast.message(`Demo ${r.status}`)).then(refresh)}
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
+                onClick={async () => {
+                  const result = await verifyLiveDemoProject({ data: { id: project.id } });
+                  toast.message(result.ok ? "Demo verified" : String(result.status));
+                  reload();
+                }}
               >
                 驗證 Demo
               </button>
               <button
                 type="button"
-                className="min-h-11 rounded-full bg-surface-mint px-4 text-sm"
-                onClick={() => void verifyCanvaFn({ data: { projectId: project.id } }).then((r) => toast.message(`Canva ${r.status}`)).then(refresh)}
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
+                onClick={async () => {
+                  const result = await testCanvaEmbed({
+                    data: { id: project.id, url: canvaUrl[project.id] || String(project.canva.embedUrl ?? "") },
+                  });
+                  toast.message(result.ok ? "Canva OK" : result.error);
+                  reload();
+                }}
               >
-                測試 Canva
+                測試嵌入
               </button>
-              <Link to="/admin/projects/$id/edit" params={{ id: project.id }} className="inline-flex min-h-11 items-center text-sm text-mint-deep">
-                編輯來源／封面
-              </Link>
-              <Link to="/admin/preview" className="inline-flex min-h-11 items-center text-sm text-mint-deep">
-                預覽草稿
-              </Link>
-              <Link to="/work/$slug" params={{ slug: project.slug }} className="inline-flex min-h-11 items-center text-sm text-mint-deep">
-                預覽公開頁
-              </Link>
-              {project.public ? (
-                <button type="button" className="min-h-11 text-sm" onClick={() => void unpublishProjectFn({ data: { id: project.id } }).then(refresh)}>
-                  下架
-                </button>
-              ) : (
-                <button type="button" className="min-h-11 text-sm" onClick={() => void publishProjectFn({ data: { id: project.id } }).then(refresh)}>
-                  發布整合內容
-                </button>
-              )}
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
+                onClick={async () => {
+                  await updateAdminIntegration({
+                    data: {
+                      id: project.id,
+                      canva_share_url: canvaUrl[project.id],
+                      canva_thumbnail_url: cover[project.id] || undefined,
+                    },
+                  });
+                  toast.success("封面／Canva 已更新");
+                  reload();
+                }}
+              >
+                加入 Canva / 更新封面
+              </button>
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm text-bg"
+                onClick={async () => {
+                  const next = project.publication_status === "published" ? "unpublished" : "published";
+                  await setAdminPublication({ data: { id: project.id, status: next } });
+                  toast.success(next);
+                  reload();
+                }}
+              >
+                {project.publication_status === "published" ? "取消發布整合內容" : "發布整合內容"}
+              </button>
             </div>
-            {previews[project.id] ? <GithubPreview preview={previews[project.id]!} /> : null}
           </article>
         ))}
       </div>
-    </div>
-  );
-}
-
-function GithubPreview({ preview }: { preview: Preview }) {
-  if (!preview.ok) {
-    return (
-      <p className="mt-3 text-sm">
-        無法預覽：{preview.error}
-        {"rateLimited" in preview && preview.rateLimited ? "（GitHub 速率限制）" : ""}
-      </p>
-    );
-  }
-  return (
-    <div className="mt-4 rounded-xl bg-surface-blue/70 p-3 text-sm">
-      <p className="text-xs text-muted">上次同步：{preview.lastSyncedAt ?? "尚未"} · 敘事欄不會被覆蓋</p>
-      <p className="mt-2 font-medium">
-        GitHub 最新：{preview.incoming.name} · {preview.incoming.branch}
-      </p>
-      <p className="text-xs text-muted">{preview.incoming.description ?? "無描述"}</p>
-      {preview.changingFields.length === 0 ? (
-        <p className="mt-2 text-xs">沒有技術欄差異。</p>
-      ) : (
-        <ul className="mt-2 grid gap-1 text-xs">
-          {preview.changingFields.map((field) => (
-            <li key={field.field}>
-              {field.field}：{field.from} → {field.to}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-function StatusBlock({
-  title,
-  status,
-  extra,
-  error,
-}: {
-  title: string;
-  status: string;
-  extra: string | null;
-  error: string | null;
-}) {
-  return (
-    <div className="rounded-xl bg-surface-blue/70 p-3">
-      <dt className="text-xs text-muted">{title}</dt>
-      <dd className="mt-1 font-medium">{status}</dd>
-      {extra ? <p className="text-xs text-muted">{extra}</p> : null}
-      {error ? <p className="text-xs">{error}</p> : null}
     </div>
   );
 }

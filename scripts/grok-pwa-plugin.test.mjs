@@ -23,19 +23,11 @@ const TEMPLATE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ISOLATED_CWD = mkdtempSync(join(tmpdir(), "grok-pwa-isolated-"));
 
 function injectGrokPwaHead(html, ctx = {}) {
-  return injectGrokPwaHeadRaw(html, {
-    ...ctx,
-    cwd: ctx.cwd ?? ISOLATED_CWD,
-    site: ctx.site ?? {},
-  });
+  return injectGrokPwaHeadRaw(html, { cwd: ISOLATED_CWD, ...ctx });
 }
 
 function createHeadInjector(ctx = {}) {
-  return createHeadInjectorRaw({
-    ...ctx,
-    cwd: ctx.cwd ?? ISOLATED_CWD,
-    site: ctx.site ?? {},
-  });
+  return createHeadInjectorRaw({ cwd: ISOLATED_CWD, ...ctx });
 }
 
 test("injects before </head>", () => {

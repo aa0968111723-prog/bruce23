@@ -1,53 +1,111 @@
-export type ZenReply = {
-  intent: string;
+export type ZenIntent =
+  | "greeting"
+  | "stress"
+  | "gratitude"
+  | "focus"
+  | "sleep"
+  | "farewell"
+  | "reflection";
+
+export interface ZenReply {
+  intent: ZenIntent;
   message: string;
   breath: string;
+}
+
+const KOANS = [
+  "The obstacle is the path.",
+  "When you reach the top of the mountain, keep climbing.",
+  "Sitting quietly, doing nothing, spring comes and the grass grows by itself.",
+  "No snowflake ever falls in the wrong place.",
+  "The quieter you become, the more you can hear.",
+  "Wherever you are, be there totally.",
+  "Let go, or be dragged.",
+  "The mind is everything. What you think you become.",
+] as const;
+
+const BREATHS = [
+  "Breathe in for 4, hold for 4, out for 6.",
+  "One slow breath in through the nose, one longer breath out.",
+  "Inhale calm, exhale tension — three times.",
+  "Rest your attention on the next single breath.",
+  "吸氣四拍，停四拍，吐氣六拍。",
+] as const;
+
+export function hashString(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 33) ^ input.charCodeAt(i);
+  }
+  return hash >>> 0;
+}
+
+function pick<T>(items: readonly T[], seed: number): T {
+  const index = ((Math.trunc(seed) % items.length) + items.length) % items.length;
+  return items[index];
+}
+
+function matchesToken(text: string, token: string): boolean {
+  if (/[\u4e00-\u9fff]/.test(token)) return text.includes(token);
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}(?![a-z0-9])`, "i").test(text);
+}
+
+export function detectIntent(message: string): ZenIntent {
+  const text = message.toLowerCase();
+  const has = (...words: string[]) => words.some((word) => matchesToken(text, word));
+  if (has("bye", "goodbye", "see you", "farewell", "再見", "掰")) return "farewell";
+  if (has("hi", "hello", "hey", "morning", "greetings", "你好", "哈囉")) return "greeting";
+  if (has("stress", "anxious", "anxiety", "overwhelm", "panic", "worried", "壓力", "焦慮", "煩"))
+    return "stress";
+  if (has("thank", "grateful", "gratitude", "appreciate", "謝謝", "感恩")) return "gratitude";
+  if (has("focus", "distract", "procrastin", "study", "concentrate", "exam", "專注", "考試"))
+    return "focus";
+  if (has("sleep", "tired", "insomnia", "rest", "exhausted", "睡", "累")) return "sleep";
+  return "reflection";
+}
+
+const RESPONSES: Record<ZenIntent, readonly string[]> = {
+  greeting: [
+    "Welcome. Settle in — there is nowhere else you need to be right now.",
+    "你好。先把這一口氣坐下來。",
+  ],
+  stress: [
+    "Notice the weight you are carrying, then set it down for one breath.",
+    "壓力是浪，不是整片海。讓它過去。",
+  ],
+  gratitude: [
+    "Gratitude turns what we have into enough. Hold that feeling gently.",
+    "謝謝這件事本身，已經是安靜的練習。",
+  ],
+  focus: [
+    "Do one thing. Then the next. The path clears as you walk it.",
+    "一次只做一件。路會在走的時候出現。",
+  ],
+  sleep: [
+    "Let the day close like a book. You can rest now.",
+    "把今天闔上。你可以休息了。",
+  ],
+  farewell: [
+    "Go gently. Carry a little stillness with you.",
+    "慢慢走。帶一點安靜離開。",
+  ],
+  reflection: [
+    "Sit with the question rather than rushing to the answer.",
+    "先陪著問題坐一會兒，不必急著給答案。",
+  ],
 };
 
-const RULES: Array<{ intent: string; tests: RegExp[]; message: string; breath: string }> = [
-  {
-    intent: "stress",
-    tests: [/緊張|壓力|焦慮|stress|anxious|worried|考試|忙/i],
-    message: "先把這一輪呼吸做完。事情還在，但你不必一次扛完。",
-    breath: "吸氣四拍，停一拍，吐氣六拍。重複三次。",
-  },
-  {
-    intent: "tired",
-    tests: [/累|疲倦|tired|睡|exhausted/i],
-    message: "身體已經給過訊號。允許自己慢一拍，比再撐一次更有用。",
-    breath: "肩膀放下，吐氣比吸氣長。",
-  },
-  {
-    intent: "gratitude",
-    tests: [/謝謝|感恩|開心|平靜|thank|calm|peace/i],
-    message: "把這一點亮的感覺記住位置。它不需要被解釋才算數。",
-    breath: "輕輕吸氣，微笑不必做給誰看。",
-  },
-  {
-    intent: "anger",
-    tests: [/生氣|怒|煩|angry|annoyed|不爽/i],
-    message: "怒氣是邊界在說話。先命名它，再決定要不要行動。",
-    breath: "腳踩實地面，吐氣時數到四。",
-  },
-];
-
-export function localZenReply(input: string): ZenReply {
-  const text = input.trim();
-  if (!text) {
-    return {
-      intent: "empty",
-      message: "先寫下一句就好。不一定要完整。",
-      breath: "吸氣，停，吐氣。",
-    };
-  }
-  for (const rule of RULES) {
-    if (rule.tests.some((re) => re.test(text))) {
-      return { intent: rule.intent, message: rule.message, breath: rule.breath };
-    }
-  }
-  return {
-    intent: "presence",
-    message: "我在。這句話被接住了，不必立刻變成答案。",
-    breath: "看著呼吸進出鼻尖三次。",
-  };
+export function zenReply(message: string): ZenReply {
+  const trimmed = message.trim();
+  const intent = detectIntent(trimmed);
+  const seed = hashString(trimmed || "silence");
+  const base = pick(RESPONSES[intent], seed);
+  const koan = pick(KOANS, seed >> 3);
+  const breath = pick(BREATHS, seed >> 7);
+  const text =
+    trimmed.length === 0
+      ? "In silence, the mind finds its own answer. 此刻想說什麼？"
+      : `${base} ${koan}`;
+  return { intent, message: text, breath };
 }

@@ -90,7 +90,7 @@ test("only a divergence warns the smoke verdict", () => {
   }
 });
 
-test("the build side resolves this workspace's app-env (auth on)", () => {
+test("the build side resolves this workspace's shipped app-env (auth on)", () => {
   assert.equal(buildAuthEnabled(projectRoot(), {}), true);
   assert.equal(buildAuthEnabled(projectRoot(), { VITE_AUTH_ENABLED: "true" }), true);
 });
