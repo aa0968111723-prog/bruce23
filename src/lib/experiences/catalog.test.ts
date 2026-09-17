@@ -442,14 +442,6 @@ describe("frontend contract", () => {
     assert.match(form, /patchMediaItem/);
     assert.match(form, /persistDemoVerify|verifyDemoFn/);
     assert.match(form, /未改中文敘事/);
-    const integrationsCard = readFileSync(
-      new URL("../../../src/components/admin/IntegrationWorkCard.tsx", import.meta.url),
-      "utf8",
-    );
-    assert.match(integrationsCard, /Canva 測試完成：pending，未驗證/);
-    assert.match(integrationsCard, /Demo 可用/);
-    assert.match(integrationsCard, /Demo 無法使用/);
-    assert.match(integrationsCard, /未改中文敘事/);
     const projectIdLayout = readFileSync(
       new URL("../../../src/routes/admin/projects/$id.tsx", import.meta.url),
       "utf8",
@@ -591,6 +583,10 @@ describe("frontend contract", () => {
     assert.match(integrationsCard, /測試嵌入/);
     assert.match(integrationsCard, /開啟原稿/);
     assert.match(integrationsCard, /min-w-0 max-w-full/);
+    assert.match(integrationsCard, /Canva 測試完成：pending，未驗證/);
+    assert.match(integrationsCard, /Demo 可用/);
+    assert.match(integrationsCard, /Demo 無法使用/);
+    assert.match(integrationsCard, /未改中文敘事/);
     const adminFn = readFileSync(new URL("../../../src/lib/cms/admin-fn.ts", import.meta.url), "utf8");
     assert.match(adminFn, /parseProjectPatch/);
     assert.match(adminFn, /catalogSourcePaths/);
