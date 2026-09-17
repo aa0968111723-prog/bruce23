@@ -235,6 +235,10 @@ export async function getPublicSite(): Promise<PublicSiteSettings> {
       row.homepage_content && typeof row.homepage_content === "object"
         ? (row.homepage_content as JsonObject)
         : {},
+    localeZh:
+      row.locale_zh && typeof row.locale_zh === "object" ? (row.locale_zh as JsonObject) : {},
+    localeEn:
+      row.locale_en && typeof row.locale_en === "object" ? (row.locale_en as JsonObject) : {},
   };
 }
 
@@ -331,18 +335,37 @@ export async function updateAdminProject(userId: string, data: ProjectUpdate): P
     localeEn: data.localeEn ?? current.localeEn,
     seoTitle: data.seoTitle === undefined ? current.seoTitle : data.seoTitle,
     seoDescription: data.seoDescription === undefined ? current.seoDescription : data.seoDescription,
-    githubUrl: data.githubUrl ?? current.github?.url ?? null,
+    githubUrl: data.githubUrl === undefined ? current.github?.url ?? null : data.githubUrl,
     githubOwner: parsedGh?.owner ?? data.githubOwner ?? current.github?.owner ?? null,
     githubRepo: parsedGh?.repo ?? data.githubRepo ?? current.github?.repo ?? null,
     githubBranch: data.githubBranch ?? current.github?.branch ?? null,
     githubSyncEnabled: data.githubSyncEnabled ?? current.githubSyncEnabled,
-    liveDemoUrl: data.liveDemoUrl ?? current.liveDemo?.url ?? null,
+    liveDemoUrl: data.liveDemoUrl === undefined ? current.liveDemo?.url ?? null : data.liveDemoUrl,
     liveDemoLabel: data.liveDemoLabel ?? current.liveDemo?.label ?? null,
     liveDemoType: data.liveDemoType ?? current.liveDemo?.type ?? null,
     liveDemoEmbedEnabled: data.liveDemoEmbedEnabled ?? current.liveDemo?.embedEnabled ?? false,
-    canvaShareUrl: parsedCanva && parsedCanva.ok ? parsedCanva.value.shareUrl : (data.canvaShareUrl ?? current.canva?.shareUrl ?? null),
-    canvaEmbedUrl: parsedCanva && parsedCanva.ok ? parsedCanva.value.embedUrl : (data.canvaEmbedUrl ?? current.canva?.embedUrl ?? null),
-    canvaDesignId: parsedCanva && parsedCanva.ok ? parsedCanva.value.designId : (data.canvaDesignId ?? current.canva?.designId ?? null),
+    canvaShareUrl:
+      data.canvaShareUrl === undefined
+        ? (current.canva?.shareUrl ?? null)
+        : data.canvaShareUrl === null
+          ? null
+          : parsedCanva && parsedCanva.ok
+            ? parsedCanva.value.shareUrl
+            : data.canvaShareUrl,
+    canvaEmbedUrl:
+      data.canvaEmbedUrl === undefined && data.canvaShareUrl === undefined
+        ? (current.canva?.embedUrl ?? null)
+        : data.canvaShareUrl === null && data.canvaEmbedUrl == null
+          ? null
+          : parsedCanva && parsedCanva.ok
+            ? parsedCanva.value.embedUrl
+            : (data.canvaEmbedUrl ?? null),
+    canvaDesignId:
+      data.canvaShareUrl === null && data.canvaEmbedUrl == null
+        ? null
+        : parsedCanva && parsedCanva.ok
+          ? parsedCanva.value.designId
+          : (data.canvaDesignId ?? current.canva?.designId ?? null),
     canvaPageIds: data.canvaPageIds ?? current.canva?.pageIds ?? [],
     canvaThumbnailUrl: data.canvaThumbnailUrl ?? current.canva?.thumbnailUrl ?? null,
     canvaAlt: data.canvaAlt ?? current.canva?.alt ?? null,
@@ -452,7 +475,7 @@ export async function restoreRevision(userId: string, projectId: string, revisio
   if (!rev[0]) throw new Error("Revision not found");
   await snapshotRevision(db, projectId, userId, `restore:${revisionId}`);
   const snap = rev[0].snapshot;
-  const cols = Object.keys(snap).filter((key) => key !== "id");
+  const cols = Object.keys(snap).filter((key) => key !== "id" && key !== "updated_at");
   if (cols.length === 0) throw new Error("Empty revision");
   const assignments = cols.map((col, i) => `${col} = $${i + 2}`).join(", ");
   const values = cols.map((col) => {

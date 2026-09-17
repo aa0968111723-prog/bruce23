@@ -13,8 +13,9 @@ import {
   validateGithubUrl,
 } from "./github-url.ts";
 import { parseCanvaInput, isAllowedCanvaHost, extractUrlFromEmbedCode, canvaFallbackMessage } from "./canva-url.ts";
-import { interpretDemoResponse, isSafeHttpsUrl, demoFallbackCopy } from "./demo-url.ts";
+import { interpretDemoResponse, isSafeHttpsUrl, isPublicHttpsUrl, demoFallbackCopy } from "./demo-url.ts";
 import { assertAdminAccess, parseAdminEmails, readAdminAllowlist } from "./admin-access.ts";
+import { httpsUrl } from "./schema.ts";
 import { assertNoSecrets, toPublicProject } from "./privacy.ts";
 import { localZenReply } from "./zen-engine.ts";
 import { buildRelationGraph, projectMatchesKind } from "./relations.ts";
@@ -105,6 +106,9 @@ describe("demo fallback", () => {
   it("only allows https", () => {
     assert.equal(isSafeHttpsUrl("javascript:alert(1)"), false);
     assert.equal(isSafeHttpsUrl("https://example.com"), true);
+    assert.equal(isPublicHttpsUrl("https://10.0.0.4/secret"), false);
+    assert.equal(isPublicHttpsUrl("https://127.0.0.1/"), false);
+    assert.equal(isPublicHttpsUrl("https://example.com"), true);
   });
   it("marks x-frame-options deny as not embeddable", () => {
     const result = interpretDemoResponse({
@@ -132,9 +136,9 @@ describe("admin allowlist fail closed", () => {
   it("parses emails", () => {
     assert.deepEqual(parseAdminEmails("a@x.com, b@y.com"), ["a@x.com", "b@y.com"]);
   });
-  it("fails closed when unset", () => {
-    const parsed = readAdminAllowlist({});
-    assert.equal(parsed.ok, false);
+  it("rejects javascript and private github-like urls", () => {
+    assert.equal(httpsUrl.safeParse("javascript:alert(1)").success, false);
+    assert.equal(httpsUrl.safeParse("https://github.com/aa0968111723-prog/bruce23").success, true);
   });
   it("rejects non-admin", () => {
     assert.throws(

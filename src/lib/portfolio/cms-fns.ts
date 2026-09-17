@@ -100,9 +100,6 @@ export const saveDraftProjectFn = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { updateAdminProject, setPublication } = await import("./queries.server");
     const updated = await updateAdminProject(context.userId, data);
-    if (updated.publicationStatus === "published") {
-      return updated;
-    }
     return setPublication(context.userId, updated.id, "draft", "save-draft");
   });
 

@@ -42,6 +42,12 @@ function AdminArchive() {
                       year: String(item.year ?? ""),
                       summary: String(item.summary ?? ""),
                       originNote: String(item.originNote ?? ""),
+                      media: item.media,
+                      href: item.href,
+                      canvaShareUrl: item.canva?.shareUrl ?? null,
+                      canvaEmbedUrl: item.canva?.embedUrl ?? null,
+                      canvaDesignId: item.canva?.designId,
+                      canvaThumbnailUrl: item.canva?.thumbnailUrl,
                       publicationStatus:
                         item.publicationStatus === "published" ? "unpublished" : "published",
                       sortOrder: Number(item.sortOrder ?? 0),

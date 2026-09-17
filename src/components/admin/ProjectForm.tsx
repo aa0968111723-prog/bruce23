@@ -155,17 +155,17 @@ export function ProjectForm({
     setDirty(true);
   }
 
-  async function save() {
+  async function save(): Promise<boolean> {
     const gh = value.githubUrl ? parseGithubUrl(value.githubUrl) : null;
     if (value.githubUrl && !gh) {
       toast.error("GitHub 網址需為 https://github.com/owner/repo");
-      return;
+      return false;
     }
     if (value.canvaShareUrl || value.canvaEmbedUrl) {
       const parsed = parseCanvaInput(value.canvaEmbedUrl || value.canvaShareUrl || "");
       if (!parsed.ok) {
         toast.error(parsed.error);
-        return;
+        return false;
       }
     }
     setSaving(true);
@@ -173,8 +173,10 @@ export function ProjectForm({
       await onSave(value);
       setDirty(false);
       toast.success("已儲存");
+      return true;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "儲存失敗");
+      return false;
     } finally {
       setSaving(false);
     }
@@ -286,7 +288,18 @@ export function ProjectForm({
           允許 iframe 嵌入
         </label>
         <Field label="Canva 分享／嵌入 URL">
-          <input className="input" value={value.canvaShareUrl ?? value.canvaEmbedUrl ?? ""} onChange={(e) => patch({ canvaShareUrl: e.target.value || undefined })} />
+          <input
+            className="input"
+            value={value.canvaShareUrl ?? ""}
+            onChange={(e) => {
+              const next = e.target.value;
+              patch({
+                canvaShareUrl: next || null,
+                canvaEmbedUrl: next ? value.canvaEmbedUrl : null,
+                canvaDesignId: next ? value.canvaDesignId : undefined,
+              });
+            }}
+          />
         </Field>
         <Field label="Canva 嵌入 URL（可選）">
           <input className="input" value={value.canvaEmbedUrl ?? ""} onChange={(e) => patch({ canvaEmbedUrl: e.target.value || undefined })} />
@@ -364,7 +377,14 @@ export function ProjectForm({
           <button
             type="button"
             className="min-h-11 rounded-full bg-ink px-5 text-sm text-bg"
-            onClick={() => void onPublish().then(() => toast.success("已發布")).catch((e) => toast.error(String(e)))}
+            onClick={() =>
+              void (async () => {
+                const ok = await save();
+                if (!ok || !onPublish) return;
+                await onPublish();
+                toast.success("已發布");
+              })().catch((e) => toast.error(String(e)))
+            }
           >
             發布
           </button>

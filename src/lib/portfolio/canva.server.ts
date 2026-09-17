@@ -16,7 +16,7 @@ export async function testCanvaEmbed(input: string) {
   try {
     const response = await fetch(parsed.value.embedUrl, {
       method: "GET",
-      redirect: "follow",
+      redirect: "manual",
       signal: controller.signal,
       headers: { "User-Agent": "luminous-studio-portfolio" },
     });

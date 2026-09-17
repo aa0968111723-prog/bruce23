@@ -24,8 +24,8 @@ function AdminSettings() {
             data: {
               ...site,
               homepageContent: site.homepageContent,
-              localeZh: {},
-              localeEn: {},
+              localeZh: site.localeZh ?? {},
+              localeEn: site.localeEn ?? {},
             },
           });
           toast.success("設定已儲存");

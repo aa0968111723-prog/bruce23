@@ -5,7 +5,6 @@ import type { PublicProject } from "@/lib/portfolio/types";
 export function CanvaOriginal({ project }: { project: PublicProject }) {
   const canva = project.canva;
   const [failed, setFailed] = useState(false);
-  const [page, setPage] = useState(0);
 
   if (!canva?.embedUrl && !canva?.shareUrl) {
     return <p className="text-sm text-muted">這件作品尚未綁定可公開嵌入的 Canva 原作。</p>;
@@ -23,7 +22,6 @@ export function CanvaOriginal({ project }: { project: PublicProject }) {
     );
   }
 
-  const pages = canva.pageIds.length ? canva.pageIds : ["cover"];
   const embed = parsed.value.embedUrl;
 
   if (failed) {
@@ -51,18 +49,6 @@ export function CanvaOriginal({ project }: { project: PublicProject }) {
         />
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        {pages.length > 1
-          ? pages.map((id, index) => (
-              <button
-                key={id}
-                type="button"
-                className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
-                onClick={() => setPage(index)}
-              >
-                頁 {index + 1}
-              </button>
-            ))
-          : null}
         <a
           className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm text-bg"
           href={parsed.value.shareUrl}
@@ -92,7 +78,6 @@ export function CanvaOriginal({ project }: { project: PublicProject }) {
           全螢幕
         </button>
       </div>
-      {page > 0 ? <p className="mt-2 text-xs text-muted">目前示意頁 {page + 1}。Canva 嵌入頁切換依原作權限而定。</p> : null}
     </div>
   );
 }

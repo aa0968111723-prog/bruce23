@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { nav, site } from "@/content/site";
+import { getPublicSiteFn } from "@/lib/portfolio/public-fns";
+import { nav, site as fallbackSite } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { getAdminContextFn } from "@/lib/portfolio/cms-fns";
 import { SignedIn, UserButton } from "@/lib/auth/gates";
@@ -10,11 +11,17 @@ export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [site, setSite] = useState(fallbackSite);
 
   useEffect(() => {
     void getAdminContextFn()
       .then((ctx) => setAdmin(Boolean(ctx.admin)))
       .catch(() => setAdmin(false));
+    void getPublicSiteFn()
+      .then((next) => {
+        if (next?.nameZh) setSite({ ...fallbackSite, ...next });
+      })
+      .catch(() => undefined);
   }, []);
 
   return (

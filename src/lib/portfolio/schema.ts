@@ -62,17 +62,25 @@ export const integrationStatusSchema = z.enum([
   "stale",
 ]);
 
-const emptyToUndef = (value: unknown) =>
-  typeof value === "string" && value.trim() === "" ? undefined : value;
+const emptyToNull = (value: unknown) => {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  if (typeof value === "string" && value.trim() === "") return null;
+  return value;
+};
 
-export const optionalHttpsUrl = z.preprocess(
-  emptyToUndef,
-  z
-    .string()
-    .url()
-    .refine((url) => url.startsWith("https://"), "Only https URLs are allowed")
-    .optional(),
-);
+export const httpsUrl = z
+  .string()
+  .url()
+  .refine((url) => {
+    try {
+      return new URL(url).protocol === "https:";
+    } catch {
+      return false;
+    }
+  }, "Only https URLs are allowed");
+
+export const optionalHttpsUrl = z.preprocess(emptyToNull, z.union([z.null(), httpsUrl]).optional());
 
 export const slugSchema = z
   .string()
@@ -171,7 +179,7 @@ export const siteSettingsWriteSchema = z.object({
   subhead: z.string().max(240),
   narrative: z.string().max(800),
   email: z.string().email(),
-  github: z.string().url(),
+  github: httpsUrl,
   githubHandle: z.string().max(80),
   location: z.string().max(80),
   seoTitle: z.string().max(80).nullable().optional(),

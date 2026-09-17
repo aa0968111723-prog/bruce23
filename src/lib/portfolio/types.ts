@@ -224,6 +224,8 @@ export interface PublicSiteSettings {
   seoTitle: string | null;
   seoDescription: string | null;
   homepageContent: JsonObject;
+  localeZh: JsonObject;
+  localeEn: JsonObject;
 }
 
 export const GITHUB_AUTO_SYNC_FIELDS = [

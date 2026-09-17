@@ -1,11 +1,11 @@
-import { isSafeHttpsUrl, interpretDemoResponse } from "./demo-url";
+import { isPublicHttpsUrl, interpretDemoResponse } from "./demo-url";
 
 export async function verifyLiveDemo(url: string) {
-  if (!isSafeHttpsUrl(url)) {
+  if (!isPublicHttpsUrl(url)) {
     return {
       status: "failed" as const,
       httpStatus: null as number | null,
-      error: "Demo URL must be https",
+      error: "Demo URL must be a public https address",
       embeddableGuess: false,
     };
   }
@@ -14,14 +14,32 @@ export async function verifyLiveDemo(url: string) {
   try {
     let response = await fetch(url, {
       method: "HEAD",
-      redirect: "follow",
+      redirect: "manual",
       signal: controller.signal,
       headers: { "User-Agent": "luminous-studio-portfolio" },
     });
+    const location = response.headers.get("location");
+    if (location && [301, 302, 303, 307, 308].includes(response.status)) {
+      const next = new URL(location, url);
+      if (!isPublicHttpsUrl(next.toString())) {
+        return {
+          status: "failed" as const,
+          httpStatus: response.status,
+          error: "Demo redirected off a public https host",
+          embeddableGuess: false,
+        };
+      }
+      response = await fetch(next, {
+        method: "HEAD",
+        redirect: "manual",
+        signal: controller.signal,
+        headers: { "User-Agent": "luminous-studio-portfolio" },
+      });
+    }
     if (response.status === 405 || response.status === 501) {
       response = await fetch(url, {
         method: "GET",
-        redirect: "follow",
+        redirect: "manual",
         signal: controller.signal,
         headers: { "User-Agent": "luminous-studio-portfolio" },
       });
