@@ -21,7 +21,8 @@ describe("pglite production assets", () => {
 
   it("finds nitro-bundled pglite after a build", () => {
     const output = join(root, ".vercel/output");
-    if (!existsSync(output)) return;
+    // Mid-build the directory can exist before nitro.json / PGLite assets land.
+    if (!existsSync(join(output, "nitro.json"))) return;
     const dirs = findPgliteBundleDirs(output);
     assert.ok(dirs.length >= 1);
   });
