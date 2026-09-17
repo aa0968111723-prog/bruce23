@@ -2,7 +2,7 @@
 
 Cycle: post-merge integrity vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: (see this branch tip; recording commit follows the GitHub tree recovery)
+HEAD: 651121ccbc683f186a6b605772513c915d62a63f (code: GitHub keepPath backfill + PGLite test guard). QA recording commit follows.
 
 ## This cycle (2026-09-17, after PRs #2 / #3 / #4 merged)
 
@@ -37,9 +37,34 @@ New branch: `cursor/portfolio-cms-main-cfe4` from up-to-date `origin/main`. Do n
 | 7 | Interactive homepage (data-backed constellation) | **CODE present** (hubs pressable, modality-backed). |
 | 8 | Privacy | **present** |
 | 9 | Tests from the original list | **CODE present** (handlers, isolation, Canva/demo iframe, keyboard, GitHub parse, keep-last, keepPath backfill, empty-tree preserve). Not a substitute for owner Canva/Connect. |
-| 10 | Gates (typecheck/test/lint/build/check:auth/smoke/preview) | **re-run on this branch** (see below / recording commit) |
+| 10 | Gates (typecheck/test/lint/build/check:auth/smoke/preview) | **pass** on this branch at `651121c` |
 
 Should parent mark goal complete? **KEEP OPEN.** Owner public Canva DAG, Connect, human Google as `aa0968111723@gmail.com`, `GITHUB_READ_TOKEN`, Notion, Folio/Zen operation shots, Drive media are still required by the original ask.
+
+### Gates this cycle (proven at `651121c`)
+
+- `npm run typecheck` pass
+- `npm test` pass (scripts 210 + src 258, fail 0; admin session E2E ok; admin live E2E ok — bearer `grok-auth.bearer-token`, no `__Host-` on http)
+- `npm run lint` pass (0 errors, 3 existing warnings: LocaleProvider / use-current-user)
+- `npm run build` pass
+- `npm run check:auth` pass (dev and build agree: sign-in on)
+- `sh /workspace/startup.sh` → `npm run dev` via `scripts/with-app-env.mjs` on `0.0.0.0:8080` (200); left up
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no overflow; empty console/page errors; no brand/auth warnings
+- `npm run preview:restart` (`127.0.0.1:8081`) vs baseline: `divergesFromBaseline: false`, same bodyTextHash
+- Canva MCP this environment: `needsAuth`; not faked connected. GitHub `search_code` `canva.com/design/` for `user:aa0968111723-prog`: parsers/fixtures/copy only — **no real public DAG to wire**
+
+### Interactive QA this cycle (agent-browser vs live preview)
+
+- Home: 1 `[data-luminous-shell]`, 5 constellation hubs (`image` `video` `space` `poster` `interactive`), light studio `rgb(247, 251, 255)`, zh headline, no overflow
+- Space hub filter: PLANFORM only in the constellation (plus 互動 hub), list card PLANFORM
+- FrameLab ExperiencePanel: 6 unique tabs; GitHub tab `verified` + README; **11/11** catalog hints `data-hint-in-tree="true"` including `src/lib/domain/context-engine.ts` and `src/lib/commands/execute.ts` with zh label `在同步樹中`
+- FrameLab Canva tab: **0 iframes**; honest empty copy (public embed mode, no `/design/{id}`, does not claim Connect linked)
+- Folio walkthrough order survived: `1. 畫布` → `2. 畫板` → `3. 指令層`; step 2 `data-walkthrough-stage=artboard` `data-walkthrough-path=src/components/editor/artboard-strip.tsx` `data-folio-artboard=true`
+- zh|en: visible English radio switches `documentElement.lang` to `en`, headline + FrameLab tabs (Play / Visual / GitHub / Canva original)
+- `/work` still lists all 8 featured works
+- Mobile 390-class: home + FrameLab experience + login, no page overflow; tabs min-height 44px (tab strip may scroll horizontally)
+- Unsigned `/admin` → `/login`, Google-only (`使用 Google 登入`), no mock admin
+- ManagePullRequest: **not in this environment**. `GitHub.create_pull_request` previously 403. Parent must open draft PR vs `main`
 
 ---
 
