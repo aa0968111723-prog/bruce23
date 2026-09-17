@@ -1,10 +1,75 @@
 # Portfolio Task State
 
-Cycle: post-merge integrity vs original 10 — KEEP OPEN (not complete)
+Cycle: operable ExperiencePanel vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: 8b92460919375e536cb56108a4656b01adf74a58 (QA recording). Code SHA: 651121ccbc683f186a6b605772513c915d62a63f (GitHub keepPath backfill + PGLite test guard).
+HEAD: 370aa070cb6e6fa9dd7d0c4886d5c2b866677ded (operable modes + process-map hit rects). Prior pin: `fc890a7`.
 
-## This cycle (2026-09-17, after PRs #2 / #3 / #4 merged)
+## This cycle (2026-09-17, operable experience deepening)
+
+Branch `cursor/portfolio-cms-main-cfe4` (from `origin/main` after PRs #2/#3/#4). Tip before this work: `fc890a7`. Code commits: `0d7f787` then `370aa07`.
+
+Previous leftover hunts that “CODE is done” were not treated as permission to idle. Viewers can now **operate** each featured Play tab, still labeled as 作品集互動展示 / not the live products.
+
+### Featured GitHub HEAD (public, this turn)
+
+| Repo | HEAD | Date | Notes |
+|---|---|---|---|
+| ai_os | `37a28ff8` | 2026-08-27 | process paths still match catalog |
+| FrameLab | `0947d131` | 2026-08-21 | `repair-planner.ts` / `region-repair.ts` / `sample-ball.ts` present |
+| poster-vision-ai | `3aa61e9c` | 2026-08-26 | JS downsample exhibit; OpenCV stays in `engine/analyze.py` |
+| planform-iso | `1b8513b7` | 2026-09-16 | `spatialKnowledge.ts`, `rehearsal.ts`, `corridorGeometry.ts` |
+| duigao | `663f64f8` | 2026-09-01 | RoomWorkspace still HEAD |
+| canva2 | `2c738169` | 2026-09-04 | editor canvas/artboard/command/audit/MCP files present |
+| hermes-console | `50a269ac` | 2026-09-17 | no-login workspace; `GET /api/ready`; Lumen/FrameLab/對稿/PLANFORM/Atlas MCP docs; GitHub URL is not MCP |
+| tku-zen-ai | `b2634af7` | 2026-08-18 | `src/lib/zen.ts` local engine |
+
+Canva hunt: `canva.com/design user:aa0968111723-prog` = parsers/fixtures/CMS copy. Featured product repos: no public `canva.com/design/DAG…` share URL (only `duigao` `canva-contract.test.ts`). Canva MCP `needsAuth`; not faked connected. `/d/` stays honest fallback. No blank iframe on Folio Canva tab.
+
+### What got more operable (Play tab)
+
+| Work | Before (still-static leftover) | Now operable |
+|---|---|---|
+| AI Director OS | numbered pipeline + source links | Click nodes 專案→世界觀→素材→生成→分鏡→審核→交付; create project, write worldview, pick assets, fake-gen (no Fal key), reorder shots, approve/reject, pack. Cut summary persists. SVG nodes have a 44px hit rect. Honesty: 作品集互動展示. Stored CMS strip still prints 審批 on published rows; catalog + cut chrome use 審核. |
+| FrameLab | scrub + onion/compare | rAF play 8fps, Space/play, R / 「只修這一窗」 linear-blend neighbors (`repairProblemFrame`); problem-frame chrome; not Wan/RIFE |
+| Poster Vision AI | sample + analyze | Heatmap toggle, clickable regions with per-region luma/contrast, calc limits + 160px downsample badge (pixel estimate, not eye-tracking) |
+| PLANFORM | iso + drag objects | Plan/iso toggle (2D-first under 640px), floor-drag rotate, numbered circulation stops, click booths for use/size; no code-compliance claim |
+| 對稿 | click-to-pin + versions | Annotation layer on/off, select/delete pins (44px), version switch, compare |
+| Folio | walkthrough SVGs | One live demo document: canvas click-places text, artboard switch, commands write, MCP step dry-run, audit from the same doc. Cover + 在 Canva 開啟; 0 iframes |
+| Hermes | keyword chat | Ready probe (disconnected), MCP chips Lumen/FrameLab/對稿/PLANFORM/Atlas → real `docs/*.md` paths; never calls out |
+| TKU Zen AI | type a line / suggestions | Local engine replies + 4-4-6 breath cycle (`data-zen-breath`); labeled not a cloud LLM |
+
+### Original 10 (unchanged completeness)
+
+Keep OPEN. Owner public Canva DAG, Connect, human Google as `aa0968111723@gmail.com`, `GITHUB_READ_TOKEN`, Notion, Folio/Zen **product** operation shots, Drive media still required. This cycle did not invent any of those.
+
+### Gates this cycle (proven at `370aa07`)
+
+- `npm run typecheck` pass
+- `npm test` pass (scripts 210 + src 260, fail 0; admin session E2E ok; admin live E2E ok — bearer `grok-auth.bearer-token`, no `__Host-` on http)
+- `npm run lint` pass (0 errors, 3 existing warnings: LocaleProvider / use-current-user)
+- `npm run build` pass (after later process-map hit-rect edit)
+- `npm run check:auth` pass (dev and build agree: sign-in on)
+- `sh /workspace/startup.sh` → `npm run dev` via `scripts/with-app-env.mjs` on `0.0.0.0:8080` (200); left up
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no overflow; empty console/page errors; no brand/auth warnings
+- `npm run preview:restart` (`127.0.0.1:8081`) vs baseline: `divergesFromBaseline: false`, same bodyTextHash; preview stopped after QA
+- Canva MCP: `needsAuth`. No real public DAG to wire.
+
+### Interactive QA this cycle (agent-browser)
+
+- AI Director: cut `專案：示範剪輯 / 世界觀：茶會世界觀 / 素材：角色卡 / 假生成靜幀 / approved / 示範交付包.zip`; SVG `[data-process-node=storyboard]` switches studio
+- FrameLab: F6 repaired `data-frame-repaired=true`; play on via JS click
+- Poster Vision: 3 regions, heatmap off, center region 高亮 64% / 對比 73
+- PLANFORM: iso→plan, circulation 入座, 報到桌 use/size
+- 對稿: pin select + annotation layer off hides pins
+- Folio: canvas place wrote a node; command applied; MCP step `data-folio-write=dry-run`; Canva tab 0 iframes
+- Hermes: tools `lumen framelab duigao planform atlas`; ready → disconnected; Atlas path `docs/ATLAS_MCP.md`
+- Zen: suggestion 考試好有壓力 + breath `in`
+- Home: 5 hubs, 8 work cards, light studio, no overflow
+- ManagePullRequest: **not in this environment**. Draft PR create may 403; parent SHA `370aa070cb6e6fa9dd7d0c4886d5c2b866677ded`
+
+---
+
+## Prior cycle (2026-09-17, after PRs #2 / #3 / #4 merged)
 
 PRs #2, #3, #4 on `aa0968111723-prog/bruce23` merged in that order. `origin/main` tip audited: `89e9111` (merge of PR #4). Parents: `131d0d6` (PR #3) + `94eaf85` (PR #4 tip). Tree of `origin/main` **equals** PR #4 / leftover-hunt `9f29b39` (`183e342`). Winning CMS is `src/lib/cms`. No leftover `src/lib/portfolio` on main. Public site does not import it.
 
@@ -18,7 +83,7 @@ New branch: `cursor/portfolio-cms-main-cfe4` from up-to-date `origin/main`. Do n
 - Catalog paths re-checked against live GitHub HEAD (FrameLab `context-engine.ts` / `execute.ts`, canva2 editor files, ai_os services, hermes `lib/server/canva.ts`, zen.ts, poster vision, planform core, duigao RoomWorkspace). Recursive trees not truncated (28–2832 entries).
 - GitHub `search_code` `canva.com/design user:aa0968111723-prog`: parsers/fixtures only. **No real public DAG.** Healing-studio `/d/` shorts only. Canva MCP `needsAuth`; not faked connected. Drive private files not published. `project-manifest.json` `publicDesignIds: []`.
 
-### CODE shipped this cycle (honest GitHub empty/stale gap)
+### CODE shipped that cycle (honest GitHub empty/stale gap)
 
 - `fetchPublicRepo` backfills catalog `keepPaths` (and `README.md`) from GitHub contents when the recursive tree omitted them. 404 is not invented. Failed recursive tree still leaves `fileTree` unset so a stored tree is not replaced with a keepPath-only stub.
 - `applyGithubSync` will not replace a stored non-empty tree with `[]`. That case is marked `stale` so hydrate v6 retries.
@@ -41,7 +106,7 @@ New branch: `cursor/portfolio-cms-main-cfe4` from up-to-date `origin/main`. Do n
 
 Should parent mark goal complete? **KEEP OPEN.** Owner public Canva DAG, Connect, human Google as `aa0968111723@gmail.com`, `GITHUB_READ_TOKEN`, Notion, Folio/Zen operation shots, Drive media are still required by the original ask.
 
-### Gates this cycle (proven at `651121c`)
+### Gates that cycle (proven at `651121c`)
 
 - `npm run typecheck` pass
 - `npm test` pass (scripts 210 + src 258, fail 0; admin session E2E ok; admin live E2E ok — bearer `grok-auth.bearer-token`, no `__Host-` on http)
@@ -53,7 +118,7 @@ Should parent mark goal complete? **KEEP OPEN.** Owner public Canva DAG, Connect
 - `npm run preview:restart` (`127.0.0.1:8081`) vs baseline: `divergesFromBaseline: false`, same bodyTextHash
 - Canva MCP this environment: `needsAuth`; not faked connected. GitHub `search_code` `canva.com/design/` for `user:aa0968111723-prog`: parsers/fixtures/copy only — **no real public DAG to wire**
 
-### Interactive QA this cycle (agent-browser vs live preview)
+### Interactive QA that cycle (agent-browser vs live preview)
 
 - Home: 1 `[data-luminous-shell]`, 5 constellation hubs (`image` `video` `space` `poster` `interactive`), light studio `rgb(247, 251, 255)`, zh headline, no overflow
 - Space hub filter: PLANFORM only in the constellation (plus 互動 hub), list card PLANFORM
