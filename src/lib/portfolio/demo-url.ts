@@ -1,5 +1,16 @@
 const BLOCKED = new Set(["javascript:", "data:", "blob:", "file:"]);
 
+export function isSafeHttpsUrl(input: string | null | undefined): boolean {
+  if (!input) return false;
+  try {
+    const url = new URL(input);
+    if (BLOCKED.has(url.protocol.toLowerCase())) return false;
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export function isPublicHttpsUrl(input: string | null | undefined): boolean {
   if (!isSafeHttpsUrl(input)) return false;
   const url = new URL(input!);

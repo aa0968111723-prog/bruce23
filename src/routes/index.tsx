@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Github } from "lucide-react";
 import { ExploreField } from "@/components/explore/ExploreField";
 import { LightField } from "@/components/site/LightField";
+import { MediaFrame } from "@/components/site/MediaFrame";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { processSteps, modalities } from "@/content/site";
 import { getPublicSiteFn, listPublicProjectsFn } from "@/lib/portfolio/public-fns";
@@ -26,24 +26,17 @@ function Home() {
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
           <div>
             <p className="text-sm font-medium tracking-wide text-mint-deep">
-              {siteContent.profile.nameEn} · {siteContent.profile.person}
+              {site.nameEn} · {site.person}
             </p>
             <h1 className="mt-4 max-w-xl font-display text-4xl font-semibold text-ink sm:text-5xl lg:text-6xl">
-              {siteContent.profile.headline}
+              {site.headline}
             </h1>
             <p className="mt-5 max-w-lg text-base text-muted sm:text-lg">{site.subhead}</p>
             <p className="mt-3 max-w-lg text-sm text-ink/80">{site.narrative}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#explore"
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card"
-              >
-                開始探索
-                <ArrowRight className="size-4" />
-              </a>
               <Link
                 to="/work"
-                className="inline-flex min-h-11 items-center rounded-full bg-surface px-6 text-sm font-semibold text-ink shadow-card"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-6 text-sm font-semibold text-primary-foreground shadow-card transition-transform duration-150 active:scale-[0.96]"
               >
                 看精選作品
                 <ArrowRight className="size-4" />
@@ -58,13 +51,15 @@ function Home() {
           </div>
           <div className="relative mx-auto w-full max-w-lg">
             <div className="float-card overflow-hidden rounded-2xl bg-surface p-1.5">
-              <img
-                src="/media/hero/light-lab.jpg"
-                alt="光域 AI 創作實驗室：晨光中漂浮的玻璃展品卡片"
-                className="aspect-[16/10] w-full object-cover"
-                width={1792}
-                height={1008}
-              />
+              <div className="overflow-hidden rounded-[1.15rem]">
+                <img
+                  src="/media/hero/light-lab.jpg"
+                  alt="光域 AI 創作實驗室：晨光中漂浮的玻璃展品卡片"
+                  className="aspect-[16/10] w-full object-cover"
+                  width={1792}
+                  height={1008}
+                />
+              </div>
             </div>
             <p className="mt-3 text-center text-xs text-muted">作品像漂在光場裡的展品。圖為工作室視覺，不是截圖。</p>
           </div>
@@ -145,7 +140,7 @@ function Home() {
           <div>
             <h2 className="font-display text-3xl font-semibold">公開簡介</h2>
             <p className="mt-3 max-w-xl text-sm text-muted">
-              {siteContent.profile.role}。GitHub 是專案真實性來源。本站不放電話、住址或內部帳號。
+              {site.role}。GitHub 是專案真實性來源。本站不放電話、住址或內部帳號。
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -159,15 +154,6 @@ function Home() {
           </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl bg-surface p-4 shadow-card">
-      <p className="text-xs font-medium text-muted">{label}</p>
-      <p className="mt-1 text-sm font-medium">{value}</p>
     </div>
   );
 }
