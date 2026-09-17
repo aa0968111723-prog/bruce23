@@ -565,8 +565,14 @@ export async function applyGithubSync(
   await insertRevision(sql, id, current, "github-sync", actor);
   const incoming = githubIncomingFromFetch(result, current.github_url ?? "");
   const keepReadme = incoming.github_readme === undefined ? current.github_readme : incoming.github_readme;
+  const incomingTree = incoming.github_file_tree;
+  const currentTree = current.github_file_tree;
+  const emptyIncoming = Array.isArray(incomingTree) && incomingTree.length === 0;
   const keepTree =
-    incoming.github_file_tree === undefined ? current.github_file_tree : incoming.github_file_tree;
+    incomingTree === undefined || (emptyIncoming && (currentTree?.length ?? 0) > 0)
+      ? currentTree
+      : incomingTree;
+  const wipedTree = emptyIncoming && (currentTree?.length ?? 0) > 0;
   const keepLang =
     incoming.github_languages === undefined ? current.github_languages : incoming.github_languages;
   const keepTopics = incoming.github_topics === undefined ? current.github_topics : incoming.github_topics;
@@ -586,7 +592,7 @@ export async function applyGithubSync(
       incoming.github_owner,
       incoming.github_repo,
       incoming.github_branch?.trim() ? incoming.github_branch : current.github_branch,
-      incoming.github_sync_status,
+      wipedTree && incoming.github_sync_status === "verified" ? "stale" : incoming.github_sync_status,
       jsonb(incoming.github_metadata),
       keepReadme,
       jsonb(keepTree ?? null),

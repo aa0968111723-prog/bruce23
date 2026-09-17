@@ -531,6 +531,78 @@ describe("cms persistence", () => {
     assert.equal(after.github_sync_status, "stale");
   });
 
+  it("does not replace a stored GitHub tree with an empty verified listing", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        fileTree: [
+          { path: "README.md", type: "file", size: 12 },
+          { path: "src/lib/domain/context-engine.ts", type: "file", size: 40 },
+        ],
+      },
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        fileTree: [],
+      },
+      "admin-1",
+    );
+    const kept = await getAdminProject(sql, created.id);
+    assert.ok(kept.github_file_tree?.some((item) => item.path === "README.md"));
+    assert.ok(kept.github_file_tree?.some((item) => item.path === "src/lib/domain/context-engine.ts"));
+    assert.equal(kept.github_sync_status, "stale");
+  });
+
   it("updates canva_share_url from an integrations-style save and rejects evil.com", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(sql, sample(), "admin-1");

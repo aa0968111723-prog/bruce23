@@ -1,4 +1,10 @@
-import { parseGithubUrl, summarizeReadme, limitGithubTree, type GithubTreeNode } from "./parse.ts";
+import {
+  parseGithubUrl,
+  summarizeReadme,
+  limitGithubTree,
+  mergeGithubTreeNodes,
+  type GithubTreeNode,
+} from "./parse.ts";
 import type { IntegrationStatus } from "../cms/status.ts";
 
 export type GithubFetchResult = {
@@ -249,10 +255,28 @@ export async function fetchPublicRepo(
   }
   const treeOk = treeRes.status >= 200 && treeRes.status < 300 && treeRes.json && typeof treeRes.json === "object";
   if (treeOk) {
-    const tree = (treeRes.json as { tree?: Array<{ path: string; type: string; size?: number }> }).tree;
+    const payload = treeRes.json as {
+      tree?: Array<{ path: string; type: string; size?: number }>;
+    };
+    const tree = payload.tree;
     fileTree = Array.isArray(tree)
       ? limitGithubTree(tree, { maxEntries: 80, maxDepth: 4, keepPaths: options.keepPaths })
       : [];
+    const keepBackfill = await fetchMissingKeepPaths(owner, repo, defaultBranch, options, fileTree);
+    if (keepBackfill.errorCode === "rate_limited" && fileTree.length === 0) {
+      return {
+        ok: false,
+        status: "failed",
+        error: keepBackfill.error,
+        errorCode: "rate_limited",
+        owner,
+        repo,
+        metadata,
+      };
+    }
+    if (keepBackfill.nodes.length) {
+      fileTree = mergeGithubTreeNodes(fileTree, keepBackfill.nodes);
+    }
   }
 
   const topics = Array.isArray(data.topics) ? data.topics.filter((t): t is string => typeof t === "string") : [];
@@ -271,6 +295,56 @@ export async function fetchPublicRepo(
     latestCommit,
     fileTree,
   };
+}
+
+function githubContentsUrl(owner: string, repo: string, path: string, ref: string): string {
+  const encoded = path
+    .replace(/^\/+/, "")
+    .split("/")
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join("/");
+  return `https://api.github.com/repos/${owner}/${repo}/contents/${encoded}?ref=${encodeURIComponent(ref)}`;
+}
+
+async function fetchMissingKeepPaths(
+  owner: string,
+  repo: string,
+  branch: string,
+  options: GithubClientOptions,
+  present: GithubTreeNode[],
+): Promise<{ nodes: GithubTreeNode[]; errorCode?: GithubFetchResult["errorCode"]; error?: string }> {
+  const have = new Set(present.map((node) => node.path));
+  const wanted = [...new Set([...(options.keepPaths ?? []), "README.md"])]
+    .map((path) => path.replace(/^\/+/, ""))
+    .filter(Boolean);
+  const nodes: GithubTreeNode[] = [];
+  for (const path of wanted) {
+    if (have.has(path)) continue;
+    const res = await fetchJson(
+      githubContentsUrl(owner, repo, path, branch),
+      options,
+      `contents:${owner}/${repo}:${branch}:${path}`,
+    );
+    if (res.errorCode === "rate_limited") {
+      return { nodes, errorCode: "rate_limited", error: res.error };
+    }
+    if (res.status === 404) continue;
+    if (res.status < 200 || res.status >= 300 || !res.json || typeof res.json !== "object" || Array.isArray(res.json)) {
+      continue;
+    }
+    const data = res.json as { type?: string; path?: string; size?: number };
+    if (data.type !== "file" && data.type !== "dir") continue;
+    const resolved = typeof data.path === "string" && data.path ? data.path.replace(/^\/+/, "") : path;
+    if (resolved !== path) continue;
+    have.add(resolved);
+    nodes.push({
+      path: resolved,
+      type: data.type === "dir" ? "dir" : "file",
+      size: typeof data.size === "number" ? data.size : undefined,
+    });
+  }
+  return { nodes };
 }
 
 function wrapRawAccept(fetchImpl?: typeof fetch): typeof fetch {

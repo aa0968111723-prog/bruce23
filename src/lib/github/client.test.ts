@@ -282,4 +282,80 @@ describe("github client honesty", () => {
     assert.ok(result.fileTree?.some((item) => item.path === "lib/server/canva.ts"));
     assert.ok(result.fileTree?.some((item) => item.path === "src/lib/domain/nested/deep.ts"));
   });
+
+  it("backfills catalog keepPaths from contents when the recursive tree omitted them", async () => {
+    const calls: string[] = [];
+    const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/hermes-console", {
+      keepPaths: ["lib/server/canva.ts"],
+      fetchImpl: async (input) => {
+        const url = String(input);
+        calls.push(url);
+        if (url.includes("/readme")) return new Response("# Hermes", { status: 200 });
+        if (url.includes("/languages")) return new Response("{}", { status: 200 });
+        if (url.includes("/commits")) return new Response("[]", { status: 200 });
+        if (url.includes("/git/trees")) {
+          return new Response(
+            JSON.stringify({
+              truncated: true,
+              tree: [{ path: "README.md", type: "blob", size: 12 }],
+            }),
+            { status: 200 },
+          );
+        }
+        if (url.includes("/contents/lib/server/canva.ts")) {
+          return new Response(
+            JSON.stringify({ type: "file", path: "lib/server/canva.ts", size: 40 }),
+            { status: 200 },
+          );
+        }
+        if (url.includes("/contents/")) return new Response("missing", { status: 404 });
+        return new Response(
+          JSON.stringify({
+            name: "hermes-console",
+            description: "console",
+            private: false,
+            default_branch: "main",
+            html_url: "https://github.com/aa0968111723-prog/hermes-console",
+            topics: [],
+          }),
+          { status: 200 },
+        );
+      },
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.status, "verified");
+    assert.ok(result.fileTree?.some((item) => item.path === "README.md"));
+    assert.ok(result.fileTree?.some((item) => item.path === "lib/server/canva.ts"));
+    assert.ok(calls.some((url) => url.includes("/contents/lib/server/canva.ts")));
+  });
+
+  it("does not invent keepPaths that GitHub contents cannot find", async () => {
+    const result = await fetchPublicRepo("https://github.com/aa0968111723-prog/FrameLab", {
+      keepPaths: ["src/does-not-exist.ts"],
+      fetchImpl: async (input) => {
+        const url = String(input);
+        if (url.includes("/readme")) return new Response("# FrameLab", { status: 200 });
+        if (url.includes("/languages")) return new Response("{}", { status: 200 });
+        if (url.includes("/commits")) return new Response("[]", { status: 200 });
+        if (url.includes("/git/trees")) {
+          return new Response(JSON.stringify({ tree: [] }), { status: 200 });
+        }
+        if (url.includes("/contents/")) return new Response("missing", { status: 404 });
+        return new Response(
+          JSON.stringify({
+            name: "FrameLab",
+            description: "demo",
+            private: false,
+            default_branch: "main",
+            html_url: "https://github.com/aa0968111723-prog/FrameLab",
+            topics: [],
+          }),
+          { status: 200 },
+        );
+      },
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.fileTree?.some((item) => item.path === "src/does-not-exist.ts"), false);
+    assert.equal(result.fileTree?.some((item) => item.path.includes("DAG")), false);
+  });
 });

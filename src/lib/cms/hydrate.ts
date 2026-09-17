@@ -9,7 +9,7 @@ import { catalogSourcePaths } from "../experiences/catalog.ts";
 import { parseCanvaDesign } from "../canva/parse.ts";
 
 export const GITHUB_HYDRATE_KEY = "github_hydrate";
-export const GITHUB_HYDRATE_VERSION = "5";
+export const GITHUB_HYDRATE_VERSION = "6";
 export const GITHUB_STALE_MS = 6 * 60 * 60 * 1000;
 export const CANVA_SHORTLINK_HYDRATE_KEY = "canva_shortlink_hydrate";
 export const CANVA_SHORTLINK_HYDRATE_VERSION = "3";

@@ -550,7 +550,7 @@ describe("frontend contract", () => {
     assert.match(adminFn, /catalogSourcePaths/);
     assert.match(adminFn, /fetchGithub\(sql, project.github_url, project.slug\)/);
     const hydrateSrc = readFileSync(new URL("../../../src/lib/cms/hydrate.ts", import.meta.url), "utf8");
-    assert.match(hydrateSrc, /GITHUB_HYDRATE_VERSION = "5"/);
+    assert.match(hydrateSrc, /GITHUB_HYDRATE_VERSION = "6"/);
     assert.match(hydrateSrc, /githubSyncIsStale/);
     assert.match(hydrateSrc, /keepPaths: catalogSourcePaths\(row.slug\)/);
     const parseSrc = readFileSync(new URL("../../../src/lib/github/parse.ts", import.meta.url), "utf8");

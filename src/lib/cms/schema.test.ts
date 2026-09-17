@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { parseGithubUrl, limitGithubTree, summarizeReadme } from "../github/parse.ts";
+import { parseGithubUrl, limitGithubTree, mergeGithubTreeNodes, summarizeReadme } from "../github/parse.ts";
 import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
 import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
 import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema, parseProjectPatch } from "./schema.ts";
@@ -116,6 +116,20 @@ describe("readme and rate-limit states", () => {
     );
     assert.equal(dropped.some((item) => item.path === "lib/server/canva.ts"), false);
     assert.equal(dropped.some((item) => item.path === "src/lib/domain/nested/deep.ts"), false);
+  });
+
+  it("merges recovered keepPaths onto a limited GitHub tree without inventing paths", () => {
+    const merged = mergeGithubTreeNodes(
+      [{ path: "README.md", type: "file", size: 12 }],
+      [
+        { path: "lib/server/canva.ts", type: "file", size: 40 },
+        { path: "README.md", type: "file", size: 99 },
+      ],
+    );
+    assert.equal(merged[0]?.path, "README.md");
+    assert.equal(merged[0]?.size, 12);
+    assert.ok(merged.some((item) => item.path === "lib/server/canva.ts"));
+    assert.equal(merged.filter((item) => item.path === "README.md").length, 1);
   });
 });
 

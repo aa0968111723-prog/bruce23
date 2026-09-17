@@ -130,6 +130,21 @@ export function limitGithubTree(
   const rest = [...high, ...low.slice(0, MAX_LOW_VALUE_ENTRIES)].filter((item) => !pinnedSeen.has(item.path));
   // Catalog source paths stay even if they would otherwise exceed maxEntries.
   const limited = [...pinned, ...rest].slice(0, Math.max(maxEntries, pinned.length));
-  limited.sort((a, b) => treeScore(b.path) - treeScore(a.path) || a.path.localeCompare(b.path));
-  return limited;
+  return sortGithubTree(limited);
+}
+
+export function mergeGithubTreeNodes(base: GithubTreeNode[], extra: GithubTreeNode[]): GithubTreeNode[] {
+  const seen = new Set(base.map((node) => node.path));
+  const out = [...base];
+  for (const node of extra) {
+    const path = node.path.replace(/^\/+/, "");
+    if (!path || seen.has(path)) continue;
+    seen.add(path);
+    out.push({ ...node, path });
+  }
+  return sortGithubTree(out);
+}
+
+function sortGithubTree(nodes: GithubTreeNode[]): GithubTreeNode[] {
+  return [...nodes].sort((a, b) => treeScore(b.path) - treeScore(a.path) || a.path.localeCompare(b.path));
 }
