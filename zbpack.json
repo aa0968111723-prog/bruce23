@@ -1,0 +1,4 @@
+{
+  "build_command": "NITRO_PRESET=node-server npm run build",
+  "start_command": "HOST=0.0.0.0 node .output/server/index.mjs"
+}
