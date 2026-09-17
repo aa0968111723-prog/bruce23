@@ -37,7 +37,7 @@ describe("portfolio operate helpers", () => {
     const clicked = placed.find((board) => board.id === "board-a")?.nodes.find((node) => node.id === "n-click");
     assert.equal(clicked?.x, 61);
     assert.equal(clicked?.y, 44);
-    const long = applyFolioCommand(start, "board-b", "insert-text", "超長標題溢出", "n-long");
+    const long = applyFolioCommand(start, "board-b", "insert-text", "超長標題溢出了", "n-long");
     assert.equal(folioAudit(long.find((board) => board.id === "board-b")).overflow, true);
   });
 });

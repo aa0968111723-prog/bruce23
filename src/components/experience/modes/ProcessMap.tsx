@@ -84,15 +84,25 @@ export function ProcessMap({ project }: { project: PublicProject }) {
                   className="stroke-mint"
                   strokeWidth="2"
                   opacity={reduced ? 0.4 : 1}
+                  pointerEvents="none"
                 />
               ) : null}
+              <rect
+                x={x - 22}
+                y="8"
+                width="44"
+                height="44"
+                fill="transparent"
+                data-process-index={index + 1}
+                data-process-node={node.id}
+                onClick={() => setActive(node.id)}
+              />
               <circle
                 cx={x}
                 cy="30"
                 r={selected ? 14 : 11}
                 className={selected ? "fill-mint" : "fill-surface"}
-                data-process-index={index + 1}
-                data-process-node={node.id}
+                pointerEvents="none"
               />
               <text
                 x={x}
@@ -102,6 +112,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
                 className={selected ? "fill-primary-foreground" : "fill-ink"}
                 fontSize="11"
                 fontWeight="600"
+                pointerEvents="none"
               >
                 {index + 1}
               </text>
@@ -111,6 +122,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
                 textAnchor="middle"
                 className={selected ? "fill-ink" : "fill-muted"}
                 fontSize="8"
+                pointerEvents="none"
               >
                 {node.stage}
               </text>
