@@ -271,14 +271,14 @@ export function ProjectForm({
       <fieldset className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card">
         <legend className="font-display text-lg font-semibold">GitHub / Canva / Demo</legend>
         <Field label="GitHub URL">
-          <input className="input" value={value.githubUrl ?? ""} onChange={(e) => patch({ githubUrl: e.target.value || undefined })} />
+          <input className="input" value={value.githubUrl ?? ""} onChange={(e) => patch({ githubUrl: e.target.value || null })} />
         </Field>
         <label className="flex min-h-11 items-center gap-2 text-sm">
           <input type="checkbox" checked={value.githubSyncEnabled} onChange={(e) => patch({ githubSyncEnabled: e.target.checked })} />
           允許同步技術 metadata
         </label>
         <Field label="Live Demo URL">
-          <input className="input" value={value.liveDemoUrl ?? ""} onChange={(e) => patch({ liveDemoUrl: e.target.value || undefined })} />
+          <input className="input" value={value.liveDemoUrl ?? ""} onChange={(e) => patch({ liveDemoUrl: e.target.value || null })} />
         </Field>
         <Field label="Demo 標籤">
           <input className="input" value={value.liveDemoLabel ?? ""} onChange={(e) => patch({ liveDemoLabel: e.target.value })} />
@@ -302,7 +302,7 @@ export function ProjectForm({
           />
         </Field>
         <Field label="Canva 嵌入 URL（可選）">
-          <input className="input" value={value.canvaEmbedUrl ?? ""} onChange={(e) => patch({ canvaEmbedUrl: e.target.value || undefined })} />
+          <input className="input" value={value.canvaEmbedUrl ?? ""} onChange={(e) => patch({ canvaEmbedUrl: e.target.value || null })} />
         </Field>
         <Field label="封面圖 URL">
           <input

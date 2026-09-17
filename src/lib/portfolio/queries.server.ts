@@ -23,6 +23,10 @@ export async function ensureSeeded(sql?: Sql): Promise<{ inserted: boolean; proj
     "insert into cms_seed_log (seed_key) values ($1) on conflict (seed_key) do nothing returning seed_key",
     [SEED_KEY],
   );
+  if (!claimed[0]) {
+    const count = await db.query<{ n: number }>("select count(*)::int as n from projects");
+    return { inserted: false, projectCount: count[0]?.n ?? 0 };
+  }
   const site = seedSiteSettings();
   await db.query(
     `insert into site_settings (
@@ -49,23 +53,14 @@ export async function ensureSeeded(sql?: Sql): Promise<{ inserted: boolean; proj
     ],
   );
 
-  if (claimed[0]) {
-    for (const project of seedProjects()) {
-      await insertProjectRow(db, null, project, project.id);
-    }
-    for (const item of seedArchive()) {
-      await insertArchiveRow(db, null, item, item.id);
-    }
-  } else {
-    for (const project of seedProjects()) {
-      await insertProjectRow(db, null, project, project.id, true);
-    }
-    for (const item of seedArchive()) {
-      await insertArchiveRow(db, null, item, item.id, true);
-    }
+  for (const project of seedProjects()) {
+    await insertProjectRow(db, null, project, project.id);
+  }
+  for (const item of seedArchive()) {
+    await insertArchiveRow(db, null, item, item.id);
   }
   const count = await db.query<{ n: number }>("select count(*)::int as n from projects");
-  return { inserted: Boolean(claimed[0]), projectCount: count[0]?.n ?? 0 };
+  return { inserted: true, projectCount: count[0]?.n ?? 0 };
 }
 
 async function insertProjectRow(
