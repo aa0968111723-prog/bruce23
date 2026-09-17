@@ -235,8 +235,8 @@ describe("experience config merge", () => {
       process: ["fallback"],
     });
     assert.ok(walk.length >= 1);
-    assert.match(walk[0] ?? "", /畫布/);
-    assert.match(walk[0] ?? "", /src\/editor\.ts/);
+    assert.ok(walk.some((step) => step.includes("src/editor.ts")));
+    assert.match(walk.find((step) => step.includes("src/editor.ts")) ?? "", /畫布/);
     assert.ok(walk.some((step) => step.includes("artboard-strip") || step.includes("畫板")));
 
     const nodes = howItWorksSteps({
@@ -280,6 +280,12 @@ describe("experience config merge", () => {
       "saved-canvas",
     );
     assert.ok(folio.walkthrough?.some((step) => step.path === "src/components/editor/artboard-strip.tsx"));
+    const folioPaths = (folio.walkthrough ?? []).map((step) => step.path);
+    const artboardAt = folioPaths.indexOf("src/components/editor/artboard-strip.tsx");
+    const canvasAt = folioPaths.indexOf("src/components/editor/canvas-stage.tsx");
+    const commandAt = folioPaths.indexOf("src/components/editor/command-palette.tsx");
+    assert.ok(canvasAt >= 0 && artboardAt > canvasAt);
+    assert.ok(commandAt > artboardAt);
     assert.ok(folio.fileHints?.some((item) => item.path === "src/components/editor/artboard-strip.tsx"));
 
     const frame = mergeExperienceConfig("framelab", {

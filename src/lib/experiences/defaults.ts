@@ -182,12 +182,28 @@ function unionByKey<T>(
 ): T[] | undefined {
   if (fallback == null || fallback.length === 0) return coalesceList(current, fallback);
   if (current == null || current.length === 0) return fallback;
-  const seen = new Set(current.map(keyOf).filter(Boolean));
-  const extras = fallback.filter((item) => {
+  const currentMap = new Map<string, T>();
+  const extras: T[] = [];
+  for (const item of current) {
     const key = keyOf(item);
-    return key !== "" && !seen.has(key);
-  });
-  return extras.length ? [...current, ...extras] : current;
+    if (!key) {
+      extras.push(item);
+      continue;
+    }
+    if (!currentMap.has(key)) currentMap.set(key, item);
+  }
+  const out: T[] = [];
+  const seen = new Set<string>();
+  for (const item of fallback) {
+    const key = keyOf(item);
+    if (!key) continue;
+    out.push(currentMap.get(key) ?? item);
+    seen.add(key);
+  }
+  for (const [key, item] of currentMap) {
+    if (!seen.has(key)) out.push(item);
+  }
+  return extras.length ? [...out, ...extras] : out;
 }
 
 function mergeObject<T extends object>(

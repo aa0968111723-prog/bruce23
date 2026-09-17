@@ -112,8 +112,10 @@ describe("experience playable chrome", () => {
       ],
     });
     const en = overlayExperienceConfig(stored, "ai-director-os", "en");
-    assert.equal(en.processNodes?.[0]?.label, "自訂節點");
-    assert.equal(en.processNodes?.[0]?.githubPath, "server/custom.ts");
+    const custom = en.processNodes?.find((node) => node.id === "only-zh");
+    assert.equal(custom?.label, "自訂節點");
+    assert.equal(custom?.githubPath, "server/custom.ts");
+    assert.ok(en.processNodes?.some((node) => node.id === "project"));
   });
 
   it("prefers a saved locale.en process node label over the dictionary", () => {
@@ -155,8 +157,9 @@ describe("experience playable chrome", () => {
       locale: { en: { processNodes: [{ id: "only-zh", label: "" }] } },
     });
     const emptySaved = overlayExperienceConfig(custom, "ai-director-os", "en");
-    assert.equal(emptySaved.processNodes?.[0]?.label, "自訂節點");
-    assert.equal(emptySaved.processNodes?.[0]?.githubPath, "server/custom.ts");
+    const onlyZh = emptySaved.processNodes?.find((node) => node.id === "only-zh");
+    assert.equal(onlyZh?.label, "自訂節點");
+    assert.equal(onlyZh?.githubPath, "server/custom.ts");
   });
 
   it("does not copy dictionary English into stored locale.en on merge", () => {
