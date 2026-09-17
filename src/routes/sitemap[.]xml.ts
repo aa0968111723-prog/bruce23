@@ -7,11 +7,15 @@ import { sitemapXml } from "@/lib/portfolio/sitemap";
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
         const sql = await getSql();
         await ensureSeeded(sql);
         const projects = await listPublishedProjects(sql);
-        const body = sitemapXml(projects.map((project) => project.slug));
+        const origin = new URL(request.url).origin;
+        const body = sitemapXml(
+          projects.map((project) => project.slug),
+          origin,
+        );
         return new Response(body, {
           headers: { "content-type": "application/xml; charset=utf-8" },
         });

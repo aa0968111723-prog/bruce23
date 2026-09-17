@@ -2,9 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
 import { LightField } from "@/components/site/LightField";
 
+function safeNextPath(next: unknown): string {
+  if (typeof next !== "string") return "/admin";
+  if (!next.startsWith("/") || next.startsWith("//") || next.includes("://")) return "/admin";
+  return next;
+}
+
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search.next === "string" ? search.next : "/admin",
+    next: safeNextPath(search.next),
   }),
   component: Login,
 });

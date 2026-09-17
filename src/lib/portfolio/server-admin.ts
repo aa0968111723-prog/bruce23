@@ -27,6 +27,7 @@ import { canvaConnectMode, hasCanvaCredentials, parseCanvaEmbedCode, parseCanvaU
 import {
   canvaAuthorizeUrl,
   connectAvailability,
+  createCanvaOAuthState,
   exchangeCanvaCode,
   exportCanvaDesignApi,
   loadCanvaTokens,
@@ -123,12 +124,43 @@ export const getAdminProjectRow = createServerFn({ method: "GET" })
     return { project: { ...rowToWrite(row), id: String(row.id) }, row, revisions };
   });
 
+function sanitizeCanvaWrite<T extends { canva_share_url?: string | null; canva_embed_url?: string | null; canva_design_id?: string | null }>(
+  input: T,
+): T {
+  const share = input.canva_share_url;
+  const embed = input.canva_embed_url;
+  if (share) {
+    const parsed = parseCanvaUrl(share);
+    if (!parsed.ok) {
+      throw new Error("Canva 網址無法解析。不會儲存未驗證的網址。");
+    }
+    return {
+      ...input,
+      canva_share_url: parsed.shareUrl ?? share,
+      canva_embed_url: parsed.embedUrl,
+      canva_design_id: parsed.designId ?? input.canva_design_id ?? null,
+    };
+  }
+  if (embed) {
+    const parsed = parseCanvaUrl(embed);
+    if (!parsed.ok) {
+      throw new Error("Canva 網址無法解析。不會儲存未驗證的網址。");
+    }
+    return {
+      ...input,
+      canva_embed_url: parsed.embedUrl,
+      canva_design_id: parsed.designId ?? input.canva_design_id ?? null,
+    };
+  }
+  return input;
+}
+
 export const createAdminProject = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((data: unknown) => projectWriteSchema.parse(data))
   .handler(async ({ context, data }) => {
     const { sql, userId } = await requireAdmin(context.userId);
-    const created = await createProject(sql, data, userId);
+    const created = await createProject(sql, sanitizeCanvaWrite(data), userId);
     return created;
   });
 
@@ -139,7 +171,13 @@ export const saveAdminProject = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const { sql, userId } = await requireAdmin(context.userId);
-    const saved = await updateProject(sql, data.id, data.project, userId, "draft-save");
+    const saved = await updateProject(
+      sql,
+      data.id,
+      sanitizeCanvaWrite(data.project),
+      userId,
+      "draft-save",
+    );
     return saved;
   });
 
@@ -311,7 +349,7 @@ export const testCanvaEmbed = createServerFn({ method: "POST" })
           canva_share_url: parsed.shareUrl,
           canva_embed_url: parsed.embedUrl,
           canva_design_id: parsed.designId ?? null,
-          canva_status: "verified",
+          canva_status: "pending",
           canva_last_synced_at: new Date().toISOString(),
           canva_error: null,
         },
@@ -436,15 +474,41 @@ export const updateAdminIntegration = createServerFn({ method: "POST" })
     const { id, ...rest } = data;
     const patch: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(rest)) {
-      if (value !== undefined) patch[key] = value;
+      if (
+        value !== undefined &&
+        key !== "canva_share_url" &&
+        key !== "canva_embed_url"
+      ) {
+        patch[key] = value;
+      }
     }
-    if (data.canva_share_url) {
-      const parsed = parseCanvaUrl(data.canva_share_url);
-      if (parsed.ok) {
+    if (data.canva_share_url !== undefined) {
+      if (!data.canva_share_url) {
+        patch.canva_share_url = null;
+        patch.canva_embed_url = null;
+        patch.canva_design_id = null;
+        patch.canva_status = "not_configured";
+      } else {
+        const parsed = parseCanvaUrl(data.canva_share_url);
+        if (!parsed.ok) {
+          throw new Error("Canva 網址無法解析。不會儲存未驗證的網址。");
+        }
         patch.canva_share_url = parsed.shareUrl;
         patch.canva_embed_url = parsed.embedUrl;
         patch.canva_design_id = parsed.designId ?? null;
-        patch.canva_status = "verified";
+        patch.canva_status = "pending";
+      }
+    } else if (data.canva_embed_url !== undefined) {
+      if (!data.canva_embed_url) {
+        patch.canva_embed_url = null;
+      } else {
+        const parsed = parseCanvaUrl(data.canva_embed_url);
+        if (!parsed.ok) {
+          throw new Error("Canva 網址無法解析。不會儲存未驗證的網址。");
+        }
+        patch.canva_embed_url = parsed.embedUrl;
+        patch.canva_design_id = parsed.designId ?? null;
+        patch.canva_status = "pending";
       }
     }
     return applyGithubPatch(sql, id, patch, userId, "integration-update");
@@ -453,7 +517,7 @@ export const updateAdminIntegration = createServerFn({ method: "POST" })
 export const startCanvaConnect = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const { userId } = await requireAdmin(context.userId);
+    const { userId, sql } = await requireAdmin(context.userId);
     const availability = connectAvailability();
     if (availability.mode === "public_embed") return availability;
     if (availability.status === "failed") return availability;
@@ -473,13 +537,14 @@ export const startCanvaConnect = createServerFn({ method: "POST" })
       };
     }
     const redirectUri = `${origin.replace(/\/$/, "")}/api/admin/canva/callback`;
+    const state = await createCanvaOAuthState(sql, userId);
     return {
       mode: "connect_api" as const,
       status: "pending" as const,
       authorizeUrl: canvaAuthorizeUrl({
         clientId,
         redirectUri,
-        state: userId,
+        state,
       }),
     };
   });

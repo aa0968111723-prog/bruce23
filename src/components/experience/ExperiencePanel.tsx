@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Github, BookOpen, ExternalLink } from "lucide-react";
 import type { PublicProject } from "@/lib/portfolio/public";
 import { EXPERIENCE_TABS } from "@/lib/portfolio/constants";
@@ -46,8 +46,13 @@ function TryNow({ project }: { project: PublicProject }) {
 
 export function ExperiencePanel({ project }: { project: PublicProject }) {
   const [tab, setTab] = useState(0);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const { locale } = useLocale();
   const current = EXPERIENCE_TABS[tab];
+  const selectTab = (index: number) => {
+    setTab(index);
+    queueMicrotask(() => tabRefs.current[index]?.focus());
+  };
 
   return (
     <section id="experience" className="rounded-3xl bg-surface p-4 shadow-float sm:p-6">
@@ -59,7 +64,7 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
           const next = moveTabIndex(tab, event.key, EXPERIENCE_TABS.length);
           if (next !== tab) {
             event.preventDefault();
-            setTab(next);
+            selectTab(next);
           }
         }}
       >
@@ -70,11 +75,14 @@ export function ExperiencePanel({ project }: { project: PublicProject }) {
             role="tab"
             aria-selected={tab === index}
             tabIndex={tab === index ? 0 : -1}
+            ref={(node) => {
+              tabRefs.current[index] = node;
+            }}
             className={cn(
               "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium",
               tab === index ? "bg-ink text-bg" : "bg-surface-blue text-muted",
             )}
-            onClick={() => setTab(index)}
+            onClick={() => selectTab(index)}
           >
             {locale === "en" ? item.labelEn : item.labelZh}
           </button>

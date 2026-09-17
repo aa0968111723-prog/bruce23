@@ -253,11 +253,25 @@ export async function verifyLiveDemo(url: string): Promise<{
     return { status: "failed", httpStatus: null, error: "url_not_public_https" };
   }
   try {
-    const response = await fetch(url, {
+    let target = url;
+    let response = await fetch(target, {
       method: "HEAD",
-      redirect: "follow",
+      redirect: "manual",
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
+    const location = response.headers.get("location");
+    if (location && [301, 302, 303, 307, 308].includes(response.status)) {
+      const next = new URL(location, target);
+      if (!isHttpsPublicUrl(next.toString())) {
+        return { status: "failed", httpStatus: response.status, error: "redirect_not_public" };
+      }
+      target = next.toString();
+      response = await fetch(target, {
+        method: "HEAD",
+        redirect: "manual",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+    }
     if (response.status === 404 || response.status === 410) {
       return { status: "unavailable", httpStatus: response.status };
     }
@@ -265,9 +279,9 @@ export async function verifyLiveDemo(url: string): Promise<{
       return { status: "verified", httpStatus: response.status };
     }
     if (response.status === 405) {
-      const getRes = await fetch(url, {
+      const getRes = await fetch(target, {
         method: "GET",
-        redirect: "follow",
+        redirect: "manual",
         signal: AbortSignal.timeout(TIMEOUT_MS),
         headers: { Range: "bytes=0-0" },
       });

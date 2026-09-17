@@ -1,3 +1,4 @@
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { decryptSecret, encryptSecret, tokenKeyFromEnv } from "./crypto.ts";
 import { hasCanvaCredentials } from "./canva.ts";
 import type { Sql } from "./sql.ts";
@@ -66,6 +67,29 @@ export async function exchangeCanvaCode(input: {
       ? Date.now() + json.expires_in * 1000
       : undefined,
   };
+}
+
+export async function createCanvaOAuthState(sql: Sql, userId: string): Promise<string> {
+  const state = randomBytes(24).toString("hex");
+  await sql.query(
+    `insert into integration_secrets (id, kind, ciphertext, updated_by, updated_at)
+     values ($1, 'canva_state', $2, $3, now())
+     on conflict (id) do update set ciphertext=excluded.ciphertext, updated_by=excluded.updated_by, updated_at=now()`,
+    [`canva-state-${userId}`, state, userId],
+  );
+  return state;
+}
+
+export async function consumeCanvaOAuthState(sql: Sql, userId: string, state: string | null): Promise<boolean> {
+  if (!state) return false;
+  const rows = await sql.query<{ ciphertext: string }>(
+    `select ciphertext from integration_secrets where id = $1 and kind = 'canva_state'`,
+    [`canva-state-${userId}`],
+  );
+  const expected = rows[0]?.ciphertext;
+  await sql.query(`delete from integration_secrets where id = $1`, [`canva-state-${userId}`]);
+  if (!expected || expected.length !== state.length) return false;
+  return timingSafeEqual(Buffer.from(expected), Buffer.from(state));
 }
 
 export async function storeCanvaTokens(

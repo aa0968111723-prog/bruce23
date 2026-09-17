@@ -29,7 +29,7 @@ import { containsSecretKey, toPublicProject } from "./public.ts";
 import { seedPortfolio } from "./seed.ts";
 import { createTestSql } from "./test-db.ts";
 import { projectWriteSchema } from "./schema.ts";
-import { zenReply } from "./zen-engine.ts";
+import { detectIntent, zenReply } from "./zen-engine.ts";
 import { analyzePosterPixels } from "./poster-analysis.ts";
 
 function assertAdminFromEmail(email: string | null, allowlistRaw?: string) {
@@ -147,6 +147,9 @@ describe("demo iframe fallback", () => {
     );
     assert.equal(isHttpsPublicUrl("https://ai-os-ten.vercel.app"), true);
     assert.equal(isHttpsPublicUrl("http://127.0.0.1/secret"), false);
+    assert.equal(isHttpsPublicUrl("https://172.16.0.8/secret"), false);
+    assert.equal(isHttpsPublicUrl("https://169.254.1.1/meta"), false);
+    assert.equal(isHttpsPublicUrl("javascript:alert(1)"), false);
   });
 });
 
@@ -311,6 +314,12 @@ describe("zen engine", () => {
     assert.equal(a.intent, "stress");
     assert.deepEqual(a, b);
   });
+
+  it("does not treat English substrings as greetings", () => {
+    assert.equal(detectIntent("I think this is hard"), "reflection");
+    assert.equal(detectIntent("hi there"), "greeting");
+    assert.equal(detectIntent("你好"), "greeting");
+  });
 });
 
 describe("poster analysis", () => {
@@ -389,9 +398,12 @@ describe("public sitemap, json-ld, i18n, overflow", () => {
       "admin-1",
     );
     const listed = await listPublishedProjects(sql);
-    const xml = sitemapXml(listed.map((item) => item.slug));
+    const xml = sitemapXml(
+      listed.map((item) => item.slug),
+      "https://example.com",
+    );
     assert.equal(xml.includes("/work/hidden-draft-case"), false);
-    assert.ok(xml.includes("/work/framelab"));
+    assert.ok(xml.includes("https://example.com/work/framelab"));
     assert.equal(creativeWorkJsonLd(null), null);
     const jsonLd = creativeWorkJsonLd(listed[0]);
     assert.ok(jsonLd);

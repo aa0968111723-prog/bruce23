@@ -45,9 +45,15 @@ function pick<T>(items: readonly T[], seed: number): T {
   return items[index];
 }
 
+function matchesToken(text: string, token: string): boolean {
+  if (/[\u4e00-\u9fff]/.test(token)) return text.includes(token);
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}(?![a-z0-9])`, "i").test(text);
+}
+
 export function detectIntent(message: string): ZenIntent {
   const text = message.toLowerCase();
-  const has = (...words: string[]) => words.some((word) => text.includes(word));
+  const has = (...words: string[]) => words.some((word) => matchesToken(text, word));
   if (has("bye", "goodbye", "see you", "farewell", "再見", "掰")) return "farewell";
   if (has("hi", "hello", "hey", "morning", "greetings", "你好", "哈囉")) return "greeting";
   if (has("stress", "anxious", "anxiety", "overwhelm", "panic", "worried", "壓力", "焦慮", "煩"))

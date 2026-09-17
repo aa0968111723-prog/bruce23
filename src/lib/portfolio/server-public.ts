@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createMiddleware, createServerFn } from "@tanstack/react-start";
 import { getSql } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth/verify.server";
 import {
@@ -18,9 +18,24 @@ import { ensureSeeded } from "./seed.ts";
 import { previewQuerySchema, slugSchema } from "./schema.ts";
 import { fetchGithubSnapshot } from "./github-client.ts";
 
-export const getViewerFlags = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const user = await getSessionUser();
+type PreviewSession = { bearerToken?: string };
+
+/** Forwards the live-preview bearer without requiring a signed-in user. */
+const previewSessionMiddleware = createMiddleware({ type: "function" })
+  .client(async ({ next }) => {
+    const { getBearerToken } = await import("@/lib/auth/client");
+    return next({ sendContext: { bearerToken: getBearerToken() ?? undefined } });
+  })
+  .server(async ({ next, context }) => {
+    return next({
+      context: { bearerToken: (context as PreviewSession).bearerToken },
+    });
+  });
+
+export const getViewerFlags = createServerFn({ method: "GET" })
+  .middleware([previewSessionMiddleware])
+  .handler(async ({ context }) => {
+    const user = await getSessionUser((context as PreviewSession).bearerToken);
     if (!user) {
       return { signedIn: false, isAdmin: false, adminConfigError: false };
     }
@@ -33,8 +48,7 @@ export const getViewerFlags = createServerFn({ method: "GET" }).handler(
       isAdmin: access.ok,
       adminConfigError: !access.ok && access.reason === "missing_allowlist",
     };
-  },
-);
+  });
 
 export const listPublicProjects = createServerFn({ method: "GET" }).handler(
   async () => {
@@ -58,11 +72,14 @@ export const getPublicProject = createServerFn({ method: "GET" })
       !existing.github_metadata?.name
     ) {
       const snapshot = await fetchGithubSnapshot(sql, String(existing.github_url));
-      if (snapshot.ok && snapshot.incoming.github_metadata.private !== true) {
+      if (snapshot.ok) {
+        const incoming = snapshot.incoming;
         await applyGithubPatch(
           sql,
           String(existing.id),
-          snapshot.incoming,
+          incoming.github_metadata?.private === true
+            ? { github_metadata: { private: true } }
+            : incoming,
           "system-hydrate",
           "github-hydrate",
         );
@@ -74,8 +91,9 @@ export const getPublicProject = createServerFn({ method: "GET" })
   });
 
 export const getPublicProjectPreview = createServerFn({ method: "GET" })
+  .middleware([previewSessionMiddleware])
   .validator((data: unknown) => previewQuerySchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ context, data }) => {
     const sql = await getSql();
     await ensureSeeded(sql);
     if (!data.previewDraft) {
@@ -83,7 +101,7 @@ export const getPublicProjectPreview = createServerFn({ method: "GET" })
       if (project) assertPublicSafe(project);
       return { project, preview: false as const };
     }
-    const user = await getSessionUser();
+    const user = await getSessionUser((context as PreviewSession).bearerToken);
     const access = resolveAdminAccess({
       email: user?.email,
       allowlist: adminAllowlistFromEnv(),

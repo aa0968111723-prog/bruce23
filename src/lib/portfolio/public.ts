@@ -326,7 +326,7 @@ export function toPublicProject(
 ): PublicProject | null {
   if (row.publication_status !== "published") return null;
   const metadata = asGithubMetadata(row.github_metadata) ?? {};
-  const isPrivateRepo = metadata.private === true;
+  const isPrivateRepo = metadata.private !== false;
   const githubUrl = typeof row.github_url === "string" ? row.github_url : null;
 
   const github: PublicGithub | null =

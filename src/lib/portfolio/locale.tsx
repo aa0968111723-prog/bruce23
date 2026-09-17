@@ -9,7 +9,6 @@ import {
 import {
   htmlLang,
   LOCALE_STORAGE_KEY,
-  parseLocale,
   type Locale,
 } from "./i18n";
 
@@ -21,14 +20,40 @@ const LocaleContext = createContext<{
   setLocale: () => undefined,
 });
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("zh");
+export function LocaleProvider({
+  children,
+  defaultLocale = "zh",
+}: {
+  children: ReactNode;
+  defaultLocale?: Locale;
+}) {
+  const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
-    const stored = parseLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY));
-    setLocaleState(stored);
-    document.documentElement.lang = htmlLang(stored);
-  }, []);
+    const storedRaw = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (storedRaw === "en" || storedRaw === "zh") {
+      setLocaleState(storedRaw);
+      document.documentElement.lang = htmlLang(storedRaw);
+      return;
+    }
+    let cancelled = false;
+    void import("./server-public")
+      .then(({ getPublicSite }) => getPublicSite())
+      .then((site) => {
+        if (cancelled) return;
+        const next = site.i18n?.defaultLocale === "en" ? "en" : defaultLocale;
+        setLocaleState(next);
+        document.documentElement.lang = htmlLang(next);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLocaleState(defaultLocale);
+        document.documentElement.lang = htmlLang(defaultLocale);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [defaultLocale]);
 
   const value = useMemo(
     () => ({

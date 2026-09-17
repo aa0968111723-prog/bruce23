@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Maximize2 } from "lucide-react";
 import { SafeFrame } from "./SafeFrame";
 
@@ -20,6 +20,14 @@ export function CanvaBoard({
   const [page, setPage] = useState(0);
   const [full, setFull] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onChange = () => {
+      if (!document.fullscreenElement) setFull(false);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
   const pages = pageIds?.filter(Boolean) ?? [];
   const src = useMemo(() => {
     if (!embedUrl) return null;

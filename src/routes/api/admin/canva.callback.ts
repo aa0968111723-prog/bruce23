@@ -4,6 +4,7 @@ import { getSql } from "@/lib/db";
 import { adminAllowlistFromEnv, resolveAdminAccess } from "@/lib/portfolio/admin";
 import { hasCanvaCredentials } from "@/lib/portfolio/canva";
 import {
+  consumeCanvaOAuthState,
   exchangeCanvaCode,
   storeCanvaTokens,
 } from "@/lib/portfolio/canva-connect";
@@ -30,6 +31,9 @@ export const Route = createFileRoute("/api/admin/canva/callback")({
         const error = url.searchParams.get("error");
         if (!code || error) return toIntegrations("canva=failed");
         try {
+          const sql = await getSql();
+          const stateOk = await consumeCanvaOAuthState(sql, user.id, url.searchParams.get("state"));
+          if (!stateOk) return toIntegrations("canva=failed");
           const clientId = process.env.CANVA_CLIENT_ID?.trim();
           const clientSecret = process.env.CANVA_CLIENT_SECRET?.trim();
           if (!clientId || !clientSecret) return toIntegrations("canva=not_configured");
@@ -40,7 +44,6 @@ export const Route = createFileRoute("/api/admin/canva/callback")({
             clientId,
             clientSecret,
           });
-          const sql = await getSql();
           await storeCanvaTokens(sql, bundle, user.id);
           return toIntegrations("canva=connected");
         } catch {

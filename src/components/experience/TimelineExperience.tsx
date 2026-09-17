@@ -18,8 +18,11 @@ export function TimelineExperience() {
   const [compare, setCompare] = useState(true);
   const frame = FRAMES[playhead];
   const onion = useMemo(
-    () => FRAMES.filter((item) => Math.abs(item.index - playhead) <= 2),
-    [playhead],
+    () =>
+      compare
+        ? FRAMES.filter((item) => Math.abs(item.index - playhead) <= 2)
+        : FRAMES.filter((item) => item.index === playhead),
+    [playhead, compare],
   );
 
   return (

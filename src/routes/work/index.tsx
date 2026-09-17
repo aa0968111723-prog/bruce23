@@ -55,7 +55,7 @@ function WorkIndex() {
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="font-display text-4xl font-semibold">作品總覽</h1>
       <p className="mt-3 max-w-2xl text-muted">
-        只列出已發布作品。依 GitHub 真實儲存庫挑選，草稿不會出現。
+        依 GitHub 真實儲存庫挑選。分類可篩選，狀態沒有寫成已完成的，就還不是已完成。
       </p>
       <div className="mt-8 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="作品分類">
         {workCategories.map((item) => {

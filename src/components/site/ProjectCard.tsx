@@ -1,28 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
-import type { ProjectMedia, ProjectStatus } from "@/content/types";
+import type { Project } from "@/content/types";
 import { MediaFrame } from "./MediaFrame";
 import { StatusBadge } from "./StatusBadge";
-
-export type CardProject = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  summary: string;
-  media: ProjectMedia[];
-  productStatus?: ProjectStatus;
-  status?: ProjectStatus;
-};
 
 export function ProjectCard({
   project,
   featured = false,
 }: {
-  project: CardProject;
+  project: Project;
   featured?: boolean;
 }) {
-  const status = project.productStatus ?? project.status ?? "prototype";
   return (
     <Link
       to="/work/$slug"
@@ -49,7 +37,7 @@ export function ProjectCard({
             <span className="text-xs font-medium tracking-wide text-muted">
               {project.category}
             </span>
-            <StatusBadge status={status} />
+            <StatusBadge status={project.status} />
           </div>
           <div>
             <h3 className="font-display text-xl font-semibold text-ink">
@@ -61,7 +49,7 @@ export function ProjectCard({
             {project.summary}
           </p>
           <span className="inline-flex items-center gap-1 text-sm font-medium text-mint-deep">
-            進入體驗
+            看個案
             <ArrowUpRight className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" />
           </span>
         </div>
