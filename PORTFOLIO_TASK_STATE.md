@@ -2,7 +2,7 @@
 
 Cycle: post-merge integrity vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: 651121ccbc683f186a6b605772513c915d62a63f (code: GitHub keepPath backfill + PGLite test guard). QA recording commit follows.
+HEAD: 8b92460919375e536cb56108a4656b01adf74a58 (QA recording). Code SHA: 651121ccbc683f186a6b605772513c915d62a63f (GitHub keepPath backfill + PGLite test guard).
 
 ## This cycle (2026-09-17, after PRs #2 / #3 / #4 merged)
 
