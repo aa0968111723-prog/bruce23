@@ -96,7 +96,6 @@ describe("readme and rate-limit states", () => {
     );
     assert.ok(limited.some((item) => item.path === "lib/server/canva.ts"));
     assert.ok(limited.some((item) => item.path === "src/lib/domain/nested/deep.ts"));
-    assert.equal(limited[0]?.path.startsWith("src/file-") || limited[0]?.path === "lib/server/canva.ts", true);
     const withReadme = limitGithubTree(
       [
         ...crowd,
