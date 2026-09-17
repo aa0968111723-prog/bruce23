@@ -2,7 +2,7 @@
 
 Cycle: operable ExperiencePanel vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: 370aa070cb6e6fa9dd7d0c4886d5c2b866677ded (operable modes + process-map hit rects). Prior pin: `fc890a7`.
+HEAD: 005a08e8f7b4df862a0cf6ba615ab066e3e1049e (recording). Code SHA: 370aa070cb6e6fa9dd7d0c4886d5c2b866677ded (operable modes + process-map hit rects). Prior pin: `fc890a7`.
 
 ## This cycle (2026-09-17, operable experience deepening)
 
