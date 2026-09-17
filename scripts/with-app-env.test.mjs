@@ -7,6 +7,7 @@ import { test } from "node:test";
 import { promisify } from "node:util";
 import {
   APP_ENV_REL_PATH,
+  applyRuntimeDefaults,
   mergeAppEnv,
   parseAppEnv,
   projectRoot,
@@ -59,8 +60,33 @@ test("an explicit process-env override wins over the file", () => {
   assert.equal(merged.PATH, "/usr/bin");
 });
 
-test("this workspace enables auth via app-env (missing VITE_AUTH_ENABLED)", () => {
-  assert.deepEqual(readAppEnv(projectRoot()), {});
+test("this app ships auth on", () => {
+  assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "true" });
+});
+
+test("does not invent a production admin allowlist", () => {
+  assert.equal(applyRuntimeDefaults({}).PORTFOLIO_ADMIN_EMAILS, undefined);
+  assert.equal(applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "  " }).PORTFOLIO_ADMIN_EMAILS, "  ");
+});
+
+test("local wrapper still sets PORTFOLIO_ADMIN_EMAILS when process env left it blank", async () => {
+  const env = { ...process.env };
+  delete env.PORTFOLIO_ADMIN_EMAILS;
+  delete env.DATABASE_URL;
+  delete env.VERCEL;
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [WRAPPER, process.execPath, "-e", "process.stdout.write(process.env.PORTFOLIO_ADMIN_EMAILS ? 'set' : 'unset')"],
+    { env },
+  );
+  assert.equal(stdout, "set");
+});
+
+test("does not overwrite an explicit PORTFOLIO_ADMIN_EMAILS", () => {
+  assert.equal(
+    applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "other@example.com" }).PORTFOLIO_ADMIN_EMAILS,
+    "other@example.com",
+  );
 });
 
 test("vite loadEnv resolves the wrapped value", () => {
@@ -80,8 +106,7 @@ test("the wrapped command runs with the app env applied", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  // Auth-on workspace: app-env has no VITE_AUTH_ENABLED, so the flag is unset.
-  assert.equal(stdout, "undefined");
+  assert.equal(stdout, "true");
 });
 
 test("the wrapped command sees an explicit override, not the file value", async () => {
@@ -114,6 +139,19 @@ test("a signal-killed command is never reported as success", async () => {
   );
 });
 
+test("wrapper does not set a PGLite file dir for non-vite-dev commands", async () => {
+  const env = { ...process.env };
+  delete env.PGLITE_DATA_DIR;
+  delete env.DATABASE_URL;
+  delete env.VERCEL;
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [WRAPPER, process.execPath, "-e", "process.stdout.write(process.env.PGLITE_DATA_DIR || 'unset')"],
+    { env },
+  );
+  assert.equal(stdout, "unset");
+});
+
 test("the CLI still runs when invoked through a symlinked path", async () => {
   // node realpaths import.meta.url but not process.argv[1], so a raw comparison
   // turns the wrapper into a no-op that exits 0 without starting anything.
@@ -125,5 +163,5 @@ test("the CLI still runs when invoked through a symlinked path", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "undefined");
+  assert.equal(stdout, "true");
 });

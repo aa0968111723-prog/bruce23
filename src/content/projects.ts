@@ -1,6 +1,45 @@
-import type { Project, ProjectCategory, ProjectStatus } from "./types.ts";
+import type { Project, ProjectCategory, ProjectMedia, ProjectStatus, SourceReference } from "./types.ts";
 
 const vis = "工作室視覺轉譯，不是產品截圖。";
+
+function githubExport(
+  slug: string,
+  file: string,
+  alt: string,
+  repo: string,
+  path: string,
+  extra = "",
+): ProjectMedia {
+  return {
+    src: `/media/github-exports/${slug}/${file}`,
+    alt,
+    kind: "image",
+    caption: `公開 GitHub 匯出（${repo} · ${path}）。不是 Canva 原作，也不是 Drive 私有檔。${extra}`.trim(),
+  };
+}
+
+function githubExportEvidence(repo: string, note: string): SourceReference {
+  return {
+    label: `GitHub 公開畫面 · ${repo}`,
+    href: `https://github.com/aa0968111723-prog/${repo}`,
+    note,
+  };
+}
+
+function studioReconstruction(
+  file: string,
+  alt: string,
+  source: string,
+  extra = "",
+): ProjectMedia {
+  return {
+    src: `/media/studio/${file}`,
+    alt,
+    kind: "image",
+    caption:
+      `光域工作室重建（對齊公開 ${source}）。不是產品操作截圖，不是 Canva 嵌入，也不是 Drive 私有檔。${extra}`.trim(),
+  };
+}
 
 export const statusLabel: Record<ProjectStatus, string> = {
   completed: "已完成",
@@ -62,15 +101,36 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ai_os",
-      live: "https://ai-os-ten.vercel.app",
+      live: "https://ai-os-app.zeabur.app",
     },
     media: [
       {
-        src: "/media/covers/ai-director-os.jpg",
+        src: "/media/covers/ai-director-os.svg",
         alt: "AI Director OS 光域工作室視覺：玻璃控制台與分鏡卡片漂在晨光中",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "ai-director-os",
+        "desktop-dashboard.png",
+        "AI Director OS 公開截圖：建立新創作專案對話框",
+        "ai_os",
+        "client/public/screenshots/desktop-dashboard.png",
+      ),
+      githubExport(
+        "ai-director-os",
+        "desktop-mixed.png",
+        "AI Director OS 公開證據截圖：桌面 Mixed Look 比較",
+        "ai_os",
+        "docs/evidence/visual-creative-ux-v3/desktop-mixed.png",
+      ),
+      githubExport(
+        "ai-director-os",
+        "mobile-390-compare.png",
+        "AI Director OS 公開證據截圖：手機並排比較",
+        "ai_os",
+        "docs/evidence/visual-creative-ux-v3/mobile-390-compare.png",
+      ),
     ],
     sourceReferences: [
       {
@@ -78,10 +138,34 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/ai_os",
         note: "功能完成項與未完成項直接取自 README 路線圖。",
       },
+      githubExportEvidence(
+        "ai_os",
+        "本站 /media/github-exports/ai-director-os 複製自公開 repo 的 screenshots 與 docs/evidence。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
+      {
+        label: "GitHub 公開 PDF · Aios系統介紹-剪輯組長",
+        href: "https://github.com/aa0968111723-prog/ai_os/blob/claude/healing-migration-ai-os-erewp2/docs/%E7%B0%A1%E5%A0%B1/Aios%E7%B3%BB%E7%B5%B1%E4%BB%8B%E7%B4%B9-%E5%89%AA%E8%BC%AF%E7%B5%84%E9%95%B7.pdf",
+        note: "公開 repo 簡報 PDF。沒有複製進本站。不是 Canva 嵌入。",
+      },
       {
         label: "GitHub · healing-studio",
         href: "https://github.com/aa0968111723-prog/healing-studio",
         note: "多模態工作室前身，描述取自公開 repo description。",
+      },
+      {
+        label: "Canva 短網址 · healing-studio 品牌主視覺",
+        href: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        note: "來自 healing-studio docs/design-reference.md。短網址不是 design id。瀏覽器跟隨後仍停在 /d/（404），所以不嵌入、也不標成已驗證。",
+      },
+      {
+        label: "公開站 · ai-os-app.zeabur.app",
+        href: "https://ai-os-app.zeabur.app",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。",
+      },
+      {
+        label: "GitHub homepage · ai-os-ten.vercel.app",
+        href: "https://ai-os-ten.vercel.app",
+        note: "GitHub 上的 homepage。目前回傳 JavaScript bundle，不是網頁，所以不當 Live Demo。",
       },
     ],
     visibility: "public",
@@ -129,11 +213,25 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/framelab.jpg",
+        src: "/media/covers/framelab.svg",
         alt: "FrameLab 視覺：明亮畫布上的 onion skin 彈跳球與時間軸",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "framelab",
+        "zh-workstation.png",
+        "FrameLab 公開截圖：經典彈跳球工作站",
+        "FrameLab",
+        "screenshots/zh-workstation.png",
+      ),
+      githubExport(
+        "framelab",
+        "zh-inbetween.png",
+        "FrameLab 公開截圖：中間影格產生面板",
+        "FrameLab",
+        "screenshots/zh-inbetween.png",
+      ),
     ],
     sourceReferences: [
       {
@@ -141,6 +239,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/FrameLab",
         note: "能力邊界與模型表直接取自公開 README。",
       },
+      githubExportEvidence(
+        "FrameLab",
+        "本站 /media/github-exports/framelab 複製自公開 repo screenshots。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
     ],
     visibility: "public",
   },
@@ -187,11 +289,27 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/poster-vision-ai.jpg",
+        src: "/media/covers/poster-vision-ai.svg",
         alt: "Poster Vision AI 視覺：海報上的柔和熱圖與構圖引導",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "poster-vision-ai",
+        "demo-event.png",
+        "Poster Vision AI 公開樣本海報：活動文宣 fixture",
+        "poster-vision-ai",
+        "public/samples/demo-event.png",
+        "這是 repo 裡的分析樣本，不是真實招生名冊。",
+      ),
+      githubExport(
+        "poster-vision-ai",
+        "demo-product.png",
+        "Poster Vision AI 公開樣本海報：商品文宣 fixture",
+        "poster-vision-ai",
+        "public/samples/demo-product.png",
+        "這是 repo 裡的分析樣本，不是真實商品拍攝。",
+      ),
     ],
     sourceReferences: [
       {
@@ -199,6 +317,10 @@ export const projects: Project[] = [
         href: "https://github.com/aa0968111723-prog/poster-vision-ai",
         note: "功能與限制原文來自 README。",
       },
+      githubExportEvidence(
+        "poster-vision-ai",
+        "本站 /media/github-exports/poster-vision-ai 複製自公開 repo public/samples。是分析用 fixture，不是 Canva 原作或 Drive 私有檔。",
+      ),
     ],
     visibility: "public",
   },
@@ -242,20 +364,44 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
+      live: "https://planform-iso-k7d2.zeabur.app",
     },
     media: [
       {
-        src: "/media/covers/planform.jpg",
+        src: "/media/covers/planform.svg",
         alt: "PLANFORM 視覺：等角教室模型、地墊與薄荷色動線",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "planform",
+        "e310-overview.png",
+        "PLANFORM 公開場刊圖：E310 社課場佈總覽",
+        "planform-iso",
+        "docs/release-1.0/e310-overview.png",
+      ),
+      githubExport(
+        "planform",
+        "phone-editor.png",
+        "PLANFORM 公開截圖：手機場佈編輯",
+        "planform-iso",
+        "docs/release-1.0/phone-editor.png",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · planform-iso",
         href: "https://github.com/aa0968111723-prog/planform-iso",
         note: "產品原則與限制取自公開 README。",
+      },
+      githubExportEvidence(
+        "planform-iso",
+        "本站 /media/github-exports/planform 複製自公開 repo docs/release-1.0。不是 Canva 原作，也不是 Drive 私有檔。",
+      ),
+      {
+        label: "公開站 · planform-iso-k7d2.zeabur.app",
+        href: "https://planform-iso-k7d2.zeabur.app",
+        note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。本次探測為 HTML，沒有 frame-bust，可當 Live Demo。狀態會隨部署變動。",
       },
     ],
     visibility: "public",
@@ -300,20 +446,44 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
+      live: "https://duigao-k7q2.zeabur.app",
     },
     media: [
       {
-        src: "/media/covers/duigao.jpg",
+        src: "/media/covers/duigao.svg",
         alt: "對稿視覺：玻璃桌上的海報與薄荷色註記圖釘",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "duigao",
+        "desktop-1280-board-20.png",
+        "對稿公開截圖：桌面視覺基準板",
+        "duigao",
+        "scripts/e2e/visual-baselines/desktop-1280-board-20.png",
+      ),
+      githubExport(
+        "duigao",
+        "phone-390-board-20.png",
+        "對稿公開截圖：手機視覺基準板",
+        "duigao",
+        "scripts/e2e/visual-baselines/phone-390-board-20.png",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · duigao",
         href: "https://github.com/aa0968111723-prog/duigao",
         note: "權限模型與雲端層取自 README。",
+      },
+      githubExportEvidence(
+        "duigao",
+        "本站 /media/github-exports/duigao 複製自公開 repo scripts/e2e/visual-baselines。不是 Canva 原作，也不是私人對稿房間。",
+      ),
+      {
+        label: "公開站 · duigao-k7q2.zeabur.app",
+        href: "https://duigao-k7q2.zeabur.app",
+        note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
       },
     ],
     visibility: "public",
@@ -360,17 +530,40 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/folio.jpg",
+        src: "/media/covers/folio.svg",
         alt: "Folio 視覺：明亮畫板上的幾何色塊與玻璃屬性面板",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "folio",
+        "og.jpg",
+        "Folio 公開分享卡：深色桌面與幾何 F 字標",
+        "canva2",
+        "public/og.jpg",
+        "這是 og.jpg 分享卡／字標，不是 Folio 編輯器操作截圖，也不是 Canva 嵌入。canva2 沒有產品操作 PNG。",
+      ),
+      studioReconstruction(
+        "folio-editor.svg",
+        "Folio 編輯器光域重建：頂列、工具軌、畫布與檢查器",
+        "canva2 src/components/editor/editor-shell.tsx",
+        "結構對齊桌面編輯器外殼（回到文件櫃、暫存、預覽、發布、工具軌、畫布、屬性／檢查）。canva2 公開 repo 沒有編輯器操作 PNG。",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · canva2 / Folio",
         href: "https://github.com/aa0968111723-prog/canva2",
         note: "完成功能與限制取自公開 README。",
+      },
+      githubExportEvidence(
+        "canva2",
+        "本站 /media/github-exports/folio/og.jpg 複製自公開 repo public/og.jpg。是分享卡／字標，不是編輯器截圖，不是 Canva 原作。",
+      ),
+      {
+        label: "光域重建 · Folio editor-shell",
+        href: "https://github.com/aa0968111723-prog/canva2/blob/main/src/components/editor/editor-shell.tsx",
+        note: "本站 /media/studio/folio-editor.svg 依公開 editor-shell.tsx 桌面結構重建。不是操作截圖。",
       },
     ],
     visibility: "public",
@@ -410,20 +603,45 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/hermes-console",
+      live: "https://344.zeabur.app",
     },
     media: [
       {
-        src: "/media/covers/hermes-console.jpg",
+        src: "/media/covers/hermes-console.svg",
         alt: "Hermes Console 視覺：明亮工作區、對話欄與漂浮專案卡片",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "hermes-console",
+        "home-desktop.png",
+        "Hermes Console 公開截圖：桌面工作區首頁",
+        "hermes-console",
+        "docs/screenshots/visual-workspace/home-desktop.png",
+      ),
+      githubExport(
+        "hermes-console",
+        "canva-unconfigured.png",
+        "Hermes Console 公開截圖：Canva 連線未設定",
+        "hermes-console",
+        "docs/screenshots/visual-workspace/canva-unconfigured.png",
+        "畫面本身標未設定；本站也不宣稱 Canva 已連線。",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · hermes-console",
         href: "https://github.com/aa0968111723-prog/hermes-console",
         note: "產品不變量取自 README。",
+      },
+      githubExportEvidence(
+        "hermes-console",
+        "本站 /media/github-exports/hermes-console 複製自公開 repo docs/screenshots。含「Canva 未設定」畫面，不宣稱已連線。",
+      ),
+      {
+        label: "公開站 · 344.zeabur.app",
+        href: "https://344.zeabur.app",
+        note: "FEATURE_AUDIT_EDU.md 記載的正式站。禁止嵌入時只開新分頁。",
       },
     ],
     visibility: "public",
@@ -459,17 +677,40 @@ export const projects: Project[] = [
     },
     media: [
       {
-        src: "/media/covers/tku-zen-ai.jpg",
+        src: "/media/covers/tku-zen-ai.svg",
         alt: "TKU Zen AI 視覺：晨光庭園、紙燈與呼吸圓",
         kind: "image",
         caption: vis,
       },
+      githubExport(
+        "tku-zen-ai",
+        "club-illustration.jpg",
+        "淡江禪學社公開插畫：女孩與烏龜坐在簷下，掛牌寫著淡江禪學社",
+        "urban-green-rose-pixel",
+        "attachments/淡江大學 禪學社 (1).png",
+        "本站為公開 PNG 的壓縮 JPEG。這是社團插畫，不是 tku-zen-ai 對話截圖，不是 Canva 原作。tku-zen-ai 公開 repo 沒有產品操作畫面。",
+      ),
+      studioReconstruction(
+        "tku-zen-chat.svg",
+        "TKU Zen AI 對話光域重建：標題、氣泡、建議句、呼吸提示與輸入列",
+        "tku-zen-ai src/app/page.tsx 與 src/lib/zen.ts",
+        "結構對齊公開對話頁（歡迎句、左右氣泡、建議句、呼吸提示、送出）。原作是深色介面，這裡是亮色轉譯。tku-zen-ai 沒有對話操作 PNG。",
+      ),
     ],
     sourceReferences: [
       {
         label: "GitHub README · tku-zen-ai",
         href: "https://github.com/aa0968111723-prog/tku-zen-ai",
-        note: "本地引擎說明取自 README。",
+        note: "本地引擎說明取自 README。公開 repo 只有 Next.js 預設 SVG／favicon，沒有產品操作截圖。",
+      },
+      githubExportEvidence(
+        "urban-green-rose-pixel",
+        "本站 /media/github-exports/tku-zen-ai/club-illustration.jpg 壓縮自公開 PNG attachments/淡江大學 禪學社 (1).png。是社團插畫，不是對話 UI，不是 Canva 嵌入。",
+      ),
+      {
+        label: "光域重建 · TKU Zen 對話",
+        href: "https://github.com/aa0968111723-prog/tku-zen-ai/blob/main/src/app/page.tsx",
+        note: "本站 /media/studio/tku-zen-chat.svg 依公開 page.tsx／zen.ts 對話結構重建。亮色轉譯，不是產品截圖。",
       },
     ],
     visibility: "public",

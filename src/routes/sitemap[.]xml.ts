@@ -1,21 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getSql } from "@/lib/db";
-import { listPublishedProjects } from "@/lib/portfolio/cms";
-import { ensureSeeded } from "@/lib/portfolio/seed";
-import { sitemapXml } from "@/lib/portfolio/sitemap";
+import { listPublishedProjectsFn } from "@/lib/cms/public-fn";
+import { publicSitemapPaths } from "@/lib/cms/sitemap";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const sql = await getSql();
-        await ensureSeeded(sql);
-        const projects = await listPublishedProjects(sql);
+        const projects = await listPublishedProjectsFn();
         const origin = new URL(request.url).origin;
-        const body = sitemapXml(
-          projects.map((project) => project.slug),
-          origin,
-        );
+        const urls = publicSitemapPaths(projects.map((item) => item.slug));
+        const body = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((path) => `  <url><loc>${origin}${path}</loc></url>`).join("\n")}
+</urlset>`;
         return new Response(body, {
           headers: { "content-type": "application/xml; charset=utf-8" },
         });

@@ -1,132 +1,298 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { getSettingsFn, saveSettingsFn } from "@/lib/cms/admin-fn";
 import { toast } from "sonner";
-import { loadAdminSettings, saveAdminSettings } from "@/lib/portfolio/server-admin";
 
 export const Route = createFileRoute("/admin/settings")({
-  component: AdminSettings,
+  component: SettingsPage,
 });
 
-function AdminSettings() {
-  const [nameZh, setNameZh] = useState("柏能 · 光域工作室");
-  const [nameEn, setNameEn] = useState("Luminous Studio");
-  const [person, setPerson] = useState("陳柏能 / Bruce Chen");
-  const [role, setRole] = useState("AI Designer · Multimodal Design Creator · AI Product Builder");
-  const [headline, setHeadline] = useState("");
-  const [headlineEn, setHeadlineEn] = useState("");
-  const [subhead, setSubhead] = useState(
-    "Designing bright, usable experiences with AI and multimodal creativity.",
-  );
-  const [narrative, setNarrative] = useState("");
-  const [narrativeEn, setNarrativeEn] = useState("");
-  const [email, setEmail] = useState("aa0968111723@gmail.com");
-  const [github, setGithub] = useState("https://github.com/aa0968111723-prog");
-  const [githubHandle, setGithubHandle] = useState("aa0968111723-prog");
-  const [location, setLocation] = useState("Taipei");
-  const [featuredIntro, setFeaturedIntro] = useState("");
-  const [featuredIntroEn, setFeaturedIntroEn] = useState("");
-  const [seoTitle, setSeoTitle] = useState("");
-  const [seoDescription, setSeoDescription] = useState("");
-  const [locale, setLocale] = useState<"zh" | "en">("zh");
+function SettingsPage() {
+  const [form, setForm] = useState({
+    name_zh: "",
+    name_en: "",
+    person: "",
+    role: "",
+    headline: "",
+    subhead: "",
+    narrative: "",
+    email: "",
+    github: "",
+    github_handle: "",
+    location: "",
+    seo_title: "",
+    seo_description: "",
+    highlightSlugs: "",
+    localeZhHeadline: "",
+    localeEnHeadline: "",
+    localeZhSubhead: "",
+    localeEnSubhead: "",
+    localeZhNarrative: "",
+    localeEnNarrative: "",
+    localeZhSeoTitle: "",
+    localeEnSeoTitle: "",
+    localeZhSeoDescription: "",
+    localeEnSeoDescription: "",
+  });
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    void loadAdminSettings().then((row) => {
+    void getSettingsFn().then((row) => {
       if (!row) return;
-      const profile = row.profile;
-      const homepage = row.homepage;
-      const seo = row.seo;
-      const i18n = row.i18n;
-      setNameZh(String(profile.nameZh ?? "柏能 · 光域工作室"));
-      setNameEn(String(profile.nameEn ?? "Luminous Studio"));
-      setPerson(String(profile.person ?? "陳柏能 / Bruce Chen"));
-      setRole(
-        String(
-          profile.role ??
-            "AI Designer · Multimodal Design Creator · AI Product Builder",
-        ),
-      );
-      setHeadline(String(profile.headline ?? ""));
-      setHeadlineEn(String(profile.headlineEn ?? ""));
-      setSubhead(
-        String(
-          profile.subhead ??
-            "Designing bright, usable experiences with AI and multimodal creativity.",
-        ),
-      );
-      setNarrative(String(profile.narrative ?? ""));
-      setNarrativeEn(String(profile.narrativeEn ?? ""));
-      setEmail(String(profile.email ?? "aa0968111723@gmail.com"));
-      setGithub(String(profile.github ?? "https://github.com/aa0968111723-prog"));
-      setGithubHandle(String(profile.githubHandle ?? "aa0968111723-prog"));
-      setLocation(String(profile.location ?? "Taipei"));
-      setFeaturedIntro(String(homepage.featuredIntro ?? ""));
-      setFeaturedIntroEn(String(homepage.featuredIntroEn ?? ""));
-      setSeoTitle(String(seo.title ?? ""));
-      setSeoDescription(String(seo.description ?? ""));
-      setLocale(i18n.defaultLocale === "en" ? "en" : "zh");
+      setForm({
+        name_zh: String(row.name_zh ?? ""),
+        name_en: String(row.name_en ?? ""),
+        person: String(row.person ?? ""),
+        role: String(row.role ?? ""),
+        headline: String(row.headline ?? ""),
+        subhead: String(row.subhead ?? ""),
+        narrative: String(row.narrative ?? ""),
+        email: String(row.email ?? ""),
+        github: String(row.github ?? ""),
+        github_handle: String(row.github_handle ?? ""),
+        location: String(row.location ?? ""),
+        seo_title: String(row.seo_title ?? ""),
+        seo_description: String(row.seo_description ?? ""),
+        highlightSlugs: (row.homepage_json?.highlightSlugs ?? []).join("\n"),
+        localeZhHeadline: String(row.locale_json?.zh?.headline ?? ""),
+        localeEnHeadline: String(row.locale_json?.en?.headline ?? ""),
+        localeZhSubhead: String(row.locale_json?.zh?.subhead ?? ""),
+        localeEnSubhead: String(row.locale_json?.en?.subhead ?? ""),
+        localeZhNarrative: String(row.locale_json?.zh?.narrative ?? ""),
+        localeEnNarrative: String(row.locale_json?.en?.narrative ?? ""),
+        localeZhSeoTitle: String(row.locale_json?.zh?.seoTitle ?? ""),
+        localeEnSeoTitle: String(row.locale_json?.en?.seoTitle ?? ""),
+        localeZhSeoDescription: String(row.locale_json?.zh?.seoDescription ?? ""),
+        localeEnSeoDescription: String(row.locale_json?.en?.seoDescription ?? ""),
+      });
+      setDirty(false);
     });
   }, []);
 
+  useEffect(() => {
+    const onLeave = (event: BeforeUnloadEvent) => {
+      if (!dirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onLeave);
+    return () => window.removeEventListener("beforeunload", onLeave);
+  }, [dirty]);
+
+  const profileKeys = [
+    "name_zh",
+    "name_en",
+    "person",
+    "role",
+    "headline",
+    "subhead",
+    "narrative",
+    "email",
+    "github",
+    "github_handle",
+    "location",
+    "seo_title",
+    "seo_description",
+  ] as const;
+
   return (
     <form
-      className="grid max-w-xl gap-4"
-      onSubmit={async (event) => {
+      className="grid max-w-xl gap-3"
+      onSubmit={(event) => {
         event.preventDefault();
-        try {
-          await saveAdminSettings({
-            data: {
-              profile: {
-                nameZh,
-                nameEn,
-                person,
-                role,
-                headline,
-                headlineEn,
-                subhead,
-                narrative,
-                narrativeEn,
-                email,
-                github,
-                githubHandle,
-                location,
+        const highlightSlugs = form.highlightSlugs
+          .split(/[\n,]+/)
+          .map((item) => item.trim())
+          .filter(Boolean);
+        void saveSettingsFn({
+          data: {
+            name_zh: form.name_zh,
+            name_en: form.name_en,
+            person: form.person,
+            role: form.role,
+            headline: form.headline,
+            subhead: form.subhead,
+            narrative: form.narrative,
+            email: form.email,
+            github: form.github,
+            github_handle: form.github_handle,
+            location: form.location,
+            seo_title: form.seo_title,
+            seo_description: form.seo_description,
+            homepage_json: { highlightSlugs },
+            locale_json: {
+              zh: {
+                headline: form.localeZhHeadline,
+                subhead: form.localeZhSubhead,
+                narrative: form.localeZhNarrative,
+                seoTitle: form.localeZhSeoTitle,
+                seoDescription: form.localeZhSeoDescription,
               },
-              homepage: { featuredIntro, featuredIntroEn },
-              seo: { title: seoTitle, description: seoDescription },
-              i18n: { defaultLocale: locale },
+              en: {
+                headline: form.localeEnHeadline,
+                subhead: form.localeEnSubhead,
+                narrative: form.localeEnNarrative,
+                seoTitle: form.localeEnSeoTitle,
+                seoDescription: form.localeEnSeoDescription,
+              },
             },
-          });
-          toast.success("設定已儲存");
-        } catch (error) {
-          toast.error(error instanceof Error ? error.message : "儲存失敗");
-        }
+          },
+        })
+          .then(() => {
+            toast.success("設定已存");
+            setDirty(false);
+          })
+          .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "儲存失敗"));
       }}
     >
-      <h1 className="font-display text-3xl font-semibold">設定</h1>
-      <label className="grid gap-1 text-sm">工作室中文名<input className="min-h-11 rounded-xl border border-line px-3" value={nameZh} onChange={(e) => setNameZh(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">Studio name<input className="min-h-11 rounded-xl border border-line px-3" value={nameEn} onChange={(e) => setNameEn(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">姓名<input className="min-h-11 rounded-xl border border-line px-3" value={person} onChange={(e) => setPerson(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">角色<input className="min-h-11 rounded-xl border border-line px-3" value={role} onChange={(e) => setRole(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">首頁標題<input className="min-h-11 rounded-xl border border-line px-3" value={headline} onChange={(e) => setHeadline(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">Headline (EN)<input className="min-h-11 rounded-xl border border-line px-3" value={headlineEn} onChange={(e) => setHeadlineEn(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">副標<input className="min-h-11 rounded-xl border border-line px-3" value={subhead} onChange={(e) => setSubhead(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">敘事<textarea className="min-h-24 rounded-xl border border-line px-3 py-2" value={narrative} onChange={(e) => setNarrative(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">Narrative (EN)<textarea className="min-h-20 rounded-xl border border-line px-3 py-2" value={narrativeEn} onChange={(e) => setNarrativeEn(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">Email<input className="min-h-11 rounded-xl border border-line px-3" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">GitHub<input className="min-h-11 rounded-xl border border-line px-3" value={github} onChange={(e) => setGithub(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">GitHub handle<input className="min-h-11 rounded-xl border border-line px-3" value={githubHandle} onChange={(e) => setGithubHandle(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">地點<input className="min-h-11 rounded-xl border border-line px-3" value={location} onChange={(e) => setLocation(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">首頁精選說明<textarea className="min-h-20 rounded-xl border border-line px-3 py-2" value={featuredIntro} onChange={(e) => setFeaturedIntro(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">Featured intro (EN)<textarea className="min-h-20 rounded-xl border border-line px-3 py-2" value={featuredIntroEn} onChange={(e) => setFeaturedIntroEn(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">SEO title<input className="min-h-11 rounded-xl border border-line px-3" value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} /></label>
-      <label className="grid gap-1 text-sm">SEO description<textarea className="min-h-20 rounded-xl border border-line px-3 py-2" value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} /></label>
+      <h1 className="font-display text-3xl">網站設定</h1>
+      {dirty ? <p className="text-sm text-muted">有未儲存的修改。</p> : null}
+      {profileKeys.map((key) => (
+        <label key={key} className="grid gap-1 text-sm">
+          {key}
+          {key === "narrative" || key === "seo_description" || key === "subhead" ? (
+            <textarea
+              className="min-h-28 rounded-xl border border-line px-3 py-2"
+              value={form[key]}
+              onChange={(event) => {
+                setDirty(true);
+                setForm((current) => ({ ...current, [key]: event.target.value }));
+              }}
+            />
+          ) : (
+            <input
+              className="min-h-11 rounded-xl border border-line px-3"
+              value={form[key]}
+              onChange={(event) => {
+                setDirty(true);
+                setForm((current) => ({ ...current, [key]: event.target.value }));
+              }}
+            />
+          )}
+        </label>
+      ))}
       <label className="grid gap-1 text-sm">
-        預設語言
-        <select className="min-h-11 rounded-xl border border-line px-3" value={locale} onChange={(e) => setLocale(e.target.value as "zh" | "en")}>
-          <option value="zh">中文</option>
-          <option value="en">English</option>
-        </select>
+        首頁節點 slug（一行一個，只會顯示已發布作品）
+        <textarea
+          className="min-h-28 rounded-xl border border-line px-3 py-2"
+          value={form.highlightSlugs}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, highlightSlugs: event.target.value }));
+          }}
+        />
       </label>
-      <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-full bg-mint text-sm font-semibold text-primary-foreground">
+      <label className="grid gap-1 text-sm">
+        中文 headline
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeZhHeadline}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhHeadline: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 headline
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeEnHeadline}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnHeadline: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 subhead
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeZhSubhead}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSubhead: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 subhead
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeEnSubhead}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSubhead: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 narrative
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeZhNarrative}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhNarrative: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 narrative
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeEnNarrative}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnNarrative: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 SEO 標題
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeZhSeoTitle}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSeoTitle: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 SEO 標題
+        <input
+          className="min-h-11 rounded-xl border border-line px-3"
+          value={form.localeEnSeoTitle}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSeoTitle: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        中文 SEO 描述
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeZhSeoDescription}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeZhSeoDescription: event.target.value }));
+          }}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        英文 SEO 描述
+        <textarea
+          className="min-h-24 rounded-xl border border-line px-3 py-2"
+          value={form.localeEnSeoDescription}
+          onChange={(event) => {
+            setDirty(true);
+            setForm((current) => ({ ...current, localeEnSeoDescription: event.target.value }));
+          }}
+        />
+      </label>
+      <button type="submit" className="min-h-11 rounded-full bg-mint text-sm font-semibold text-primary-foreground">
         儲存
       </button>
     </form>

@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { copyFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
@@ -30,6 +30,28 @@ function hasGlobbedMigrations(root: string): boolean {
  * migrations — no schema to apply — skips it entirely rather than paying for a
  * PGLite instance it never queries.
  */
+/** Nitro bundles `@electric-sql/pglite` but not sibling `pglite.data` / `.wasm`. */
+function copyPgliteNitroAssets(): void {
+  const destDir = join(process.cwd(), ".vercel/output/functions/__server.func/_libs");
+  if (!existsSync(destDir)) return;
+  const srcDir = join(process.cwd(), "node_modules/@electric-sql/pglite/dist");
+  for (const name of ["pglite.data", "pglite.wasm", "initdb.wasm"]) {
+    const src = join(srcDir, name);
+    if (existsSync(src)) copyFileSync(src, join(destDir, name));
+  }
+}
+
+function pgliteNitroAssetsPlugin(): Plugin {
+  return {
+    name: "app-builder:pglite-nitro-assets",
+    apply: "build",
+    enforce: "post",
+    closeBundle() {
+      copyPgliteNitroAssets();
+    },
+  };
+}
+
 function pgliteBootstrapPlugin(): Plugin {
   return {
     name: "app-builder:pglite-bootstrap",
@@ -159,6 +181,7 @@ export default defineConfig(({ command, isPreview }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     pgliteBootstrapPlugin(),
+    pgliteNitroAssetsPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.

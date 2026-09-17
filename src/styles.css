@@ -5,12 +5,14 @@
   --color-surface: #ffffff;
   --color-surface-blue: #eaf6ff;
   --color-surface-mint: #effff7;
+  --color-mat: #f7f2e6;
   --color-mint: #63e6be;
   --color-mint-deep: #2bb894;
   --color-sky: #72b7ff;
   --color-sun: #ffd166;
   --color-ink: #17324d;
   --color-muted: #59748a;
+  --color-alert: #c45c4a;
   --color-line: #d9eaf2;
   --color-background: var(--color-bg);
   --color-foreground: var(--color-ink);
@@ -60,7 +62,6 @@
     background: var(--color-bg);
     color: var(--color-ink);
     min-height: 100dvh;
-    overflow-x: clip;
   }
 
   button:not(:disabled),
@@ -106,6 +107,14 @@
     box-shadow: var(--shadow-float);
   }
 
+  .float-card-lite {
+    transition: transform 180ms ease;
+  }
+
+  .float-card-lite:hover {
+    transform: translateY(-4px);
+  }
+
   .drift {
     animation: drift 14s ease-in-out alternate infinite;
   }
@@ -113,8 +122,10 @@
   .orbit {
     animation: orbit 60s linear infinite;
   }
-  .relation-space {
-    transform: rotateX(12deg);
+
+  .constellation {
+    max-height: none;
+    overflow: visible;
   }
 }
 
@@ -126,8 +137,24 @@
   }
 
   .float-card,
-  .relation-space {
-    transform: none;
+  .float-card-lite,
+  .node-chip {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .float-card-lite:hover {
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

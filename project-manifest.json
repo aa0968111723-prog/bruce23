@@ -2,7 +2,7 @@
   "name": "Luminous Studio",
   "person": "陳柏能 / Bruce Chen",
   "repo": "https://github.com/aa0968111723-prog/bruce23",
-  "cycle": 2,
+  "cycle": 3,
   "featured": [
     "ai-director-os",
     "framelab",
@@ -13,9 +13,22 @@
     "hermes-console",
     "tku-zen-ai"
   ],
-  "content": "postgres-cms",
+  "featuredCount": 8,
+  "content": "postgres-cms-with-static-seed",
   "dataLayer": "neon-pglite",
   "theme": "light-only",
-  "auth": "better-auth-google",
-  "admin": "PORTFOLIO_ADMIN_EMAILS"
+  "stack": "tanstack-start",
+  "auth": "allowlist-admin",
+  "admin": {
+    "kind": "fail-closed-google-allowlist",
+    "cms": true,
+    "canvaPaste": "paste canva.com/design/{id} share links on the work or archive edit form"
+  },
+  "canva": {
+    "connect": "unavailable",
+    "mcp": "needsAuth",
+    "publicDesignIds": [],
+    "embedMode": "public-share-paste-only",
+    "note": "No public canva.com/design/{id} for the eight featured works. Healing-studio /d/ short links did not resolve to a design. Admin paste is the only embed path. Do not invent design ids or mark Connect as connected."
+  }
 }

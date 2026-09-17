@@ -1,249 +1,194 @@
-import { useRef, useState } from "react";
-import { Github, BookOpen, ExternalLink } from "lucide-react";
-import type { PublicProject } from "@/lib/portfolio/public";
-import { EXPERIENCE_TABS } from "@/lib/portfolio/constants";
-import { moveTabIndex } from "@/lib/portfolio/a11y";
+import { useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
+import type { PublicProject } from "@/lib/cms/privacy";
+import { sanitizePublicHref } from "@/lib/safe-href";
 import { cn } from "@/lib/cn";
-import { useLocale } from "@/lib/portfolio/locale";
-import { GithubTree } from "./GithubTree";
-import { CanvaBoard } from "./CanvaBoard";
-import { SafeFrame } from "./SafeFrame";
-import { ProcessMapExperience } from "./ProcessMapExperience";
-import { TimelineExperience } from "./TimelineExperience";
-import { PosterVisionExperience } from "./PosterVisionExperience";
-import { PlanformExperience } from "./PlanformExperience";
-import { DuigaoExperience } from "./DuigaoExperience";
-import { FolioWalkthrough } from "./FolioWalkthrough";
-import { HermesConversation } from "./HermesConversation";
-import { ZenChatExperience } from "./ZenChatExperience";
+import { GithubExplorer } from "./GithubExplorer";
+import { CanvaStage } from "./CanvaStage";
+import { LiveDemoStage } from "./LiveDemoStage";
+import { ExperienceCanvas } from "./ExperienceCanvas";
+import { MediaFrame } from "@/components/site/MediaFrame";
+import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { howItWorksSteps } from "@/lib/experiences/resolve";
+import { useExperienceView } from "./useExperienceView";
 
-function TryNow({ project }: { project: PublicProject }) {
-  const cover = project.media[0]?.src;
-  switch (project.slug) {
-    case "ai-director-os":
-      return <ProcessMapExperience project={project} />;
-    case "framelab":
-      return <TimelineExperience />;
-    case "poster-vision-ai":
-      return <PosterVisionExperience coverSrc={cover} />;
-    case "planform":
-      return <PlanformExperience />;
-    case "duigao":
-      return <DuigaoExperience coverSrc={cover} />;
-    case "folio":
-      return <FolioWalkthrough />;
-    case "hermes-console":
-      return <HermesConversation connected={project.live_demo?.status === "verified"} />;
-    case "tku-zen-ai":
-      return <ZenChatExperience />;
-    default:
-      if (project.experience_mode === "canva-embed") {
-        return <CanvaBoard {...(project.canva ?? {})} />;
-      }
-      return <FolioWalkthrough />;
-  }
-}
+const TAB_IDS = ["play", "visual", "github", "canva", "how", "source"] as const;
+type TabId = (typeof TAB_IDS)[number];
 
-export function ExperiencePanel({ project }: { project: PublicProject }) {
-  const [tab, setTab] = useState(0);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const { locale } = useLocale();
-  const current = EXPERIENCE_TABS[tab];
-  const selectTab = (index: number) => {
-    setTab(index);
-    queueMicrotask(() => tabRefs.current[index]?.focus());
-  };
+export function ExperiencePanel({
+  project,
+  onClose,
+  variant = "overlay",
+}: {
+  project: PublicProject;
+  onClose?: () => void;
+  variant?: "overlay" | "page";
+}) {
+  const { lang, ex, config } = useExperienceView(project);
+  const [tab, setTab] = useState<TabId>("play");
+  const tabs = useRovingTabs(TAB_IDS, tab, setTab);
+  const honesty = config.honestyLabel || null;
+  const galleryNote = config.galleryNote;
+  const tabItems = useMemo(
+    () => [
+      { id: "play" as const, label: ex.tabPlay },
+      { id: "visual" as const, label: ex.tabVisual },
+      { id: "github" as const, label: ex.tabGithub },
+      { id: "canva" as const, label: ex.tabCanva },
+      { id: "how" as const, label: ex.tabHow },
+      { id: "source" as const, label: ex.tabSource },
+    ],
+    [ex],
+  );
 
-  return (
-    <section id="experience" className="rounded-3xl bg-surface p-4 shadow-float sm:p-6">
-      <div
-        className="flex gap-2 overflow-x-auto pb-2"
-        role="tablist"
-        aria-label="體驗面板"
-        onKeyDown={(event) => {
-          const next = moveTabIndex(tab, event.key, EXPERIENCE_TABS.length);
-          if (next !== tab) {
-            event.preventDefault();
-            selectTab(next);
-          }
-        }}
-      >
-        {EXPERIENCE_TABS.map((item, index) => (
+  useEffect(() => {
+    if (!onClose) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const body = (
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-6">
+        <div>
+          <p className="text-xs font-medium tracking-wide text-muted">
+            {project.category} · {project.year}
+          </p>
+          <h2 className="font-display text-2xl font-semibold">{project.title}</h2>
+          <p className="mt-1 text-sm text-muted">{project.subtitle}</p>
+          {honesty ? (
+            <p className="mt-2 text-xs text-mint-deep">{honesty}</p>
+          ) : null}
+        </div>
+        {onClose ? (
           <button
-            key={item.id}
             type="button"
-            role="tab"
-            aria-selected={tab === index}
-            tabIndex={tab === index ? 0 : -1}
-            ref={(node) => {
-              tabRefs.current[index] = node;
-            }}
-            className={cn(
-              "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium",
-              tab === index ? "bg-ink text-bg" : "bg-surface-blue text-muted",
-            )}
-            onClick={() => selectTab(index)}
+            className="inline-flex size-11 items-center justify-center rounded-xl bg-surface shadow-card"
+            onClick={onClose}
           >
-            {locale === "en" ? item.labelEn : item.labelZh}
+            <X className="size-5" />
+            <span className="sr-only">{ex.closeExperience}</span>
           </button>
-        ))}
+        ) : null}
       </div>
 
-      <div className="mt-5" role="tabpanel">
-        {current.id === "try" ? <TryNow project={project} /> : null}
-        {current.id === "visual" ? (
-          <div>
-            {project.media[0]?.kind === "video" ? (
-              <video
-                src={project.media[0].src}
-                poster={project.media[0].poster}
-                controls
-                className="w-full rounded-2xl"
-              >
-                無法播放時請改看封面或來源連結。
-              </video>
-            ) : project.media[0] ? (
-              <img
-                src={project.media[0].src}
-                alt={project.media[0].alt}
-                className="w-full rounded-2xl"
-              />
+      <div
+        className="flex min-w-0 max-w-full gap-1 overflow-x-auto px-3 pt-3"
+        role="tablist"
+        aria-label={ex.tabsAria}
+        data-experience-tabs=""
+        onKeyDown={tabs.onKeyDown}
+      >
+        {tabItems.map((item) => {
+          const active = item.id === tab;
+          return (
+            <button
+              key={item.id}
+              ref={tabs.setRef(item.id)}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              tabIndex={tabs.tabIndex(item.id)}
+              className={cn(
+                "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-medium",
+                active ? "bg-ink text-bg" : "bg-surface text-muted shadow-card",
+              )}
+              onClick={() => setTab(item.id)}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6" role="tabpanel">
+        {tab === "play" ? <ExperienceCanvas project={project} /> : null}
+        {tab === "visual" ? (
+          <div className="grid gap-4">
+            {galleryNote ? <p className="text-sm text-muted">{galleryNote}</p> : null}
+            {project.media.length ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {project.media.map((item) => (
+                  <figure
+                    key={item.src}
+                    className={
+                      item.src.startsWith("/media/github-exports/")
+                        ? "overflow-hidden rounded-2xl bg-surface shadow-card"
+                        : "overflow-hidden rounded-2xl bg-surface-blue"
+                    }
+                  >
+                    <MediaFrame media={item} className={item.kind === "video" ? "aspect-video" : "aspect-[4/3]"} />
+                    {item.caption ? (
+                      <figcaption className="border-t border-line/70 bg-surface px-3 py-2 text-xs text-muted">
+                        {item.caption}
+                      </figcaption>
+                    ) : null}
+                  </figure>
+                ))}
+              </div>
             ) : (
-              <p className="text-sm text-muted">尚未設定公開畫面。</p>
+              <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">{ex.emptyMedia}</p>
             )}
-            {project.media[0]?.caption ? (
-              <p className="mt-2 text-xs text-muted">{project.media[0].caption}</p>
-            ) : null}
+            <LiveDemoStage project={project} />
+            <p className="text-sm leading-relaxed text-ink/85">{project.summary}</p>
           </div>
         ) : null}
-        {current.id === "github" ? (
-          project.github ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-display text-2xl">{project.github.name ?? project.github.repo}</h3>
-                <p className="mt-1 text-sm text-muted">{project.github.description}</p>
-              </div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                {Object.entries(project.github.languages ?? {}).map(([lang, bytes]) => (
-                  <span key={lang} className="rounded-full bg-surface-blue px-3 py-1">
-                    {lang} · {bytes}
-                  </span>
-                ))}
-                {project.github.topics?.map((topic) => (
-                  <span key={topic} className="rounded-full bg-surface-mint px-3 py-1">
-                    {topic}
-                  </span>
-                ))}
-              </div>
-              <p className="text-xs text-muted">
-                更新 {project.github.updatedAt ?? "未知"}
-                {project.github.latestCommit
-                  ? ` · ${project.github.latestCommit.sha.slice(0, 7)} ${project.github.latestCommit.message}`
-                  : ""}
-              </p>
-              {project.github.readmeSummary ? (
-                <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-2xl bg-surface-blue p-4 text-xs">
-                  {project.github.readmeSummary}
-                </pre>
-              ) : (
-                <p className="text-sm text-muted">README 尚未同步，或讀取失敗。</p>
-              )}
-              <GithubTree
-                nodes={project.github.fileTree ?? []}
-                owner={project.github.owner}
-                repo={project.github.repo}
-                branch={project.github.branch ?? "main"}
-              />
-              <div className="flex flex-wrap gap-2">
-                <a
-                  href={project.github.url}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 text-sm text-bg"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <Github className="size-4" /> 儲存庫
-                </a>
-                <a
-                  href={`${project.github.url}#readme`}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 text-sm shadow-card"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <BookOpen className="size-4" /> README
-                </a>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted">沒有可公開的 GitHub 資料。私人儲存庫不會出現在這裡。</p>
-          )
-        ) : null}
-        {current.id === "canva" ? (
-          <CanvaBoard
-            shareUrl={project.canva?.shareUrl}
-            embedUrl={project.canva?.embedUrl}
-            thumbnailUrl={project.canva?.thumbnailUrl}
-            alt={project.canva?.alt}
-            caption={project.canva?.caption}
-            pageIds={project.canva?.pageIds}
-          />
-        ) : null}
-        {current.id === "how" ? (
+        {tab === "github" ? <GithubExplorer project={project} /> : null}
+        {tab === "canva" ? <CanvaStage project={project} /> : null}
+        {tab === "how" ? (
           <ol className="grid gap-3">
-            {(project.interaction_steps.length
-              ? project.interaction_steps
-              : project.process.map((item, index) => ({
-                  id: String(index),
-                  title: `步驟 ${index + 1}`,
-                  body: item,
-                }))
-            ).map((step) => (
-              <li key={step.id} className="rounded-2xl bg-surface-blue p-4">
-                <p className="font-display text-lg">{step.title}</p>
-                <p className="mt-1 text-sm text-muted">{step.body}</p>
+            {howItWorksSteps(project, lang).map((step, index) => (
+              <li key={`${index}-${step}`} className="rounded-2xl bg-surface px-4 py-3 shadow-card">
+                <p className="text-xs text-mint-deep">{String(index + 1).padStart(2, "0")}</p>
+                <p className="mt-1 text-sm leading-relaxed">{step}</p>
               </li>
             ))}
           </ol>
         ) : null}
-        {current.id === "source" ? (
-          <ul className="grid gap-2">
-            {project.source_evidence.map((item) => (
-              <li key={item.label} className="rounded-xl bg-surface-blue px-4 py-3 text-sm">
-                {item.href ? (
-                  <a href={item.href} className="text-mint-deep" rel="noreferrer" target="_blank">
-                    {item.label}
-                  </a>
-                ) : (
-                  item.label
-                )}
-                <span className="text-muted"> — {item.note}</span>
-              </li>
-            ))}
-          </ul>
+        {tab === "source" ? (
+          project.sourceEvidence.length ? (
+            <ul className="grid gap-3">
+              {project.sourceEvidence.map((ref) => {
+                const href = sanitizePublicHref(ref.href);
+                return (
+                <li key={ref.label} className="rounded-2xl bg-surface-blue/70 px-4 py-3 text-sm">
+                  {href ? (
+                    <a
+                      href={href}
+                      className="inline-flex min-h-11 items-center font-medium text-mint-deep"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {ref.label}
+                    </a>
+                  ) : (
+                    <span className="font-medium">{ref.label}</span>
+                  )}
+                  <p className="mt-1 text-muted">{ref.note}</p>
+                </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">{ex.emptySource}</p>
+          )
         ) : null}
       </div>
+    </div>
+  );
 
-      {project.live_demo?.url && current.id === "try" && project.live_demo.embedEnabled ? (
-        <div className="mt-6">
-          <SafeFrame
-            src={project.live_demo.url}
-            title={project.live_demo.label ?? "Live demo"}
-            kind="demo"
-            coverSrc={project.media[0]?.src}
-            openHref={project.live_demo.url}
-            openLabel="開新分頁"
-          />
-        </div>
-      ) : project.live_demo?.url && current.id === "github" ? (
-        <a
-          href={project.live_demo.url}
-          className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-mint-deep"
-          rel="noreferrer"
-          target="_blank"
-        >
-          <ExternalLink className="size-4" />
-          {project.live_demo.label ?? "公開網址"}
-        </a>
-      ) : null}
-    </section>
+  if (variant === "page") {
+    return <section className="min-w-0 max-w-full overflow-hidden rounded-3xl bg-surface shadow-float">{body}</section>;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/30 p-0 sm:items-center sm:p-6">
+      <div className="flex h-[92dvh] w-full min-w-0 max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-bg shadow-float sm:h-[86dvh] sm:rounded-3xl">
+        {body}
+      </div>
+    </div>
   );
 }

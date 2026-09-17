@@ -1,0 +1,1224 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { describe, it } from "node:test";
+import { PGlite } from "@electric-sql/pglite";
+import {
+  applyGithubSync,
+  countProjects,
+  createProjectRecord,
+  getAdminProject,
+  getAdminProjectBySlug,
+  getPublishedProject,
+  listPublishedArchive,
+  listPublishedProjects,
+  listRevisions,
+  restoreRevision,
+  saveProjectRecord,
+  serializePublicProject,
+  setPublication,
+  toPreviewProject,
+  upsertArchive,
+  persistDemoVerify,
+  demoTypeFromVerify,
+  getSiteSettings,
+  saveSiteSettings,
+  listAdminArchive,
+} from "./store.ts";
+import { ensureSeed } from "./seed.ts";
+import { parseProjectPatch, projectInputSchema } from "./schema.ts";
+import type { Sql } from "../db.ts";
+import { NotFoundError } from "./errors.ts";
+import { projectCanvaInventory } from "../canva/inventory.ts";
+import { howItWorksSteps } from "../experiences/resolve.ts";
+import { publicSitemapPaths } from "./sitemap.ts";
+import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
+import { resolveHomepageCopy } from "./public-site.ts";
+import { ARCHIVE_ITEM_IDS, archiveLocaleEn, FEATURED_WORK_SLUGS, featuredProjectLocaleEn, siteLocaleEn } from "../../content/locale-en.ts";
+
+function sqlFrom(pg: PGlite): Sql {
+  const run = async <T>(text: string, params: unknown[] = []): Promise<T[]> => {
+    const result = await pg.query<T>(text, params);
+    return result.rows;
+  };
+  const sql = (async () => []) as unknown as Sql;
+  sql.query = run;
+  return sql;
+}
+
+async function setup() {
+  const pg = new PGlite();
+  await pg.waitReady;
+  await pg.exec(readFileSync(new URL("../../../migrations/0002_portfolio_cms.sql", import.meta.url), "utf8"));
+  await pg.exec(readFileSync(new URL("../../../migrations/0003_archive_locale.sql", import.meta.url), "utf8"));
+  return { pg, sql: sqlFrom(pg) };
+}
+
+const sample = () =>
+  projectInputSchema.parse({
+    slug: "test-work",
+    title: "Test Work",
+    category: "AI Product",
+    year: "2026",
+    product_status: "prototype",
+    publication_status: "draft",
+    featured: true,
+    sort_order: 1,
+    summary: "draft only",
+  });
+
+describe("cms persistence", () => {
+  it("lets an admin create a project", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    assert.equal(created.slug, "test-work");
+    assert.equal(created.publication_status, "draft");
+  });
+
+  it("keeps drafts off the public list", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(sql, sample(), "admin-1");
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 0);
+  });
+
+  it("publish then unpublish updates public visibility", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    await setPublication(sql, created.id, "published", "admin-1");
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 1);
+    assert.equal(published[0].slug, "test-work");
+    assert.equal(publishedCreativeWorkJsonLd(published[0]).url, "/work/test-work");
+    assert.equal(
+      publicSitemapPaths(published.map((item) => item.slug)).includes("/work/test-work"),
+      true,
+    );
+    const live = await getPublishedProject(sql, "test-work");
+    assert.equal(publishedCreativeWorkJsonLd(live).name, "Test Work");
+    await setPublication(sql, created.id, "draft", "admin-1");
+    const unpublished = await listPublishedProjects(sql);
+    assert.equal(unpublished.length, 0);
+    assert.equal(
+      publicSitemapPaths(unpublished.map((item) => item.slug)).includes("/work/test-work"),
+      false,
+    );
+    assert.equal(
+      unpublished.map((item) => publishedCreativeWorkJsonLd(item).url).includes("/work/test-work"),
+      false,
+    );
+    await assert.rejects(() => getPublishedProject(sql, "test-work"), NotFoundError);
+  });
+
+  it("save draft updates copy without publishing", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    const saved = await saveProjectRecord(
+      sql,
+      created.id,
+      { summary: "updated", publication_status: "draft" },
+      "admin-1",
+      "draft",
+    );
+    assert.equal(saved.summary, "updated");
+    assert.equal(saved.publication_status, "draft");
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+  });
+
+  it("does not duplicate seed rows", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const first = await countProjects(sql);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const second = await countProjects(sql);
+    assert.equal(first, 8);
+    assert.equal(second, 8);
+  });
+
+  it("sorts featured published works first", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "later",
+        title: "Later",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 0,
+      }),
+      "admin-1",
+    );
+    await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "featured-one",
+        title: "Featured",
+        category: "AI Product",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: true,
+        sort_order: 5,
+      }),
+      "admin-1",
+    );
+    const list = await listPublishedProjects(sql);
+    assert.equal(list[0].slug, "featured-one");
+  });
+
+  it("github sync does not overwrite Chinese narrative", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "framed",
+        title: "中文標題",
+        subtitle: "個人觀點",
+        category: "Multimodal",
+        year: "2026",
+        product_status: "prototype",
+        publication_status: "published",
+        featured: false,
+        sort_order: 1,
+        summary: "這是作者的設計決策，不可以被 README 蓋掉。",
+        problem: "問題敘事",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        languages: { TypeScript: 10 },
+        topics: ["animation"],
+        latestCommit: { sha: "abc1234dead", message: "docs" },
+        fileTree: [{ path: "README.md", type: "file", size: 12 }],
+      },
+      "admin-1",
+    );
+    const after = await getAdminProject(sql, created.id);
+    assert.equal(after.title, "中文標題");
+    assert.equal(after.summary, "這是作者的設計決策，不可以被 README 蓋掉。");
+    assert.equal(after.problem, "問題敘事");
+    assert.equal(after.github_readme, "# FrameLab");
+    assert.equal(after.github_sync_status, "verified");
+  });
+
+  it("lets an admin preview a draft without putting it on the public site", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+    const preview = toPreviewProject(created);
+    assert.equal(preview.slug, "test-work");
+    assert.equal(preview.title, "Test Work");
+    assert.equal(preview.summary, "draft only");
+  });
+
+  it("hides drafts from getPublishedProject and sitemap-facing lists", async () => {
+    const { sql } = await setup();
+    await createProjectRecord(sql, sample(), "admin-1");
+    await assert.rejects(() => getPublishedProject(sql, "test-work"), NotFoundError);
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 0);
+    assert.equal(
+      publicSitemapPaths(published.map((item) => item.slug)).includes("/work/test-work"),
+      false,
+    );
+    assert.equal(
+      published.map((item) => publishedCreativeWorkJsonLd(item).url).includes("/work/test-work"),
+      false,
+    );
+  });
+
+  it("archive then restore updates public visibility", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({ ...sample(), publication_status: "published" }),
+      "admin-1",
+    );
+    assert.equal((await listPublishedProjects(sql)).length, 1);
+    await setPublication(sql, created.id, "archived", "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 0);
+    await setPublication(sql, created.id, "published", "admin-1");
+    assert.equal((await listPublishedProjects(sql)).length, 1);
+  });
+
+  it("keeps a revision history and can restore a previous snapshot", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    await saveProjectRecord(sql, created.id, { title: "Changed Title" }, "admin-1", "save");
+    const revisions = await listRevisions(sql, created.id);
+    assert.ok(revisions.length >= 2);
+    const beforeChange = revisions.find((item) => item.note === "save");
+    assert.ok(beforeChange);
+    const restored = await restoreRevision(sql, created.id, beforeChange.id, "admin-1");
+    assert.equal(restored.title, "Test Work");
+  });
+
+  it("reads zh/en locale onto the public project payload", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        title: "Row title",
+        summary: "row summary",
+        locale_json: {
+          zh: { title: "中文標題", summary: "中文摘要", seoTitle: "SEO 中" },
+          en: { title: "English title", seoTitle: "SEO EN" },
+        },
+      }),
+      "admin-1",
+    );
+    const live = serializePublicProject(created);
+    assert.equal(live.title, "Row title");
+    assert.equal(live.summary, "row summary");
+    assert.equal(live.seoTitle, "SEO 中");
+    assert.equal(live.locale.en?.title, "English title");
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.title, "Row title");
+    const blank = serializePublicProject({
+      ...created,
+      title: "",
+      summary: "",
+      seo_title: null,
+      locale_json: created.locale_json,
+    } as typeof created);
+    assert.equal(blank.title, "中文標題");
+    assert.equal(blank.summary, "中文摘要");
+  });
+
+  it("seeds real English overlays for site copy and all eight featured works", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const settings = await getSiteSettings(sql);
+    assert.equal(settings?.locale_json.en?.headline, siteLocaleEn.headline);
+    assert.equal(settings?.locale_json.en?.narrative, siteLocaleEn.narrative);
+    assert.notEqual(settings?.headline, settings?.locale_json.en?.headline);
+    assert.notEqual(settings?.narrative, settings?.locale_json.en?.narrative);
+    assert.equal(settings?.narrative, "我把 AI、設計、影像、動畫、3D、互動與真實工作流程，轉化成看得懂、用得上的數位體驗。");
+    for (const slug of FEATURED_WORK_SLUGS) {
+      const admin = await getAdminProjectBySlug(sql, slug);
+      const en = featuredProjectLocaleEn[slug];
+      assert.notEqual(admin.locale_json.en?.title, admin.title, slug);
+      assert.notEqual(admin.locale_json.en?.summary, admin.summary, slug);
+      assert.equal(admin.locale_json.en?.title, en.title);
+      assert.equal(admin.locale_json.en?.summary, en.summary);
+      assert.equal(admin.locale_json.en?.problem, en.problem);
+      assert.equal(admin.locale_json.en?.role, en.role);
+      assert.notDeepEqual(admin.locale_json.en?.decisions, admin.decisions, slug);
+      assert.notDeepEqual(admin.locale_json.en?.limitations, admin.limitations, slug);
+      assert.deepEqual(admin.locale_json.en?.decisions, en.decisions);
+      assert.deepEqual(admin.locale_json.en?.limitations, en.limitations);
+      assert.deepEqual(admin.locale_json.en?.process, en.process);
+      assert.deepEqual(admin.locale_json.en?.outputs, en.outputs);
+      assert.notDeepEqual(admin.locale_json.en?.modalities, admin.modalities, slug);
+      assert.deepEqual(admin.locale_json.en?.modalities, en.modalities);
+      const live = serializePublicProject(admin);
+      assert.equal(live.locale.en?.title, en.title);
+      assert.equal(live.locale.en?.summary, en.summary);
+      assert.equal(admin.publication_status, "published");
+    }
+    for (const id of ARCHIVE_ITEM_IDS) {
+      const row = (await listAdminArchive(sql)).find((item) => item.id === id || item.slug === id);
+      const en = archiveLocaleEn[id];
+      assert.ok(row, id);
+      assert.notEqual(row.locale_json.en?.title, row.title, id);
+      assert.notEqual(row.locale_json.en?.summary, row.summary, id);
+      assert.equal(row.locale_json.en?.title, en.title);
+      assert.equal(row.locale_json.en?.summary, en.summary);
+      const live = (await listPublishedArchive(sql)).find((item) => item.id === id);
+      assert.equal(live?.locale.en?.title, en.title);
+    }
+  });
+
+  it("excludes draft archive items from the public archive", async () => {
+    const { sql } = await setup();
+    await upsertArchive(
+      sql,
+      {
+        slug: "hidden-poster",
+        title: "Hidden poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "draft",
+        origin_note: "test",
+        publication_status: "draft",
+        sort_order: 0,
+        canva_status: "not_configured",
+      },
+      "admin-1",
+    );
+    await upsertArchive(
+      sql,
+      {
+        slug: "public-poster",
+        title: "Public poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "live",
+        origin_note: "test",
+        publication_status: "published",
+        sort_order: 1,
+        canva_status: "not_configured",
+      },
+      "admin-1",
+    );
+    const published = await listPublishedArchive(sql);
+    assert.equal(published.length, 1);
+    assert.equal(published[0].slug, "public-poster");
+  });
+
+  it("persists a real Canva share URL onto the public slice without inventing one", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/design/DAGadminPasted/view",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.designId, "DAGadminPasted");
+    assert.equal(published.canva.shareUrl, "https://www.canva.com/design/DAGadminPasted/view");
+    assert.ok(published.canva.embedUrl?.includes("embed"));
+  });
+
+  it("keeps a Canva /d/ short URL on save without treating it as a verified embed", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(published.canva.embedUrl, null);
+    assert.equal(published.canva.designId, null);
+    assert.equal(published.canva.status, "pending");
+  });
+
+  it("keeps a resolved Canva embed when share is still a /d/ short URL", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_embed_url: "https://www.canva.com/design/DAGkeepOnSave/view?embed",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.designId, "DAGkeepOnSave");
+    assert.ok(published.canva.embedUrl?.includes("embed"));
+    assert.notEqual(published.canva.status, "verified");
+  });
+
+  it("never persists Canva verified from an admin save", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://www.canva.com/design/DAGadminPasted/view",
+        canva_status: "verified",
+      }),
+      "admin-1",
+    );
+    assert.equal(created.canva_status, "pending");
+  });
+
+  it("keeps an existing GitHub tree when a later sync is stale without a tree", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_sync_enabled: true,
+        github_sync_status: "pending",
+      }),
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+        fileTree: [{ path: "README.md", type: "file", size: 12 }],
+      },
+      "admin-1",
+    );
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "stale",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        branch: "main",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab",
+      },
+      "admin-1",
+    );
+    const after = await getAdminProject(sql, created.id);
+    assert.equal(after.github_file_tree?.[0]?.path, "README.md");
+    assert.equal(after.github_sync_status, "stale");
+  });
+
+  it("updates canva_share_url from an integrations-style save and rejects evil.com", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(sql, sample(), "admin-1");
+    const saved = await saveProjectRecord(
+      sql,
+      created.id,
+      { canva_share_url: "https://www.canva.com/design/DAGadminPasted/view" },
+      "admin-1",
+      "integrations",
+    );
+    assert.equal(saved.canva_share_url, "https://www.canva.com/design/DAGadminPasted/view");
+    assert.equal(saved.canva_status, "pending");
+    assert.notEqual(saved.canva_status, "verified");
+    const rejected = await saveProjectRecord(
+      sql,
+      created.id,
+      {
+        canva_share_url: "https://evil.com/design/DAGhacked/view",
+        canva_embed_url: null,
+        canva_design_id: null,
+      },
+      "admin-1",
+      "integrations",
+    );
+    assert.equal(rejected.canva_share_url, null);
+    assert.equal(rejected.canva_embed_url, null);
+    assert.equal(rejected.canva_status, "failed");
+  });
+
+  it("keeps Chinese narrative when an integrations save clears Canva", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        title: "中文標題",
+        summary: "中文摘要不可被清空",
+        locale_json: {
+          zh: { title: "中文標題", summary: "中文摘要不可被清空" },
+          en: { title: "English title" },
+        },
+      }),
+      "admin-1",
+    );
+    const patch = parseProjectPatch({
+      id: created.id,
+      canva_share_url: null,
+      canva_embed_url: null,
+      canva_design_id: null,
+      live_demo_url: null,
+      experience_mode: created.experience_mode,
+    });
+    assert.equal("summary" in patch, false);
+    assert.equal("locale_json" in patch, false);
+    assert.equal("title" in patch, false);
+    const { id, ...fields } = patch;
+    const cleared = await saveProjectRecord(sql, id, fields, "admin-1", "integrations");
+    assert.equal(cleared.title, "中文標題");
+    assert.equal(cleared.summary, "中文摘要不可被清空");
+    assert.equal(cleared.locale_json.zh?.title, "中文標題");
+    assert.equal(cleared.locale_json.zh?.summary, "中文摘要不可被清空");
+    assert.equal(cleared.locale_json.en?.title, "English title");
+    assert.equal(cleared.canva_share_url, null);
+  });
+
+  it("drops non-allowlisted Canva URLs instead of storing them as share links", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        canva_share_url: "https://evil.example/design/DAGfake/view",
+        canva_thumbnail_url: "https://document-export.canva.com/expired.png",
+        canva_status: "pending",
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.canva.shareUrl, null);
+    assert.equal(published.canva.embedUrl, null);
+    assert.equal(published.canva.thumbnailUrl, null);
+    assert.equal(published.canva.status, "failed");
+  });
+
+  it("seeds honest Canva fields for every featured work", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const expected = projectCanvaInventory();
+    const published = await listPublishedProjects(sql);
+    assert.equal(published.length, 8);
+    for (const project of published) {
+      const fields = expected[project.slug];
+      assert.equal(project.canva.shareUrl, fields.shareUrl, project.slug);
+      assert.equal(project.canva.embedUrl, fields.embedUrl, project.slug);
+      assert.equal(project.canva.status, fields.status, project.slug);
+    }
+    const archive = await listPublishedArchive(sql);
+    const zen = archive.find((item) => item.id === "tku-zen-poster");
+    assert.equal(zen?.canva.status, "unavailable");
+    assert.equal(zen?.canva.shareUrl, null);
+    assert.match(zen?.summary ?? "", /SVG 轉譯/);
+  });
+
+  it("seeded how-it-works uses experience_config instead of duplicating process", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set interaction_steps = process`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const published = await listPublishedProjects(sql);
+    const folio = published.find((item) => item.slug === "folio");
+    const director = published.find((item) => item.slug === "ai-director-os");
+    const folioHow = howItWorksSteps(folio!);
+    assert.ok(folioHow.some((step) => step.includes("畫布") && step.includes("文件模型")));
+    assert.ok(howItWorksSteps(director!).some((step) => step.includes("專案")));
+    assert.notEqual(folioHow[0], folio?.process[0]);
+  });
+
+  it("rewrites already-seeded archive copy that claimed live Canva or original photos", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update archive_items set summary = '縮圖來自 Canva 原作匯出，不是生成圖。' where slug = $1 or id = $1`,
+      ["tku-zen-poster"],
+    );
+    await sql.query(`delete from cms_meta where key = 'archive_honesty_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const archive = await listPublishedArchive(sql);
+    const zen = archive.find((item) => item.id === "tku-zen-poster");
+    const photo = archive.find((item) => item.id === "landscape-series");
+    assert.match(zen?.summary ?? "", /不是 Canva 嵌入/);
+    assert.doesNotMatch(zen?.summary ?? "", /原作匯出/);
+    assert.match(photo?.summary ?? "", /不是原作照片/);
+  });
+
+  it("saves homepage highlight slugs without wiping locale_json", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const { getSiteSettings, saveSiteSettings } = await import("./store.ts");
+    const current = await getSiteSettings(sql);
+    assert.ok(current);
+    await saveSiteSettings(
+      sql,
+      {
+        name_zh: current.name_zh,
+        name_en: current.name_en,
+        person: current.person,
+        role: current.role,
+        headline: current.headline,
+        subhead: current.subhead,
+        narrative: current.narrative,
+        email: current.email,
+        github: current.github,
+        github_handle: current.github_handle,
+        location: current.location,
+        seo_title: current.seo_title,
+        seo_description: current.seo_description,
+        homepage_json: { highlightSlugs: ["framelab", "planform"] },
+        locale_json: { zh: { headline: "中文" }, en: { headline: "EN" } },
+      },
+      "admin-1",
+    );
+    const saved = await getSiteSettings(sql);
+    assert.deepEqual(saved?.homepage_json.highlightSlugs, ["framelab", "planform"]);
+    assert.equal(saved?.locale_json.zh?.headline, "中文");
+    assert.equal(saved?.locale_json.en?.headline, "EN");
+    assert.equal(saved?.headline, current.headline);
+  });
+
+  it("publishes structured experience_config so the public page can read it", async () => {
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        experience_mode: "timeline",
+        interaction_steps: ["看幀", "開 onion-skin"],
+        experience_config: {
+          honestyLabel: "saved-timeline",
+          intro: "後台存下來的時間軸",
+          processNodes: [
+            {
+              id: "engine",
+              label: "引擎",
+              summary: "時間軸引擎",
+              githubPath: "src/lib/domain/timeline-engine.ts",
+              purpose: "時間軸",
+              stage: "時間軸",
+            },
+          ],
+          timeline: {
+            frames: [
+              { i: 3, kind: "key", x: 12, y: 40 },
+              { i: 4, kind: "generated", x: 90, y: 20, problem: true },
+            ],
+            onionDefault: false,
+            demoDisclaimer: "示範，不是 GPU。",
+          },
+        },
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.experienceMode, "timeline");
+    assert.equal(published.experienceConfig.honestyLabel, "saved-timeline");
+    assert.equal(published.experienceConfig.intro, "後台存下來的時間軸");
+    assert.equal(published.experienceConfig.processNodes?.[0]?.githubPath, "src/lib/domain/timeline-engine.ts");
+    assert.equal(published.experienceConfig.timeline?.frames[1]?.kind, "generated");
+    assert.equal(published.experienceConfig.timeline?.frames[1]?.problem, true);
+    assert.equal(published.experienceConfig.timeline?.onionDefault, false);
+    assert.deepEqual(published.interactionSteps, ["看幀", "開 onion-skin"]);
+  });
+
+  it("publishes saved experience_config.locale.en so public en can read it", async () => {
+    const { overlayExperienceConfig } = await import("../locale/experience.ts");
+    const { sql } = await setup();
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        ...sample(),
+        publication_status: "published",
+        experience_mode: "process-map",
+        experience_config: {
+          honestyLabel: "作品集互動展示",
+          processNodes: [
+            {
+              id: "engine",
+              label: "引擎",
+              summary: "時間軸引擎",
+              githubPath: "src/lib/domain/timeline-engine.ts",
+              purpose: "時間軸",
+              stage: "時間軸",
+            },
+          ],
+          locale: {
+            en: {
+              processNodes: [{ id: "engine", label: "Engine desk" }],
+            },
+          },
+        },
+      }),
+      "admin-1",
+    );
+    const published = await getPublishedProject(sql, created.slug);
+    assert.equal(published.experienceConfig.processNodes?.[0]?.label, "引擎");
+    assert.equal(published.experienceConfig.locale?.en?.processNodes?.[0]?.label, "Engine desk");
+    const en = overlayExperienceConfig(published.experienceConfig, created.slug, "en");
+    assert.equal(en.processNodes?.[0]?.label, "Engine desk");
+    const empty = overlayExperienceConfig(
+      {
+        ...published.experienceConfig,
+        locale: { en: { processNodes: [{ id: "engine", label: "" }] } },
+      },
+      created.slug,
+      "en",
+    );
+    assert.equal(empty.processNodes?.[0]?.label, "引擎");
+    const zh = overlayExperienceConfig(published.experienceConfig, created.slug, "zh");
+    assert.equal(zh.processNodes?.[0]?.label, "引擎");
+  });
+
+  it("fills missing nested experience keys on seed complement without overwriting saved copy", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set experience_config = $2::jsonb where slug = $1`, [
+      "framelab",
+      JSON.stringify({ honestyLabel: "kept-label" }),
+    ]);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const framelab = await getPublishedProject(sql, "framelab");
+    assert.equal(framelab.experienceConfig.honestyLabel, "kept-label");
+    assert.ok((framelab.experienceConfig.timeline?.frames.length ?? 0) >= 3);
+    const director = await getPublishedProject(sql, "ai-director-os");
+    assert.ok(director.experienceConfig.processNodes?.some((node) => node.id === "project"));
+  });
+
+  it("restores empty FrameLab frames and appends GitHub export media on seed complement", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set experience_config = $2::jsonb, media = $3::jsonb where slug = $1`, [
+      "framelab",
+      JSON.stringify({ honestyLabel: "kept-empty-frames", timeline: { frames: [] } }),
+      JSON.stringify([{ src: "/media/covers/framelab.svg", alt: "cover", kind: "image" }]),
+    ]);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const framelab = await getPublishedProject(sql, "framelab");
+    assert.equal(framelab.experienceConfig.honestyLabel, "kept-empty-frames");
+    assert.ok((framelab.experienceConfig.timeline?.frames.length ?? 0) >= 3);
+    assert.ok(framelab.media.some((item) => item.src === "/media/covers/framelab.svg"));
+    assert.ok(framelab.media.some((item) => item.src.startsWith("/media/github-exports/framelab/")));
+    assert.match(framelab.media.find((item) => item.src.includes("github-exports"))?.caption ?? "", /GitHub 匯出/);
+    const director = await getPublishedProject(sql, "ai-director-os");
+    assert.ok(director.media.some((item) => item.src.startsWith("/media/github-exports/ai-director-os/")));
+    const folio = await getPublishedProject(sql, "folio");
+    assert.ok(folio.media.some((item) => item.src === "/media/github-exports/folio/og.jpg"));
+    const zen = await getPublishedProject(sql, "tku-zen-ai");
+    assert.ok(zen.media.some((item) => item.src === "/media/github-exports/tku-zen-ai/club-illustration.jpg"));
+    assert.ok(folio.media.some((item) => item.src === "/media/studio/folio-editor.svg"));
+    assert.ok(zen.media.some((item) => item.src === "/media/studio/tku-zen-chat.svg"));
+  });
+
+  it("round-trips distinctive admin field groups to admin, public, and homepage slices", async () => {
+    const { sql } = await setup();
+    assert.equal(demoTypeFromVerify(true, "https://example.com"), "iframe");
+    assert.equal(demoTypeFromVerify(false, "https://example.com"), "link");
+    assert.equal(demoTypeFromVerify(true, ""), "unavailable");
+
+    const created = await createProjectRecord(
+      sql,
+      projectInputSchema.parse({
+        slug: "round-trip-work",
+        title: "RT-TITLE-主標",
+        subtitle: "RT-SUBTITLE-副標",
+        category: "Creative Tool",
+        year: "2099",
+        product_status: "concept",
+        publication_status: "draft",
+        featured: true,
+        sort_order: 77,
+        summary: "RT-SUMMARY-摘要",
+        problem: "RT-PROBLEM-問題",
+        role: "RT-ROLE-角色",
+        decisions: ["RT-DECISION-決策"],
+        modalities: ["RT-MODALITY-模態"],
+        process: ["RT-PROCESS-流程"],
+        outputs: ["RT-OUTPUT-產出"],
+        stack: ["RT-STACK-技術"],
+        limitations: ["RT-LIMIT-限制"],
+        media: [
+          {
+            src: "/media/covers/folio.svg",
+            alt: "RT-COVER-ALT",
+            kind: "image",
+            caption: "RT-COVER-CAPTION",
+          },
+          {
+            src: "/media/covers/framelab.svg",
+            alt: "RT-VIDEO-ALT",
+            kind: "video",
+            caption: "RT-VIDEO-CAPTION",
+            poster: "/media/covers/framelab.svg",
+          },
+          {
+            src: "/media/covers/planform.svg",
+            alt: "RT-GALLERY-ALT",
+            kind: "image",
+            caption: "RT-GALLERY-CAPTION",
+          },
+        ],
+        locale_json: {
+          zh: {
+            title: "RT-ZH-TITLE",
+            subtitle: "RT-ZH-SUB",
+            summary: "RT-ZH-SUM",
+            problem: "RT-ZH-PROB",
+            role: "RT-ZH-ROLE",
+            seoTitle: "RT-ZH-SEO-T",
+            seoDescription: "RT-ZH-SEO-D",
+          },
+          en: {
+            title: "RT-EN-TITLE",
+            subtitle: "RT-EN-SUB",
+            summary: "RT-EN-SUM",
+            problem: "RT-EN-PROB",
+            role: "RT-EN-ROLE",
+            seoTitle: "RT-EN-SEO-T",
+            seoDescription: "RT-EN-SEO-D",
+          },
+        },
+        seo_title: "RT-SEO-TITLE",
+        seo_description: "RT-SEO-DESC",
+        github_url: "https://github.com/aa0968111723-prog/FrameLab",
+        github_branch: "rt-branch",
+        github_sync_enabled: true,
+        live_demo_url: "https://planform-iso-k7d2.zeabur.app",
+        live_demo_label: "RT-DEMO-LABEL",
+        live_demo_type: "link",
+        live_demo_embed_enabled: false,
+        live_demo_status: "pending",
+        canva_share_url: "https://www.canva.com/design/DAGroundTrip1/view",
+        canva_page_ids: ["RT-PAGE-1"],
+        canva_thumbnail_url: "/media/covers/folio.svg",
+        canva_alt: "RT-CANVA-ALT",
+        canva_caption: "RT-CANVA-CAPTION",
+        experience_mode: "timeline",
+        experience_config: {
+          honestyLabel: "RT-HONESTY-標籤",
+          intro: "RT-INTRO-引言",
+          demoNote: "RT-DEMO-NOTE",
+          canvaNote: "RT-CANVA-NOTE",
+          githubIntro: "RT-GH-INTRO",
+          galleryNote: "RT-GALLERY-NOTE",
+          canvaPageLabels: [{ id: "RT-PAGE-1", label: "RT-PAGE-LABEL" }],
+          timeline: {
+            frames: [{ i: 1, kind: "key", x: 10, y: 20 }],
+            onionDefault: true,
+            demoDisclaimer: "RT-TIMELINE-DISCLAIMER",
+          },
+          locale: {
+            en: {
+              processNodes: [{ id: "engine", label: "RT-EN-NODE-LABEL" }],
+              canvaNote: "RT-EN-CANVA-NOTE",
+              timeline: { demoDisclaimer: "RT-EN-TIMELINE-DISCLAIMER" },
+            },
+          },
+        },
+        interaction_steps: ["RT-STEP-A"],
+        source_evidence: [
+          {
+            label: "RT-EVIDENCE-LABEL",
+            href: "https://github.com/aa0968111723-prog/FrameLab",
+            note: "RT-EVIDENCE-NOTE",
+            kind: "github",
+          },
+        ],
+      }),
+      "admin-rt",
+    );
+
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.subtitle, "RT-SUBTITLE-副標");
+    assert.equal(admin.category, "Creative Tool");
+    assert.equal(admin.year, "2099");
+    assert.equal(admin.product_status, "concept");
+    assert.equal(admin.featured, true);
+    assert.equal(admin.sort_order, 77);
+    assert.equal(admin.summary, "RT-SUMMARY-摘要");
+    assert.equal(admin.problem, "RT-PROBLEM-問題");
+    assert.equal(admin.role, "RT-ROLE-角色");
+    assert.deepEqual(admin.decisions, ["RT-DECISION-決策"]);
+    assert.deepEqual(admin.modalities, ["RT-MODALITY-模態"]);
+    assert.deepEqual(admin.process, ["RT-PROCESS-流程"]);
+    assert.deepEqual(admin.outputs, ["RT-OUTPUT-產出"]);
+    assert.deepEqual(admin.stack, ["RT-STACK-技術"]);
+    assert.deepEqual(admin.limitations, ["RT-LIMIT-限制"]);
+    assert.equal(admin.media[0]?.caption, "RT-COVER-CAPTION");
+    assert.equal(admin.media.find((item) => item.kind === "video")?.poster, "/media/covers/framelab.svg");
+    assert.equal(admin.media.find((item) => item.alt === "RT-GALLERY-ALT")?.caption, "RT-GALLERY-CAPTION");
+    assert.equal(admin.locale_json.zh?.seoTitle, "RT-ZH-SEO-T");
+    assert.equal(admin.locale_json.en?.role, "RT-EN-ROLE");
+    assert.equal(admin.seo_title, "RT-SEO-TITLE");
+    assert.equal(admin.github_owner, "aa0968111723-prog");
+    assert.equal(admin.github_repo, "FrameLab");
+    assert.equal(admin.github_branch, "rt-branch");
+    assert.equal(admin.live_demo_label, "RT-DEMO-LABEL");
+    assert.equal(admin.canva_design_id, "DAGroundTrip1");
+    assert.deepEqual(admin.canva_page_ids, ["RT-PAGE-1"]);
+    assert.equal(admin.canva_alt, "RT-CANVA-ALT");
+    assert.equal(admin.experience_mode, "timeline");
+    assert.equal(admin.experience_config.honestyLabel, "RT-HONESTY-標籤");
+    assert.equal(admin.experience_config.demoNote, "RT-DEMO-NOTE");
+    assert.equal(admin.experience_config.canvaPageLabels?.[0]?.label, "RT-PAGE-LABEL");
+    assert.equal(admin.experience_config.locale?.en?.processNodes?.[0]?.label, "RT-EN-NODE-LABEL");
+    assert.deepEqual(admin.interaction_steps, ["RT-STEP-A"]);
+    assert.equal(admin.source_evidence[0]?.note, "RT-EVIDENCE-NOTE");
+
+    await persistDemoVerify(sql, created.id, "admin-rt", {
+      url: "https://planform-iso-k7d2.zeabur.app",
+      status: "verified",
+      embedEnabled: true,
+      error: null,
+    });
+    const afterDemo = await getAdminProject(sql, created.id);
+    assert.equal(afterDemo.live_demo_type, "iframe");
+    assert.equal(afterDemo.live_demo_embed_enabled, true);
+    assert.equal(afterDemo.live_demo_status, "verified");
+    assert.equal(afterDemo.live_demo_url, "https://planform-iso-k7d2.zeabur.app");
+
+    const retitled = await saveProjectRecord(sql, created.id, { title: "RT-TITLE-主標" }, "admin-rt");
+    assert.equal(retitled.media[0]?.caption, "RT-COVER-CAPTION");
+    assert.equal(retitled.live_demo_type, "iframe");
+    assert.equal(retitled.live_demo_embed_enabled, true);
+    assert.deepEqual(retitled.canva_page_ids, ["RT-PAGE-1"]);
+    assert.equal(retitled.github_branch, "rt-branch");
+
+    await applyGithubSync(
+      sql,
+      created.id,
+      {
+        ok: true,
+        status: "verified",
+        owner: "aa0968111723-prog",
+        repo: "FrameLab",
+        metadata: {
+          name: "FrameLab",
+          description: "repo description",
+          homepage: null,
+          defaultBranch: "main",
+          updatedAt: "2026-09-01T00:00:00Z",
+          private: false,
+          archived: false,
+          htmlUrl: "https://github.com/aa0968111723-prog/FrameLab",
+          language: "TypeScript",
+        },
+        readme: "# FrameLab RT",
+        fileTree: [{ path: "README.md", type: "file", size: 12 }],
+      },
+      "admin-rt",
+    );
+    const afterGithub = await getAdminProject(sql, created.id);
+    assert.equal(afterGithub.title, "RT-TITLE-主標");
+    assert.equal(afterGithub.summary, "RT-SUMMARY-摘要");
+    assert.equal(afterGithub.github_branch, "rt-branch");
+    assert.equal(afterGithub.github_readme, "# FrameLab RT");
+    assert.equal(afterGithub.live_demo_type, "iframe");
+
+    await saveProjectRecord(
+      sql,
+      created.id,
+      {
+        media: [
+          { src: "/media/covers/folio.svg", alt: "RT-COVER-ALT", kind: "image" },
+        ],
+      },
+      "admin-rt",
+      "wipe-caption",
+    );
+    const wiped = await getAdminProject(sql, created.id);
+    assert.equal(wiped.media[0]?.caption, undefined);
+    const revisions = await listRevisions(sql, created.id);
+    const prior = revisions.find((item) => item.note === "save");
+    assert.ok(prior);
+    const restored = await restoreRevision(sql, created.id, prior.id, "admin-rt");
+    assert.equal(restored.media[0]?.caption, "RT-COVER-CAPTION");
+    assert.equal(restored.media.find((item) => item.alt === "RT-GALLERY-ALT")?.caption, "RT-GALLERY-CAPTION");
+    assert.equal(restored.live_demo_type, "iframe");
+
+    await setPublication(sql, created.id, "published", "admin-rt");
+    const live = await getPublishedProject(sql, "round-trip-work");
+    assert.equal(live.subtitle, "RT-SUBTITLE-副標");
+    assert.equal(live.productStatus, "concept");
+    assert.equal(live.sortOrder, 77);
+    assert.equal(live.featured, true);
+    assert.equal(live.media[0]?.caption, "RT-COVER-CAPTION");
+    assert.equal(live.media.find((item) => item.kind === "video")?.caption, "RT-VIDEO-CAPTION");
+    assert.equal(live.media.find((item) => item.alt === "RT-GALLERY-ALT")?.caption, "RT-GALLERY-CAPTION");
+    assert.equal(live.locale.en?.title, "RT-EN-TITLE");
+    assert.equal(live.seoTitle, "RT-ZH-SEO-T");
+    assert.equal(live.github.branch, "rt-branch");
+    assert.equal(live.demo.label, "RT-DEMO-LABEL");
+    assert.equal(live.demo.type, "iframe");
+    assert.equal(live.demo.embedEnabled, true);
+    assert.equal(live.canva.alt, "RT-CANVA-ALT");
+    assert.equal(live.canva.caption, "RT-CANVA-CAPTION");
+    assert.deepEqual(live.canva.pageIds, ["RT-PAGE-1"]);
+    assert.equal(live.experienceConfig.honestyLabel, "RT-HONESTY-標籤");
+    assert.equal(live.experienceConfig.canvaNote, "RT-CANVA-NOTE");
+    assert.equal(live.experienceConfig.canvaPageLabels?.[0]?.label, "RT-PAGE-LABEL");
+    assert.deepEqual(live.interactionSteps, ["RT-STEP-A"]);
+    assert.equal(live.sourceEvidence[0]?.label, "RT-EVIDENCE-LABEL");
+
+    await setPublication(sql, created.id, "draft", "admin-rt");
+    await assert.rejects(() => getPublishedProject(sql, "round-trip-work"), NotFoundError);
+    const draftAdmin = await getAdminProject(sql, created.id);
+    assert.equal(draftAdmin.publication_status, "draft");
+    assert.equal(draftAdmin.subtitle, "RT-SUBTITLE-副標");
+    const preview = toPreviewProject(draftAdmin);
+    assert.equal(preview.subtitle, "RT-SUBTITLE-副標");
+    assert.equal(preview.media[0]?.caption, "RT-COVER-CAPTION");
+    await setPublication(sql, created.id, "archived", "admin-rt");
+    await assert.rejects(() => getPublishedProject(sql, "round-trip-work"), NotFoundError);
+    await setPublication(sql, created.id, "published", "admin-rt");
+
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await saveSiteSettings(
+      sql,
+      {
+        name_zh: "RT-NAME-ZH",
+        name_en: "RT-NAME-EN",
+        person: "RT-PERSON-柏能",
+        role: "RT-ROLE-SITE",
+        headline: "RT-HEADLINE-欄",
+        subhead: "RT-SUBHEAD-欄",
+        narrative: "RT-NARRATIVE-欄",
+        email: "rt-roundtrip@example.com",
+        github: "https://github.com/aa0968111723-prog",
+        github_handle: "aa0968111723-prog",
+        location: "RT-LOCATION-北投",
+        seo_title: "RT-SITE-SEO-T",
+        seo_description: "RT-SITE-SEO-D",
+        homepage_json: { highlightSlugs: ["round-trip-work"] },
+        locale_json: {
+          zh: {
+            headline: "RT-ZH-HEADLINE",
+            subhead: "RT-ZH-SUBHEAD",
+            narrative: "RT-ZH-NARRATIVE",
+            seoTitle: "RT-ZH-SITE-SEO-T",
+            seoDescription: "RT-ZH-SITE-SEO-D",
+          },
+          en: {
+            headline: "RT-EN-HEADLINE",
+            subhead: "RT-EN-SUBHEAD",
+            narrative: "RT-EN-NARRATIVE",
+            seoTitle: "RT-EN-SITE-SEO-T",
+            seoDescription: "RT-EN-SITE-SEO-D",
+          },
+        },
+      },
+      "admin-rt",
+    );
+    const settings = await getSiteSettings(sql);
+    assert.equal(settings?.person, "RT-PERSON-柏能");
+    assert.equal(settings?.headline, "RT-HEADLINE-欄");
+    assert.equal(settings?.subhead, "RT-SUBHEAD-欄");
+    assert.equal(settings?.locale_json.en?.subhead, "RT-EN-SUBHEAD");
+    assert.deepEqual(settings?.homepage_json.highlightSlugs, ["round-trip-work"]);
+    const publicSite = {
+      nameZh: settings!.name_zh,
+      nameEn: settings!.name_en,
+      person: settings!.person,
+      role: settings!.role,
+      headline: settings!.headline,
+      subhead: settings!.subhead,
+      narrative: settings!.narrative,
+      email: settings!.email,
+      github: settings!.github,
+      githubHandle: settings!.github_handle,
+      location: settings!.location,
+      seoTitle: settings!.seo_title,
+      seoDescription: settings!.seo_description,
+      homepageHighlightSlugs: settings!.homepage_json.highlightSlugs ?? [],
+      locale: settings!.locale_json,
+    };
+    const fallback = {
+      nameEn: "fallback",
+      person: "fallback",
+      headline: "fallback",
+      subhead: "fallback",
+      narrative: "fallback",
+    };
+    const homepageZh = resolveHomepageCopy(publicSite, fallback, "zh");
+    const homepageEn = resolveHomepageCopy(publicSite, fallback, "en");
+    assert.equal(homepageZh.headline, "RT-ZH-HEADLINE");
+    assert.equal(homepageZh.subhead, "RT-ZH-SUBHEAD");
+    assert.equal(homepageZh.narrative, "RT-ZH-NARRATIVE");
+    assert.equal(homepageZh.seoTitle, "RT-ZH-SITE-SEO-T");
+    assert.equal(homepageEn.headline, "RT-EN-HEADLINE");
+    assert.equal(homepageEn.subhead, "RT-EN-SUBHEAD");
+    assert.equal(homepageEn.narrative, "RT-EN-NARRATIVE");
+    assert.equal(homepageEn.seoTitle, "RT-EN-SITE-SEO-T");
+    assert.equal(homepageEn.seoDescription, "RT-EN-SITE-SEO-D");
+
+    await upsertArchive(
+      sql,
+      {
+        slug: "round-trip-poster",
+        title: "RT-ARCHIVE-TITLE",
+        kind: "graphic",
+        year: "2099",
+        summary: "RT-ARCHIVE-SUMMARY",
+        origin_note: "RT-ORIGIN-NOTE",
+        publication_status: "published",
+        sort_order: 42,
+        href: "https://github.com/aa0968111723-prog/FrameLab",
+        media: {
+          src: "/media/archive/tku-zen-poster.svg",
+          alt: "RT-ARCHIVE-ALT",
+          kind: "image",
+          caption: "RT-ARCHIVE-CAPTION",
+        },
+        canva_share_url: "https://www.canva.com/design/DAGarchiveRt1/view",
+        canva_page_ids: ["RT-ARCH-PAGE"],
+        canva_thumbnail_url: "/media/archive/tku-zen-poster.svg",
+        canva_alt: "RT-ARCH-CANVA-ALT",
+        canva_caption: "RT-ARCH-CANVA-CAPTION",
+        canva_status: "pending",
+        locale_json: {
+          zh: { title: "RT-ZH-ARCH-TITLE", summary: "RT-ZH-ARCH-SUM", caption: "RT-ZH-ARCH-CAP" },
+          en: { title: "RT-EN-ARCH-TITLE", summary: "RT-EN-ARCH-SUM", caption: "RT-EN-ARCH-CAP" },
+        },
+      },
+      "admin-rt",
+    );
+    const adminArchive = (await listAdminArchive(sql)).find((item) => item.slug === "round-trip-poster");
+    assert.equal(adminArchive?.origin_note, "RT-ORIGIN-NOTE");
+    assert.equal(adminArchive?.media?.caption, "RT-ARCHIVE-CAPTION");
+    assert.deepEqual(adminArchive?.canva_page_ids, ["RT-ARCH-PAGE"]);
+    assert.equal(adminArchive?.canva_thumbnail_url, "/media/archive/tku-zen-poster.svg");
+    assert.equal(adminArchive?.locale_json.en?.title, "RT-EN-ARCH-TITLE");
+    const publicArchive = (await listPublishedArchive(sql)).find((item) => item.slug === "round-trip-poster");
+    assert.equal(publicArchive?.originNote, "RT-ORIGIN-NOTE");
+    assert.equal(publicArchive?.media?.caption, "RT-ARCHIVE-CAPTION");
+    assert.equal(publicArchive?.canva.alt, "RT-ARCH-CANVA-ALT");
+    assert.equal(publicArchive?.canva.caption, "RT-ARCH-CANVA-CAPTION");
+    assert.equal(publicArchive?.canva.thumbnailUrl, "/media/archive/tku-zen-poster.svg");
+    assert.deepEqual(publicArchive?.canva.pageIds, ["RT-ARCH-PAGE"]);
+    assert.equal(publicArchive?.locale.en?.title, "RT-EN-ARCH-TITLE");
+    assert.equal(publicArchive?.title, "RT-ARCHIVE-TITLE");
+  });
+});

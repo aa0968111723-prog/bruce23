@@ -24,6 +24,7 @@ import { readFileSync, realpathSync } from "node:fs";
 import { constants as osConstants } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { applyPreviewLocalDefaults } from "./preview-local.mjs";
 
 export const APP_ENV_REL_PATH = ".grok/app-env.json";
 
@@ -104,13 +105,20 @@ export function isMainModule(moduleUrl) {
   }
 }
 
+export function applyRuntimeDefaults(env) {
+  return { ...env };
+}
+
 function main(argv) {
   const [command, ...args] = argv;
   if (!command) {
     console.error("usage: node scripts/with-app-env.mjs <command> [args…]");
     process.exit(2);
   }
-  const env = mergeAppEnv(readAppEnv(projectRoot()), process.env);
+  const env = applyPreviewLocalDefaults(
+    applyRuntimeDefaults(mergeAppEnv(readAppEnv(projectRoot()), process.env)),
+    { command, args },
+  );
   const child = spawn(command, args, { stdio: "inherit", env });
   // The dev server is long-running and is stopped by signalling this wrapper.
   for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {

@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
 
 /** Which database backend is active. */
@@ -9,6 +12,23 @@ const rawDatabaseUrl =
   typeof process !== "undefined" ? process.env.DATABASE_URL : undefined;
 const databaseUrl =
   rawDatabaseUrl && rawDatabaseUrl.trim() ? rawDatabaseUrl : undefined;
+
+/**
+ * Durable PGLite directory for local `npm run dev` / test mint only.
+ * Never used when `DATABASE_URL` is set (Neon) or when `VERCEL` is set
+ * (read-only serverless FS). Two processes cannot open the same PGLite
+ * dataDir; mint scripts must `close()` and exit before Vite boots.
+ */
+function resolvePgliteDataDir(): string | undefined {
+  if (databaseUrl) return undefined;
+  if (typeof process !== "undefined" && String(process.env.VERCEL ?? "").trim()) {
+    return undefined;
+  }
+  const dir = typeof process !== "undefined" ? process.env.PGLITE_DATA_DIR?.trim() : "";
+  return dir || undefined;
+}
+
+export const pgliteDataDir = resolvePgliteDataDir();
 
 /**
  * Active backend: real **Neon** when `DATABASE_URL` is set (deployed / configured
@@ -105,13 +125,49 @@ function createNeonSql(): Promise<Sql> {
   return globalRef.__pgSqlPromise__;
 }
 
+/**
+ * Vite inlines `import.meta.glob` at build time. Node tests/scripts have no
+ * transform, so fall back to the same `migrations/*.sql` files on disk.
+ */
+function loadMigrationSourcesFromFs(): Record<string, string> {
+  const dir = fileURLToPath(new URL("../../migrations", import.meta.url));
+  const out: Record<string, string> = {};
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith(".sql")) continue;
+    out[`/migrations/${name}`] = readFileSync(join(dir, name), "utf8");
+  }
+  return out;
+}
+
+function loadMigrationSources(): Record<string, string> {
+  try {
+    const loaded = import.meta.glob("/migrations/*.sql", {
+      query: "?raw",
+      import: "default",
+      eager: true,
+    }) as Record<string, string>;
+    if (loaded && typeof loaded === "object" && Object.keys(loaded).length > 0) {
+      return loaded;
+    }
+  } catch {
+    // Node: `import.meta.glob` is not a function until Vite rewrites this call.
+  }
+  return loadMigrationSourcesFromFs();
+}
+
 async function createPgliteSql(): Promise<Sql> {
   // Embedded Postgres, imported on demand so it never loads on the Neon path.
   // One in-memory instance per process, shared across HMR module instances, so
   // data survives source edits (it resets on dev-server restart).
   globalRef.__pgliteInstance__ ??= (async () => {
     const { PGlite } = await import("@electric-sql/pglite");
+    const dataDir = resolvePgliteDataDir();
+    if (dataDir) {
+      const { mkdirSync } = await import("node:fs");
+      mkdirSync(dataDir, { recursive: true });
+    }
     const pg = new PGlite({
+      ...(dataDir ? { dataDir } : {}),
       parsers: {
         [OID_INT8]: Number,
         [OID_DATE]: identity,
@@ -137,11 +193,7 @@ async function createPgliteSql(): Promise<Sql> {
   // passes serialized on a global chain so concurrent callers never
   // double-apply.
   const migrate = async (): Promise<void> => {
-    const migrations = import.meta.glob("/migrations/*.sql", {
-      query: "?raw",
-      import: "default",
-      eager: true,
-    }) as Record<string, string>;
+    const migrations = loadMigrationSources();
     const doneRows = await pg.query<{ name: string }>(
       "select name from _migrations",
     );
@@ -207,6 +259,23 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
   const pg = await globalRef.__pgliteInstance__;
   if (!pg) throw new Error("PGLite instance failed to initialize");
   return pg;
+}
+
+/** Release a file-backed PGLite so another process can open the same dataDir. */
+export async function closePglite(): Promise<void> {
+  let pg: import("@electric-sql/pglite").PGlite | undefined;
+  try {
+    pg = await globalRef.__pgliteInstance__;
+  } catch {
+    pg = undefined;
+  }
+  globalRef.__pgliteInstance__ = undefined;
+  globalRef.__pgliteMigrateChain__ = undefined;
+  globalRef.__pgSqlPromise__ = undefined;
+  (globalThis as typeof globalThis & { __pgBootstrapPromise__?: Promise<void> }).__pgBootstrapPromise__ =
+    undefined;
+  sqlPromise = null;
+  if (pg && !pg.closed) await pg.close();
 }
 
 /**

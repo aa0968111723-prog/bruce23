@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1120" role="img" aria-label="TKU Zen AI chat reconstruction in Luminous Studio light tokens">
+  <title>TKU Zen chat reconstruction aligned with tku-zen-ai page.tsx - light translation, not a product screenshot</title>
+  <rect width="900" height="1120" fill="#F7FBFF"/>
+  <rect x="40" y="36" width="820" height="1048" rx="32" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <circle cx="108" cy="108" r="28" fill="#EFFFF7"/>
+  <circle cx="108" cy="108" r="10" fill="#63E6BE"/>
+  <text x="152" y="102" fill="#17324D" font-family="Fraunces, Noto Serif TC, serif" font-size="22" font-weight="600">TKU Zen AI</text>
+  <text x="152" y="126" fill="#2BB894" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13">Local engine · no network</text>
+  <rect x="72" y="168" width="560" height="148" rx="24" fill="#EFFFF7"/>
+  <text x="96" y="208" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">Welcome to TKU Zen AI.</text>
+  <text x="96" y="232" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">Take a breath, and share whatever is on your mind.</text>
+  <line x1="96" y1="252" x2="560" y2="252" stroke="#D9EAF2"/>
+  <text x="96" y="280" fill="#2BB894" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13" font-style="italic">Inhale calm, exhale tension - three times.</text>
+  <rect x="268" y="340" width="500" height="72" rx="24" fill="#EAF6FF"/>
+  <text x="292" y="384" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">I feel stressed about my exams</text>
+  <rect x="72" y="436" width="620" height="168" rx="24" fill="#EFFFF7"/>
+  <text x="96" y="476" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">Notice the weight you are carrying,</text>
+  <text x="96" y="500" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="16">then set it down for one breath.</text>
+  <text x="96" y="528" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14">The quieter you become, the more you can hear.</text>
+  <line x1="96" y1="548" x2="620" y2="548" stroke="#D9EAF2"/>
+  <text x="96" y="576" fill="#2BB894" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13" font-style="italic">Breathe in for 4, hold for 4, out for 6.</text>
+  <rect x="72" y="640" width="300" height="40" rx="20" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="88" y="666" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">I feel stressed about my exams</text>
+  <rect x="384" y="640" width="148" height="40" rx="20" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="404" y="666" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Help me focus</text>
+  <rect x="544" y="640" width="140" height="40" rx="20" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="560" y="666" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">I can't sleep</text>
+  <rect x="696" y="640" width="108" height="40" rx="20" fill="#FFFFFF" stroke="#D9EAF2"/>
+  <text x="716" y="666" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="12">Thank you</text>
+  <rect x="72" y="716" width="560" height="52" rx="26" fill="#F7FBFF" stroke="#D9EAF2"/>
+  <text x="96" y="748" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="15">Share what is on your mind</text>
+  <rect x="648" y="716" width="120" height="52" rx="26" fill="#63E6BE"/>
+  <text x="686" y="748" fill="#073528" font-family="Figtree, Noto Sans TC, sans-serif" font-size="15" font-weight="600">Send</text>
+  <text x="72" y="808" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13">Aligned with tku-zen-ai src/app/page.tsx and src/lib/zen.ts</text>
+  <text x="72" y="832" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="13">Original UI is dark; this is a light-studio translation, not a screenshot.</text>
+  <rect x="72" y="868" width="756" height="160" rx="20" fill="#EAF6FF"/>
+  <text x="96" y="908" fill="#17324D" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14" font-weight="600">Local contract</text>
+  <text x="96" y="936" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14">Same line -&gt; same intent / message / breath</text>
+  <text x="96" y="962" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14">No API key, no cloud model, no club roster</text>
+  <text x="96" y="988" fill="#59748A" font-family="Figtree, Noto Sans TC, sans-serif" font-size="14">Public repo has no chat PNG, so this is not claimed as a screenshot</text>
+</svg>

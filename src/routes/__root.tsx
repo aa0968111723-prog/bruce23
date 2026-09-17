@@ -3,14 +3,13 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  useRouterState,
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { DedupHydratedShells } from "@/components/site/DedupHydratedShells";
 import { SiteShell } from "@/components/site/SiteShell";
-import { NotFoundView } from "@/components/site/NotFoundView";
-import { LocaleProvider } from "@/lib/portfolio/locale";
 import { Toaster } from "sonner";
+import { NotFoundView } from "@/components/site/NotFoundView";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Luminous Studio · 柏能";
@@ -30,10 +29,15 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/icon-512.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
       {
         rel: "preconnect",
         href: "https://fonts.gstatic.com",
@@ -49,17 +53,6 @@ export const Route = createRootRoute({
   component: RootDocument,
 });
 
-function AppFrame() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const bare = pathname.startsWith("/admin") || pathname === "/login";
-  if (bare) return <Outlet />;
-  return (
-    <SiteShell>
-      <Outlet />
-    </SiteShell>
-  );
-}
-
 function RootDocument() {
   return (
     <html lang="zh-Hant" className="antialiased" suppressHydrationWarning>
@@ -68,11 +61,12 @@ function RootDocument() {
       </head>
       <body className="bg-bg text-ink">
         <PreviewHostBridge />
+        <DedupHydratedShells />
         <AuthProvider>
-          <LocaleProvider>
-            <AppFrame />
-            <Toaster position="top-center" richColors />
-          </LocaleProvider>
+          <SiteShell>
+            <Outlet />
+          </SiteShell>
+          <Toaster position="top-center" richColors />
         </AuthProvider>
         <Scripts />
       </body>

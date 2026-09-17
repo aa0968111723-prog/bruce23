@@ -1,28 +1,40 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { listAdminProjectRows } from "@/lib/portfolio/server-admin";
+import { listAdminProjectsFn, listIntegrationsFn } from "@/lib/cms/admin-fn";
+import type { AdminProject } from "@/lib/cms/store";
+import { publicationStatusLabel } from "@/lib/cms/status";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminHome,
 });
 
 function AdminHome() {
-  const [rows, setRows] = useState<Awaited<ReturnType<typeof listAdminProjectRows>>>([]);
+  const [projects, setProjects] = useState<AdminProject[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    listAdminProjectRows().then(setRows).catch(() => setRows([]));
+    void Promise.all([listAdminProjectsFn(), listIntegrationsFn()])
+      .then(([list]) => setProjects(list))
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "讀取失敗");
+        setProjects([]);
+      });
   }, []);
-  const published = rows.filter((row) => row.publication_status === "published").length;
-  const drafts = rows.filter((row) => row.publication_status === "draft").length;
+
+  const loaded = projects !== null;
+  const published = (projects ?? []).filter((item) => item.publication_status === "published").length;
+  const drafts = (projects ?? []).filter((item) => item.publication_status === "draft").length;
+
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold">後台總覽</h1>
-      <p className="mt-2 text-sm text-muted">草稿與發布是分開的。公開網站只讀 published。</p>
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl bg-surface p-5 shadow-card">作品 {rows.length}</div>
-        <div className="rounded-2xl bg-surface p-5 shadow-card">已發布 {published}</div>
-        <div className="rounded-2xl bg-surface p-5 shadow-card">草稿 {drafts}</div>
+      <h1 className="font-display text-3xl">內容總覽</h1>
+      {error ? <p className="mt-3 text-sm text-alert">{error}</p> : null}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <Stat label="作品" value={loaded ? (projects?.length ?? 0) : "…"} />
+        <Stat label="已發布" value={loaded ? published : "…"} />
+        <Stat label="草稿" value={loaded ? drafts : "…"} />
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-8 flex flex-wrap gap-3">
         <Link to="/admin/projects/new" className="inline-flex min-h-11 items-center rounded-full bg-mint px-5 text-sm font-semibold text-primary-foreground">
           新增作品
         </Link>
@@ -30,6 +42,33 @@ function AdminHome() {
           整合狀態
         </Link>
       </div>
+      <ul className="mt-8 grid gap-2">
+        {projects === null ? <li className="text-sm text-muted">作品列載入中。</li> : null}
+        {(projects ?? []).map((project) => (
+          <li key={project.id}>
+            <Link
+              to="/admin/projects/$id/edit"
+              params={{ id: project.id }}
+              className="flex min-h-11 items-center justify-between rounded-2xl bg-surface px-4 py-3 shadow-card"
+            >
+              <span>
+                <span className="font-medium">{project.title}</span>
+                <span className="ml-2 text-xs text-muted">{publicationStatusLabel[project.publication_status]}</span>
+              </span>
+              <span className="text-xs text-muted">{project.github_sync_status}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-2xl bg-surface p-5 shadow-card">
+      <p className="text-sm text-muted">{label}</p>
+      <p className="mt-1 font-display text-3xl">{value}</p>
     </div>
   );
 }

@@ -1,0 +1,562 @@
+import type { Sql } from "../db.ts";
+import { archiveItems } from "../../content/archive.ts";
+import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
+import { projects } from "../../content/projects.ts";
+import { site } from "../../content/site.ts";
+import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
+import { experienceForSlug } from "../experiences/catalog.ts";
+import { defaultExperienceConfig, mergeExperienceConfig } from "../experiences/defaults.ts";
+import { parseGithubUrl } from "../github/parse.ts";
+import { projectInputSchema, type ExperienceConfig } from "./schema.ts";
+import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive } from "./store.ts";
+
+export const SEED_VERSION = "portfolio-cms-1";
+const ARCHIVE_HONESTY_VERSION = "svg-translations-20260916";
+
+async function refreshArchiveHonesty(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'archive_honesty_version' limit 1`,
+  );
+  if (meta[0]?.value === ARCHIVE_HONESTY_VERSION) return;
+  for (const item of archiveItems) {
+    const fields = canvaFieldsForArchive(item);
+    await sql.query(
+      `update archive_items
+       set summary = $2,
+           origin_note = $3,
+           media = $4::jsonb,
+           canva_alt = $5,
+           canva_caption = $6,
+           canva_thumbnail_url = coalesce(nullif($7, ''), canva_thumbnail_url),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null then canva_status
+             else $8
+           end,
+           updated_at = now()
+       where slug = $1 or id = $1`,
+      [
+        item.id,
+        item.summary,
+        item.originNote,
+        item.media ? JSON.stringify(item.media) : null,
+        fields.alt,
+        fields.caption,
+        fields.thumbnailUrl,
+        fields.status,
+      ],
+    );
+  }
+  await sql.query(
+    `insert into cms_meta (key, value) values ('archive_honesty_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [ARCHIVE_HONESTY_VERSION],
+  );
+}
+
+async function ensureSeedComplements(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const fields = canvaFieldsForProject(project);
+    await sql.query(
+      `update projects
+       set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $2),
+           canva_alt = coalesce(nullif(canva_alt, ''), $3),
+           canva_caption = coalesce(canva_caption, $4),
+           canva_share_url = coalesce(canva_share_url, $5),
+           canva_embed_url = coalesce(canva_embed_url, $6),
+           canva_design_id = coalesce(canva_design_id, $7),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
+               then case
+                 when canva_status in ('not_configured', 'unavailable', 'failed')
+                   and canva_share_url is null and canva_embed_url is null
+                   then 'pending'
+                 else canva_status
+               end
+             else $8
+           end
+       where slug = $1`,
+      [
+        project.slug,
+        fields.thumbnailUrl,
+        fields.alt,
+        fields.caption,
+        fields.shareUrl,
+        fields.embedUrl,
+        fields.designId,
+        fields.status,
+      ],
+    );
+  }
+  for (const item of archiveItems) {
+    const fields = canvaFieldsForArchive(item);
+    await sql.query(
+      `update archive_items
+       set canva_thumbnail_url = coalesce(nullif(canva_thumbnail_url, ''), $2),
+           canva_alt = coalesce(nullif(canva_alt, ''), $3),
+           canva_caption = coalesce(canva_caption, $4),
+           canva_share_url = coalesce(canva_share_url, $5),
+           canva_embed_url = coalesce(canva_embed_url, $6),
+           canva_design_id = coalesce(canva_design_id, $7),
+           canva_status = case
+             when canva_share_url is not null or canva_embed_url is not null or $5 is not null or $6 is not null
+               then canva_status
+             else $8
+           end,
+           media = coalesce(media, $9::jsonb)
+       where slug = $1 or id = $1`,
+      [
+        item.id,
+        fields.thumbnailUrl,
+        fields.alt,
+        fields.caption,
+        fields.shareUrl,
+        fields.embedUrl,
+        fields.designId,
+        fields.status,
+        item.media ? JSON.stringify(item.media) : null,
+      ],
+    );
+  }
+  await refreshArchiveHonesty(sql);
+  await fillExperienceConfigGaps(sql);
+  await fillLiveDemoAndEvidenceGaps(sql);
+  await fillLocaleJsonGaps(sql);
+  await fillArchiveLocaleGaps(sql);
+  await fillSiteLocaleGaps(sql);
+  await fillProjectMediaGaps(sql);
+  await clearUncustomizedHowSteps(sql);
+}
+
+export async function ensureSeed(
+  sql: Sql,
+  options: { actor?: string; skipGithubHydrate?: boolean } = {},
+): Promise<{ seeded: boolean; skipped: boolean }> {
+  const actor = options.actor ?? "seed";
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'seed_version' limit 1`,
+  );
+  if (meta[0]?.value === SEED_VERSION) {
+    await ensureSeedComplements(sql);
+    if (!options.skipGithubHydrate) {
+      await runPublicHydrates(sql);
+    }
+    return { seeded: false, skipped: true };
+  }
+
+  const settings = await getSiteSettings(sql);
+  if (!settings) {
+    await saveSiteSettings(
+      sql,
+      {
+        name_zh: site.nameZh,
+        name_en: site.nameEn,
+        person: site.person,
+        role: site.role,
+        headline: site.headline,
+        subhead: site.subhead,
+        narrative: site.narrative,
+        email: site.email,
+        github: site.github,
+        github_handle: site.githubHandle,
+        location: site.location,
+        seo_title: `${site.nameZh} · ${site.person}`,
+        seo_description: site.narrative,
+        homepage_json: {
+          highlightSlugs: projects.map((item) => item.slug),
+        },
+        locale_json: {
+          zh: siteLocaleZh,
+          en: siteLocaleEn,
+        },
+      },
+      actor,
+    );
+  } else if (!(settings.homepage_json.highlightSlugs?.length)) {
+    await sql.query(
+      `update site_settings
+       set homepage_json = jsonb_set(coalesce(homepage_json, '{}'::jsonb), '{highlightSlugs}', $1::jsonb, true)
+       where id = 'default'`,
+      [JSON.stringify(projects.map((item) => item.slug))],
+    );
+  }
+
+  for (const [index, project] of projects.entries()) {
+    const existing = await sql.query<{ id: string }>(
+      `select id from projects where slug = $1 limit 1`,
+      [project.slug],
+    );
+    if (existing[0]) continue;
+    const parsed = parseGithubUrl(project.links.github);
+    const catalog = experienceForSlug(project.slug);
+    const demoUrl = project.links.live ?? project.links.demo ?? null;
+    const canva = canvaFieldsForProject(project);
+    const input = projectInputSchema.parse({
+      slug: project.slug,
+      title: project.title,
+      subtitle: project.subtitle,
+      category: project.category,
+      year: project.year,
+      product_status: project.status,
+      publication_status: "published",
+      featured: project.featured,
+      sort_order: index,
+      summary: project.summary,
+      problem: project.problem,
+      role: project.role,
+      decisions: project.decisions,
+      modalities: project.modalities,
+      process: project.process,
+      outputs: project.outputs,
+      stack: project.stack,
+      limitations: project.limitations,
+      media: project.media.map((item) => ({
+        ...item,
+        src: item.src.replace(/\.jpg$/i, ".svg"),
+      })),
+      locale_json: {
+        zh: localeZhFromProject(project.slug),
+        en: localeEnForSlug(project.slug) ?? {
+          title: project.title,
+          subtitle: project.subtitle,
+          summary: project.summary,
+        },
+      },
+      seo_title: `${project.title} · ${site.nameZh}`,
+      seo_description: project.summary,
+      github_url: parsed?.url ?? project.links.github ?? null,
+      github_owner: parsed?.owner ?? null,
+      github_repo: parsed?.repo ?? null,
+      github_branch: null,
+      github_sync_enabled: Boolean(parsed),
+      github_sync_status: parsed ? "pending" : "not_configured",
+      live_demo_url: demoUrl,
+      live_demo_label: demoUrl ? "公開網址（狀態可能變動）" : null,
+      live_demo_type: demoUrl ? "link" : "unavailable",
+      live_demo_embed_enabled: false,
+      live_demo_status: demoUrl ? "pending" : "not_configured",
+      canva_share_url: canva.shareUrl,
+      canva_embed_url: canva.embedUrl,
+      canva_design_id: canva.designId,
+      canva_thumbnail_url: canva.thumbnailUrl,
+      canva_alt: canva.alt,
+      canva_caption: canva.caption,
+      canva_status: canva.status,
+      experience_mode: catalog?.mode ?? "github-explorer",
+      experience_config: defaultExperienceConfig(project.slug),
+      interaction_steps: [],
+      source_evidence: project.sourceReferences.map((ref) => ({
+        label: ref.label,
+        href: ref.href,
+        note: ref.note,
+        kind: ref.href?.includes("canva.com")
+          ? ("canva" as const)
+          : ref.href?.includes("github.com")
+            ? ("github" as const)
+            : ("demo" as const),
+      })),
+    });
+    await createProjectRecord(sql, input, actor);
+  }
+
+  for (const [index, item] of archiveItems.entries()) {
+    const existing = await sql.query<{ id: string }>(
+      `select id from archive_items where slug = $1 or id = $2 limit 1`,
+      [item.id, item.id],
+    );
+    if (existing[0]) continue;
+    const canva = canvaFieldsForArchive(item);
+    await upsertArchive(
+      sql,
+      {
+        id: item.id,
+        slug: item.id,
+        title: item.title,
+        kind: item.kind,
+        year: item.year,
+        summary: item.summary,
+        media: item.media
+          ? { ...item.media, src: item.media.src.replace(/\.jpg$/i, ".svg") }
+          : null,
+        href: item.href ?? null,
+        origin_note: item.originNote,
+        publication_status: "published",
+        sort_order: index,
+        locale_json: {
+          zh: localeZhFromArchive(item.id),
+          en: archiveLocaleEnForId(item.id),
+        },
+        canva_share_url: canva.shareUrl,
+        canva_embed_url: canva.embedUrl,
+        canva_design_id: canva.designId,
+        canva_thumbnail_url: canva.thumbnailUrl,
+        canva_alt: canva.alt,
+        canva_caption: canva.caption,
+        canva_status: canva.status,
+      },
+      actor,
+    );
+  }
+
+  await sql.query(
+    `insert into cms_meta (key, value) values ('seed_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [SEED_VERSION],
+  );
+  await ensureSeedComplements(sql);
+  if (!options.skipGithubHydrate) {
+    await runPublicHydrates(sql);
+  }
+  return { seeded: true, skipped: false };
+}
+
+async function runPublicHydrates(sql: Sql): Promise<void> {
+  const { shouldHydrateGithub, hydratePendingGithub, hydratePendingDemos, hydratePendingCanvaShortLinks } =
+    await import("./hydrate.ts");
+  if (!shouldHydrateGithub()) return;
+  await hydratePendingGithub(sql).catch((err: unknown) => {
+    console.warn("[cms] github hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
+  await hydratePendingDemos(sql).catch((err: unknown) => {
+    console.warn("[cms] demo hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
+  await hydratePendingCanvaShortLinks(sql).catch((err: unknown) => {
+    console.warn("[cms] canva shortlink hydrate deferred:", err instanceof Error ? err.message : "unknown error");
+  });
+}
+
+function asStoredConfig(value: unknown): ExperienceConfig {
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value) as ExperienceConfig;
+    } catch {
+      return {};
+    }
+  }
+  if (value && typeof value === "object") return value as ExperienceConfig;
+  return {};
+}
+
+async function fillExperienceConfigGaps(sql: Sql): Promise<void> {
+  const rows = await sql.query<{ id: string; slug: string; experience_config: unknown }>(
+    `select id, slug, experience_config from projects`,
+  );
+  for (const row of rows) {
+    const stored = asStoredConfig(row.experience_config);
+    const merged = mergeExperienceConfig(row.slug, stored);
+    if (JSON.stringify(stored) === JSON.stringify(merged)) continue;
+    await sql.query(`update projects set experience_config = $2::jsonb where id = $1`, [
+      row.id,
+      JSON.stringify(merged),
+    ]);
+  }
+}
+
+function asEvidenceList(value: unknown): Array<{ label: string; href?: string; note: string; kind: string }> {
+  if (typeof value === "string") {
+    try {
+      return asEvidenceList(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is { label: string; href?: string; note: string; kind: string } => {
+    return Boolean(item && typeof item === "object" && "label" in item);
+  });
+}
+
+/** Seed used to copy process into interaction_steps, which hid saved experience_config. */
+async function clearUncustomizedHowSteps(sql: Sql): Promise<void> {
+  await sql.query(
+    `update projects
+     set interaction_steps = '[]'::jsonb, updated_at = now()
+     where interaction_steps = process`,
+  );
+}
+
+/** GitHub homepage that currently serves a JS bundle, not HTML. Seed live URLs replace it. */
+const STALE_NON_PAGE_LIVE_URL = "https://ai-os-ten.vercel.app";
+
+async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const demoUrl = project.links.live ?? project.links.demo ?? null;
+    if (demoUrl) {
+      const stale = demoUrl === STALE_NON_PAGE_LIVE_URL ? "" : STALE_NON_PAGE_LIVE_URL;
+      await sql.query(
+        `update projects
+         set live_demo_url = $2,
+             live_demo_label = coalesce(nullif(live_demo_label, ''), $3),
+             live_demo_type = case
+               when live_demo_type is null or live_demo_type in ('unavailable', '') then 'link'
+               else live_demo_type
+             end,
+             live_demo_embed_enabled = false,
+             live_demo_status = 'pending',
+             live_demo_error = null,
+             live_demo_last_verified_at = null,
+             updated_at = now()
+         where slug = $1 and (
+           live_demo_url is null or live_demo_url = ''
+           or ($4 <> '' and live_demo_url = $4)
+         )`,
+        [project.slug, demoUrl, "公開網址（狀態可能變動）", stale],
+      );
+    }
+
+    const rows = await sql.query<{
+      id: string;
+      source_evidence: unknown;
+      experience_mode: string | null;
+    }>(`select id, source_evidence, experience_mode from projects where slug = $1 limit 1`, [project.slug]);
+    const row = rows[0];
+    if (!row) continue;
+
+    const catalog = experienceForSlug(project.slug);
+    if (!row.experience_mode && catalog?.mode) {
+      await sql.query(`update projects set experience_mode = $2 where id = $1`, [row.id, catalog.mode]);
+    }
+
+    const stored = asEvidenceList(row.source_evidence);
+    const have = new Set(stored.map((item) => item.href || item.label));
+    const next = [...stored];
+    for (const ref of project.sourceReferences) {
+      const key = ref.href || ref.label;
+      if (have.has(key)) continue;
+      next.push({
+        label: ref.label,
+        href: ref.href,
+        note: ref.note,
+        kind: ref.href?.includes("canva.com")
+          ? "canva"
+          : ref.href?.includes("github.com")
+            ? "github"
+            : "demo",
+      });
+      have.add(key);
+    }
+    if (next.length !== stored.length) {
+      await sql.query(`update projects set source_evidence = $2::jsonb where id = $1`, [
+        row.id,
+        JSON.stringify(next),
+      ]);
+    }
+  }
+}
+
+function asMediaList(value: unknown): Array<{ src: string; alt: string; kind: string; caption?: string; poster?: string }> {
+  if (typeof value === "string") {
+    try {
+      return asMediaList(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is { src: string; alt: string; kind: string; caption?: string; poster?: string } => {
+    return Boolean(item && typeof item === "object" && "src" in item && "alt" in item);
+  });
+}
+
+async function fillProjectMediaGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const rows = await sql.query<{ id: string; media: unknown }>(
+      `select id, media from projects where slug = $1 limit 1`,
+      [project.slug],
+    );
+    const row = rows[0];
+    if (!row) continue;
+    const stored = asMediaList(row.media);
+    const have = new Set(stored.map((item) => item.src));
+    const next = [...stored];
+    for (const item of project.media) {
+      if (have.has(item.src)) continue;
+      next.push(item);
+      have.add(item.src);
+    }
+    if (next.length !== stored.length) {
+      await sql.query(`update projects set media = $2::jsonb, updated_at = now() where id = $1`, [
+        row.id,
+        JSON.stringify(next),
+      ]);
+    }
+  }
+}
+
+function asLocaleBag(value: unknown): { zh?: Record<string, unknown>; en?: Record<string, unknown> } {
+  if (!value || typeof value !== "object") return {};
+  const bag = value as { zh?: Record<string, unknown>; en?: Record<string, unknown> };
+  return {
+    zh: bag.zh && typeof bag.zh === "object" && !Array.isArray(bag.zh) ? bag.zh : undefined,
+    en: bag.en && typeof bag.en === "object" && !Array.isArray(bag.en) ? bag.en : undefined,
+  };
+}
+
+async function fillLocaleJsonGaps(sql: Sql): Promise<void> {
+  for (const project of projects) {
+    const seedEn = localeEnForSlug(project.slug);
+    if (!seedEn) continue;
+    const rows = await sql.query<{ locale_json: unknown }>(
+      `select locale_json from projects where slug = $1 limit 1`,
+      [project.slug],
+    );
+    if (!rows[0]) continue;
+    const current = asLocaleBag(rows[0].locale_json);
+    const zh = { ...(localeZhFromProject(project.slug) ?? {}), ...(current.zh ?? {}) };
+    const en = mergeSeedEnglish(current.en, zh, seedEn, [
+      project.title,
+      project.subtitle,
+      project.summary,
+      project.problem,
+      project.role,
+      project.decisions.join("\n"),
+      project.process.join("\n"),
+      project.outputs.join("\n"),
+      project.limitations.join("\n"),
+      project.modalities.join("\n"),
+      project.stack.join("\n"),
+    ]);
+    await sql.query(`update projects set locale_json = $2::jsonb, updated_at = now() where slug = $1`, [
+      project.slug,
+      JSON.stringify({ zh, en }),
+    ]);
+  }
+}
+
+async function fillArchiveLocaleGaps(sql: Sql): Promise<void> {
+  for (const item of archiveItems) {
+    const seedEn = archiveLocaleEnForId(item.id);
+    if (!seedEn) continue;
+    const rows = await sql.query<{ locale_json: unknown }>(
+      `select locale_json from archive_items where slug = $1 or id = $1 limit 1`,
+      [item.id],
+    );
+    if (!rows[0]) continue;
+    const current = asLocaleBag(rows[0].locale_json);
+    const zh = { ...(localeZhFromArchive(item.id) ?? {}), ...(current.zh ?? {}) };
+    const en = mergeSeedEnglish(current.en, zh, seedEn, [
+      item.title,
+      item.summary,
+      item.originNote,
+      item.media?.caption ?? "",
+      item.media?.alt ?? "",
+    ]);
+    await sql.query(
+      `update archive_items set locale_json = $2::jsonb, updated_at = now() where slug = $1 or id = $1`,
+      [item.id, JSON.stringify({ zh, en })],
+    );
+  }
+}
+
+async function fillSiteLocaleGaps(sql: Sql): Promise<void> {
+  const rows = await sql.query<{ locale_json: unknown }>(
+    `select locale_json from site_settings where id = 'default' limit 1`,
+  );
+  if (!rows[0]) return;
+  const current = asLocaleBag(rows[0].locale_json);
+  const zh = { ...siteLocaleZh, ...(current.zh ?? {}) };
+  const en = mergeSeedEnglish(current.en, zh, siteLocaleEn, [site.headline, site.subhead, site.narrative]);
+  await sql.query(
+    `update site_settings set locale_json = $1::jsonb, updated_at = now() where id = 'default'`,
+    [JSON.stringify({ zh, en })],
+  );
+}

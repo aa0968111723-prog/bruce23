@@ -1,0 +1,193 @@
+import { useMemo, useState } from "react";
+import type { PublicProject } from "@/lib/cms/privacy";
+import { modalityFilters, projectHubIds } from "@/lib/experiences/catalog";
+import {
+  CONSTELLATION_HEIGHT,
+  CONSTELLATION_WIDTH,
+  HUB_HALF_H,
+  HUB_HALF_W,
+  constellationLayout,
+} from "@/lib/home/constellation";
+import { chromeHub } from "@/lib/locale/view";
+import { cn } from "@/lib/cn";
+import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { useViewerLocale } from "@/components/site/LocaleProvider";
+
+export function ExplorationField({
+  projects,
+  onOpen,
+  highlightSlugs,
+}: {
+  projects: PublicProject[];
+  onOpen: (project: PublicProject) => void;
+  highlightSlugs?: string[];
+}) {
+  const { ui } = useViewerLocale();
+  const [filter, setFilter] = useState<string | null>(null);
+  const ordered = useMemo(() => {
+    if (!highlightSlugs?.length) return projects;
+    const bySlug = new Map(projects.map((item) => [item.slug, item]));
+    const picked = highlightSlugs
+      .map((slug) => bySlug.get(slug))
+      .filter((item): item is PublicProject => Boolean(item));
+    const rest = projects.filter((item) => !highlightSlugs.includes(item.slug));
+    return [...picked, ...rest];
+  }, [highlightSlugs, projects]);
+  const availableFilters = useMemo(
+    () => modalityFilters.filter((item) => ordered.some((project) => projectHubIds(project).includes(item.id))),
+    [ordered],
+  );
+  const visible = useMemo(() => {
+    if (!filter) return ordered;
+    const spec = availableFilters.find((item) => item.id === filter);
+    if (!spec) return ordered;
+    return ordered.filter((project) => spec && projectHubIds(project).includes(spec.id));
+  }, [availableFilters, filter, ordered]);
+  const map = useMemo(() => constellationLayout(visible), [visible]);
+  const bySlug = useMemo(() => new Map(visible.map((item) => [item.slug, item])), [visible]);
+  const filterIds = useMemo(() => ["all", ...availableFilters.map((item) => item.id)], [availableFilters]);
+  const tabs = useRovingTabs(filterIds, filter ?? "all", (next) => setFilter(next === "all" ? null : next));
+
+  return (
+    <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+      <h2 className="font-display text-3xl font-semibold">{ui.explorationTitle}</h2>
+      <p className="mt-2 max-w-2xl text-sm text-muted">{ui.explorationBody}</p>
+
+      <div
+        className="mt-6 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-2"
+        role="tablist"
+        aria-label={ui.explorationAria}
+        onKeyDown={tabs.onKeyDown}
+      >
+        <button
+          type="button"
+          ref={tabs.setRef("all")}
+          role="tab"
+          aria-selected={!filter}
+          tabIndex={tabs.tabIndex("all")}
+          className={cn(
+            "node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 text-sm font-medium shadow-card",
+            !filter ? "bg-mint text-primary-foreground" : "bg-surface",
+          )}
+          onClick={() => setFilter(null)}
+        >
+          {ui.all}
+        </button>
+        {availableFilters.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            ref={tabs.setRef(item.id)}
+            role="tab"
+            aria-selected={filter === item.id}
+            tabIndex={tabs.tabIndex(item.id)}
+            className={cn(
+              "node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 text-sm font-medium shadow-card",
+              filter === item.id ? "bg-mint text-primary-foreground" : "bg-surface",
+            )}
+            onClick={() => setFilter((value) => (value === item.id ? null : item.id))}
+          >
+            {chromeHub(ui, item.id)}
+          </button>
+        ))}
+      </div>
+
+      <div className="constellation mt-8 hidden overflow-visible rounded-[2rem] bg-surface-blue/70 p-3 shadow-card lg:block">
+        <svg
+          viewBox={`0 0 ${CONSTELLATION_WIDTH} ${CONSTELLATION_HEIGHT}`}
+          role="group"
+          aria-label={ui.constellationAria}
+          className="mx-auto h-auto w-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <title>{ui.constellationTitle}</title>
+          {map.edges.map((edge) => {
+            const hub = map.hubs.find((item) => item.id === edge.from);
+            const node = map.nodes.find((item) => item.slug === edge.to);
+            if (!hub || !node) return null;
+            return (
+              <line
+                key={`${edge.from}-${edge.to}`}
+                x1={hub.x}
+                y1={hub.y}
+                x2={node.x}
+                y2={node.y}
+                className="stroke-sky/55"
+                strokeWidth={1.5}
+              />
+            );
+          })}
+          {map.hubs.map((hub) => (
+            <g key={hub.id}>
+              <foreignObject
+                x={hub.x - HUB_HALF_W}
+                y={hub.y - HUB_HALF_H}
+                width={HUB_HALF_W * 2}
+                height={HUB_HALF_H * 2}
+              >
+                <button
+                  type="button"
+                  data-constellation-hub={hub.id}
+                  aria-pressed={filter === hub.id}
+                  className={cn(
+                    "flex h-full min-h-11 w-full items-center justify-center rounded-full px-2 text-center text-xs font-medium shadow-card",
+                    filter === hub.id ? "bg-mint text-primary-foreground" : "bg-surface-mint text-ink",
+                  )}
+                  onClick={() => setFilter((value) => (value === hub.id ? null : hub.id))}
+                >
+                  {chromeHub(ui, hub.id)}
+                </button>
+              </foreignObject>
+            </g>
+          ))}
+          {map.nodes.map((node) => (
+            <g key={node.slug}>
+              <circle cx={node.x} cy={node.y} r={28} className="fill-surface stroke-line" strokeWidth={1.5} />
+              <foreignObject x={node.x - 94} y={node.y - 36} width={188} height={72}>
+                <button
+                  type="button"
+                  className="flex min-h-11 h-full w-full flex-col items-center justify-center rounded-2xl px-2 text-center"
+                  onClick={() => {
+                    const project = bySlug.get(node.slug);
+                    if (project) onOpen(project);
+                  }}
+                >
+                  <span className="font-display text-[12px] font-semibold leading-tight text-ink">{node.title}</span>
+                  <span className="text-[10px] text-muted">{node.year}</span>
+                </button>
+              </foreignObject>
+            </g>
+          ))}
+        </svg>
+      </div>
+
+      <div className="mt-6 grid gap-3">
+        <div className="flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1 lg:hidden" aria-label={ui.workNodes}>
+          {visible.map((project) => (
+            <button
+              key={`node-${project.slug}`}
+              type="button"
+              onClick={() => onOpen(project)}
+              className="node-chip inline-flex min-h-11 shrink-0 items-center rounded-2xl bg-surface-mint px-4 text-sm shadow-card"
+            >
+              {project.title}
+            </button>
+          ))}
+        </div>
+        {visible.map((project) => (
+          <button
+            key={project.slug}
+            type="button"
+            onClick={() => onOpen(project)}
+            className="flex min-h-11 items-center justify-between rounded-2xl bg-surface px-4 py-4 text-left shadow-card"
+          >
+            <span>
+              <span className="block font-display text-lg font-semibold">{project.title}</span>
+              <span className="text-sm text-muted">{project.subtitle}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
