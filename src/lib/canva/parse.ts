@@ -105,6 +105,51 @@ export function isCanvaShortLink(input: string | null | undefined): boolean {
   }
 }
 
+export type NormalizedCanvaPaste = {
+  shareUrl: string;
+  embedUrl: string | null;
+  designId: string | null;
+  kind: "empty" | "design" | "short" | "invalid";
+};
+
+/**
+ * Normalize a paste (share URL, embed URL, or iframe HTML) into stored Canva fields.
+ * Never invents a design id. Drops pasted HTML that is not a Canva URL.
+ */
+export function normalizeCanvaPaste(raw: string | null | undefined): NormalizedCanvaPaste {
+  const value = raw?.trim() ?? "";
+  if (!value) {
+    return { shareUrl: "", embedUrl: null, designId: null, kind: "empty" };
+  }
+  const parsed = parseCanvaDesign(value);
+  if (parsed) {
+    return {
+      shareUrl: parsed.shareUrl,
+      embedUrl: parsed.embedUrl,
+      designId: parsed.designId,
+      kind: "design",
+    };
+  }
+  const extracted = extractCanvaUrl(value);
+  if (extracted && isCanvaShortLink(extracted)) {
+    return {
+      shareUrl: extracted.split("?")[0],
+      embedUrl: null,
+      designId: null,
+      kind: "short",
+    };
+  }
+  if (/<iframe|javascript:|data:/i.test(value) && !extracted) {
+    return { shareUrl: "", embedUrl: null, designId: null, kind: "invalid" };
+  }
+  return {
+    shareUrl: extracted ? extracted.split("?")[0] : value,
+    embedUrl: null,
+    designId: null,
+    kind: "invalid",
+  };
+}
+
 export function isCanvaLoginUrl(input: string): boolean {
   try {
     const url = new URL(input);

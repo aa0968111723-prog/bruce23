@@ -3,10 +3,11 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { assertAdminAccess, isAllowedAdminOrigin, parseAdminEmails } from "./admin.ts";
 import { AdminConfigError, ForbiddenError } from "./errors.ts";
-import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
+import { publishedCollectionJsonLd, publishedCreativeWorkJsonLd, publishedPersonJsonLd, publishedWebSiteJsonLd } from "./jsonld.ts";
 import { resolveHomepageCopy } from "./public-site.ts";
 import { applyPublicLocale, englishTitle } from "./locale.ts";
 import type { PublicProject } from "./privacy.ts";
+import { publicRobotsBody } from "./robots.ts";
 
 describe("admin allowlist", () => {
   it("parses emails", () => {
@@ -137,6 +138,13 @@ describe("admin allowlist", () => {
     const sitemap = readFileSync(new URL("./sitemap.ts", import.meta.url), "utf8");
     assert.match(sitemap, /\/privacy/);
     assert.doesNotMatch(source, /listAdminArchiveFn/);
+    const robotsRoute = readFileSync(new URL("../../routes/robots[.]txt.ts", import.meta.url), "utf8");
+    assert.match(robotsRoute, /publicRobotsBody/);
+    assert.match(robotsRoute, /listPublishedProjectsFn|request\.url/);
+    const robots = readFileSync(new URL("./robots.ts", import.meta.url), "utf8");
+    assert.match(robots, /Disallow: \/admin/);
+    assert.match(robots, /Disallow: \/api/);
+    assert.match(robots, /Sitemap:/);
   });
 
   it("does not expose admin session helpers on public CMS functions", () => {
@@ -178,7 +186,9 @@ describe("admin allowlist", () => {
     assert.match(live, /\/admin\/integrations/);
     assert.match(live, /有未儲存的修改/);
     assert.match(live, /中文敘事保留/);
-    assert.match(live, /儲存這件作品/);
+    assert.match(live, /還原此版/);
+    assert.match(live, /還原修訂成功/);
+    assert.match(live, /Sitemap: \$\{ORIGIN\}\/sitemap.xml/);
     assert.doesNotMatch(live, /\/api\/test-login/);
     const db = readFileSync(new URL("../db.ts", import.meta.url), "utf8");
     assert.match(db, /PGLITE_DATA_DIR/);
@@ -206,6 +216,40 @@ describe("public json-ld and homepage copy", () => {
       media: [{ src: "/media/covers/folio.svg", alt: "x", kind: "image" }],
     } as PublicProject);
     assert.equal(withSeo.description, "SEO desc");
+    const person = publishedPersonJsonLd({
+      person: "陳柏能",
+      nameEn: "Luminous Studio",
+      email: "a@b.c",
+      github: "https://github.com/x",
+      role: "role",
+    });
+    assert.equal(person["@type"], "Person");
+    const siteLd = publishedWebSiteJsonLd({ name: "Luminous Studio" });
+    assert.equal(siteLd["@type"], "WebSite");
+    const collection = publishedCollectionJsonLd({
+      name: "作品",
+      description: "已發布",
+      path: "/work",
+      itemPaths: ["/work/folio"],
+    });
+    assert.equal(collection["@type"], "CollectionPage");
+    assert.equal(
+      publishedCreativeWorkJsonLd(
+        {
+          slug: "folio",
+          title: "Folio",
+          summary: "摘要",
+          media: [{ src: "/media/covers/folio.svg", alt: "x", kind: "image" }],
+        } as PublicProject,
+        "https://studio.example",
+      ).url,
+      "https://studio.example/work/folio",
+    );
+    const robots = publicRobotsBody("https://example.com");
+    assert.match(robots, /Disallow: \/admin/);
+    assert.match(robots, /Disallow: \/api/);
+    assert.match(robots, /Sitemap: https:\/\/example.com\/sitemap.xml/);
+    assert.doesNotMatch(robots, /Disallow: \/$/);
   });
 
   it("prefers saved zh/en locale and SEO on the public homepage", () => {

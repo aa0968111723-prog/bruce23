@@ -83,6 +83,56 @@ export function publicCanvaEmbedUrl(embedUrl: string | null | undefined): string
   return parseCanvaDesign(embedUrl)?.embedUrl ?? null;
 }
 
+/** Public pages only get a Canva /design/{id} share. Short /d/ and Connect-only ids stay admin-only. */
+export function publicCanvaSlice(input: CanvaPublicSlice): CanvaPublicSlice {
+  const parsed = parseCanvaDesign(input.embedUrl || input.shareUrl);
+  if (!parsed) {
+    const hadPrivateLink = Boolean(input.shareUrl || input.embedUrl || input.designId);
+    return {
+      shareUrl: null,
+      embedUrl: null,
+      designId: null,
+      pageIds: undefined,
+      thumbnailUrl: input.thumbnailUrl,
+      status:
+        input.status === "unavailable" || input.status === "failed"
+          ? input.status
+          : hadPrivateLink
+            ? "unavailable"
+            : input.status === "not_configured"
+              ? "not_configured"
+              : "unavailable",
+      lastSyncedAt: input.lastSyncedAt,
+      alt: input.alt,
+      caption: input.caption,
+    };
+  }
+  return {
+    shareUrl: parsed.shareUrl,
+    embedUrl: parsed.embedUrl,
+    designId: parsed.designId,
+    pageIds: input.pageIds,
+    thumbnailUrl: input.thumbnailUrl,
+    status: input.status === "verified" || input.status === "connected" ? "pending" : input.status,
+    lastSyncedAt: input.lastSyncedAt,
+    alt: input.alt,
+    caption: input.caption,
+  };
+}
+
+export function publicGithubSlice(isPrivate: boolean, slice: GithubPublicSlice): GithubPublicSlice {
+  if (!isPrivate) return slice;
+  return {
+    url: null,
+    owner: null,
+    repo: null,
+    branch: null,
+    syncStatus: "not_configured",
+    lastSyncedAt: null,
+    readme: null,
+  };
+}
+
 export function canvaViewerState(canva: CanvaPublicSlice, failed: boolean) {
   const embeddable = publicCanvaEmbedUrl(canva.embedUrl);
   if (embeddable && !failed && canva.status !== "unavailable" && canva.status !== "failed") {
@@ -120,6 +170,8 @@ const SECRET_KEYS = [
   "service_role",
   "invite",
   "phone",
+  "password",
+  "private_key",
 ];
 
 export function stripSecrets<T>(value: T): T {

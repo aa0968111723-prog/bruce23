@@ -35,38 +35,48 @@ function SettingsPage() {
     localeEnSeoDescription: "",
   });
   const [dirty, setDirty] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    void getSettingsFn().then((row) => {
-      if (!row) return;
-      setForm({
-        name_zh: String(row.name_zh ?? ""),
-        name_en: String(row.name_en ?? ""),
-        person: String(row.person ?? ""),
-        role: String(row.role ?? ""),
-        headline: String(row.headline ?? ""),
-        subhead: String(row.subhead ?? ""),
-        narrative: String(row.narrative ?? ""),
-        email: String(row.email ?? ""),
-        github: String(row.github ?? ""),
-        github_handle: String(row.github_handle ?? ""),
-        location: String(row.location ?? ""),
-        seo_title: String(row.seo_title ?? ""),
-        seo_description: String(row.seo_description ?? ""),
-        highlightSlugs: (row.homepage_json?.highlightSlugs ?? []).join("\n"),
-        localeZhHeadline: String(row.locale_json?.zh?.headline ?? ""),
-        localeEnHeadline: String(row.locale_json?.en?.headline ?? ""),
-        localeZhSubhead: String(row.locale_json?.zh?.subhead ?? ""),
-        localeEnSubhead: String(row.locale_json?.en?.subhead ?? ""),
-        localeZhNarrative: String(row.locale_json?.zh?.narrative ?? ""),
-        localeEnNarrative: String(row.locale_json?.en?.narrative ?? ""),
-        localeZhSeoTitle: String(row.locale_json?.zh?.seoTitle ?? ""),
-        localeEnSeoTitle: String(row.locale_json?.en?.seoTitle ?? ""),
-        localeZhSeoDescription: String(row.locale_json?.zh?.seoDescription ?? ""),
-        localeEnSeoDescription: String(row.locale_json?.en?.seoDescription ?? ""),
+    void getSettingsFn()
+      .then((row) => {
+        if (!row) {
+          setLoadError("找不到網站設定，未寫入空表單。");
+          return;
+        }
+        setForm({
+          name_zh: String(row.name_zh ?? ""),
+          name_en: String(row.name_en ?? ""),
+          person: String(row.person ?? ""),
+          role: String(row.role ?? ""),
+          headline: String(row.headline ?? ""),
+          subhead: String(row.subhead ?? ""),
+          narrative: String(row.narrative ?? ""),
+          email: String(row.email ?? ""),
+          github: String(row.github ?? ""),
+          github_handle: String(row.github_handle ?? ""),
+          location: String(row.location ?? ""),
+          seo_title: String(row.seo_title ?? ""),
+          seo_description: String(row.seo_description ?? ""),
+          highlightSlugs: (row.homepage_json?.highlightSlugs ?? []).join("\n"),
+          localeZhHeadline: String(row.locale_json?.zh?.headline ?? ""),
+          localeEnHeadline: String(row.locale_json?.en?.headline ?? ""),
+          localeZhSubhead: String(row.locale_json?.zh?.subhead ?? ""),
+          localeEnSubhead: String(row.locale_json?.en?.subhead ?? ""),
+          localeZhNarrative: String(row.locale_json?.zh?.narrative ?? ""),
+          localeEnNarrative: String(row.locale_json?.en?.narrative ?? ""),
+          localeZhSeoTitle: String(row.locale_json?.zh?.seoTitle ?? ""),
+          localeEnSeoTitle: String(row.locale_json?.en?.seoTitle ?? ""),
+          localeZhSeoDescription: String(row.locale_json?.zh?.seoDescription ?? ""),
+          localeEnSeoDescription: String(row.locale_json?.en?.seoDescription ?? ""),
+        });
+        setLoaded(true);
+        setDirty(false);
+      })
+      .catch((err: unknown) => {
+        setLoadError(err instanceof Error ? err.message : "讀取設定失敗");
       });
-      setDirty(false);
-    });
   }, []);
 
   useEffect(() => {
@@ -100,6 +110,10 @@ function SettingsPage() {
       className="grid max-w-xl gap-3"
       onSubmit={(event) => {
         event.preventDefault();
+        if (!loaded) {
+          toast.error(loadError || "設定尚未載入，沒有寫入空表單。");
+          return;
+        }
         const highlightSlugs = form.highlightSlugs
           .split(/[\n,]+/)
           .map((item) => item.trim())
@@ -146,6 +160,8 @@ function SettingsPage() {
       }}
     >
       <h1 className="font-display text-3xl">網站設定</h1>
+      {loadError ? <p className="text-sm text-alert">{loadError}</p> : null}
+      {!loaded && !loadError ? <p className="text-sm text-muted">設定載入中。</p> : null}
       {dirty ? <p className="text-sm text-muted">有未儲存的修改。</p> : null}
       {profileKeys.map((key) => (
         <label key={key} className="grid gap-1 text-sm">
@@ -292,7 +308,11 @@ function SettingsPage() {
           }}
         />
       </label>
-      <button type="submit" className="min-h-11 rounded-full bg-mint text-sm font-semibold text-primary-foreground">
+      <button
+        type="submit"
+        disabled={!loaded}
+        className="min-h-11 rounded-full bg-mint text-sm font-semibold text-primary-foreground disabled:opacity-50"
+      >
         儲存
       </button>
     </form>

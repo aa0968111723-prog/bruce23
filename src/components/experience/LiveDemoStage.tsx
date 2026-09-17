@@ -24,7 +24,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
       <div className="rounded-2xl bg-surface p-5 shadow-card">
         <p className="font-medium">{demo.label ?? ex.publicUrl}</p>
         <p className="mt-2 text-sm text-muted">
-          {demo.error || (demo.status === "pending" ? ex.pendingEmbed : ex.cannotEmbed)}
+          {demo.status === "pending" ? ex.pendingEmbed : ex.cannotEmbed}
         </p>
         {demo.url && isSafeHttpUrl(demo.url) ? (
           <a

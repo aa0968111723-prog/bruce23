@@ -24,6 +24,8 @@ import {
   getPublishedProject,
   getSiteSettings,
   listPublishedProjects,
+  listRevisions,
+  restoreRevision,
 } from "./store";
 import { projectInputSchema } from "./schema";
 import { CANVA_FIXTURE_SHARE_URL, evaluateCanvaEmbedTest } from "../canva/embed";
@@ -336,6 +338,19 @@ export async function runAdminE2E() {
     );
     assert.equal(saved.summary, "updated draft");
     assert.equal(saved.publication_status, "draft");
+
+    const overwritten = await withAuthedAdmin(minted.token, async (ctx) =>
+      handleSaveDraft(ctx, { id: created.id, summary: "overwrite for restore" }),
+    );
+    assert.equal(overwritten.summary, "overwrite for restore");
+    const restoredCopy = await withAuthedAdmin(minted.token, async (ctx) => {
+      const { sql: adminSql, actor } = await runAdminSql(ctx);
+      const revisions = await listRevisions(adminSql, created.id);
+      const prior = revisions.find((item) => item.note === "draft");
+      assert.ok(prior);
+      return restoreRevision(adminSql, created.id, prior.id, actor.userId);
+    });
+    assert.equal(restoredCopy.summary, "updated draft");
 
     const sql = await getSql();
     await assert.rejects(() => getPublishedProject(sql, created.slug), NotFoundError);

@@ -4,6 +4,8 @@ import { site as fallbackSite } from "@/content/site";
 import { getPublicSiteFn } from "@/lib/cms/public-fn";
 import { resolveHomepageCopy } from "@/lib/cms/public-site";
 import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/LocaleProvider";
+import { JsonLd } from "@/components/site/JsonLd";
+import { publishedPersonJsonLd } from "@/lib/cms/jsonld";
 
 export const Route = createFileRoute("/about")({
   loader: async () => ({ site: await getPublicSiteFn() }),
@@ -39,6 +41,15 @@ function About() {
   );
   return (
     <div>
+      <JsonLd
+        data={publishedPersonJsonLd({
+          person: copy.person,
+          nameEn: copy.nameEn,
+          email,
+          github,
+          role,
+        })}
+      />
       <section className="bg-surface-blue/50">
         <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
           <p className="text-sm font-medium text-mint-deep">{copy.nameEn}</p>

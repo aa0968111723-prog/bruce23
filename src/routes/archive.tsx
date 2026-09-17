@@ -12,6 +12,8 @@ import type { PublicProject } from "@/lib/cms/privacy";
 import type { PublicArchiveItem } from "@/lib/cms/store";
 import { chromeArchiveKind, overlayArchive } from "@/lib/locale/view";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { JsonLd } from "@/components/site/JsonLd";
+import { publishedCollectionJsonLd } from "@/lib/cms/jsonld";
 
 export const Route = createFileRoute("/archive")({
   loader: async (): Promise<PublicArchiveItem[]> => listPublishedArchiveFn(),
@@ -30,7 +32,7 @@ export const Route = createFileRoute("/archive")({
 function hasPublicCanvaSurface(item: PublicArchiveItem): boolean {
   return Boolean(
     parseCanvaDesign(item.canva.embedUrl || item.canva.shareUrl) ||
-      item.canva.shareUrl ||
+      item.canva.thumbnailUrl ||
       item.canva.status === "unavailable" ||
       item.canva.status === "failed",
   );
@@ -53,6 +55,13 @@ function Archive() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+      <JsonLd
+        data={publishedCollectionJsonLd({
+          name: ui.archiveTitle,
+          description: ui.archiveLead,
+          path: "/archive",
+        })}
+      />
       <h1 className="font-display text-4xl font-semibold">{ui.archiveTitle}</h1>
       <p className="mt-3 max-w-2xl text-muted">{ui.archiveLead}</p>
       <div

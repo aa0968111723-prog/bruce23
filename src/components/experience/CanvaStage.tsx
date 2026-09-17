@@ -11,6 +11,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const frameRef = useRef<HTMLIFrameElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const pages = canva.pageIds?.filter(Boolean) ?? [];
   const state = canvaViewerState(canva, failed);
   const embed = publicCanvaEmbedUrl(canva.embedUrl);
@@ -101,17 +102,20 @@ export function CanvaStage({ project }: { project: PublicProject }) {
   return (
     <div className="grid gap-3">
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
-        <iframe
-          ref={frameRef}
-          key={embedSrc}
-          title={canva.alt ?? fillChrome(ex.iframeTitle, { title: project.title })}
-          src={embedSrc}
-          className="aspect-[4/3] w-full bg-surface-blue"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allow="fullscreen"
-          onError={() => setFailed(true)}
-        />
+        <div ref={stageRef} className="bg-surface-blue">
+          <iframe
+            ref={frameRef}
+            key={embedSrc}
+            title={canva.alt ?? fillChrome(ex.iframeTitle, { title: project.title })}
+            src={embedSrc}
+            className="aspect-[4/3] w-full bg-surface-blue"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allow="fullscreen"
+            allowFullScreen
+            onError={() => setFailed(true)}
+          />
+        </div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         {pages.length > 1
@@ -137,7 +141,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
           type="button"
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface-mint px-4 text-sm"
           onClick={() => {
-            const node = frameRef.current;
+            const node = stageRef.current ?? frameRef.current;
             if (node && typeof node.requestFullscreen === "function") {
               void node.requestFullscreen().catch(() => {
                 if (original) window.open(original, "_blank", "noopener,noreferrer");

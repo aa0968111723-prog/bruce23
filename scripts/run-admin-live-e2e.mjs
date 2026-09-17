@@ -376,6 +376,20 @@ async function proveLiveAdmin(page, request) {
 
   const sitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();
   assert(!sitemap.includes(`/work/${SLUG}`), "draft slug appeared in sitemap.xml");
+  const robots = await (await request.get(`${ORIGIN}/robots.txt`)).text();
+  assert(robots.includes("Disallow: /admin"), "robots.txt missing /admin");
+  assert(robots.includes("Disallow: /login"), "robots.txt missing /login");
+  assert(robots.includes("Disallow: /api"), "robots.txt missing /api");
+  assert(
+    robots.includes(`Sitemap: ${ORIGIN}/sitemap.xml`),
+    "robots.txt sitemap must be an absolute URL from the request origin",
+  );
+  assert(!robots.includes(`/work/${SLUG}`), "draft slug appeared in robots.txt");
+  const homeHtml = await (await request.get(`${ORIGIN}/`)).text();
+  assert(homeHtml.includes("application/ld+json"), "homepage missing JSON-LD");
+  assert(homeHtml.includes("WebSite"), "homepage JSON-LD missing WebSite");
+  assert(homeHtml.includes("Person"), "homepage JSON-LD missing Person");
+  assert(!homeHtml.includes(MARKER), "draft marker leaked into homepage JSON-LD/HTML");
 
   await gotoReady(page, `${ORIGIN}/admin/draft/${SLUG}`);
   await page.getByText("後台預覽瀏覽器框").waitFor({ timeout: 20000 });
@@ -391,6 +405,28 @@ async function proveLiveAdmin(page, request) {
   await waitForProjectList(page);
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "存成草稿" }).waitFor({ timeout: 20000 });
+
+  const summaryAfterPreview = page
+    .locator("fieldset")
+    .filter({ has: page.locator("legend", { hasText: /^敘事$/ }) })
+    .locator("textarea")
+    .first();
+  await summaryAfterPreview.fill("REVISION-OVERWRITE");
+  await summaryAfterPreview.evaluate((el, value) => {
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+    setter?.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  }, "REVISION-OVERWRITE");
+  await page.getByRole("button", { name: "存成草稿" }).click();
+  await page.getByText("存成草稿成功").first().waitFor({ timeout: 20000 });
+  await page.getByRole("button", { name: "還原此版" }).first().click();
+  await page.getByText("還原修訂成功").first().waitFor({ timeout: 20000 });
+  const restoredSummary = await summaryAfterPreview.inputValue();
+  assert(
+    restoredSummary.includes("LIVE-E2E"),
+    `revision restore UI did not bring back the live marker (got ${restoredSummary})`,
+  );
 
   await pasteCanvaShareAndTest(page);
   const afterTest = await page.locator("body").innerText();
@@ -475,6 +511,10 @@ async function proveLiveAdmin(page, request) {
   await page.getByText(SLUG, { exact: true }).first().click();
   await page.getByRole("button", { name: "取消發布", exact: true }).click();
   await page.getByText("取消發布成功").first().waitFor({ timeout: 20000 });
+  await page.getByRole("button", { name: "封存", exact: true }).click();
+  await page.getByText("封存成功").first().waitFor({ timeout: 20000 });
+  await page.getByRole("button", { name: "還原草稿", exact: true }).click();
+  await page.getByText("還原成功").first().waitFor({ timeout: 20000 });
   await gotoReady(page, `${ORIGIN}/work/${SLUG}`);
   assert(!(await page.content()).includes(MARKER), "unpublish left the marker on the public page");
   const unpublishedSitemap = await (await request.get(`${ORIGIN}/sitemap.xml`)).text();

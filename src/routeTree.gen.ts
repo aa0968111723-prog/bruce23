@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminArchiveRouteImport } from './routes/admin/archive'
@@ -66,6 +67,11 @@ const LoginRoute = LoginRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/archive': typeof ArchiveRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/archive': typeof AdminArchiveRoute
   '/admin/integrations': typeof AdminIntegrationsRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/archive'
     | '/login'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/archive'
     | '/login'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/archive'
     | '/login'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/archive'
     | '/admin/integrations'
@@ -309,6 +321,7 @@ export interface RootRouteChildren {
   ArchiveRoute: typeof ArchiveRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WorkSlugRoute: typeof WorkSlugRoute
   WorkIndexRoute: typeof WorkIndexRoute
@@ -366,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -529,6 +549,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveRoute: ArchiveRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   WorkSlugRoute: WorkSlugRoute,
   WorkIndexRoute: WorkIndexRoute,

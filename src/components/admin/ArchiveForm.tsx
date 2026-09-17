@@ -5,7 +5,7 @@ import type { AdminArchiveItem } from "@/lib/cms/store";
 import type { ArchiveInput } from "@/lib/cms/schema";
 import { PUBLICATION_STATUSES, publicationStatusLabel } from "@/lib/cms/status";
 import { archiveKinds } from "@/content/archive";
-import { parseCanvaDesign, isCanvaShortLink } from "@/lib/canva/parse";
+import { normalizeCanvaPaste } from "@/lib/canva/parse";
 
 const KIND_OPTIONS = archiveKinds.filter((item) => item.id !== "all");
 
@@ -68,34 +68,37 @@ export function ArchiveForm({
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  function persistArchive(status?: ArchiveInput["publication_status"], label = "Archive 已儲存") {
+    const pasted = normalizeCanvaPaste(form.canva_share_url);
+    const share = pasted.shareUrl.trim();
+    void saveArchiveFn({
+      data: {
+        ...form,
+        publication_status: status ?? form.publication_status,
+        canva_share_url: share || null,
+        canva_embed_url: pasted.embedUrl,
+        canva_design_id: pasted.designId,
+        canva_status: share
+          ? pasted.kind === "design" || pasted.kind === "short"
+            ? "pending"
+            : "unavailable"
+          : "not_configured",
+      },
+    })
+      .then(() => {
+        toast.success(label);
+        setDirty(false);
+        onSaved();
+      })
+      .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "儲存失敗"));
+  }
+
   return (
     <form
       className="grid gap-3 rounded-2xl bg-surface p-5 shadow-card"
       onSubmit={(event) => {
         event.preventDefault();
-        const parsed = parseCanvaDesign(form.canva_share_url);
-        const share = form.canva_share_url?.trim() || "";
-        void saveArchiveFn({
-          data: {
-            ...form,
-            canva_share_url: share || null,
-            canva_embed_url: parsed?.embedUrl ?? (share && isCanvaShortLink(share) ? null : form.canva_embed_url),
-            canva_design_id: parsed?.designId ?? form.canva_design_id,
-            canva_status: share
-              ? parsed
-                ? "pending"
-                : isCanvaShortLink(share)
-                  ? "pending"
-                  : "unavailable"
-              : "not_configured",
-          },
-        })
-          .then(() => {
-            toast.success("Archive 已儲存");
-            setDirty(false);
-            onSaved();
-          })
-          .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "儲存失敗"));
+        persistArchive(undefined, "Archive 已儲存");
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -298,7 +301,12 @@ export function ArchiveForm({
         value={form.canva_share_url ?? ""}
         placeholder="https://www.canva.com/design/{id}/view"
         emptyHint="空著就不會嵌入、也不能翻頁。請貼公開分享連結，不要發明設計編號。"
-        onChange={(value) => patch("canva_share_url", value || null)}
+        onChange={(value) => {
+          const pasted = normalizeCanvaPaste(value);
+          patch("canva_share_url", pasted.shareUrl || null);
+          patch("canva_embed_url", pasted.embedUrl);
+          patch("canva_design_id", pasted.designId);
+        }}
       />
       <p className="text-xs text-muted">
         只接受 canva.com/design/{"{id}"} 或 /d/ 短網址。沒有公開 /design/{"{id}"} 時不會嵌入 iframe，也不會虛構設計編號。
@@ -327,9 +335,39 @@ export function ArchiveForm({
           )
         }
       />
-      <button type="submit" className="min-h-11 justify-self-start rounded-full bg-ink px-5 text-sm text-bg">
-        儲存 Archive
-      </button>
+      <div className="flex flex-wrap gap-2">
+        <button type="submit" className="min-h-11 justify-self-start rounded-full bg-ink px-5 text-sm text-bg">
+          儲存 Archive
+        </button>
+        <button
+          type="button"
+          className="min-h-11 rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+          onClick={() => persistArchive("published", "Archive 已發布")}
+        >
+          發布
+        </button>
+        <button
+          type="button"
+          className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+          onClick={() => persistArchive("draft", "Archive 已取消發布")}
+        >
+          取消發布
+        </button>
+        <button
+          type="button"
+          className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+          onClick={() => persistArchive("archived", "Archive 已封存")}
+        >
+          封存
+        </button>
+        <button
+          type="button"
+          className="min-h-11 rounded-full bg-surface px-4 text-sm shadow-card"
+          onClick={() => persistArchive("draft", "Archive 已還原為草稿")}
+        >
+          還原草稿
+        </button>
+      </div>
     </form>
   );
 }

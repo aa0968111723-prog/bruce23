@@ -377,7 +377,8 @@ describe("frontend contract", () => {
     assert.match(index, /resolveHomepageCopy\(site, fallbackSite, lang\)/);
     assert.match(index, /overlayProject/);
     assert.match(index, /ui\.heroAlt/);
-    assert.match(index, /ui\.modalitiesAlt/);
+    assert.match(index, /publishedWebSiteJsonLd/);
+    assert.match(index, /publishedPersonJsonLd/);
     assert.doesNotMatch(index, /alt="光域 AI 創作實驗室/);
     assert.doesNotMatch(index, /alt="多模態節點"/);
     assert.match(header, /md:hidden/);
@@ -405,6 +406,7 @@ describe("frontend contract", () => {
     assert.doesNotMatch(zenStudio, /canva\.com\/design\/DAG/);
     const jsonldView = readFileSync(new URL("../../../src/components/work/CaseStudyView.tsx", import.meta.url), "utf8");
     assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
+    assert.match(jsonldView, /JsonLd/);
     assert.match(jsonldView, /min-w-0 max-w-4xl/);
     assert.match(jsonldView, /break-all/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
@@ -415,6 +417,8 @@ describe("frontend contract", () => {
     assert.doesNotMatch(form, /experience_config JSON/);
     assert.match(form, /canva_page_ids/);
     assert.match(form, /修訂紀錄/);
+    assert.match(form, /還原此版/);
+    assert.match(form, /restoreRevisionFn/);
     assert.match(form, /尚無修訂/);
     assert.match(form, /年份/);
     assert.match(form, /listRevisionsFn/);
@@ -437,6 +441,23 @@ describe("frontend contract", () => {
     assert.match(form, /GitHub branch/);
     assert.match(form, /patchMediaItem/);
     assert.match(form, /persistDemoVerify|verifyDemoFn/);
+    assert.match(form, /未改中文敘事/);
+    const integrationsCard = readFileSync(
+      new URL("../../../src/components/admin/IntegrationWorkCard.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(integrationsCard, /Canva 測試完成：pending，未驗證/);
+    assert.match(integrationsCard, /Demo 可用/);
+    assert.match(integrationsCard, /Demo 無法使用/);
+    assert.match(integrationsCard, /未改中文敘事/);
+    const projectIdLayout = readFileSync(
+      new URL("../../../src/routes/admin/projects/$id.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(projectIdLayout, /\/admin\/projects\/\$id\/edit/);
+    assert.match(projectIdLayout, /Navigate/);
+    const robotsRoute = readFileSync(new URL("../../../src/routes/robots[.]txt.ts", import.meta.url), "utf8");
+    assert.match(robotsRoute, /publicRobotsBody/);
     const seedSource = readFileSync(new URL("../../../src/lib/cms/seed.ts", import.meta.url), "utf8");
     assert.match(seedSource, /fillLocaleJsonGaps/);
     assert.match(seedSource, /fillArchiveLocaleGaps/);
@@ -468,6 +489,8 @@ describe("frontend contract", () => {
     assert.match(archiveForm, /英文摘要/);
     assert.match(archiveForm, /英文媒體說明/);
     assert.match(archiveForm, /locale_json/);
+    assert.match(archiveForm, /還原草稿/);
+    assert.match(archiveForm, /normalizeCanvaPaste/);
     assert.match(archiveForm, /canva_page_ids/);
     assert.match(archiveForm, /媒體類型/);
     assert.match(archiveForm, /canva_thumbnail_url/);

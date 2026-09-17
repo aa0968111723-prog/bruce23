@@ -10,7 +10,7 @@ import {
   type IntegrationWorkItem,
 } from "@/lib/cms/admin-fn";
 import { canvaOpenOriginalUrl } from "@/lib/canva/embed";
-import { isCanvaShortLink, parseCanvaDesign } from "@/lib/canva/parse";
+import { normalizeCanvaPaste } from "@/lib/canva/parse";
 import {
   EXPERIENCE_MODE_LABEL,
   EXPERIENCE_MODES,
@@ -38,22 +38,15 @@ function StatusChip({ status }: { status: IntegrationStatus }) {
 }
 
 function canvaSaveFields(raw: string) {
-  const value = raw.trim();
-  const parsed = parseCanvaDesign(value);
-  if (parsed) {
-    return {
-      canva_share_url: parsed.shareUrl,
-      canva_embed_url: parsed.embedUrl,
-      canva_design_id: parsed.designId,
-    };
-  }
-  if (!value) {
+  const pasted = normalizeCanvaPaste(raw);
+  if (pasted.kind === "empty") {
     return { canva_share_url: null, canva_embed_url: null, canva_design_id: null };
   }
-  if (isCanvaShortLink(value)) {
-    return { canva_share_url: value.split("?")[0], canva_embed_url: null, canva_design_id: null };
-  }
-  return { canva_share_url: value, canva_embed_url: null, canva_design_id: null };
+  return {
+    canva_share_url: pasted.shareUrl || null,
+    canva_embed_url: pasted.embedUrl,
+    canva_design_id: pasted.designId,
+  };
 }
 
 export function IntegrationWorkCard({
@@ -188,9 +181,8 @@ export function IntegrationWorkCard({
             className="min-h-11 rounded-xl border border-line px-3 text-sm"
             value={canvaUrl}
             onChange={(event) => {
-              const value = event.target.value;
-              const parsed = parseCanvaDesign(value);
-              setCanvaUrl(parsed?.shareUrl ?? value);
+              const pasted = normalizeCanvaPaste(event.target.value);
+              setCanvaUrl(pasted.shareUrl || event.target.value);
             }}
             placeholder="https://www.canva.com/design/{id}/view"
           />
@@ -200,11 +192,20 @@ export function IntegrationWorkCard({
             type="button"
             disabled={busy}
             className="min-h-11 rounded-full bg-surface-blue px-4 text-sm disabled:opacity-50"
-            onClick={() =>
-              void run("Canva 測試完成：pending，未驗證", () =>
-                testCanvaEmbedFn({ data: { id: item.id, url: canvaUrl || undefined } }),
-              )
-            }
+            onClick={() => {
+              setBusy(true);
+              void testCanvaEmbedFn({ data: { id: item.id, url: canvaUrl || undefined } })
+                .then((result) => {
+                  if (result.status === "pending") {
+                    toast.success("Canva 測試完成：pending，未驗證");
+                  } else {
+                    toast.error(result.error || "Canva 測試未通過，未標成已驗證");
+                  }
+                  onReload();
+                })
+                .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Canva 測試失敗"))
+                .finally(() => setBusy(false));
+            }}
           >
             測試嵌入
           </button>
@@ -238,11 +239,32 @@ export function IntegrationWorkCard({
           type="button"
           disabled={busy}
           className="min-h-11 w-fit rounded-full bg-surface-blue px-4 text-sm disabled:opacity-50"
-          onClick={() =>
-            void run("已驗證 Demo 可用性", () =>
-              verifyDemoFn({ data: { id: item.id, url: demoUrl || undefined } }),
-            )
-          }
+          onClick={() => {
+            setBusy(true);
+            void verifyDemoFn({ data: { id: item.id, url: demoUrl || undefined } })
+              .then((result) => {
+                const status =
+                  result && typeof result === "object" && "live_demo_status" in result
+                    ? String((result as { live_demo_status?: string }).live_demo_status)
+                    : result && typeof result === "object" && "status" in result
+                      ? String((result as { status?: string }).status)
+                      : "";
+                const error =
+                  result && typeof result === "object" && "live_demo_error" in result
+                    ? (result as { live_demo_error?: string | null }).live_demo_error
+                    : result && typeof result === "object" && "error" in result
+                      ? (result as { error?: string | null }).error
+                      : null;
+                if (status === "verified") {
+                  toast.success("Demo 可用");
+                } else {
+                  toast.error(error || `Demo 無法使用（${status || "failed"}）`);
+                }
+                onReload();
+              })
+              .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Demo 測試失敗"))
+              .finally(() => setBusy(false));
+          }}
         >
           驗證可用性
         </button>
@@ -277,7 +299,9 @@ export function IntegrationWorkCard({
             type="button"
             disabled={busy || !item.github.url}
             className="min-h-11 rounded-full bg-ink px-4 text-sm text-bg disabled:opacity-50"
-            onClick={() => void run("已同步 GitHub 中繼資料", () => applyGithubFn({ data: { id: item.id } }))}
+            onClick={() =>
+              void run("已同步 GitHub 中繼資料（未改中文敘事）", () => applyGithubFn({ data: { id: item.id } }))
+            }
           >
             同步 GitHub
           </button>

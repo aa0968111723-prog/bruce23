@@ -4,7 +4,8 @@ import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/LocaleProvider";
 import type { PublicProject } from "@/lib/cms/privacy";
-import { publishedCreativeWorkJsonLd, serializeJsonLd } from "@/lib/cms/jsonld";
+import { JsonLd } from "@/components/site/JsonLd";
+import { publishedCreativeWorkJsonLd } from "@/lib/cms/jsonld";
 import { englishTitle } from "@/lib/cms/locale";
 import { overlayProject } from "@/lib/locale/view";
 import { sanitizePublicHref } from "@/lib/safe-href";
@@ -29,14 +30,7 @@ export function CaseStudyView({
   );
   return (
     <article className="mx-auto w-full min-w-0 max-w-4xl scroll-mt-20 px-4 py-12 sm:px-6">
-      {includeJsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: serializeJsonLd(publishedCreativeWorkJsonLd(project)),
-          }}
-        />
-      ) : null}
+      {includeJsonLd ? <JsonLd data={publishedCreativeWorkJsonLd(project)} /> : null}
       {backTo === "work" ? (
         <Link to="/work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-ink">
           <ArrowLeft className="size-4" />

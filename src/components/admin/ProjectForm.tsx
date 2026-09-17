@@ -18,7 +18,7 @@ import type { AdminProject } from "@/lib/cms/store";
 import { EXPERIENCE_MODE_LABEL, EXPERIENCE_MODES, PRODUCT_STATUSES, PROJECT_CATEGORIES } from "@/lib/cms/status";
 import type { ProjectInput, ProjectMedia } from "@/lib/cms/schema";
 import { experienceConfigSchema } from "@/lib/cms/schema";
-import { parseCanvaDesign, isCanvaShortLink } from "@/lib/canva/parse";
+import { normalizeCanvaPaste } from "@/lib/canva/parse";
 import { parseCanvaPageIds } from "@/lib/canva/embed";
 import { mergeExperienceConfig } from "@/lib/experiences/defaults";
 import { githubSyncDiff, type GithubDiffRow } from "@/lib/github/diff";
@@ -76,7 +76,15 @@ export function ProjectForm({ project }: { project: AdminProject }) {
   const [form, setForm] = useState<ProjectInput>(() => toForm(project));
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
-  const [revisions, setRevisions] = useState<Array<{ id: string; note: string | null; created_at: string }>>([]);
+  const [revisions, setRevisions] = useState<
+    Array<{
+      id: string;
+      note: string | null;
+      created_at: string;
+      title?: string | null;
+      publication_status?: string | null;
+    }>
+  >([]);
   const [githubDiff, setGithubDiff] = useState<GithubDiffRow[] | null>(null);
   const [githubFetch, setGithubFetch] = useState<string | null>(null);
   const canvaShareRef = useRef<HTMLInputElement>(null);
@@ -439,7 +447,7 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             type="button"
             className="min-h-11 rounded-full bg-ink px-4 text-sm text-bg"
             onClick={() =>
-              void run("同步 GitHub", (payload) =>
+              void run("已同步 GitHub 中繼資料（未改中文敘事）", (payload) =>
                 applyGithubFn({ data: { id: project.id, url: payload.github_url ?? undefined } }),
               )
             }
@@ -467,15 +475,16 @@ export function ProjectForm({ project }: { project: AdminProject }) {
           emptyHint="空著就不會嵌入。請貼公開分享連結，不要發明設計編號。"
           inputRef={canvaShareRef}
           onChange={(value) => {
-            const parsed = parseCanvaDesign(value);
-            patch("canva_share_url", parsed?.shareUrl ?? value);
-            if (parsed) {
-              patch("canva_embed_url", parsed.embedUrl);
-              patch("canva_design_id", parsed.designId);
-            } else if (isCanvaShortLink(value)) {
-              patch("canva_embed_url", "");
-              patch("canva_design_id", null);
+            const pasted = normalizeCanvaPaste(value);
+            patch("canva_share_url", pasted.shareUrl);
+            patch("canva_embed_url", pasted.embedUrl ?? "");
+            patch("canva_design_id", pasted.designId);
+            if (pasted.kind === "design" || pasted.kind === "short") {
               patch("canva_status", "pending");
+            } else if (pasted.kind === "empty") {
+              patch("canva_status", "not_configured");
+            } else if (pasted.kind === "invalid" && pasted.shareUrl) {
+              patch("canva_status", "failed");
             }
           }}
         />
@@ -531,15 +540,10 @@ export function ProjectForm({ project }: { project: AdminProject }) {
             onClick={() => {
               const typed = canvaShareRef.current?.value?.trim() ?? "";
               if (typed) {
-                const parsed = parseCanvaDesign(typed);
-                patch("canva_share_url", parsed?.shareUrl ?? typed);
-                if (parsed) {
-                  patch("canva_embed_url", parsed.embedUrl);
-                  patch("canva_design_id", parsed.designId);
-                } else if (isCanvaShortLink(typed)) {
-                  patch("canva_embed_url", "");
-                  patch("canva_design_id", null);
-                }
+                const pasted = normalizeCanvaPaste(typed);
+                patch("canva_share_url", pasted.shareUrl);
+                patch("canva_embed_url", pasted.embedUrl ?? "");
+                patch("canva_design_id", pasted.designId);
               }
               const url = typed || form.canva_share_url || form.canva_embed_url || undefined;
               void testCanvaEmbedFn({
@@ -926,18 +930,24 @@ export function ProjectForm({ project }: { project: AdminProject }) {
 
       <section>
         <h2 className="font-display text-lg">修訂紀錄</h2>
+        <p className="mt-1 text-xs text-muted">還原會寫回該版快照（標題、敘事、媒體、整合欄位），並再存一筆還原紀錄。</p>
         {revisions.length === 0 ? (
           <p className="mt-2 text-sm text-muted">尚無修訂。儲存後會出現可還原的版本。</p>
         ) : null}
         <ul className="mt-2 grid gap-2">
           {revisions.map((item) => (
-            <li key={item.id} className="flex min-h-11 items-center justify-between rounded-xl bg-surface px-3 text-sm shadow-card">
+            <li key={item.id} className="flex min-h-11 items-center justify-between gap-3 rounded-xl bg-surface px-3 py-2 text-sm shadow-card">
               <span>
-                {item.note} · {item.created_at}
+                <span className="font-medium">{item.title || "未命名"}</span>
+                <span className="text-muted">
+                  {" "}
+                  · {revisionNoteLabel(item.note)}
+                  {item.publication_status ? ` · ${item.publication_status}` : ""} · {formatRevisionTime(item.created_at)}
+                </span>
               </span>
               <button
                 type="button"
-                className="inline-flex min-h-11 items-center text-mint-deep"
+                className="inline-flex min-h-11 shrink-0 items-center text-mint-deep"
                 onClick={() =>
                   void run("還原修訂", () => restoreRevisionFn({ data: { id: project.id, revisionId: item.id } }))
                 }
@@ -950,6 +960,23 @@ export function ProjectForm({ project }: { project: AdminProject }) {
       </section>
     </form>
   );
+}
+
+function revisionNoteLabel(note: string | null | undefined) {
+  if (!note) return "儲存";
+  if (note.startsWith("restore:")) return "還原";
+  if (note === "create") return "建立";
+  if (note === "draft") return "草稿";
+  if (note === "save") return "儲存";
+  if (note === "published") return "發布";
+  if (note === "archived") return "封存";
+  return note;
+}
+
+function formatRevisionTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toISOString().slice(0, 16).replace("T", " ");
 }
 
 function splitLines(value: string) {

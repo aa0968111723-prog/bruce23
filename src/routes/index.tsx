@@ -7,8 +7,10 @@ import { ProjectCard } from "@/components/site/ProjectCard";
 import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/LocaleProvider";
 import { ExplorationField } from "@/components/home/ExplorationField";
 import { ExperiencePanel } from "@/components/experience/ExperiencePanel";
+import { JsonLd } from "@/components/site/JsonLd";
 import { listPublishedProjectsFn, getPublicSiteFn } from "@/lib/cms/public-fn";
 import { resolveHomepageCopy } from "@/lib/cms/public-site";
+import { publishedPersonJsonLd, publishedWebSiteJsonLd } from "@/lib/cms/jsonld";
 import { overlayProject } from "@/lib/locale/view";
 import { site as fallbackSite } from "@/content/site";
 import type { PublicProject } from "@/lib/cms/privacy";
@@ -61,6 +63,21 @@ function Home() {
 
   return (
     <div>
+      <JsonLd
+        data={publishedWebSiteJsonLd({
+          name: copy.seoTitle || copy.nameEn || "Luminous Studio",
+          description: copy.seoDescription || copy.narrative,
+        })}
+      />
+      <JsonLd
+        data={publishedPersonJsonLd({
+          person: copy.person,
+          nameEn: copy.nameEn,
+          email: site?.email ?? fallbackSite.email,
+          github: site?.github ?? fallbackSite.github,
+          role: site?.role ?? fallbackSite.role,
+        })}
+      />
       <section className="relative overflow-hidden">
         <LightField />
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">

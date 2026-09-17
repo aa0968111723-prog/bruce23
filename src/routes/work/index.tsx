@@ -9,6 +9,8 @@ import { cn } from "@/lib/cn";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { overlayProject } from "@/lib/locale/view";
 import { useRovingTabs } from "@/components/site/useRovingTabs";
+import { JsonLd } from "@/components/site/JsonLd";
+import { publishedCollectionJsonLd } from "@/lib/cms/jsonld";
 
 export const Route = createFileRoute("/work/")({
   loader: async (): Promise<PublicProject[]> => listPublishedProjectsFn(),
@@ -42,6 +44,14 @@ function WorkIndex() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+      <JsonLd
+        data={publishedCollectionJsonLd({
+          name: ui.workTitle,
+          description: ui.workLead,
+          path: "/work",
+          itemPaths: projects.map((item) => `/work/${item.slug}`),
+        })}
+      />
       <h1 className="font-display text-4xl font-semibold">{ui.workTitle}</h1>
       <p className="mt-3 max-w-2xl text-muted">{ui.workLead}</p>
       <div

@@ -29,6 +29,7 @@ import { parseProjectPatch, projectInputSchema } from "./schema.ts";
 import type { Sql } from "../db.ts";
 import { NotFoundError } from "./errors.ts";
 import { projectCanvaInventory } from "../canva/inventory.ts";
+import { publicCanvaSlice } from "./privacy.ts";
 import { howItWorksSteps } from "../experiences/resolve.ts";
 import { publicSitemapPaths } from "./sitemap.ts";
 import { publishedCreativeWorkJsonLd } from "./jsonld.ts";
@@ -274,6 +275,9 @@ describe("cms persistence", () => {
     assert.ok(revisions.length >= 2);
     const beforeChange = revisions.find((item) => item.note === "save");
     assert.ok(beforeChange);
+    assert.equal("snapshot" in beforeChange, false);
+    assert.equal("github_url" in beforeChange, false);
+    assert.equal(beforeChange.title, "Test Work");
     const restored = await restoreRevision(sql, created.id, beforeChange.id, "admin-1");
     assert.equal(restored.title, "Test Work");
   });
@@ -393,6 +397,53 @@ describe("cms persistence", () => {
     assert.equal(published[0].slug, "public-poster");
   });
 
+  it("restores an archived archive row and strips private Canva shorts from public archive", async () => {
+    const { sql } = await setup();
+    const id = await upsertArchive(
+      sql,
+      {
+        slug: "archived-poster",
+        title: "Archived poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "hidden then restored",
+        origin_note: "test",
+        publication_status: "archived",
+        sort_order: 3,
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_status: "pending",
+      },
+      "admin-1",
+    );
+    assert.equal(
+      (await listPublishedArchive(sql)).some((item) => item.slug === "archived-poster"),
+      false,
+    );
+    await upsertArchive(
+      sql,
+      {
+        id,
+        slug: "archived-poster",
+        title: "Archived poster",
+        kind: "graphic",
+        year: "2026",
+        summary: "hidden then restored",
+        origin_note: "test",
+        publication_status: "published",
+        sort_order: 3,
+        canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+        canva_status: "pending",
+      },
+      "admin-1",
+    );
+    const live = (await listPublishedArchive(sql)).find((item) => item.slug === "archived-poster");
+    assert.ok(live);
+    assert.equal(live.canva.shareUrl, null);
+    assert.equal(live.canva.embedUrl, null);
+    assert.equal(live.canva.designId, null);
+    assert.equal(live.canva.status, "unavailable");
+  });
+
   it("persists a real Canva share URL onto the public slice without inventing one", async () => {
     const { sql } = await setup();
     const created = await createProjectRecord(
@@ -423,11 +474,16 @@ describe("cms persistence", () => {
       }),
       "admin-1",
     );
+    const admin = await getAdminProject(sql, created.id);
+    assert.equal(admin.canva_share_url, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(admin.canva_embed_url, null);
+    assert.equal(admin.canva_design_id, null);
+    assert.notEqual(admin.canva_status, "verified");
     const published = await getPublishedProject(sql, created.slug);
-    assert.equal(published.canva.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(published.canva.shareUrl, null);
     assert.equal(published.canva.embedUrl, null);
     assert.equal(published.canva.designId, null);
-    assert.equal(published.canva.status, "pending");
+    assert.equal(published.canva.status, "unavailable");
   });
 
   it("keeps a resolved Canva embed when share is still a /d/ short URL", async () => {
@@ -696,9 +752,19 @@ describe("cms persistence", () => {
     assert.equal(published.length, 8);
     for (const project of published) {
       const fields = expected[project.slug];
-      assert.equal(project.canva.shareUrl, fields.shareUrl, project.slug);
-      assert.equal(project.canva.embedUrl, fields.embedUrl, project.slug);
-      assert.equal(project.canva.status, fields.status, project.slug);
+      const publicCanva = publicCanvaSlice({
+        shareUrl: fields.shareUrl,
+        embedUrl: fields.embedUrl,
+        designId: fields.designId,
+        thumbnailUrl: fields.thumbnailUrl,
+        status: fields.status,
+        lastSyncedAt: null,
+        alt: fields.alt,
+        caption: fields.caption,
+      });
+      assert.equal(project.canva.shareUrl, publicCanva.shareUrl, project.slug);
+      assert.equal(project.canva.embedUrl, publicCanva.embedUrl, project.slug);
+      assert.equal(project.canva.status, publicCanva.status, project.slug);
     }
     const archive = await listPublishedArchive(sql);
     const zen = archive.find((item) => item.id === "tku-zen-poster");

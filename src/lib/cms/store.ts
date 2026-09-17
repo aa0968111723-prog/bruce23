@@ -4,6 +4,8 @@ import type { ArchiveInput, ArchiveLocaleCopy, ExperienceConfig, LocaleCopy, Pro
 import {
   asRecord,
   asStringArray,
+  publicCanvaSlice,
+  publicGithubSlice,
   stripSecrets,
   type CanvaPublicSlice,
   type PublicProject,
@@ -182,7 +184,7 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
       note: item.note,
       kind: item.kind,
     })),
-    github: {
+    github: publicGithubSlice(isPrivate, {
       url: githubOk ? (admin.github_url ?? null) : null,
       owner: githubOk ? (admin.github_owner ?? null) : null,
       repo: githubOk ? (admin.github_repo ?? null) : null,
@@ -198,8 +200,8 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
       fileTree: githubOk ? (admin.github_file_tree ?? undefined) : undefined,
       htmlUrl: githubOk && typeof meta.htmlUrl === "string" ? meta.htmlUrl : undefined,
       updatedAt: githubOk && typeof meta.updatedAt === "string" ? meta.updatedAt : undefined,
-    },
-    canva: {
+    }),
+    canva: publicCanvaSlice({
       shareUrl: admin.canva_share_url ?? null,
       embedUrl: admin.canva_embed_url ?? null,
       designId: admin.canva_design_id ?? null,
@@ -209,7 +211,7 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
       lastSyncedAt: admin.canva_last_synced_at ?? null,
       alt: admin.canva_alt ?? null,
       caption: admin.canva_caption ?? null,
-    },
+    }),
     demo: {
       url: admin.live_demo_url ?? null,
       label: admin.live_demo_label ?? null,
@@ -217,7 +219,6 @@ export function serializePublicProject(admin: AdminProject): PublicProject {
       embedEnabled: admin.live_demo_embed_enabled,
       status: admin.live_demo_status,
       lastVerifiedAt: admin.live_demo_last_verified_at ?? null,
-      error: admin.live_demo_error ?? null,
     },
   }));
 }
@@ -494,16 +495,27 @@ export async function listRevisions(sql: Sql, projectId: string) {
     note: string | null;
     created_at: string | Date;
     created_by: string | null;
+    snapshot: unknown;
   }>(
-    `select id, note, created_at, created_by from project_revisions where project_id = $1 order by created_at desc limit 40`,
+    `select id, note, created_at, created_by, snapshot from project_revisions where project_id = $1 order by created_at desc limit 40`,
     [projectId],
   );
-  return rows.map((row) => ({
-    id: String(row.id),
-    note: row.note,
-    created_at: iso(row.created_at) ?? "",
-    created_by: row.created_by,
-  }));
+  return rows.map((row) => {
+    const snapshot = parseJson<Partial<AdminProject>>(row.snapshot, {});
+    return {
+      id: String(row.id),
+      note: row.note,
+      created_at: iso(row.created_at) ?? "",
+      created_by: row.created_by,
+      title: typeof snapshot.title === "string" ? snapshot.title : null,
+      publication_status:
+        snapshot.publication_status === "draft" ||
+        snapshot.publication_status === "published" ||
+        snapshot.publication_status === "archived"
+          ? snapshot.publication_status
+          : null,
+    };
+  });
 }
 
 export async function restoreRevision(
@@ -634,7 +646,7 @@ export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[
     href: sanitizePublicHref(row.href as string | null) ?? null,
     originNote: String(row.origin_note ?? ""),
     locale: parseJson<PublicArchiveItem["locale"]>(row.locale_json, {}),
-    canva: {
+    canva: publicCanvaSlice({
       shareUrl: (row.canva_share_url as string | null) ?? null,
       embedUrl: (row.canva_embed_url as string | null) ?? null,
       designId: (row.canva_design_id as string | null) ?? null,
@@ -644,7 +656,7 @@ export async function listPublishedArchive(sql: Sql): Promise<PublicArchiveItem[
       lastSyncedAt: iso(row.canva_last_synced_at),
       alt: (row.canva_alt as string | null) ?? null,
       caption: (row.canva_caption as string | null) ?? null,
-    },
+    }),
   }));
 }
 

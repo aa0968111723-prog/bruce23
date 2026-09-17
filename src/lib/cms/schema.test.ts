@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { parseGithubUrl, limitGithubTree, mergeGithubTreeNodes, summarizeReadme } from "../github/parse.ts";
-import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome } from "../canva/parse.ts";
+import { extractCanvaUrl, isAllowedCanvaMediaUrl, isAllowedCanvaUrl, parseCanvaDesign, canvaPersistShape, canvaPersistFromFields, isCanvaShortLink, classifyCanvaNavigationUrl, classifyCanvaPageOutcome, normalizeCanvaPaste } from "../canva/parse.ts";
 import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
 import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema, parseProjectPatch } from "./schema.ts";
-import { serializeJsonLd } from "./jsonld.ts";
+import { publishedCollectionJsonLd, publishedPersonJsonLd, publishedWebSiteJsonLd, serializeJsonLd } from "./jsonld.ts";
 import { toPublicProject } from "./store.ts";
 import { canvaViewerState, demoViewerState, stripSecrets } from "./privacy.ts";
 
@@ -165,6 +165,16 @@ describe("canva allowlist", () => {
     const html = `<iframe src="https://www.canva.com/design/DAGxyz/view?embed"></iframe><script>alert(1)</script>`;
     assert.ok(extractCanvaUrl(html)?.includes("canva.com"));
     assert.equal(extractCanvaUrl(`<iframe src="https://evil.test/x"></iframe>`), null);
+    const pasted = normalizeCanvaPaste(html);
+    assert.equal(pasted.kind, "design");
+    assert.equal(pasted.designId, "DAGxyz");
+    assert.equal(pasted.shareUrl, "https://www.canva.com/design/DAGxyz/view");
+    const junk = normalizeCanvaPaste(`<iframe src="https://evil.test/x"></iframe>`);
+    assert.equal(junk.kind, "invalid");
+    assert.equal(junk.shareUrl, "");
+    const short = normalizeCanvaPaste("https://www.canva.com/d/ysK5sYZisVEjZFe");
+    assert.equal(short.kind, "short");
+    assert.equal(short.designId, null);
   });
 
   it("rejects non-canva hosts", () => {
@@ -287,9 +297,17 @@ describe("demo verification", () => {
 
 describe("privacy", () => {
   it("strips tokens from objects", () => {
-    const cleaned = stripSecrets({ title: "ok", access_token: "secret", nested: { client_secret: "x" } });
+    const cleaned = stripSecrets({
+      title: "ok",
+      access_token: "secret",
+      password: "nope",
+      private_key: "nope",
+      nested: { client_secret: "x" },
+    });
     assert.equal(cleaned.title, "ok");
     assert.equal("access_token" in cleaned, false);
+    assert.equal("password" in cleaned, false);
+    assert.equal("private_key" in cleaned, false);
   });
 
   it("hides unpublished rows from the public mapper", () => {
@@ -354,7 +372,49 @@ describe("privacy", () => {
     assert.ok(publicRow);
     assert.equal(publicRow.github.url, null);
     assert.equal(publicRow.github.name, undefined);
+    assert.equal(publicRow.github.syncStatus, "not_configured");
+    assert.equal(publicRow.github.lastSyncedAt, null);
     assert.equal("access_token" in publicRow.github, false);
+  });
+
+  it("hides private Canva short links and demo probe errors from public responses", () => {
+    const publicRow = toPublicProject({
+      id: "3",
+      slug: "hidden-canva",
+      title: "Hidden Canva",
+      publication_status: "published",
+      product_status: "prototype",
+      category: "AI Product",
+      year: "2026",
+      featured: false,
+      sort_order: 0,
+      summary: "public copy",
+      decisions: "[]",
+      modalities: "[]",
+      process: "[]",
+      outputs: "[]",
+      stack: "[]",
+      limitations: "[]",
+      media: "[]",
+      locale_json: "{}",
+      github_sync_status: "not_configured",
+      live_demo_url: "https://example.com/demo",
+      live_demo_status: "unavailable",
+      live_demo_error: "HEAD 403 internal probe",
+      canva_share_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+      canva_embed_url: "https://www.canva.com/d/ysK5sYZisVEjZFe",
+      canva_status: "pending",
+      experience_config: "{}",
+      interaction_steps: "[]",
+      source_evidence: "[]",
+    });
+    assert.ok(publicRow);
+    assert.equal(publicRow.canva.shareUrl, null);
+    assert.equal(publicRow.canva.embedUrl, null);
+    assert.equal(publicRow.canva.designId, null);
+    assert.equal(publicRow.canva.status, "unavailable");
+    assert.equal(publicRow.demo.url, "https://example.com/demo");
+    assert.equal(publicRow.demo.error, undefined);
   });
 
   it("falls back when Canva embed or demo iframe cannot load", () => {
@@ -642,6 +702,50 @@ describe("json-ld", () => {
     const html = serializeJsonLd({ name: "</script><script>alert(1)" });
     assert.match(html, /\\u003c/);
     assert.doesNotMatch(html, /<\/script>/);
+  });
+
+  it("builds Person, WebSite, and CollectionPage JSON-LD without draft paths", () => {
+    const person = publishedPersonJsonLd({
+      person: "陳柏能",
+      nameEn: "Luminous Studio",
+      email: "aa0968111723@gmail.com",
+      github: "https://github.com/aa0968111723-prog",
+      role: "maker",
+    });
+    assert.equal(person["@type"], "Person");
+    assert.equal(person.url, "/about");
+    const site = publishedWebSiteJsonLd({ name: "Luminous Studio", description: "光域" });
+    assert.equal(site["@type"], "WebSite");
+    assert.equal(site.url, "/");
+    const collection = publishedCollectionJsonLd({
+      name: "作品",
+      description: "已發布",
+      path: "/work",
+      itemPaths: ["/work/framelab"],
+    });
+    assert.equal(collection["@type"], "CollectionPage");
+    assert.deepEqual(
+      collection.hasPart?.map((item) => item.url),
+      ["/work/framelab"],
+    );
+    assert.doesNotMatch(JSON.stringify(collection), /\/admin|\/work\/draft/);
+    assert.equal(
+      publishedPersonJsonLd(
+        {
+          person: "陳柏能",
+          nameEn: "Luminous Studio",
+          email: "aa0968111723@gmail.com",
+          github: "https://github.com/aa0968111723-prog",
+          role: "maker",
+        },
+        "https://studio.example",
+      ).url,
+      "https://studio.example/about",
+    );
+    assert.equal(
+      publishedWebSiteJsonLd({ name: "Luminous Studio" }, "https://studio.example").url,
+      "https://studio.example/",
+    );
   });
 });
 
