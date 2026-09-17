@@ -129,5 +129,7 @@ export function limitGithubTree(
   }
   const rest = [...high, ...low.slice(0, MAX_LOW_VALUE_ENTRIES)].filter((item) => !pinnedSeen.has(item.path));
   // Catalog source paths stay even if they would otherwise exceed maxEntries.
-  return [...pinned, ...rest].slice(0, Math.max(maxEntries, pinned.length));
+  const limited = [...pinned, ...rest].slice(0, Math.max(maxEntries, pinned.length));
+  limited.sort((a, b) => treeScore(b.path) - treeScore(a.path) || a.path.localeCompare(b.path));
+  return limited;
 }

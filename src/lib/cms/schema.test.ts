@@ -96,6 +96,17 @@ describe("readme and rate-limit states", () => {
     );
     assert.ok(limited.some((item) => item.path === "lib/server/canva.ts"));
     assert.ok(limited.some((item) => item.path === "src/lib/domain/nested/deep.ts"));
+    assert.equal(limited[0]?.path.startsWith("src/file-") || limited[0]?.path === "lib/server/canva.ts", true);
+    const withReadme = limitGithubTree(
+      [
+        ...crowd,
+        { path: "README.md", type: "blob", size: 40 },
+        { path: "lib/server/canva.ts", type: "blob", size: 40 },
+      ],
+      { maxDepth: 4, maxEntries: 80, keepPaths: ["lib/server/canva.ts"] },
+    );
+    assert.equal(withReadme[0]?.path, "README.md");
+    assert.ok(withReadme.some((item) => item.path === "lib/server/canva.ts"));
     const dropped = limitGithubTree(
       [
         ...crowd,
