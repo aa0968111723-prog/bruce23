@@ -105,15 +105,8 @@ export function isMainModule(moduleUrl) {
   }
 }
 
-export const DEFAULT_PORTFOLIO_ADMIN_EMAILS = "aa0968111723@gmail.com";
-
-/** Fail-closed admin allowlist for preview/dev when the platform did not inject one. Not a secret. */
 export function applyRuntimeDefaults(env) {
-  const next = { ...env };
-  if (!String(next.PORTFOLIO_ADMIN_EMAILS ?? "").trim()) {
-    next.PORTFOLIO_ADMIN_EMAILS = DEFAULT_PORTFOLIO_ADMIN_EMAILS;
-  }
-  return next;
+  return { ...env };
 }
 
 function main(argv) {

@@ -48,6 +48,9 @@ export function applyPreviewLocalDefaults(env, options = {}) {
   if (!String(next.BETTER_AUTH_SECRET ?? "").trim()) {
     next.BETTER_AUTH_SECRET = readOrCreatePreviewAuthSecret(options.root ?? ROOT);
   }
+  if (!String(next.PORTFOLIO_ADMIN_EMAILS ?? "").trim()) {
+    next.PORTFOLIO_ADMIN_EMAILS = ADMIN_EMAIL;
+  }
   const forceFile = Boolean(options.forcePgliteFile);
   const isViteDev = options.command === "vite" && options.args?.[0] === "dev";
   if ((forceFile || isViteDev) && !String(next.PGLITE_DATA_DIR ?? "").trim()) {

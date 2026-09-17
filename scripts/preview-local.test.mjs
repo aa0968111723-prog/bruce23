@@ -38,6 +38,17 @@ test("VERCEL skips the workspace PGLite file", () => {
   assert.equal(env.PGLITE_DATA_DIR, undefined);
 });
 
+test("local preview injects admin allowlist; production does not", () => {
+  const root = mkdtempSync(join(tmpdir(), "preview-admin-"));
+  const local = applyPreviewLocalDefaults({}, { command: "vite", args: ["dev"], root });
+  assert.equal(local.PORTFOLIO_ADMIN_EMAILS, "aa0968111723@gmail.com");
+  const prod = applyPreviewLocalDefaults(
+    { VERCEL: "1" },
+    { command: "vite", args: ["dev"], root },
+  );
+  assert.equal(prod.PORTFOLIO_ADMIN_EMAILS, undefined);
+});
+
 test("forcePgliteFile still refuses Neon", () => {
   const env = applyPreviewLocalDefaults(
     { DATABASE_URL: "postgres://example" },

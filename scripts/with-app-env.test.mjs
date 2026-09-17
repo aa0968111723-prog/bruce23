@@ -7,7 +7,6 @@ import { test } from "node:test";
 import { promisify } from "node:util";
 import {
   APP_ENV_REL_PATH,
-  DEFAULT_PORTFOLIO_ADMIN_EMAILS,
   applyRuntimeDefaults,
   mergeAppEnv,
   parseAppEnv,
@@ -65,14 +64,16 @@ test("this app ships auth on", () => {
   assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "true" });
 });
 
-test("defaults PORTFOLIO_ADMIN_EMAILS when unset", () => {
-  assert.equal(applyRuntimeDefaults({}).PORTFOLIO_ADMIN_EMAILS, DEFAULT_PORTFOLIO_ADMIN_EMAILS);
-  assert.equal(applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "  " }).PORTFOLIO_ADMIN_EMAILS, DEFAULT_PORTFOLIO_ADMIN_EMAILS);
+test("does not invent a production admin allowlist", () => {
+  assert.equal(applyRuntimeDefaults({}).PORTFOLIO_ADMIN_EMAILS, undefined);
+  assert.equal(applyRuntimeDefaults({ PORTFOLIO_ADMIN_EMAILS: "  " }).PORTFOLIO_ADMIN_EMAILS, "  ");
 });
 
-test("wrapper sets PORTFOLIO_ADMIN_EMAILS when process env left it blank", async () => {
+test("local wrapper still sets PORTFOLIO_ADMIN_EMAILS when process env left it blank", async () => {
   const env = { ...process.env };
   delete env.PORTFOLIO_ADMIN_EMAILS;
+  delete env.DATABASE_URL;
+  delete env.VERCEL;
   const { stdout } = await execFileAsync(
     process.execPath,
     [WRAPPER, process.execPath, "-e", "process.stdout.write(process.env.PORTFOLIO_ADMIN_EMAILS ? 'set' : 'unset')"],
