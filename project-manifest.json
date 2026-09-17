@@ -13,8 +13,8 @@
     "hermes-console",
     "tku-zen-ai"
   ],
-  "content": "postgres-cms-with-static-seed",
+  "content": "postgres-cms",
   "dataLayer": "neon-pglite",
-  "auth": "better-auth-admin-allowlist",
-  "theme": "light-only"
+  "theme": "light-only",
+  "auth": "allowlist-admin"
 }

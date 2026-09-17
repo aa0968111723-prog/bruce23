@@ -1,28 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
-import type { ProjectMedia, ProjectStatus } from "@/content/types";
+import type { PublicProject } from "@/lib/portfolio/types";
 import { MediaFrame } from "./MediaFrame";
 import { StatusBadge } from "./StatusBadge";
-
-export type CardProject = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  summary: string;
-  media: ProjectMedia[];
-  productStatus?: ProjectStatus;
-  status?: ProjectStatus;
-};
 
 export function ProjectCard({
   project,
   featured = false,
 }: {
-  project: CardProject;
+  project: PublicProject;
   featured?: boolean;
 }) {
-  const status = project.productStatus ?? project.status ?? "prototype";
   return (
     <Link
       to="/work/$slug"
@@ -49,7 +37,7 @@ export function ProjectCard({
             <span className="text-xs font-medium tracking-wide text-muted">
               {project.category}
             </span>
-            <StatusBadge status={status} />
+            <StatusBadge status={project.productStatus} />
           </div>
           <div>
             <h3 className="font-display text-xl font-semibold text-ink">

@@ -1,37 +1,32 @@
 # Portfolio Task State
 
-Cycle: 2 — interactive CMS
+Cycle: 3 complete (gates verified)
 Updated: 2026-09-16
 Branch: cursor/portfolio-interactive-cms-da82
 
 ## Source of truth
 
 - GitHub user: `aa0968111723-prog` (Bruce / 陳柏能)
-- Featured repos read: `ai_os`, `FrameLab`, `poster-vision-ai`, `planform-iso`, `duigao`, `canva2`, `hermes-console`, `tku-zen-ai`
-- Auth ON, Database ON (PGLite preview / Neon deploy)
-- Admin allowlist: `PORTFOLIO_ADMIN_EMAILS` (fail closed if unset)
-- Static seed remains in `src/content/*` and is upserted once into CMS tables
-- `VITE_AUTH_ENABLED=true` in `.grok/app-env.json` (not a `.env` file)
+- Public site reads published CMS rows (seeded from static content)
+- Admin writes are allowlisted (`PORTFOLIO_ADMIN_EMAILS`)
 
-## Proven this cycle
+## Done this cycle
 
-- Better Auth routes + Google/X login (sandbox cannot finish Google OAuth; fail-closed + unit tests)
-- `migrations/0002_portfolio_cms.sql` with product_status vs publication_status
-- Public site reads published CMS rows only
-- Admin CMS routes: /admin, projects, new, edit, archive, settings, preview, integrations
-- Server-side GitHub sync (metadata/README/languages/topics/commit/tree) that does not overwrite narrative
-- Canva public embed allowlist + reserved Connect OAuth
-- ExperiencePanel + per-project experiences
-- Homepage relation space including GitHub / Canva / Live Demo nodes
-- Serializable CMS types (no `unknown` on server-fn payloads)
-- Gates: typecheck, test, lint, build, check:auth, desktop+mobile smoke, production preview smoke
+- Auth ON + Neon/PGLite schema `0002_portfolio_cms.sql`
+- Public work/case/archive/home read published data
+- ExperiencePanel + per-project operable exhibits
+- Admin CMS: projects, archive, settings, preview, integrations
+- Server-side GitHub / Canva embed test / Demo verify / README verify
+- Nested GitHub file tree, homepage exploration nodes, custom share card
+- Tests for privacy, allowlist, github/canva/demo, seed, publish round-trip
+- `/sitemap.xml` via dotted TanStack filename
+- Local production preview copies `pglite.data` + `pglite.wasm` + `initdb.wasm`
+- Gates: typecheck, test (92), lint (0 errors), build, check:auth, desktop+mobile smoke, production smoke non-diverging
 
-## Not done / need from you
+## Not done / honest gaps
 
-- Original photography and event photos (Drive originals not on a public CDN)
-- Original AI video files
-- More Canva share URLs for 美食地圖、淡水生存指南
-- Notion connection
-- Confirm whether `https://ai-os-ten.vercel.app` should stay listed
-- Production env: `PORTFOLIO_ADMIN_EMAILS`, optional `GITHUB_READ_TOKEN`, optional Canva Connect secrets
-- Draft GitHub PR: token returned 403 on pull-request create (branch is on origin)
+- Canva Connect OAuth is reserved: public-embed mode works; full Connect search/export/edit-in-app is not live until client id/secret exist and OAuth is finished
+- Original large photos/videos still not on a public CDN
+- GitHub sync metadata fills after an admin clicks 同步 (seed has repo URLs, not REST payloads)
+- Archive Canva items currently have thumbnails + notes; share/embed URLs can be added in admin
+- GitHub MCP cannot create the PR (403 on personal access token); compare URL is used instead

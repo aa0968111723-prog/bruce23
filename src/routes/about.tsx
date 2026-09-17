@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Github, Mail } from "lucide-react";
-import { fetchPublicSite } from "@/lib/cms/public-fns";
+import { getPublicSiteFn } from "@/lib/portfolio/public-fns";
 
 export const Route = createFileRoute("/about")({
-  loader: () => fetchPublicSite(),
+  loader: () => getPublicSiteFn(),
   component: About,
 });
 
@@ -24,7 +24,7 @@ const publicWork = [
 ];
 
 function About() {
-  const site = Route.useLoaderData().profile;
+  const site = Route.useLoaderData();
   return (
     <div>
       <section className="bg-surface-blue/50">
@@ -36,17 +36,16 @@ function About() {
           </p>
         </div>
       </section>
-
       <section className="mx-auto w-full max-w-3xl space-y-10 px-4 py-14 sm:px-6">
         <div>
           <h2 className="font-display text-2xl font-semibold">公開定位</h2>
           <p className="mt-3 leading-relaxed text-ink/85">{site.narrative}</p>
         </div>
         <div>
-          <h2 className="font-display text-2xl font-semibold">我相信</h2>
+          <h2 className="font-display text-2xl font-semibold">核心信念</h2>
           <ul className="mt-4 grid gap-3">
             {beliefs.map((item) => (
-              <li key={item} className="rounded-2xl bg-surface p-4 text-sm leading-relaxed shadow-card">
+              <li key={item} className="rounded-2xl bg-surface px-4 py-3 text-sm leading-relaxed shadow-card">
                 {item}
               </li>
             ))}
@@ -56,30 +55,31 @@ function About() {
           <h2 className="font-display text-2xl font-semibold">公開工作範圍</h2>
           <ul className="mt-4 grid gap-2 text-sm text-muted">
             {publicWork.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item} className="rounded-xl bg-surface-mint/70 px-4 py-3 text-sm">
+                {item}
+              </li>
             ))}
           </ul>
           <Link to="/work" className="mt-5 inline-flex min-h-11 items-center text-sm font-medium text-mint-deep">
             看作品
           </Link>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href={`mailto:${site.email}`}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-5 text-sm shadow-card"
-          >
-            <Mail className="size-4" />
-            {site.email}
-          </a>
-          <a
-            href={site.github}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm text-bg"
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Github className="size-4" />
-            GitHub
-          </a>
+        <div className="rounded-2xl bg-surface p-6 shadow-card">
+          <h2 className="font-display text-2xl font-semibold">聯絡</h2>
+          <p className="mt-2 text-sm text-muted">只提供已公開的 GitHub 與 Email。</p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a href={`mailto:${site.email}`} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mint px-5 text-sm font-semibold text-primary-foreground">
+              <Mail className="size-4" />
+              寄信
+            </a>
+            <a href={site.github} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg" rel="noreferrer" target="_blank">
+              <Github className="size-4" />
+              GitHub
+            </a>
+            <Link to="/work" className="inline-flex min-h-11 items-center rounded-full bg-surface-blue px-5 text-sm font-medium">
+              看作品
+            </Link>
+          </div>
         </div>
       </section>
     </div>

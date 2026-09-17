@@ -26,7 +26,6 @@ import { Route as WorkSlugRouteImport } from './routes/work/$slug'
 import { Route as AdminProjectsIndexRouteImport } from './routes/admin/projects/index'
 import { Route as AdminProjectsNewRouteImport } from './routes/admin/projects/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as ApiCanvaCallbackRouteImport } from './routes/api/canva/callback'
 import { Route as AdminProjectsIdEditRouteImport } from './routes/admin/projects/$id/edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -114,11 +113,6 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCanvaCallbackRoute = ApiCanvaCallbackRouteImport.update({
-  id: '/api/canva/callback',
-  path: '/api/canva/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminProjectsIdEditRoute = AdminProjectsIdEditRouteImport.update({
   id: '/projects/$id/edit',
   path: '/projects/$id/edit',
@@ -142,7 +136,6 @@ export interface FileRoutesByFullPath {
   '/work/': typeof WorkIndexRoute
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/canva/callback': typeof ApiCanvaCallbackRoute
   '/admin/projects/': typeof AdminProjectsIndexRoute
   '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
@@ -162,7 +155,6 @@ export interface FileRoutesByTo {
   '/work': typeof WorkIndexRoute
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/canva/callback': typeof ApiCanvaCallbackRoute
   '/admin/projects': typeof AdminProjectsIndexRoute
   '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
@@ -184,7 +176,6 @@ export interface FileRoutesById {
   '/work/': typeof WorkIndexRoute
   '/admin/projects/new': typeof AdminProjectsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/canva/callback': typeof ApiCanvaCallbackRoute
   '/admin/projects/': typeof AdminProjectsIndexRoute
   '/admin/projects/$id/edit': typeof AdminProjectsIdEditRoute
 }
@@ -207,7 +198,6 @@ export interface FileRouteTypes {
     | '/work/'
     | '/admin/projects/new'
     | '/api/auth/$'
-    | '/api/canva/callback'
     | '/admin/projects/'
     | '/admin/projects/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -227,7 +217,6 @@ export interface FileRouteTypes {
     | '/work'
     | '/admin/projects/new'
     | '/api/auth/$'
-    | '/api/canva/callback'
     | '/admin/projects'
     | '/admin/projects/$id/edit'
   id:
@@ -248,7 +237,6 @@ export interface FileRouteTypes {
     | '/work/'
     | '/admin/projects/new'
     | '/api/auth/$'
-    | '/api/canva/callback'
     | '/admin/projects/'
     | '/admin/projects/$id/edit'
   fileRoutesById: FileRoutesById
@@ -264,7 +252,6 @@ export interface RootRouteChildren {
   WorkSlugRoute: typeof WorkSlugRoute
   WorkIndexRoute: typeof WorkIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiCanvaCallbackRoute: typeof ApiCanvaCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -388,13 +375,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/canva/callback': {
-      id: '/api/canva/callback'
-      path: '/api/canva/callback'
-      fullPath: '/api/canva/callback'
-      preLoaderRoute: typeof ApiCanvaCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/projects/$id/edit': {
       id: '/admin/projects/$id/edit'
       path: '/projects/$id/edit'
@@ -440,7 +420,6 @@ const rootRouteChildren: RootRouteChildren = {
   WorkSlugRoute: WorkSlugRoute,
   WorkIndexRoute: WorkIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiCanvaCallbackRoute: ApiCanvaCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

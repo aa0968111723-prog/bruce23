@@ -1,91 +1,87 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { listAdminArchiveFn, saveArchiveItemFn } from "@/lib/cms/admin-fns";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { PublicArchiveItem } from "@/lib/cms/public-types";
+import { toast } from "sonner";
+import { listAdminArchiveFn, restoreProjectFn, upsertArchiveFn } from "@/lib/portfolio/cms-fns";
+import { listAdminProjectsFn } from "@/lib/portfolio/cms-fns";
+import type { AdminArchiveItem, AdminProject } from "@/lib/portfolio/types";
 
 export const Route = createFileRoute("/admin/archive")({
   component: AdminArchive,
 });
 
 function AdminArchive() {
-  const [items, setItems] = useState<PublicArchiveItem[] | null>(null);
+  const [items, setItems] = useState<AdminArchiveItem[]>([]);
+  const [archived, setArchived] = useState<AdminProject[]>([]);
   useEffect(() => {
-    void listAdminArchiveFn()
-      .then(setItems)
-      .catch(() => setItems([]));
+    void listAdminArchiveFn().then(setItems);
+    void listAdminProjectsFn().then((projects) =>
+      setArchived(projects.filter((p) => p.publicationStatus === "archived")),
+    );
   }, []);
-  if (!items) return <p className="text-sm text-muted">載入中…</p>;
   return (
-    <div>
-      <h1 className="font-display text-3xl font-semibold">Archive</h1>
-      <p className="mt-2 text-sm text-muted">草稿不會出現在公開 Archive。</p>
-      <ul className="mt-6 grid gap-4">
-        {items.map((item) => (
-          <ArchiveEditor key={item.id} item={item} />
-        ))}
-      </ul>
-      <Link to="/archive" className="mt-6 inline-flex min-h-11 text-sm text-mint-deep">
-        看公開 Archive
-      </Link>
+    <div className="grid gap-8">
+      <h1 className="font-display text-3xl font-semibold">Archive 與封存</h1>
+      <section>
+        <h2 className="font-display text-xl font-semibold">視覺 Archive</h2>
+        <ul className="mt-4 grid gap-3">
+          {items.map((item) => (
+            <li key={String(item.id)} className="rounded-2xl bg-surface p-4 shadow-card">
+              <p className="font-medium">{String(item.title)}</p>
+              <p className="text-xs text-muted">
+                {String(item.kind)} · {String(item.publicationStatus)}
+              </p>
+              <button
+                type="button"
+                className="mt-2 min-h-11 text-sm text-mint-deep"
+                onClick={async () => {
+                  await upsertArchiveFn({
+                    data: {
+                      id: String(item.id),
+                      title: String(item.title),
+                      kind: item.kind,
+                      year: String(item.year ?? ""),
+                      summary: String(item.summary ?? ""),
+                      originNote: String(item.originNote ?? ""),
+                      media: item.media,
+                      href: item.href,
+                      canvaShareUrl: item.canva?.shareUrl ?? null,
+                      canvaEmbedUrl: item.canva?.embedUrl ?? null,
+                      canvaDesignId: item.canva?.designId,
+                      canvaThumbnailUrl: item.canva?.thumbnailUrl,
+                      publicationStatus:
+                        item.publicationStatus === "published" ? "unpublished" : "published",
+                      sortOrder: Number(item.sortOrder ?? 0),
+                    },
+                  });
+                  toast.success("已更新 Archive 發布狀態");
+                }}
+              >
+                切換發布
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section>
+        <h2 className="font-display text-xl font-semibold">已封存作品</h2>
+        <ul className="mt-4 grid gap-3">
+          {archived.map((project) => (
+            <li key={project.id} className="flex items-center justify-between rounded-2xl bg-surface p-4 shadow-card">
+              <span>{project.title}</span>
+              <button
+                type="button"
+                className="min-h-11 text-sm text-mint-deep"
+                onClick={async () => {
+                  await restoreProjectFn({ data: { id: project.id } });
+                  toast.success("已還原為草稿");
+                }}
+              >
+                還原
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
-  );
-}
-
-function ArchiveEditor({ item }: { item: PublicArchiveItem }) {
-  const [title, setTitle] = useState(item.title);
-  const [summary, setSummary] = useState(item.summary);
-  const [status, setStatus] = useState<"draft" | "published" | "unpublished" | "archived">("published");
-  return (
-    <li className="rounded-2xl bg-surface p-4 shadow-card">
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="min-h-11 w-full rounded-xl border border-line px-3 text-sm"
-      />
-      <textarea
-        value={summary}
-        onChange={(e) => setSummary(e.target.value)}
-        className="mt-2 min-h-24 w-full rounded-xl border border-line px-3 py-2 text-sm"
-      />
-      <div className="mt-2 flex flex-wrap gap-2">
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as typeof status)}
-          className="min-h-11 rounded-xl border border-line px-3 text-sm"
-        >
-          <option value="published">published</option>
-          <option value="draft">draft</option>
-          <option value="archived">archived</option>
-        </select>
-        <button
-          type="button"
-          className="min-h-11 rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
-          onClick={async () => {
-            try {
-              await saveArchiveItemFn({
-                data: {
-                  id: item.id,
-                  title,
-                  kind: item.kind,
-                  year: item.year,
-                  summary,
-                  origin_note: item.originNote,
-                  href: item.href,
-                  publication_status: status,
-                  canva_share_url: item.canvaShareUrl,
-                  canva_embed_url: item.canvaEmbedUrl,
-                },
-              });
-              toast.success("已儲存");
-            } catch (err) {
-              toast.error(err instanceof Error ? err.message : "失敗");
-            }
-          }}
-        >
-          儲存
-        </button>
-      </div>
-    </li>
   );
 }
