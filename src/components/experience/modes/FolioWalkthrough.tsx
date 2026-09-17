@@ -1,7 +1,13 @@
-import { useState, type KeyboardEvent } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import type { WalkthroughStep } from "@/lib/cms/schema";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { walkthroughStageKind, type WalkthroughStageKind } from "@/lib/experiences/walkthrough";
+import {
+  applyFolioCommand,
+  folioAudit,
+  initialFolioDoc,
+  type FolioBoard,
+} from "@/lib/experiences/operate";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { joinSentences, type ExperienceChrome } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
@@ -10,15 +16,29 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   const { ex, config } = useExperienceView(project);
   const steps = config.walkthrough ?? [];
   const [index, setIndex] = useState(0);
+  const [boards, setBoards] = useState<FolioBoard[]>(initialFolioDoc);
+  const [boardId, setBoardId] = useState(boards[0]?.id ?? "board-a");
+  const [query, setQuery] = useState("");
+  const [lastCommand, setLastCommand] = useState<string | null>(null);
   const step = steps[index];
   const owner = project.github.owner;
   const repo = project.github.repo;
   const branch = project.github.branch ?? "main";
   const kind = step ? walkthroughStageKind(step) : "document";
+  const board = boards.find((item) => item.id === boardId) ?? boards[0];
+  const audit = folioAudit(board);
+  const dryRun = kind === "mcp";
 
   function go(next: number) {
     if (!steps.length) return;
     setIndex(Math.min(steps.length - 1, Math.max(0, next)));
+  }
+
+  function run(command: "insert-text" | "add-shape") {
+    const label = command === "insert-text" ? ex.folioText : "";
+    setLastCommand(command);
+    if (dryRun) return;
+    setBoards((list) => applyFolioCommand(list, boardId, command, label));
   }
 
   function onKey(event: KeyboardEvent<HTMLDivElement>) {
@@ -31,12 +51,21 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
     }
   }
 
+  const commands = useMemo(
+    () =>
+      [
+        { id: "insert-text" as const, label: ex.folioInsertText },
+        { id: "add-shape" as const, label: ex.folioAddShape },
+      ].filter((item) => !query.trim() || item.label.toLowerCase().includes(query.trim().toLowerCase())),
+    [ex.folioAddShape, ex.folioInsertText, query],
+  );
+
   if (!step) return <p className="text-sm text-muted">{ex.emptyWalkthrough}</p>;
 
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.walkAria}>
       <p className="text-sm text-muted">
-        {joinSentences(config.intro ?? ex.folioDefaultIntro, ex.folioNotCounter)}
+        {joinSentences(config.intro ?? ex.folioDefaultIntro, ex.folioNotCounter, ex.folioLiveHint)}
       </p>
       <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label={ex.walkStepsAria}>
         {steps.map((item, stepIndex) => (
@@ -58,9 +87,66 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
         className="mt-4 overflow-hidden rounded-2xl bg-surface shadow-card"
         data-walkthrough-stage={kind}
         data-walkthrough-path={step.path ?? ""}
+        data-folio-live="true"
       >
-        <FolioStage step={step} kind={kind} index={index} total={steps.length} ex={ex} />
+        <FolioStage
+          step={step}
+          kind={kind}
+          index={index}
+          total={steps.length}
+          ex={ex}
+          boards={boards}
+          boardId={boardId}
+          onBoard={setBoardId}
+          onPlace={(x, y) => {
+            if (kind !== "canvas") return;
+            setBoards((list) =>
+              applyFolioCommand(list, boardId, "insert-text", ex.folioText, `n-${Math.round(x)}-${Math.round(y)}`, {
+                x,
+                y,
+              }),
+            );
+            setLastCommand("insert-text");
+          }}
+        />
       </div>
+      {(kind === "command" || kind === "mcp") && (
+        <div className="mt-3 rounded-2xl bg-surface p-4 shadow-card" data-folio-commands="">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            className="min-h-11 w-full rounded-full border border-line bg-bg px-4 text-sm"
+            placeholder={ex.folioCommand}
+          />
+          <div className="mt-2 flex flex-wrap gap-2">
+            {commands.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+                onClick={() => run(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {lastCommand ? (
+            <p className="mt-2 text-xs text-mint-deep" data-folio-write={dryRun ? "dry-run" : "applied"}>
+              {dryRun ? ex.folioDryRun : ex.folioApplied} · {lastCommand}
+            </p>
+          ) : null}
+        </div>
+      )}
+      {kind === "audit" ? (
+        <ul className="mt-3 grid gap-2 text-sm">
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card" data-folio-contrast={audit.contrast ? "ok" : "low"}>
+            {ex.folioContrast}: {audit.contrast ? ex.folioSafe : ex.folioContrast}
+          </li>
+          <li className="rounded-xl bg-surface px-4 py-3 shadow-card" data-folio-overflow={audit.overflow ? "true" : "false"}>
+            {ex.folioOverflow}: {audit.overflow ? ex.folioOverflow : ex.folioSafe}
+          </li>
+        </ul>
+      ) : null}
       <div className="mt-4 rounded-2xl bg-surface p-5 shadow-card">
         <p className="text-xs text-mint-deep">
           {index + 1} / {steps.length}
@@ -107,14 +193,23 @@ function FolioStage({
   index,
   total,
   ex,
+  boards,
+  boardId,
+  onBoard,
+  onPlace,
 }: {
   step: WalkthroughStep;
   kind: WalkthroughStageKind;
   index: number;
   total: number;
   ex: ExperienceChrome;
+  boards: FolioBoard[];
+  boardId: string;
+  onBoard: (id: string) => void;
+  onPlace: (x: number, y: number) => void;
 }) {
   const file = step.path?.split("/").pop() ?? step.path ?? "document";
+  const board = boards.find((item) => item.id === boardId) ?? boards[0];
   return (
     <div className="bg-surface-blue/70 p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between gap-2 text-[11px] text-muted">
@@ -130,7 +225,79 @@ function FolioStage({
         {kind === "audit" ? <AuditStage file={file} ex={ex} /> : null}
         {kind === "mcp" ? <McpStage file={file} ex={ex} /> : null}
         {kind === "document" ? <DocumentStage title={step.title} file={file} ex={ex} /> : null}
+        {board && (kind === "canvas" || kind === "artboard" || kind === "audit") ? (
+          <LiveBoard
+            board={board}
+            boards={boards}
+            boardId={boardId}
+            kind={kind}
+            onBoard={onBoard}
+            onPlace={onPlace}
+          />
+        ) : null}
       </div>
+    </div>
+  );
+}
+
+function LiveBoard({
+  board,
+  boards,
+  boardId,
+  kind,
+  onBoard,
+  onPlace,
+}: {
+  board: FolioBoard;
+  boards: FolioBoard[];
+  boardId: string;
+  kind: WalkthroughStageKind;
+  onBoard: (id: string) => void;
+  onPlace: (x: number, y: number) => void;
+}) {
+  return (
+    <div className="absolute inset-0">
+      {kind === "canvas" ? (
+        <button
+          type="button"
+          className="absolute inset-[11%] left-[11%] right-[27%] top-[17%] bottom-[12%]"
+          data-folio-place=""
+          onClick={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            onPlace(x, y);
+          }}
+        >
+          <span className="sr-only">place</span>
+        </button>
+      ) : null}
+      {board.nodes.map((node) => (
+        <span
+          key={node.id}
+          className={`pointer-events-none absolute rounded-md ${node.kind === "text" ? "bg-mint/80 px-1 text-[10px] text-primary-foreground" : "bg-sky"}`}
+          style={{ left: `${node.x}%`, top: `${node.y}%`, width: `${node.w}%`, height: `${node.h}%` }}
+          data-folio-node={node.kind}
+        >
+          {node.label}
+        </span>
+      ))}
+      {kind === "artboard" ? (
+        <div className="absolute inset-x-3 bottom-2 flex gap-1" data-folio-artboards="">
+          {boards.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`inline-flex min-h-11 flex-1 items-center justify-center rounded-lg text-xs ${
+                item.id === boardId ? "bg-mint text-primary-foreground" : "bg-surface-blue"
+              }`}
+              onClick={() => onBoard(item.id)}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

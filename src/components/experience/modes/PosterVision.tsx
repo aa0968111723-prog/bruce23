@@ -3,15 +3,57 @@ import type { PublicProject } from "@/lib/cms/privacy";
 import { fillChrome, joinSentences, type ExperienceChrome } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
-type Region = { id: string; label: string; x: number; y: number; w: number; h: number };
+type Region = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  bright: number;
+  contrast: number;
+};
 
 type Analysis = {
   areaBright: number;
   contrast: number;
   textRegions: number;
   note: string;
+  downsample: string;
   regions: Region[];
 };
+
+function regionStats(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number,
+  box: { x: number; y: number; w: number; h: number },
+) {
+  const x0 = Math.max(0, Math.round((box.x / 100) * width));
+  const y0 = Math.max(0, Math.round((box.y / 100) * height));
+  const x1 = Math.min(width, x0 + Math.max(1, Math.round((box.w / 100) * width)));
+  const y1 = Math.min(height, y0 + Math.max(1, Math.round((box.h / 100) * height)));
+  let sum = 0;
+  let sumSq = 0;
+  let bright = 0;
+  let n = 0;
+  for (let y = y0; y < y1; y += 1) {
+    for (let x = x0; x < x1; x += 1) {
+      const i = (y * width + x) * 4;
+      const l = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+      sum += l;
+      sumSq += l * l;
+      if (l > 200) bright += 1;
+      n += 1;
+    }
+  }
+  const mean = n ? sum / n : 0;
+  const variance = n ? sumSq / n - mean * mean : 0;
+  return {
+    bright: n ? Math.round((bright / n) * 100) : 0,
+    contrast: Math.round(Math.sqrt(Math.max(0, variance))),
+  };
+}
 
 function analyze(
   image: HTMLImageElement,
@@ -19,7 +61,9 @@ function analyze(
   labels: Pick<ExperienceChrome, "canvasUnavailable" | "regionCenter" | "regionBright" | "regionText">,
 ): Analysis {
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return { areaBright: 0, contrast: 0, textRegions: 0, note: labels.canvasUnavailable, regions: [] };
+  if (!ctx) {
+    return { areaBright: 0, contrast: 0, textRegions: 0, note: labels.canvasUnavailable, downsample: "0×0", regions: [] };
+  }
   const w = 160;
   const h = Math.max(1, Math.round((image.height / image.width) * w));
   canvas.width = w;
@@ -53,14 +97,14 @@ function analyze(
   const textRows = rowEdges
     .map((count, y) => ({ y, count }))
     .filter((row) => row.count > w * 0.18);
-  const regions: Region[] = [
+  const boxes: Array<{ id: string; label: string; x: number; y: number; w: number; h: number }> = [
     { id: "center", label: labels.regionCenter, x: 28, y: 22, w: 44, h: 48 },
     { id: "bright", label: labels.regionBright, x: 8, y: 8, w: 28, h: 22 },
   ];
   if (textRows.length) {
     const first = textRows[0].y / h;
     const last = textRows[textRows.length - 1].y / h;
-    regions.push({
+    boxes.push({
       id: "text",
       label: labels.regionText,
       x: 10,
@@ -69,11 +113,13 @@ function analyze(
       h: Math.max(8, Math.round((last - first) * 100)),
     });
   }
+  const regions: Region[] = boxes.map((box) => ({ ...box, ...regionStats(data, w, h, box) }));
   return {
     areaBright: Math.round((bright / n) * 100),
     contrast: Math.round(contrast),
     textRegions: textRows.length,
     note: labels.canvasUnavailable,
+    downsample: `${w}×${h}`,
     regions,
   };
 }
@@ -87,6 +133,8 @@ export function PosterVision({ project }: { project?: PublicProject }) {
   const heatRef = useRef<HTMLCanvasElement>(null);
   const [src, setSrc] = useState(sampleSrc);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [heatOn, setHeatOn] = useState(true);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const run = useCallback(() => {
     const image = imgRef.current;
@@ -124,9 +172,11 @@ export function PosterVision({ project }: { project?: PublicProject }) {
     if (imgRef.current?.complete) run();
   }, [src, run]);
 
+  const region = analysis?.regions.find((item) => item.id === selected);
+
   return (
     <div>
-      <p className="text-sm text-muted">{joinSentences(config.intro, disclaimer)}</p>
+      <p className="text-sm text-muted">{joinSentences(config.intro, disclaimer, ex.calcLimits)}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <label className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card">
           {ex.uploadPoster}
@@ -139,6 +189,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
               if (!file) return;
               setSrc(URL.createObjectURL(file));
               setAnalysis(null);
+              setSelected(null);
             }}
           />
         </label>
@@ -148,6 +199,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           onClick={() => {
             setSrc(sampleSrc);
             setAnalysis(null);
+            setSelected(null);
           }}
         >
           {ex.samplePoster}
@@ -158,6 +210,14 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           onClick={run}
         >
           {ex.analyze}
+        </button>
+        <button
+          type="button"
+          className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
+          data-heatmap-toggle={heatOn ? "on" : "off"}
+          onClick={() => setHeatOn((value) => !value)}
+        >
+          {ex.heatmapToggle} {heatOn ? ex.on : ex.off}
         </button>
       </div>
       <div className="relative mt-4 overflow-hidden rounded-2xl bg-surface shadow-card">
@@ -174,7 +234,7 @@ export function PosterVision({ project }: { project?: PublicProject }) {
         />
         <canvas
           ref={heatRef}
-          className="pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply"
+          className={`pointer-events-none absolute inset-0 h-full w-full mix-blend-multiply ${heatOn ? "" : "hidden"}`}
           data-heatmap-palette="studio"
         />
         <p
@@ -183,19 +243,24 @@ export function PosterVision({ project }: { project?: PublicProject }) {
         >
           {ex.heatmapBadge}
         </p>
-        {analysis?.regions.map((region) => (
-          <div
-            key={region.id}
-            className="pointer-events-none absolute rounded-md border border-mint/80 bg-mint/10 px-1 text-[10px] text-ink"
+        {analysis?.regions.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`absolute min-h-11 min-w-11 rounded-md border px-1 text-left text-[10px] text-ink ${
+              selected === item.id ? "border-ink bg-mint/30" : "border-mint/80 bg-mint/10"
+            }`}
             style={{
-              left: `${region.x}%`,
-              top: `${region.y}%`,
-              width: `${region.w}%`,
-              height: `${region.h}%`,
+              left: `${item.x}%`,
+              top: `${item.y}%`,
+              width: `${item.w}%`,
+              height: `${item.h}%`,
             }}
+            data-region-id={item.id}
+            onClick={() => setSelected(item.id)}
           >
-            {region.label}
-          </div>
+            {item.label}
+          </button>
         ))}
       </div>
       <canvas ref={canvasRef} className="hidden" />
@@ -210,7 +275,17 @@ export function PosterVision({ project }: { project?: PublicProject }) {
           <li className="rounded-xl bg-surface px-4 py-3 shadow-card">
             {fillChrome(ex.textBands, { n: analysis.textRegions })}
           </li>
+          <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted" data-calc-limits="">
+            {ex.calcLimits} · {analysis.downsample}
+          </li>
           <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted">{analysis.note}</li>
+          {region ? (
+            <li className="rounded-xl bg-surface px-4 py-3 shadow-card" data-region-detail={region.id}>
+              {region.label} · {fillChrome(ex.brightArea, { n: region.bright })} · {fillChrome(ex.contrastStat, { n: region.contrast })}
+            </li>
+          ) : (
+            <li className="rounded-xl bg-surface-blue px-4 py-3 text-muted">{ex.regionSelect}</li>
+          )}
         </ul>
       ) : (
         <p className="mt-3 text-sm text-muted">{ex.posterLoading}</p>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
@@ -6,17 +6,44 @@ import { useRovingTabs } from "@/components/site/useRovingTabs";
 import { joinSentences, labeledLine } from "@/lib/locale/experience";
 import { useExperienceView } from "../useExperienceView";
 
+type Cut = {
+  projectName: string;
+  worldview: string;
+  assets: string[];
+  generated: string | null;
+  shots: string[];
+  review: "draft" | "approved" | "rejected";
+  pack: string | null;
+};
+
+const EMPTY_CUT: Cut = {
+  projectName: "",
+  worldview: "",
+  assets: [],
+  generated: null,
+  shots: ["鏡頭 A · 角色進場", "鏡頭 B · 對白", "鏡頭 C · 收束"],
+  review: "draft",
+  pack: null,
+};
+
+const SAMPLE_ASSETS = ["角色卡", "場景卡", "世界觀禁語"] as const;
+
 export function ProcessMap({ project }: { project: PublicProject }) {
   const { lang, ex, config } = useExperienceView(project);
   const nodes = config.processNodes ?? [];
   const ids = nodes.map((node) => node.id);
   const [active, setActive] = useState(nodes[0]?.id ?? "");
+  const [cut, setCut] = useState<Cut>(EMPTY_CUT);
   const current = nodes.find((node) => node.id === active) ?? nodes[0];
   const owner = project.github.owner;
   const repo = project.github.repo;
   const branch = project.github.branch ?? "main";
   const reduced = usePrefersReducedMotion();
   const tabs = useRovingTabs(ids, (active || ids[0] || "") as string, setActive);
+  const assetChoices = useMemo(
+    () => (lang === "en" ? ["Character card", "Scene card", "Worldview bans"] : [...SAMPLE_ASSETS]),
+    [lang],
+  );
 
   if (!nodes.length) {
     return <p className="text-sm text-muted">{ex.emptyNodes}</p>;
@@ -41,7 +68,13 @@ export function ProcessMap({ project }: { project: PublicProject }) {
           const x = 46 + index * 92;
           const selected = current?.id === node.id;
           return (
-            <g key={`pipe-${node.id}`}>
+            <g
+              key={`pipe-${node.id}`}
+              role="button"
+              tabIndex={-1}
+              style={{ cursor: "pointer" }}
+              onClick={() => setActive(node.id)}
+            >
               {index > 0 ? (
                 <line
                   x1={x - 46}
@@ -59,6 +92,7 @@ export function ProcessMap({ project }: { project: PublicProject }) {
                 r={selected ? 14 : 11}
                 className={selected ? "fill-mint" : "fill-surface"}
                 data-process-index={index + 1}
+                data-process-node={node.id}
               />
               <text
                 x={x}
@@ -133,9 +167,205 @@ export function ProcessMap({ project }: { project: PublicProject }) {
               {ex.openSourceFile}
             </a>
           ) : null}
+          <ProcessStudio
+            nodeId={current.id}
+            cut={cut}
+            setCut={setCut}
+            assets={assetChoices}
+            ex={ex}
+            lang={lang}
+          />
           {reduced ? <p className="mt-3 text-xs text-muted">{ex.reducedMotion}</p> : null}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function ProcessStudio({
+  nodeId,
+  cut,
+  setCut,
+  assets,
+  ex,
+  lang,
+}: {
+  nodeId: string;
+  cut: Cut;
+  setCut: (next: Cut | ((value: Cut) => Cut)) => void;
+  assets: string[];
+  ex: ReturnType<typeof useExperienceView>["ex"];
+  lang: "zh" | "en";
+}) {
+  return (
+    <div className="mt-4 rounded-2xl bg-surface-blue/70 p-4" data-process-studio={nodeId}>
+      <p className="text-xs text-mint-deep">{ex.processOperate}</p>
+      {nodeId === "project" ? (
+        <form
+          className="mt-3 flex flex-wrap gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            const name = String(form.get("name") ?? "").trim() || (lang === "en" ? "Demo cut" : "示範專案");
+            setCut((value) => ({ ...value, projectName: name, pack: null, review: "draft" }));
+          }}
+        >
+          <input
+            name="name"
+            defaultValue={cut.projectName}
+            className="min-h-11 flex-1 rounded-full border border-line bg-bg px-4 text-sm"
+            placeholder={lang === "en" ? "Project name" : "專案名稱"}
+          />
+          <button type="submit" className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground">
+            {ex.processCreate}
+          </button>
+        </form>
+      ) : null}
+      {nodeId === "world" ? (
+        <form
+          className="mt-3 flex flex-wrap gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            const worldview = String(form.get("world") ?? "").trim();
+            if (!worldview) return;
+            setCut((value) => ({ ...value, worldview }));
+          }}
+        >
+          <input
+            name="world"
+            defaultValue={cut.worldview}
+            className="min-h-11 flex-1 rounded-full border border-line bg-bg px-4 text-sm"
+            placeholder={lang === "en" ? "Logline / tone" : "一句世界觀／調性"}
+          />
+          <button type="submit" className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground">
+            {ex.processWorld}
+          </button>
+        </form>
+      ) : null}
+      {nodeId === "assets" ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {assets.map((item) => {
+            const on = cut.assets.includes(item);
+            return (
+              <button
+                key={item}
+                type="button"
+                className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm ${on ? "bg-ink text-bg" : "bg-surface shadow-card"}`}
+                onClick={() =>
+                  setCut((value) => ({
+                    ...value,
+                    assets: on ? value.assets.filter((asset) => asset !== item) : [...value.assets, item],
+                  }))
+                }
+              >
+                {ex.processPickAsset} · {item}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+      {nodeId === "gen" ? (
+        <button
+          type="button"
+          className="mt-3 inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+          data-fake-gen=""
+          onClick={() =>
+            setCut((value) => ({
+              ...value,
+              generated: lang === "en" ? "Fake still · Fal key not loaded" : "假生成靜幀 · 未載入 Fal 金鑰",
+            }))
+          }
+        >
+          {ex.processFakeGen}
+        </button>
+      ) : null}
+      {nodeId === "storyboard" ? (
+        <ul className="mt-3 grid gap-2">
+          {cut.shots.map((shot, index) => (
+            <li key={shot} className="flex min-h-11 items-center justify-between gap-2 rounded-xl bg-surface px-3 text-sm shadow-card">
+              <span>
+                {index + 1}. {shot}
+              </span>
+              <span className="flex gap-1">
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl"
+                  aria-label={ex.processShotUp}
+                  disabled={index === 0}
+                  onClick={() =>
+                    setCut((value) => {
+                      if (index === 0) return value;
+                      const shots = [...value.shots];
+                      [shots[index - 1], shots[index]] = [shots[index], shots[index - 1]];
+                      return { ...value, shots };
+                    })
+                  }
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl"
+                  aria-label={ex.processShotDown}
+                  disabled={index === cut.shots.length - 1}
+                  onClick={() =>
+                    setCut((value) => {
+                      if (index >= value.shots.length - 1) return value;
+                      const shots = [...value.shots];
+                      [shots[index], shots[index + 1]] = [shots[index + 1], shots[index]];
+                      return { ...value, shots };
+                    })
+                  }
+                >
+                  ↓
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {nodeId === "review" ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+            onClick={() => setCut((value) => ({ ...value, review: "approved" }))}
+          >
+            {ex.processApprove}
+          </button>
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
+            onClick={() => setCut((value) => ({ ...value, review: "rejected", pack: null }))}
+          >
+            {ex.processReject}
+          </button>
+        </div>
+      ) : null}
+      {nodeId === "delivery" ? (
+        <button
+          type="button"
+          className="mt-3 inline-flex min-h-11 items-center rounded-full bg-mint px-4 text-sm font-semibold text-primary-foreground"
+          onClick={() =>
+            setCut((value) => ({
+              ...value,
+              pack: value.review === "approved" ? (lang === "en" ? "demo-pack.zip" : "示範交付包.zip") : null,
+            }))
+          }
+        >
+          {ex.processPack}
+        </button>
+      ) : null}
+      <dl className="mt-3 grid gap-1 text-xs text-muted" data-process-cut="">
+        <div>{labeledLine(lang, lang === "en" ? "Project" : "專案", cut.projectName || "—")}</div>
+        <div>{labeledLine(lang, lang === "en" ? "Worldview" : "世界觀", cut.worldview || "—")}</div>
+        <div>{labeledLine(lang, lang === "en" ? "Assets" : "素材", cut.assets.join(" · ") || "—")}</div>
+        <div>{labeledLine(lang, lang === "en" ? "Generate" : "生成", cut.generated ?? "—")}</div>
+        <div>{labeledLine(lang, lang === "en" ? "Review" : "審核", cut.review)}</div>
+        <div>{labeledLine(lang, lang === "en" ? "Pack" : "交付", cut.pack ?? "—")}</div>
+      </dl>
+      {cut.pack ? <p className="mt-2 text-xs text-mint-deep">{ex.processPacked}</p> : null}
     </div>
   );
 }

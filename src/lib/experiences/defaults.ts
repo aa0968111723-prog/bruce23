@@ -127,7 +127,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
         starter: "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。",
         placeholder: "輸入一句話",
         sourceNote: "未連線。任何回覆都是本地說明，不是 Agent 執行結果。",
-        suggestions: ["海報", "連線", "任務"],
+        suggestions: ["海報", "連線", "任務", "就緒"],
         replies: [
           {
             match: "海報",
@@ -140,6 +140,10 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
           {
             match: "任務",
             reply: "Console 保存會話與任務版本；秘密不進瀏覽器。本頁是作品集對話預覽。",
+          },
+          {
+            match: "就緒",
+            reply: "GET /api/ready 是連線探測。未設 HERMES_API_URL 時工作區仍應開啟並顯示尚未連線。GitHub 網址不是 MCP。",
           },
         ],
       },

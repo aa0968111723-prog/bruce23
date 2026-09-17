@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
@@ -14,6 +14,12 @@ type Prop = {
   y: number;
 };
 
+const STOPS = [
+  { id: "enter", x: 12, y: 70, zh: "入場", en: "Enter" },
+  { id: "checkin", x: 40, y: 48, zh: "報到", en: "Check-in" },
+  { id: "seat", x: 88, y: 62, zh: "入座", en: "Seat" },
+] as const;
+
 export function PlanformSpace({ project }: { project?: PublicProject }) {
   const { lang, ex, config } = useExperienceView(project);
   const catalog = (config.spatial?.objects ?? []) as Prop[];
@@ -25,12 +31,19 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
   }));
   const [selected, setSelected] = useState<string>(catalog[0]?.id ?? "");
   const [tilt, setTilt] = useState(config.spatial?.tiltDefault ?? 18);
+  const [iso, setIso] = useState(true);
+  const [stop, setStop] = useState<(typeof STOPS)[number]["id"]>("enter");
   const current = props.find((item) => item.id === selected);
   const reduced = usePrefersReducedMotion();
   const owner = project?.github.owner;
   const repo = project?.github.repo;
   const branch = project?.github.branch ?? "main";
-  const sources = config.fileHints?.slice(0, 2) ?? [];
+  const sources = config.fileHints?.slice(0, 3) ?? [];
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 640) setIso(false);
+  }, []);
 
   function place(id: string, x: number, y: number) {
     setMove((value) => ({
@@ -46,6 +59,13 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
     place(id, x, y);
+  }
+
+  function onFloorDrag(event: PointerEvent<HTMLDivElement>) {
+    if (event.buttons !== 1 || reduced || !iso) return;
+    const dx = event.movementX;
+    if (!dx) return;
+    setTilt((value) => Math.min(50, Math.max(-40, value + dx * 0.35)));
   }
 
   function onKey(event: KeyboardEvent<HTMLDivElement>) {
@@ -64,7 +84,7 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
     }
   }
 
-  const tiltValue = reduced ? 0 : tilt;
+  const tiltValue = reduced || !iso ? 0 : tilt;
 
   if (!props.length) {
     return <p className="text-sm text-muted">{ex.emptyObjects}</p>;
@@ -79,26 +99,38 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
           ex.planformKeyboard,
         )}
       </p>
-      <label className="mt-3 flex items-center gap-3 text-sm">
-        {ex.rotate}
-        <input
-          type="range"
-          min={-40}
-          max={50}
-          value={tiltValue}
-          onChange={(event) => setTilt(Number(event.target.value))}
-          className="min-h-11 w-40"
-          disabled={reduced}
-        />
-      </label>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm shadow-card"
+          data-plan-view={iso ? "iso" : "plan"}
+          onClick={() => setIso((value) => !value)}
+        >
+          {iso ? ex.viewIso : ex.view2d}
+        </button>
+        <label className="flex items-center gap-3 text-sm">
+          {ex.rotate}
+          <input
+            type="range"
+            min={-40}
+            max={50}
+            value={tiltValue}
+            onChange={(event) => setTilt(Number(event.target.value))}
+            className="min-h-11 w-40"
+            disabled={reduced || !iso}
+          />
+        </label>
+      </div>
       <div
         className="relative mt-4 aspect-[16/10] overflow-hidden rounded-2xl bg-surface-blue shadow-card"
-        style={{ perspective: reduced ? undefined : "1200px" }}
+        style={{ perspective: reduced || !iso ? undefined : "1200px" }}
+        onPointerMove={onFloorDrag}
+        data-plan-stage=""
       >
         <div
           className="absolute inset-6 rounded-2xl bg-surface"
           style={{
-            transform: reduced ? undefined : `rotateX(58deg) rotateZ(${tiltValue}deg)`,
+            transform: reduced || !iso ? undefined : `rotateX(58deg) rotateZ(${tiltValue}deg)`,
             transformOrigin: "center",
           }}
         >
@@ -106,7 +138,7 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
             <path
               d="M12 70 Q40 48 88 62"
               fill="none"
-              stroke="#63e6be"
+              className="stroke-mint"
               strokeWidth="2"
               strokeLinecap="round"
               opacity="0.7"
@@ -135,6 +167,25 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
               {item.label}
             </button>
           ))}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none" role="group" aria-label={ex.circulationAria}>
+              {STOPS.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-xs font-semibold ${
+                    stop === item.id ? "bg-mint text-primary-foreground" : "bg-surface shadow-card"
+                  }`}
+                  style={{ left: `${item.x}%`, top: `${item.y}%` }}
+                  data-circulation-stop={item.id}
+                  onClick={() => setStop(item.id)}
+                >
+                  {index + 1}
+                  <span className="sr-only">{lang === "en" ? item.en : item.zh}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       {current ? (
@@ -142,8 +193,8 @@ export function PlanformSpace({ project }: { project?: PublicProject }) {
           <p className="font-display text-lg">{current.label}</p>
           <p className="mt-1">{labeledLine(lang, ex.useLabel, current.use)}</p>
           <p>{labeledLine(lang, ex.sizeLabel, current.size)}</p>
-          <p className="mt-2 text-muted">
-            {config.spatial?.circulationNote ?? ""}
+          <p className="mt-2 text-muted" data-circulation-label={stop}>
+            {config.spatial?.circulationNote ?? ""} · {lang === "en" ? STOPS.find((item) => item.id === stop)?.en : STOPS.find((item) => item.id === stop)?.zh}
           </p>
           {owner && repo && sources.length ? (
             <p className="mt-2 text-xs text-muted">

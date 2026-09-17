@@ -82,7 +82,16 @@ describe("experience catalog", () => {
     assert.ok(catalogSourcePaths("folio").includes("src/components/editor/artboard-strip.tsx"));
     assert.ok(catalogSourcePaths("framelab").includes("src/lib/domain/context-engine.ts"));
     assert.ok(catalogSourcePaths("hermes-console").includes("lib/server/canva.ts"));
+    assert.ok(catalogSourcePaths("hermes-console").includes("docs/LUMEN.md"));
+    assert.ok(catalogSourcePaths("hermes-console").includes("docs/ATLAS_MCP.md"));
     assert.ok(catalogSourcePaths("ai-director-os").includes("server/services/projectCore.ts"));
+    assert.ok(catalogSourcePaths("planform").includes("src/core/spatialKnowledge.ts"));
+    assert.ok(catalogSourcePaths("planform").includes("src/core/corridorGeometry.ts"));
+    assert.ok(catalogSourcePaths("framelab").includes("src/lib/domain/repair-planner.ts"));
+    assert.deepEqual(
+      (experienceCatalog["ai-director-os"].processNodes ?? []).map((node) => node.stage),
+      ["專案", "世界觀", "素材", "生成", "分鏡", "審核", "交付"],
+    );
   });
 
   it("maps CMS modalities onto hubs instead of guessing from slug", () => {
@@ -261,6 +270,8 @@ describe("frontend contract", () => {
     assert.match(processMap, /min-w-0 max-w-full gap-2 overflow-x-auto/);
     assert.match(processMap, /data-process-pipeline/);
     assert.match(processMap, /data-process-index/);
+    assert.match(processMap, /data-process-studio/);
+    assert.match(processMap, /data-fake-gen/);
     assert.match(experienceLocale, /不是線上產品控制台/);
     const timeline = readFileSync(
       new URL("../../../src/components/experience/modes/FrameTimeline.tsx", import.meta.url),
@@ -268,6 +279,9 @@ describe("frontend contract", () => {
     );
     assert.match(timeline, /ex\.onionSkin|useExperienceView/);
     assert.match(timeline, /frameKindKey/);
+    assert.match(timeline, /repairProblemFrame/);
+    assert.match(timeline, /data-timeline-play/);
+    assert.match(timeline, /requestAnimationFrame/);
     assert.match(experienceLocale, /Onion skin/);
     assert.match(experienceLocale, /not GPU model output/);
     const defaultsSrc = readFileSync(
@@ -285,6 +299,7 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /ArtboardStage/);
     assert.match(folioWalk, /data-folio-artboard/);
     assert.match(folioWalk, /data-folio-shell/);
+    assert.match(folioWalk, /data-folio-live/);
     assert.match(folioWalk, /folioInsertText/);
     assert.match(folioWalk, /folioDocumentLayer/);
     assert.doesNotMatch(folioWalk, /\$\{title\} 文件層/);
@@ -306,6 +321,8 @@ describe("frontend contract", () => {
     assert.match(poster, /posterLoading/);
     assert.match(poster, /heatmapBadge/);
     assert.match(poster, /data-heatmap-palette="studio"/);
+    assert.match(poster, /data-heatmap-toggle/);
+    assert.match(poster, /data-region-id/);
     assert.doesNotMatch(poster, /out\.data\[i\] = 255;/);
     assert.match(experienceLocale, /不是眼動追蹤/);
     assert.match(experienceLocale, /not eye-tracking/);
@@ -315,6 +332,8 @@ describe("frontend contract", () => {
     );
     assert.match(planform, /法規符合|規範符合|ex\.planformAria|complianceDisclaimer/);
     assert.match(planform, /data-iso-booth/);
+    assert.match(planform, /data-circulation-stop/);
+    assert.match(planform, /data-plan-view/);
     assert.match(experienceLocale, /not a code-compliance calculation/);
     const zenTalk = readFileSync(
       new URL("../../../src/components/experience/modes/ZenTalk.tsx", import.meta.url),
@@ -324,17 +343,21 @@ describe("frontend contract", () => {
     assert.match(zenTalk, /suggestions/);
     assert.match(zenTalk, /zenLocalBadge/);
     assert.match(zenTalk, /engine.breath/);
+    assert.match(zenTalk, /data-zen-breath/);
     const duigao = readFileSync(
       new URL("../../../src/components/experience/modes/DuigaoBoard.tsx", import.meta.url),
       "utf8",
     );
     assert.match(duigao, /data-pin-index/);
+    assert.match(duigao, /data-annotation-layer/);
     const hermes = readFileSync(
       new URL("../../../src/components/experience/modes/HermesPreview.tsx", import.meta.url),
       "utf8",
     );
     assert.match(hermes, /data-hermes-preview/);
     assert.match(hermes, /hermesDisconnected/);
+    assert.match(hermes, /data-hermes-ready/);
+    assert.match(hermes, /data-hermes-mcp/);
     const hermesHook = hermes.match(/const \{([^}]+)\} = useExperienceView/);
     assert.ok(hermesHook);
     if (/\blang\b/.test(hermes.replace(hermesHook[0], ""))) {

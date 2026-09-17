@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
 import { zenReply } from "@/lib/zen/engine";
 import { useExperienceView } from "../useExperienceView";
+import { usePrefersReducedMotion } from "@/lib/motion/prefers-reduced";
 
 export function ZenTalk({ project }: { project?: PublicProject }) {
   const { lang, ex, config } = useExperienceView(project);
@@ -10,6 +11,8 @@ export function ZenTalk({ project }: { project?: PublicProject }) {
   const suggestions = conversation?.suggestions ?? [];
   const starter = conversation?.starter ?? conversation?.disclaimer ?? ex.zenStarter;
   const [text, setText] = useState("");
+  const [breath, setBreath] = useState<"idle" | "in" | "hold" | "out">("idle");
+  const reduced = usePrefersReducedMotion();
   const [log, setLog] = useState<Array<{ role: "you" | "zen"; text: string; extra?: string }>>([
     { role: "zen", text: starter, extra: ex.zenBreath },
   ]);
@@ -22,6 +25,17 @@ export function ZenTalk({ project }: { project?: PublicProject }) {
       return list;
     });
   }, [lang, starter, ex.zenBreath]);
+
+  useEffect(() => {
+    if (breath === "idle" || reduced) return;
+    const order: Array<"in" | "hold" | "out"> = ["in", "hold", "out"];
+    const ms = breath === "in" ? 4000 : breath === "hold" ? 4000 : 6000;
+    const timer = window.setTimeout(() => {
+      const next = order[(order.indexOf(breath) + 1) % order.length];
+      setBreath(next);
+    }, ms);
+    return () => window.clearTimeout(timer);
+  }, [breath, reduced]);
 
   function send(raw = text) {
     const value = raw.trim();
@@ -53,6 +67,15 @@ export function ZenTalk({ project }: { project?: PublicProject }) {
             <p className="font-medium">{ex.zenTitle}</p>
             <p className="text-xs text-mint-deep">{ex.zenLocalBadge}</p>
           </div>
+          <button
+            type="button"
+            className="ml-auto inline-flex min-h-11 items-center rounded-full bg-surface-blue px-4 text-sm"
+            data-zen-breath={breath}
+            onClick={() => setBreath((value) => (value === "idle" ? "in" : "idle"))}
+          >
+            {ex.zenBreathe}
+            {breath !== "idle" ? ` · ${breath}` : ""}
+          </button>
         </header>
         <div className="grid gap-2 p-4">
           {log.map((item, index) => (
