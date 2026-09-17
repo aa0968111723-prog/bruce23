@@ -1,5 +1,60 @@
 # Portfolio Task State
 
+Cycle: leftover hunt vs original 10 — KEEP OPEN (not complete)
+Updated: 2026-09-17
+HEAD: 25ef488539ada0b08e83c7672587b720f9bdb19b
+
+## This cycle (2026-09-17)
+
+Wrap-up “CODE done, only OWNER secrets remain” was a hypothesis. Independent leftover hunt vs the original 10 found remaining CODE, then shipped it. Success is still those 10 deliverables plus owner secrets. Do not mark complete.
+
+### Leftover hunt (file evidence)
+
+- Live admin E2E failed on `getByRole('tablist', { name: '作品體驗' })` → two **Canva 原作** tabs. `screenshots/admin-live-error.png` / `.html` showed **two stacked SiteShells** (SSR `<!--$-->` tree + client tree). `hydrateRoot(document)` did not adopt the streamed shell.
+- Folio walkthrough: saved 4-step config hid catalog **畫板** at the end. Interactive QA before catalog-order merge showed Artboards as step 5.
+- GitHub `search_code` `canva.com/design user:aa0968111723-prog`: parsers/fixtures only (`duigao` canvaContract, hermes `lib/server/canva.ts` URL builder, `contract_design` / `DAGabc123_-x` / `ui-fixture`). **No real public DAG.** Canva MCP `needsAuth`; not faked connected. `project-manifest.json` `publicDesignIds: []`.
+- Drive private files not published.
+
+### CODE shipped this cycle
+
+- `7621765` catalog-order `unionByKey` (saved values win; missing catalog items insert in catalog position). Folio QA now: `1. 畫布, 2. 畫板, 3. 指令層, 4. 設計檢查, 5. MCP 邊界` + `data-folio-artboard`.
+- `7e75bae` `DedupHydratedShells` + `data-luminous-shell` + `data-experience-tabs`; keep last shell/toaster; `data-luminous-hydrated=1`. Live E2E waits for that before clicking Canva.
+- `9741074` `src/lib/dom/keep-last.test.ts` in `npm test`.
+- `25ef488` (sibling) production no longer invents `PORTFOLIO_ADMIN_EMAILS`; local preview still injects via `preview-local.mjs`.
+
+### Gates (proven)
+
+- `npm run typecheck` pass (on `9741074`; `25ef488` is env-wrapper only)
+- `npm test` pass: scripts `# tests 210` fail 0; src `# tests 254` fail 0; admin session E2E ok; **admin live E2E ok** (Canva paste pending, iframe, keyboard, reduced-motion). Bearer `grok-auth.bearer-token`, no `__Host-` on http.
+- `npm run lint` pass (0 errors, 3 existing warnings)
+- `npm run build` pass
+- `npm run check:auth` pass (sign-in on). Re-run after `25ef488` + `preview-local` / `with-app-env` tests 24/24.
+- `sh /workspace/startup.sh` → `npm run dev` on `0.0.0.0:8080` (200, left up)
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no overflow; empty console/page errors; no brand/auth warnings
+- `npm run preview:restart` vs baseline: `divergesFromBaseline: false`, same bodyTextHash
+- Interactive: home `data-luminous-shell` count 1; space hub filter; Folio artboard step 2; FrameLab GitHub hint-tree 11/11 in-tree (`context-engine` / `execute.ts`); unsigned `/admin` Google-only
+
+### Original 10 (not the wrap-up 14)
+
+| # | Requirement | Verdict |
+|---|---|---|
+| 1 | Admin CMS (create/save/publish/unpublish/revisions/preview, fields persist to public published pages) | **proven** (CODE + live E2E). Human Google as `aa0968111723@gmail.com`: **owner-secret** |
+| 2 | Auth fail-closed `PORTFOLIO_ADMIN_EMAILS` | **proven** (CODE). Production must set the env (`25ef488`). Human login: **owner-secret** |
+| 3 | DB 0002 (plus 0001/0003) | **proven** |
+| 4 | Server GitHub hydrate (tree/README/languages/topics/commit; no fake) | **proven** (CODE, hydrate v5 + keepPaths). Private token / live refresh of every path: **owner-secret** |
+| 5 | ExperiencePanel per-work modes vs each repo HEAD | **proven** as labeled portfolio demos (catalog paths for FrameLab/Folio/Hermes). Not the live products. |
+| 6 | Canva embed + Connect reserve | **proven** (CODE: paste `/design/{id}`, `/d/` fallback, no blank iframe, Connect fail-closed). Real public DAG for the eight: **owner-secret / not present**. Connect MCP: **needsAuth** |
+| 7 | Interactive homepage (data-backed constellation) | **proven** (hubs pressable, modality-backed). |
+| 8 | Privacy | **proven** |
+| 9 | Tests from the original list | **proven** this cycle (handlers, isolation, Canva/demo iframe, keyboard, GitHub parse, keep-last, live admin). Not a substitute for owner Canva/Connect. |
+| 10 | Gates (typecheck/test/lint/build/check:auth/smoke/preview) | **proven** this cycle |
+
+Should parent mark goal complete? **KEEP OPEN.** Owner Canva DAG, Connect, human Google admin, `GITHUB_READ_TOKEN`, Notion, Folio/Zen operation shots, Drive media are still required by the original ask.
+
+---
+
+# Prior wrap-up (stale HEAD; kept for history)
+
 Cycle: final wrap-up — CODE closed on this branch; OWNER blockers remain (not complete)
 Updated: 2026-09-16
 HEAD: a6ef72e5e427d7d63c4a099600263b01cd18dfc4
