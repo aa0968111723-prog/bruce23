@@ -1,8 +1,72 @@
 # Portfolio Task State
 
-Cycle: operable ExperiencePanel vs original 10 — KEEP OPEN (not complete)
+Cycle: private admin CMS + privacy/JSON-LD/Canva honesty vs original 10 — KEEP OPEN (not complete)
 Updated: 2026-09-17
-HEAD: 005a08e8f7b4df862a0cf6ba615ab066e3e1049e (recording). Code SHA: 370aa070cb6e6fa9dd7d0c4886d5c2b866677ded (operable modes + process-map hit rects). Prior pin: `fc890a7`.
+HEAD: c2c18c88f744393716b64d53f041d5b8c05ab67f (recording). Code SHA: d9c6dd2 (CMS restore / privacy / JSON-LD / Canva honesty) + `c2c18c8` (catalog test binding). Prior pin: `87287eb`.
+
+## This cycle (2026-09-17, deliverable 1 + leftover 8)
+
+Branch `cursor/portfolio-cms-main-cfe4`. Tip before this work: `87287ebfe195c9a404459fba3064f8f6fb032d8c`. Did not redo the just-shipped Play-tab operability. Did not invent Canva `/design/{id}` or fake GitHub/Canva/Demo/API/sync. Connect stays not_configured without credentials.
+
+Previous leftover hunts that “CODE is done” were not treated as permission to idle. This cycle inspected live admin routes + store, then closed the remaining CMS/privacy gaps.
+
+### Deliverable 1 — what was missing and fixed
+
+| Gap | Fix (file evidence) |
+|---|---|
+| Revision list stored snapshots but restore UI was thin | `ProjectForm` 還原此版 → `restoreRevisionFn`; list shows title + zh note + status + time; `listRevisions` no longer returns the snapshot blob |
+| Archive lacked one-click restore | `ArchiveForm` 發布 / 取消發布 / 封存 / 還原草稿 via `persistArchive` |
+| Settings could save an empty form before load | `settings.tsx` `loaded`/`loadError`; submit disabled until load; locale_json merge in `saveSiteSettings` |
+| Canva paste stored iframe HTML / evil hosts | `normalizeCanvaPaste` (URL or iframe src only); ProjectForm / ArchiveForm / IntegrationWorkCard |
+| Canva/Demo toasts claimed success from syntax | Canva toast pending-not-verified; Demo toast verified vs error (`IntegrationWorkCard`) |
+| Canva fullscreen on cross-origin iframe | `CanvaStage` `requestFullscreen` on stage wrapper + `allowFullScreen`; fallback open original |
+| `/admin/projects/:id` was an empty outlet | `$id.tsx` Navigate to `/admin/projects/$id/edit` |
+| Public `/d/` Canva + private GitHub syncStatus + demo.error leaked | `publicCanvaSlice` / `publicGithubSlice`; `serializePublicProject` omits `live_demo_error` |
+| robots relative sitemap, missing `/api` | `robots[.]txt.ts` + `publicRobotsBody` (absolute Sitemap); deleted static `public/robots.txt` so the route wins |
+| JSON-LD only CreativeWork | Person / WebSite / CollectionPage via `JsonLd`; drafts/admin preview `includeJsonLd={false}` |
+
+Live E2E now clicks 還原此版, asserts 還原修訂成功, archive 封存+還原草稿, robots Disallow `/api` + absolute Sitemap, homepage WebSite+Person JSON-LD, Canva pending not verified.
+
+### Deliverable 1 — already proven (not rewritten)
+
+- Routes: `/admin`, `/admin/projects`, `/admin/projects/new`, `/admin/projects/:id/edit`, `/admin/archive`, `/admin/settings`, `/admin/preview`, `/admin/integrations` (`src/routes/admin/**`)
+- DB persist (not localStorage): personal/homepage/project/media/github/canva/demo/experience/sources/zh-en/SEO (`store.ts` + migrations 0002/0003)
+- Draft save, draft preview, publish, unpublish, archive, restore (`ProjectForm` + `admin-fn.ts`)
+- Unsaved warnings + sonner toasts (ProjectForm, ArchiveForm, settings, integrations)
+- GitHub sync does not overwrite Chinese narrative (`applyGithubSync` github_* only; `store.test` “github sync does not overwrite Chinese narrative”; live E2E marker 中文敘事保留)
+- Auth fail-closed: `authMiddleware` on every admin Fn, origin (`guard.server.ts`), Zod, `PORTFOLIO_ADMIN_EMAILS`, no mock user, no tokens on client (`admin.test`)
+- Connection tests: GitHub preview/apply, Canva embed test, demo verify (`admin-fn.ts`)
+
+### Deliverable 8
+
+Drafts stay off sitemap/JSON-LD/public APIs (`getPublishedProject` 404; `public-fn.ts` published-only; `includeJsonLd={false}` on admin preview). Private Canva shorts, private GitHub, demo probe errors, tokens stripped. `robots.txt` Disallow `/admin` `/login` `/api`.
+
+### Gates this cycle (proven at `c2c18c8` / app `d9c6dd2`)
+
+- `npm run typecheck` pass
+- `npm test` pass (scripts 210 + src 263, fail 0; admin session E2E ok; admin live E2E ok — bearer `grok-auth.bearer-token`, no `__Host-` on http)
+- `npm run lint` pass (0 errors, 3 existing warnings: LocaleProvider / use-current-user)
+- `npm run build` pass (rebuilt after catalog-test fix; app source unchanged from `d9c6dd2`)
+- `npm run check:auth` pass (dev and build agree: sign-in on)
+- `sh /workspace/startup.sh` → `npm run dev` via `scripts/with-app-env.mjs` on `0.0.0.0:8080` (200); left up
+- `node scripts/browser-smoke.mjs` desktop+mobile pass; no overflow; empty console/page errors; no brand/auth warnings; visual inspect of both PNGs: light Luminous Studio, zh headline, zh|en
+- `npm run preview:restart` (`127.0.0.1:8081`) vs baseline: `divergesFromBaseline: false`, same bodyTextHash; preview stopped after QA
+- Canva MCP: not faked connected. No invented public DAG.
+
+### OWNER blockers (unchanged)
+
+Owner public Canva DAG, Connect, human Google as `aa0968111723@gmail.com`, `GITHUB_READ_TOKEN`, Notion, Folio/Zen **product** operation shots, Drive media still required.
+
+ManagePullRequest: **not in this environment**. `GitHub.create_pull_request` draft vs `main` returned **403**. Do not merge. Parent SHA `c2c18c88f744393716b64d53f041d5b8c05ab67f`.
+
+Should parent mark goal complete? **KEEP OPEN.**
+
+---
+
+# Prior cycle (2026-09-17, operable ExperiencePanel)
+
+HEAD then: 005a08e8f7b4df862a0cf6ba615ab066e3e1049e (recording). Code SHA: 370aa070cb6e6fa9dd7d0c4886d5c2b866677ded. Prior pin: `fc890a7`.
+
 
 ## This cycle (2026-09-17, operable experience deepening)
 
