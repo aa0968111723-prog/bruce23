@@ -11,7 +11,9 @@
     "planPullRequest": {
       "state": "open",
       "draft": true,
-      "headSha": "d50755dc83c287a6f6f0f962efdcf426612780b0",
+      "inspectedCommitBeforeBaselineUpdate": "d50755dc83c287a6f6f0f962efdcf426612780b0",
+      "baselineStateCommit": "00274f6aa2fe363450ea45aa0f73157a00a971ec",
+      "baselineReportCommit": "ef3e7c54e8a508bb982c36e8d4cf093740c337fa",
       "codeRabbitStatus": "success",
       "pullRequestWorkflowRuns": 0
     },
