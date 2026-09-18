@@ -148,6 +148,21 @@ async function ensureSeedOnce(
   sql: Sql,
   options: { actor?: string; skipGithubHydrate?: boolean } = {},
 ): Promise<{ seeded: boolean; skipped: boolean }> {
+  try {
+    return await ensureSeedOnceInner(sql, options);
+  } catch (err) {
+    if (isUniqueViolation(err)) {
+      console.warn("[cms] seed unique constraint skipped:", err instanceof Error ? err.message : err);
+      return { seeded: false, skipped: true };
+    }
+    throw err;
+  }
+}
+
+async function ensureSeedOnceInner(
+  sql: Sql,
+  options: { actor?: string; skipGithubHydrate?: boolean } = {},
+): Promise<{ seeded: boolean; skipped: boolean }> {
   const actor = options.actor ?? "seed";
   const meta = await sql.query<{ value: string }>(
     `select value from cms_meta where key = 'seed_version' limit 1`,
