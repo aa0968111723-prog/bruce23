@@ -3,7 +3,7 @@
 - Target repository: aa0968111723-prog/bruce23
 - Target production service: bruce23
 - Target public URL: https://bruce23-k7m2.zeabur.app/
-- Schedule: */30 * * * *
+- Schedule: 0 * * * *
 - Created: 2026-09-18
 - Scope: 只修改 bruce23；其他專案只讀取、驗證與建立來源資料
 - Owner model: 單一代理寫入線，避免多個代理同時修改相同核心檔案
@@ -27,9 +27,9 @@
 - AI Product Builder
 - Interactive Experience Designer
 
-## 2. 每 30 分鐘執行協定
+## 2. 每小時執行協定
 
-每輪執行時間上限約 24 分鐘，最後 6 分鐘保留給驗證、部署狀態與紀錄。
+每輪執行時間上限約 50 分鐘，最後 10 分鐘保留給驗證、部署狀態與紀錄。
 
 每輪必須依序執行：
 
@@ -615,7 +615,7 @@ Mobile／Desktop 結果：
 6. 更新作品集的狀態。
 7. 只有達標才開放 Featured 或「立即操作」主按鈕。
 
-## 17. 每 30 分鐘的修復任務選擇順序
+## 17. 每小時的修復任務選擇順序
 
 代理不可每輪隨機改 UI，應依照以下優先順序：
 
@@ -647,7 +647,7 @@ Mobile／Desktop 結果：
 - 每個作品至少能完成一條核心使用旅程，或清楚標示目前不可用。
 - 每個外部修復都有獨立 PR、測試證據與部署驗證。
 - bruce23 的案例敘事、GitHub、Zeabur、Live Demo 與 readiness score 一致。
-- 代理每 30 分鐘能從本文件與 state 繼續，不需要重新猜測進度。
+- 代理每小時能從本文件與 state 繼續，不需要重新猜測進度。
 
 
 
