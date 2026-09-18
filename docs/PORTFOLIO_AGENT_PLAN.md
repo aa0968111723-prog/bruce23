@@ -864,3 +864,24 @@ PORTFOLIO_STATUS = IN_PROGRESS
 17/17 COMPLETE INFO
 17/17 READY >= 70
 
+
+
+## 24. Grok Bot 協作入口
+
+Grok Bot 的專用任務文件：
+
+docs/GROK_BOT_PORTFOLIO_TASK.md
+
+Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、資訊完整性檢查與 70 分門檻複核。
+
+主代理與 Grok Bot 必須遵守：
+
+- 主代理負責主要實作與修復。
+- Grok Bot 負責獨立驗證與找出遺漏。
+- 同一時間不可讓兩個代理修改同一個 repository 的相同檔案。
+- Grok Bot 發現問題時，優先寫 review comment 或 failure report。
+- 沒有主代理正在處理時，才可建立 grok/repair/<project>/<date> 修復 branch。
+- Grok Bot 不得直接推送 main/master。
+- Grok Bot 必須使用實測證據，不得只依賴 README 或卡片上的狀態。
+- Grok Bot 的 PORTFOLIO_READY 必須與主代理的完成報告相互核對。
+
