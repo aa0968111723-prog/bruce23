@@ -265,7 +265,21 @@ async function runPublicHydrates(sql: Sql): Promise<void> {
   });
 }
 
+function isUniqueViolation(err: unknown): boolean {
+  let current: unknown = err;
+  for (let i = 0; i < 4; i += 1) {
+    if (!current || typeof current !== "object") break;
+    const row = current as { code?: string; message?: string; cause?: unknown };
+    if (row.code === "23505") return true;
+    if (/projects_slug_key|unique constraint/i.test(String(row.message ?? ""))) return true;
+    current = row.cause;
+  }
+  return /projects_slug_key|unique constraint/i.test(String(err));
+}
+
 async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void> {
+  const counted = await sql.query<{ n: string }>(`select count(*)::text as n from projects`);
+  if (Number(counted[0]?.n ?? 0) >= projects.length) return;
   for (const [index, project] of projects.entries()) {
     const existing = await sql.query<{ id: string }>(
       `select id from projects where slug = $1 limit 1`,
@@ -341,8 +355,7 @@ async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void>
     });
     await createProjectRecord(sql, input, actor);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      if (/projects_slug_key|unique constraint/i.test(message)) continue;
+      if (isUniqueViolation(err)) continue;
       throw err;
     }
   }
