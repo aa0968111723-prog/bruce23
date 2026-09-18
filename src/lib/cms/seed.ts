@@ -12,6 +12,8 @@ import { createProjectRecord, getSiteSettings, saveSiteSettings, upsertArchive }
 
 export const SEED_VERSION = "portfolio-cms-1";
 const ARCHIVE_HONESTY_VERSION = "svg-translations-20260916";
+const HERMES_DASHBOARD_LIVE_VERSION = "hermes-dashboard-k7q2-20260919";
+const STALE_HERMES_LIVE_HOST = "455.zeabur.app";
 
 async function refreshArchiveHonesty(sql: Sql): Promise<void> {
   const meta = await sql.query<{ value: string }>(
@@ -126,6 +128,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await fillSiteLocaleGaps(sql);
   await fillProjectMediaGaps(sql);
   await clearUncustomizedHowSteps(sql);
+  await refreshHermesDashboardLive(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -426,6 +429,73 @@ async function clearUncustomizedHowSteps(sql: Sql): Promise<void> {
   );
 }
 
+function isStaleHermesHref(href: string | undefined): boolean {
+  return Boolean(href && href.includes(STALE_HERMES_LIVE_HOST));
+}
+
+function hermesDashboardEvidence(project: (typeof projects)[number]) {
+  return project.sourceReferences.map((ref) => ({
+    label: ref.label,
+    href: ref.href,
+    note: ref.note,
+    kind: ref.href?.includes("canva.com")
+      ? ("canva" as const)
+      : ref.href?.includes("github.com")
+        ? ("github" as const)
+        : ("demo" as const),
+  }));
+}
+
+async function refreshHermesDashboardLive(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'hermes_dashboard_live_version' limit 1`,
+  );
+  if (meta[0]?.value === HERMES_DASHBOARD_LIVE_VERSION) return;
+  const project = projects.find((item) => item.slug === "hermes-agent");
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set title = $2,
+         subtitle = $3,
+         summary = $4,
+         problem = $5,
+         role = $6,
+         decisions = $7::jsonb,
+         process = $8::jsonb,
+         outputs = $9::jsonb,
+         limitations = $10::jsonb,
+         seo_title = $11,
+         seo_description = $12,
+         source_evidence = $13::jsonb,
+         locale_json = $14::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      project.title,
+      project.subtitle,
+      project.summary,
+      project.problem,
+      project.role,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
+      JSON.stringify(project.outputs),
+      JSON.stringify(project.limitations),
+      `${project.title} · ${site.nameZh}`,
+      project.summary,
+      JSON.stringify(hermesDashboardEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('hermes_dashboard_live_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [HERMES_DASHBOARD_LIVE_VERSION],
+  );
+}
+
 /** GitHub homepage that currently serves a JS bundle, not HTML. Seed live URLs replace it. */
 const STALE_NON_PAGE_LIVE_URL = "https://ai-os-ten.vercel.app";
 
@@ -501,8 +571,9 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
     }
 
     const stored = asEvidenceList(row.source_evidence);
-    const have = new Set(stored.map((item) => item.href || item.label));
-    const next = [...stored];
+    const cleaned = stored.filter((item) => !isStaleHermesHref(item.href));
+    const have = new Set(cleaned.map((item) => item.href || item.label));
+    const next = [...cleaned];
     for (const ref of project.sourceReferences) {
       const key = ref.href || ref.label;
       if (have.has(key)) continue;
@@ -518,7 +589,7 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
       });
       have.add(key);
     }
-    if (next.length !== stored.length) {
+    if (JSON.stringify(next) !== JSON.stringify(stored)) {
       await sql.query(`update projects set source_evidence = $2::jsonb where id = $1`, [
         row.id,
         JSON.stringify(next),

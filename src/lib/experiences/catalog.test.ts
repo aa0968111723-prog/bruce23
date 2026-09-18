@@ -57,7 +57,8 @@ describe("experience catalog", () => {
     assert.match(source, /https:\/\/untitled-5\.zeabur\.app/);
     assert.match(source, /https:\/\/tku-zen-agent-k7f2\.zeabur\.app/);
     assert.match(source, /https:\/\/cutos\.zeabur\.app/);
-    assert.match(source, /https:\/\/455\.zeabur\.app\/sessions/);
+    assert.match(source, /https:\/\/hermes-agent-k7q2\.zeabur\.app\//);
+    assert.doesNotMatch(source, /https:\/\/455\.zeabur\.app/);
     assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
     assert.doesNotMatch(source, /github\.io\/planform/);
     assert.match(source, /\/media\/github-exports\/\$\{slug\}\/\$\{file\}/);

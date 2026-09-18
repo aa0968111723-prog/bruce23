@@ -667,6 +667,45 @@ describe("cms persistence", () => {
     assert.match(photo?.summary ?? "", /不是原作照片/);
   });
 
+  it("replaces the stale 455 Hermes URL with the dashboard domain", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set title = 'Hermes Agent',
+           summary = '公開網域 455.zeabur.app',
+           live_demo_url = 'https://455.zeabur.app/sessions',
+           source_evidence = $2::jsonb,
+           locale_json = $3::jsonb
+       where slug = $1`,
+      [
+        "hermes-agent",
+        JSON.stringify([
+          {
+            label: "公開站 · 455.zeabur.app",
+            href: "https://455.zeabur.app/sessions",
+            note: "stale",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({
+          zh: { title: "Hermes Agent", summary: "公開網域 455.zeabur.app" },
+          en: { title: "Hermes Agent", summary: "Public domain 455.zeabur.app" },
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_dashboard_live_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const hermes = await getPublishedProject(sql, "hermes-agent");
+    assert.equal(hermes.title, "Hermes Agent - Dashboard");
+    assert.equal(hermes.demo.url, "https://hermes-agent-k7q2.zeabur.app/");
+    assert.match(hermes.summary, /hermes-agent-k7q2\.zeabur\.app/);
+    assert.doesNotMatch(hermes.summary, /455\.zeabur\.app/);
+    assert.ok(hermes.sourceEvidence.some((item) => item.href === "https://hermes-agent-k7q2.zeabur.app/"));
+    assert.ok(!hermes.sourceEvidence.some((item) => item.href?.includes("455.zeabur.app")));
+    assert.equal(hermes.locale.en?.title, "Hermes Agent - Dashboard");
+  });
+
   it("saves homepage highlight slugs without wiping locale_json", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

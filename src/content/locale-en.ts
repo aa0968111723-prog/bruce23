@@ -477,14 +477,15 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     ],
   },
   "hermes-agent": {
-    title: "Hermes Agent",
-    subtitle: "The execution layer (sign-in required)",
-    summary: "Nous Research Hermes Agent: sessions, tools, API. Public domain 455.zeabur.app. /sessions shows Sign in.",
+    title: "Hermes Agent - Dashboard",
+    subtitle: "Agent dashboard (sign-in required)",
+    summary:
+      "Nous Research Hermes Agent dashboard: sessions and the sign-in gate. Public domain hermes-agent-k7q2.zeabur.app. Unsigned visitors land on Sign in — Hermes Agent.",
     process: [
-      "Open 455.zeabur.app/sessions",
-      "Sign in as the owner",
-      "Read sessions",
-      "Point Console at HERMES_API_URL",
+      "Open hermes-agent-k7q2.zeabur.app",
+      "Unsigned visitors land on Sign in — Hermes Agent",
+      "Sign in as the owner to enter the dashboard",
+      "Read sessions and tool status",
     ],
   },
 };

@@ -310,11 +310,11 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
   },
   "hermes-agent": {
     mode: "conversation-preview",
-    honestyLabel: "需登入的執行層，不是免登入 Console",
+    honestyLabel: "需登入的 Dashboard，不是免登入 Console",
     walkthrough: [
-      { title: "Sessions", body: "打開 455.zeabur.app/sessions。未登入只看得到 Sign in。" },
-      { title: "執行層", body: "這是 Hermes Agent，不是 344 的 Console。" },
-      { title: "連線", body: "擁有者把 Console 的 HERMES_API_URL 指到 hermes-agent-api.zeabur.app。" },
+      { title: "Dashboard", body: "打開 hermes-agent-k7q2.zeabur.app。未登入會到 Sign in — Hermes Agent。" },
+      { title: "執行層", body: "這是 Hermes Agent Dashboard，不是 344 的 Console。" },
+      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。" },
     ],
   },
 };
