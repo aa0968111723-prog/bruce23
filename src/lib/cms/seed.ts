@@ -128,7 +128,23 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await clearUncustomizedHowSteps(sql);
 }
 
+const seedLock = globalThis as typeof globalThis & {
+  __luminousSeedLock__?: Promise<{ seeded: boolean; skipped: boolean }>;
+};
+
 export async function ensureSeed(
+  sql: Sql,
+  options: { actor?: string; skipGithubHydrate?: boolean } = {},
+): Promise<{ seeded: boolean; skipped: boolean }> {
+  if (seedLock.__luminousSeedLock__) return seedLock.__luminousSeedLock__;
+  const run = ensureSeedOnce(sql, options).finally(() => {
+    seedLock.__luminousSeedLock__ = undefined;
+  });
+  seedLock.__luminousSeedLock__ = run;
+  return run;
+}
+
+async function ensureSeedOnce(
   sql: Sql,
   options: { actor?: string; skipGithubHydrate?: boolean } = {},
 ): Promise<{ seeded: boolean; skipped: boolean }> {
@@ -256,6 +272,7 @@ async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void>
       [project.slug],
     );
     if (existing[0]) continue;
+    try {
     const parsed = parseGithubUrl(project.links.github);
     const catalog = experienceForSlug(project.slug);
     const demoUrl = project.links.live ?? project.links.demo ?? null;
@@ -323,6 +340,11 @@ async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void>
       })),
     });
     await createProjectRecord(sql, input, actor);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (/projects_slug_key|unique constraint/i.test(message)) continue;
+      throw err;
+    }
   }
 }
 
