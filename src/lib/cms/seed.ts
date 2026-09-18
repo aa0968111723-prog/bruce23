@@ -118,6 +118,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
     );
   }
   await refreshArchiveHonesty(sql);
+  await insertMissingSeedProjects(sql, "seed");
   await fillExperienceConfigGaps(sql);
   await fillLiveDemoAndEvidenceGaps(sql);
   await fillLocaleJsonGaps(sql);
@@ -162,7 +163,7 @@ export async function ensureSeed(
         seo_title: `${site.nameZh} · ${site.person}`,
         seo_description: site.narrative,
         homepage_json: {
-          highlightSlugs: projects.map((item) => item.slug),
+          highlightSlugs: projects.filter((item) => item.featured).map((item) => item.slug),
         },
         locale_json: {
           zh: siteLocaleZh,
@@ -176,87 +177,11 @@ export async function ensureSeed(
       `update site_settings
        set homepage_json = jsonb_set(coalesce(homepage_json, '{}'::jsonb), '{highlightSlugs}', $1::jsonb, true)
        where id = 'default'`,
-      [JSON.stringify(projects.map((item) => item.slug))],
+      [JSON.stringify(projects.filter((item) => item.featured).map((item) => item.slug))],
     );
   }
 
-  for (const [index, project] of projects.entries()) {
-    const existing = await sql.query<{ id: string }>(
-      `select id from projects where slug = $1 limit 1`,
-      [project.slug],
-    );
-    if (existing[0]) continue;
-    const parsed = parseGithubUrl(project.links.github);
-    const catalog = experienceForSlug(project.slug);
-    const demoUrl = project.links.live ?? project.links.demo ?? null;
-    const canva = canvaFieldsForProject(project);
-    const input = projectInputSchema.parse({
-      slug: project.slug,
-      title: project.title,
-      subtitle: project.subtitle,
-      category: project.category,
-      year: project.year,
-      product_status: project.status,
-      publication_status: "published",
-      featured: project.featured,
-      sort_order: index,
-      summary: project.summary,
-      problem: project.problem,
-      role: project.role,
-      decisions: project.decisions,
-      modalities: project.modalities,
-      process: project.process,
-      outputs: project.outputs,
-      stack: project.stack,
-      limitations: project.limitations,
-      media: project.media.map((item) => ({
-        ...item,
-        src: item.src.replace(/\.jpg$/i, ".svg"),
-      })),
-      locale_json: {
-        zh: localeZhFromProject(project.slug),
-        en: localeEnForSlug(project.slug) ?? {
-          title: project.title,
-          subtitle: project.subtitle,
-          summary: project.summary,
-        },
-      },
-      seo_title: `${project.title} · ${site.nameZh}`,
-      seo_description: project.summary,
-      github_url: parsed?.url ?? project.links.github ?? null,
-      github_owner: parsed?.owner ?? null,
-      github_repo: parsed?.repo ?? null,
-      github_branch: null,
-      github_sync_enabled: Boolean(parsed),
-      github_sync_status: parsed ? "pending" : "not_configured",
-      live_demo_url: demoUrl,
-      live_demo_label: demoUrl ? "公開網址（狀態可能變動）" : null,
-      live_demo_type: demoUrl ? "link" : "unavailable",
-      live_demo_embed_enabled: false,
-      live_demo_status: demoUrl ? "pending" : "not_configured",
-      canva_share_url: canva.shareUrl,
-      canva_embed_url: canva.embedUrl,
-      canva_design_id: canva.designId,
-      canva_thumbnail_url: canva.thumbnailUrl,
-      canva_alt: canva.alt,
-      canva_caption: canva.caption,
-      canva_status: canva.status,
-      experience_mode: catalog?.mode ?? "github-explorer",
-      experience_config: defaultExperienceConfig(project.slug),
-      interaction_steps: [],
-      source_evidence: project.sourceReferences.map((ref) => ({
-        label: ref.label,
-        href: ref.href,
-        note: ref.note,
-        kind: ref.href?.includes("canva.com")
-          ? ("canva" as const)
-          : ref.href?.includes("github.com")
-            ? ("github" as const)
-            : ("demo" as const),
-      })),
-    });
-    await createProjectRecord(sql, input, actor);
-  }
+  await insertMissingSeedProjects(sql, actor);
 
   for (const [index, item] of archiveItems.entries()) {
     const existing = await sql.query<{ id: string }>(
@@ -324,6 +249,83 @@ async function runPublicHydrates(sql: Sql): Promise<void> {
   });
 }
 
+async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void> {
+  for (const [index, project] of projects.entries()) {
+    const existing = await sql.query<{ id: string }>(
+      `select id from projects where slug = $1 limit 1`,
+      [project.slug],
+    );
+    if (existing[0]) continue;
+    const parsed = parseGithubUrl(project.links.github);
+    const catalog = experienceForSlug(project.slug);
+    const demoUrl = project.links.live ?? project.links.demo ?? null;
+    const canva = canvaFieldsForProject(project);
+    const input = projectInputSchema.parse({
+      slug: project.slug,
+      title: project.title,
+      subtitle: project.subtitle,
+      category: project.category,
+      year: project.year,
+      product_status: project.status,
+      publication_status: "published",
+      featured: project.featured,
+      sort_order: index,
+      summary: project.summary,
+      problem: project.problem,
+      role: project.role,
+      decisions: project.decisions,
+      modalities: project.modalities,
+      process: project.process,
+      outputs: project.outputs,
+      stack: project.stack,
+      limitations: project.limitations,
+      media: project.media,
+      locale_json: {
+        zh: localeZhFromProject(project.slug),
+        en: localeEnForSlug(project.slug) ?? {
+          title: project.title,
+          subtitle: project.subtitle,
+          summary: project.summary,
+        },
+      },
+      seo_title: `${project.title} · ${site.nameZh}`,
+      seo_description: project.summary,
+      github_url: parsed?.url ?? project.links.github ?? null,
+      github_owner: parsed?.owner ?? null,
+      github_repo: parsed?.repo ?? null,
+      github_branch: null,
+      github_sync_enabled: Boolean(parsed),
+      github_sync_status: parsed ? "pending" : "not_configured",
+      live_demo_url: demoUrl,
+      live_demo_label: demoUrl ? "公開網址（狀態可能變動）" : null,
+      live_demo_type: demoUrl ? "link" : "unavailable",
+      live_demo_embed_enabled: false,
+      live_demo_status: demoUrl ? "pending" : "not_configured",
+      canva_share_url: canva.shareUrl,
+      canva_embed_url: canva.embedUrl,
+      canva_design_id: canva.designId,
+      canva_thumbnail_url: canva.thumbnailUrl,
+      canva_alt: canva.alt,
+      canva_caption: canva.caption,
+      canva_status: canva.status,
+      experience_mode: catalog?.mode ?? "github-explorer",
+      experience_config: defaultExperienceConfig(project.slug),
+      interaction_steps: [],
+      source_evidence: project.sourceReferences.map((ref) => ({
+        label: ref.label,
+        href: ref.href,
+        note: ref.note,
+        kind: ref.href?.includes("canva.com")
+          ? ("canva" as const)
+          : ref.href?.includes("github.com")
+            ? ("github" as const)
+            : ("demo" as const),
+      })),
+    });
+    await createProjectRecord(sql, input, actor);
+  }
+}
+
 function asStoredConfig(value: unknown): ExperienceConfig {
   if (typeof value === "string") {
     try {
@@ -380,6 +382,28 @@ const STALE_NON_PAGE_LIVE_URL = "https://ai-os-ten.vercel.app";
 async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
   for (const project of projects) {
     const demoUrl = project.links.live ?? project.links.demo ?? null;
+    const parsed = parseGithubUrl(project.links.github);
+    await sql.query(
+      `update projects
+       set sort_order = $2,
+           featured = $3,
+           category = $4,
+           github_url = coalesce($5, github_url),
+           github_owner = coalesce($6, github_owner),
+           github_repo = coalesce($7, github_repo),
+           github_sync_enabled = case when $5 is not null then true else github_sync_enabled end,
+           updated_at = now()
+       where slug = $1`,
+      [
+        project.slug,
+        projects.indexOf(project),
+        project.featured,
+        project.category,
+        parsed?.url ?? project.links.github ?? null,
+        parsed?.owner ?? null,
+        parsed?.repo ?? null,
+      ],
+    );
     if (demoUrl) {
       const stale = demoUrl === STALE_NON_PAGE_LIVE_URL ? "" : STALE_NON_PAGE_LIVE_URL;
       await sql.query(
@@ -391,12 +415,22 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
                else live_demo_type
              end,
              live_demo_embed_enabled = false,
-             live_demo_status = 'pending',
-             live_demo_error = null,
-             live_demo_last_verified_at = null,
+             live_demo_status = case
+               when live_demo_url is distinct from $2 then 'pending'
+               else live_demo_status
+             end,
+             live_demo_error = case
+               when live_demo_url is distinct from $2 then null
+               else live_demo_error
+             end,
+             live_demo_last_verified_at = case
+               when live_demo_url is distinct from $2 then null
+               else live_demo_last_verified_at
+             end,
              updated_at = now()
          where slug = $1 and (
            live_demo_url is null or live_demo_url = ''
+           or live_demo_url is distinct from $2
            or ($4 <> '' and live_demo_url = $4)
          )`,
         [project.slug, demoUrl, "公開網址（狀態可能變動）", stale],
@@ -466,14 +500,16 @@ async function fillProjectMediaGaps(sql: Sql): Promise<void> {
     const row = rows[0];
     if (!row) continue;
     const stored = asMediaList(row.media);
-    const have = new Set(stored.map((item) => item.src));
-    const next = [...stored];
+    const cover = project.media[0];
+    const rest = stored.filter((item) => item.src !== cover?.src);
+    const next = cover ? [cover, ...rest] : [...stored];
+    const have = new Set(next.map((item) => item.src));
     for (const item of project.media) {
       if (have.has(item.src)) continue;
       next.push(item);
       have.add(item.src);
     }
-    if (next.length !== stored.length) {
+    if (JSON.stringify(next) !== JSON.stringify(stored)) {
       await sql.query(`update projects set media = $2::jsonb, updated_at = now() where id = $1`, [
         row.id,
         JSON.stringify(next),

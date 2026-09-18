@@ -227,6 +227,96 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
       { path: "src/lib/zen.test.ts", purpose: "單元測試", stage: "驗證" },
     ],
   },
+  "tamkang-world": {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "開始巡禮", body: "公開站 forge-bloom-k7xq。點「開始巡禮」進 3D；「校園圖鑑」看建築。WASD 移動、滑鼠視角。" },
+      { title: "逛五虎崗", body: "在瀏覽器裡走校園，辨認建築與山勢。效能依裝置而變。" },
+      { title: "對照現場", body: "巡禮是身體感，不是完整數位雙生。回到淡水現場再對一次。" },
+    ],
+  },
+  "tamsui-drama": {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "載入世界", body: "打開 tku-tamsui-drama-world-k4x9。等「淡江·淡水世界」載入，不是 FrameLab。" },
+      { title: "第一集", body: "從宮燈下的迎新開始，依關卡走校園闖關。" },
+      { title: "關卡", body: "把淡江／淡水當成可持續開發的劇本，而不是一次導覽 PDF。" },
+    ],
+  },
+  skatehub: {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "打開基地", body: "公開站 dd-k3f9。標題是「走向健康，走向陽光」，不是 Folio。" },
+      { title: "裝備圖鑑", body: "看直排輪款式與配件。" },
+      { title: "里程", body: "記錄滑行里程，回到自己的基地。" },
+    ],
+  },
+  "zen-studio": {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "今天可以創作什麼", body: "打開 delta-horizon-k7f2。先看今日靈感與近期活動。" },
+      { title: "生成", body: "從 IG 貼文／Carousel／Story／畫布開始，不要先開雲端硬碟。" },
+      { title: "月曆", body: "到期內容在月曆裡改。未接 IG 時只在工作室內排程。" },
+    ],
+  },
+  "focus-challenge": {
+    mode: "interactive-walkthrough",
+    honestyLabel: "現場遊戲，不是心理測驗",
+    walkthrough: [
+      { title: "暖身", body: "打開 leader-dna-mcp-a7k2。先暖身，再進 60 秒正式挑戰。" },
+      { title: "挑戰", body: "現場 60 秒。這是攤位遊戲，不是正式心理測驗。" },
+      { title: "狀態", body: "主辦方可看活動狀態。本站不展示名冊。" },
+    ],
+  },
+  lumen: {
+    mode: "conversation-preview",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "想做什麼", body: "打開 ai-chat-8rq3。點一下開始聽，或按住說話。" },
+      { title: "入口", body: "做海報、拍照、開始做影片、長任務。" },
+      { title: "最近", body: "從最近專案繼續，不要把未生成的結果假裝完成。" },
+    ],
+  },
+  xiaocai: {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。若 502，是部署狀態，不是產品已下架。" },
+      { title: "記一筆", body: "記收支、看分類。" },
+      { title: "這個月", body: "看這個月花到哪。不是作品集後台。" },
+    ],
+  },
+  "tku-zen-agent": {
+    mode: "conversation-preview",
+    honestyLabel: "社團工作台，不是本地 tku-zen-ai",
+    walkthrough: [
+      { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。" },
+      { title: "問答", body: "問社團文書或現場問題。回覆不是已審核公告。" },
+      { title: "邊界", body: "與本站展示的本地 tku-zen-ai 不是同一個產品。" },
+    ],
+  },
+  cutos: {
+    mode: "interactive-walkthrough",
+    honestyLabel: PORTFOLIO_DEMO,
+    walkthrough: [
+      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。用對話剪影片。" },
+      { title: "找精華", body: "用一句話描述要找的段落。" },
+      { title: "計畫", body: "看時間軸候選，產出剪輯計畫。服務暫停時連結仍保留。" },
+    ],
+  },
+  "hermes-agent": {
+    mode: "conversation-preview",
+    honestyLabel: "需登入的執行層，不是免登入 Console",
+    walkthrough: [
+      { title: "Sessions", body: "打開 455.zeabur.app/sessions。未登入只看得到 Sign in。" },
+      { title: "執行層", body: "這是 Hermes Agent，不是 344 的 Console。" },
+      { title: "連線", body: "擁有者把 Console 的 HERMES_API_URL 指到 hermes-agent-api.zeabur.app。" },
+    ],
+  },
 };
 
 export function experienceForSlug(slug: string): ExperienceCatalogEntry | null {
@@ -252,11 +342,11 @@ export function catalogSourcePaths(slug?: string | null): string[] {
 }
 
 export const modalityFilters: Array<{ id: string; label: string; slugs: string[] }> = [
-  { id: "image", label: "圖像", slugs: ["poster-vision-ai", "folio", "duigao", "ai-director-os"] },
-  { id: "video", label: "影片", slugs: ["framelab", "ai-director-os"] },
-  { id: "space", label: "空間", slugs: ["planform"] },
-  { id: "poster", label: "文宣", slugs: ["poster-vision-ai", "duigao", "tku-zen-ai", "folio"] },
-  { id: "interactive", label: "互動", slugs: ["duigao", "tku-zen-ai", "hermes-console", "planform"] },
+  { id: "image", label: "圖像", slugs: ["poster-vision-ai", "folio", "duigao", "ai-director-os", "skatehub", "zen-studio", "lumen"] },
+  { id: "video", label: "影片", slugs: ["framelab", "ai-director-os", "cutos"] },
+  { id: "space", label: "空間", slugs: ["planform", "tamkang-world", "tamsui-drama"] },
+  { id: "poster", label: "文宣", slugs: ["poster-vision-ai", "duigao", "tku-zen-ai", "folio", "zen-studio"] },
+  { id: "interactive", label: "互動", slugs: ["duigao", "tku-zen-ai", "hermes-console", "planform", "skatehub", "focus-challenge", "lumen", "xiaocai"] },
 ];
 
 /** Map CMS modality strings onto homepage hubs. Slug lists are only a fallback. */
@@ -264,8 +354,8 @@ export const MODALITY_HUB_TOKENS: Array<{ id: string; label: string; tokens: str
   { id: "image", label: "圖像", tokens: ["圖像", "畫布", "熱圖", "OCR", "嵌入"] },
   { id: "video", label: "影片", tokens: ["影片", "影像序列", "時間軸", "姿勢殘影"] },
   { id: "space", label: "空間", tokens: ["3D", "平面圖", "動線", "物資", "空間"] },
-  { id: "poster", label: "文宣", tokens: ["文宣", "海報", "設計 token"] },
-  { id: "interactive", label: "互動", tokens: ["互動", "對話", "MCP", "註記", "任務", "審批", "自然語言", "LINE", "呼吸"] },
+  { id: "poster", label: "文宣", tokens: ["文宣", "海報", "設計 token", "日曆"] },
+  { id: "interactive", label: "互動", tokens: ["互動", "對話", "MCP", "註記", "任務", "審批", "自然語言", "LINE", "呼吸", "現場", "語音", "數字", "敘事"] },
 ];
 
 export function projectHubIds(project: { slug: string; modalities: string[] }): string[] {

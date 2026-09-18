@@ -130,8 +130,8 @@ describe("cms persistence", () => {
     const first = await countProjects(sql);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const second = await countProjects(sql);
-    assert.equal(first, 8);
-    assert.equal(second, 8);
+    assert.equal(first, 18);
+    assert.equal(second, 18);
   });
 
   it("sorts featured published works first", async () => {
@@ -621,7 +621,8 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const expected = projectCanvaInventory();
     const published = await listPublishedProjects(sql);
-    assert.equal(published.length, 8);
+    assert.equal(published.length, 18);
+    assert.equal(published.filter((item) => item.featured).length, 8);
     for (const project of published) {
       const fields = expected[project.slug];
       assert.equal(project.canva.shareUrl, fields.shareUrl, project.slug);

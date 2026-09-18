@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { archiveItems } from "../../content/archive.ts";
-import { projects } from "../../content/projects.ts";
+import { featuredProjects, projects } from "../../content/projects.ts";
 import {
   archiveCanvaInventory,
   canvaFieldsForProject,
@@ -65,8 +65,9 @@ describe("canva content inventory", () => {
 
   it("keeps all eight works honest: local thumbnails, unavailable short links, never invented embeds", () => {
     const inventory = projectCanvaInventory();
-    assert.equal(Object.keys(inventory).length, 8);
-    assert.equal(projects.length, 8);
+    assert.equal(featuredProjects().length, 8);
+    assert.ok(projects.length >= 18);
+    assert.equal(Object.keys(inventory).length, projects.length);
     for (const project of projects) {
       const fields = inventory[project.slug];
       assert.equal(fields.embedUrl, null, project.slug);
@@ -83,7 +84,7 @@ describe("canva content inventory", () => {
         assert.equal(fields.thumbnailUrl, null);
       } else {
         assert.equal(fields.shareUrl, null, project.slug);
-        assert.equal(fields.status, "not_configured");
+        assert.ok(fields.status === "not_configured" || fields.status === "unavailable", project.slug);
         assert.equal(fields.thumbnailUrl, null);
       }
     }

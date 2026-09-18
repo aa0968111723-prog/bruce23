@@ -34,13 +34,30 @@ describe("experience catalog", () => {
   });
 
   it("wires only hunted public demo URLs into featured seed content", () => {
-    const source = readFileSync(new URL("../../../src/content/projects.ts", import.meta.url), "utf8");
+    const source = [
+      readFileSync(new URL("../../../src/content/projects.ts", import.meta.url), "utf8"),
+      readFileSync(new URL("../../../src/content/linked-works.ts", import.meta.url), "utf8"),
+    ].join("\n");
     assert.match(source, /live: "https:\/\/ai-os-app\.zeabur\.app"/);
     assert.match(source, /https:\/\/ai-os-ten\.vercel\.app/);
     assert.match(source, /https:\/\/ai-os-app\.zeabur\.app/);
+    assert.match(source, /https:\/\/vexlark\.co/);
     assert.match(source, /https:\/\/duigao-k7q2\.zeabur\.app/);
     assert.match(source, /https:\/\/344\.zeabur\.app/);
     assert.match(source, /https:\/\/planform-iso-k7d2\.zeabur\.app/);
+    assert.match(source, /https:\/\/lunar-falcon-8p2r\.zeabur\.app/);
+    assert.match(source, /https:\/\/canva2-k7qm\.zeabur\.app/);
+    assert.match(source, /https:\/\/forge-bloom-k7xq\.zeabur\.app/);
+    assert.match(source, /https:\/\/tku-tamsui-drama-world-k4x9\.zeabur\.app/);
+    assert.match(source, /https:\/\/dd-k3f9\.zeabur\.app/);
+    assert.match(source, /https:\/\/delta-horizon-k7f2\.zeabur\.app/);
+    assert.match(source, /https:\/\/leader-dna-mcp-a7k2\.zeabur\.app/);
+    assert.match(source, /https:\/\/cabin-shale-k7q2\.zeabur\.app/);
+    assert.match(source, /https:\/\/ai-chat-8rq3\.zeabur\.app/);
+    assert.match(source, /https:\/\/untitled-5\.zeabur\.app/);
+    assert.match(source, /https:\/\/tku-zen-agent-k7f2\.zeabur\.app/);
+    assert.match(source, /https:\/\/cutos\.zeabur\.app/);
+    assert.match(source, /https:\/\/455\.zeabur\.app\/sessions/);
     assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
     assert.doesNotMatch(source, /github\.io\/planform/);
     assert.match(source, /\/media\/github-exports\/\$\{slug\}\/\$\{file\}/);

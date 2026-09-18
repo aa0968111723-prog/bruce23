@@ -387,8 +387,110 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
   },
 };
 
+const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
+  "tamkang-world": {
+    title: "Tamkang World",
+    subtitle: "A 3D campus walk on Wuhu Hill",
+    summary: "Walk Tamkang in the browser. The hill becomes a visitable campus — not a PDF tour, and not a Google Earth screenshot.",
+    process: [
+      "Open forge-bloom-k7xq.zeabur.app",
+      "Tap Start tour",
+      "WASD to move, mouse to look",
+      "Open the campus atlas",
+    ],
+  },
+  "tamsui-drama": {
+    title: "Tamkang freshman quest",
+    subtitle: "Campus quest · a drama world",
+    summary: "Tamkang / Tamsui as a playable script. The public site is a campus quest, not FrameLab.",
+    process: [
+      "Open tku-tamsui-drama-world-k4x9.zeabur.app",
+      "Wait for the world to load",
+      "Start episode one under the lanterns",
+      "Walk the campus gates",
+    ],
+  },
+  skatehub: {
+    title: "SkateHub",
+    subtitle: "Toward health, toward sunlight",
+    summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
+    process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+  },
+  "zen-studio": {
+    title: "TKU Zen Studio",
+    subtitle: "A bright desk for club work",
+    summary: "Print, events, and daily making under one lamp — not another Drive folder.",
+    process: [
+      "Open delta-horizon-k7f2.zeabur.app",
+      "Read today's prompt and upcoming events",
+      "Start an IG post / carousel / story",
+      "Edit due items on the calendar",
+    ],
+  },
+  "focus-challenge": {
+    title: "Focus challenge",
+    subtitle: "60 seconds on the TKU Zen booth",
+    summary: "A 60-second booth game: warm-up, official run, live status. Not a psychological test.",
+    process: [
+      "Open leader-dna-mcp-a7k2.zeabur.app",
+      "Warm up, then start the 60-second run",
+      "See your result",
+      "Hosts can view event status",
+    ],
+  },
+  lumen: {
+    title: "Lumen",
+    subtitle: "A multimodal voice orb in your pocket",
+    summary: "Speak to design, search, and generate. Public site ai-chat-8rq3; GitHub wood-ivory-blaze-maple.",
+    process: [
+      "Open ai-chat-8rq3.zeabur.app",
+      "Tap to listen or hold to speak",
+      "Pick poster / photo / video / long task",
+      "Continue from recent projects",
+    ],
+  },
+  xiaocai: {
+    title: "Xiaocai ledger",
+    subtitle: "A small bright book for personal money",
+    summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
+    process: ["Open untitled-5.zeabur.app", "Log income or spend", "See categories", "See this month"],
+  },
+  "tku-zen-agent": {
+    title: "TKU Zen desk",
+    subtitle: "Leader Zen club · Ask mode",
+    summary: "A club writing and Q&A desk. Public site tku-zen-agent-k7f2 with ?mode=ask. Not the local tku-zen-ai companion.",
+    process: [
+      "Open tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+      "Ask a club-writing or booth question",
+      "Do not treat replies as approved notices",
+    ],
+  },
+  cutos: {
+    title: "CUTOS",
+    subtitle: "Cut video by talking",
+    summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
+    process: [
+      "Open cutos.zeabur.app",
+      "Describe the highlight in one sentence",
+      "Review timeline candidates",
+      "Export a cut plan",
+    ],
+  },
+  "hermes-agent": {
+    title: "Hermes Agent",
+    subtitle: "The execution layer (sign-in required)",
+    summary: "Nous Research Hermes Agent: sessions, tools, API. Public domain 455.zeabur.app. /sessions shows Sign in.",
+    process: [
+      "Open 455.zeabur.app/sessions",
+      "Sign in as the owner",
+      "Read sessions",
+      "Point Console at HERMES_API_URL",
+    ],
+  },
+};
+
 export function localeEnForSlug(slug: string): LocaleCopy | undefined {
-  return featuredProjectLocaleEn[slug as FeaturedWorkSlug];
+  return featuredProjectLocaleEn[slug as FeaturedWorkSlug] ?? linkedProjectLocaleEn[slug];
 }
 
 export const ARCHIVE_ITEM_IDS = [

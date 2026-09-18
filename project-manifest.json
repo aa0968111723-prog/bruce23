@@ -14,6 +14,7 @@
     "tku-zen-ai"
   ],
   "featuredCount": 8,
+  "linkedWorks": 10,
   "content": "postgres-cms-with-static-seed",
   "dataLayer": "neon-pglite",
   "theme": "light-only",

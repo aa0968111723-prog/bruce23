@@ -1,3 +1,4 @@
+import { linkedWorks } from "./linked-works.ts";
 import type { Project, ProjectCategory, ProjectMedia, ProjectStatus, SourceReference } from "./types.ts";
 
 const vis = "工作室視覺轉譯，不是產品截圖。";
@@ -59,7 +60,7 @@ export const categoryLabel: Record<ProjectCategory, string> = {
   "Real-world Experience": "Real-world Experience",
 };
 
-export const projects: Project[] = [
+const featuredWorks: Project[] = [
   {
     slug: "ai-director-os",
     title: "AI Director OS",
@@ -102,6 +103,7 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/aa0968111723-prog/ai_os",
       live: "https://ai-os-app.zeabur.app",
+      demo: "https://vexlark.co",
     },
     media: [
       {
@@ -160,7 +162,12 @@ export const projects: Project[] = [
       {
         label: "公開站 · ai-os-app.zeabur.app",
         href: "https://ai-os-app.zeabur.app",
-        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。本次探測服務可能暫停。",
+      },
+      {
+        label: "自訂網域 · vexlark.co",
+        href: "https://vexlark.co",
+        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。本次探測可能 502／暫停。",
       },
       {
         label: "GitHub homepage · ai-os-ten.vercel.app",
@@ -210,6 +217,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
+      live: "https://lunar-falcon-8p2r.zeabur.app",
     },
     media: [
       {
@@ -232,6 +240,12 @@ export const projects: Project[] = [
         "FrameLab",
         "screenshots/zh-inbetween.png",
       ),
+      {
+        src: "/media/shots/framelab-en.jpg",
+        alt: "FrameLab 英文公開站：Give it keyframes. Repair only the frames that break.",
+        kind: "image",
+        caption: "公開站 lunar-falcon-8p2r 實際畫面。",
+      },
     ],
     sourceReferences: [
       {
@@ -243,6 +257,26 @@ export const projects: Project[] = [
         "FrameLab",
         "本站 /media/github-exports/framelab 複製自公開 repo screenshots。不是 Canva 原作，也不是 Drive 私有檔。",
       ),
+      {
+        label: "公開站 · lunar-falcon-8p2r.zeabur.app",
+        href: "https://lunar-falcon-8p2r.zeabur.app",
+        note: "Zeabur 服務 lunar-crystal-falcon-granite，英文 FrameLab 公開站。本次探測 RUNNING。不是淡江戲劇世界。",
+      },
+      {
+        label: "GitHub · lunar-crystal-falcon-granite",
+        href: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
+        note: "FrameLab 公開站對應倉庫。",
+      },
+      {
+        label: "工作站 · cabin-shale-k7q2.zeabur.app",
+        href: "https://cabin-shale-k7q2.zeabur.app",
+        note: "Zeabur 服務 cabin-shale-raven-swift，完整 FrameLab 工作站。本次探測可能 502。GitHub 目前為私有。",
+      },
+      {
+        label: "GitHub · cabin-shale-raven-swift",
+        href: "https://github.com/aa0968111723-prog/cabin-shale-raven-swift",
+        note: "FrameLab 工作站倉庫，目前為私有。",
+      },
     ],
     visibility: "public",
   },
@@ -527,6 +561,7 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
+      live: "https://canva2-k7qm.zeabur.app",
     },
     media: [
       {
@@ -549,6 +584,12 @@ export const projects: Project[] = [
         "canva2 src/components/editor/editor-shell.tsx",
         "結構對齊桌面編輯器外殼（回到文件櫃、暫存、預覽、發布、工具軌、畫布、屬性／檢查）。canva2 公開 repo 沒有編輯器操作 PNG。",
       ),
+      {
+        src: "/media/shots/folio.jpg",
+        alt: "Folio 文件櫃：新增文件、標誌、MCP 卡片、內嵌小站",
+        kind: "image",
+        caption: "公開站 canva2-k7qm 實際畫面。",
+      },
     ],
     sourceReferences: [
       {
@@ -564,6 +605,11 @@ export const projects: Project[] = [
         label: "光域重建 · Folio editor-shell",
         href: "https://github.com/aa0968111723-prog/canva2/blob/main/src/components/editor/editor-shell.tsx",
         note: "本站 /media/studio/folio-editor.svg 依公開 editor-shell.tsx 桌面結構重建。不是操作截圖。",
+      },
+      {
+        label: "公開站 · canva2-k7qm.zeabur.app",
+        href: "https://canva2-k7qm.zeabur.app",
+        note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",
@@ -627,6 +673,12 @@ export const projects: Project[] = [
         "docs/screenshots/visual-workspace/canva-unconfigured.png",
         "畫面本身標未設定；本站也不宣稱 Canva 已連線。",
       ),
+      {
+        src: "/media/shots/hermes-console.jpg",
+        alt: "Hermes Console 工作區：今天想做什麼、研究／創作／分析入口",
+        kind: "image",
+        caption: "公開站 344.zeabur.app 實際畫面。",
+      },
     ],
     sourceReferences: [
       {
@@ -716,6 +768,8 @@ export const projects: Project[] = [
     visibility: "public",
   },
 ];
+
+export const projects: Project[] = [...featuredWorks, ...linkedWorks];
 
 export const workCategories: Array<ProjectCategory | "All"> = [
   "All",
