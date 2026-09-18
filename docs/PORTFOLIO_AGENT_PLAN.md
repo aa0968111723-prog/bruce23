@@ -649,3 +649,218 @@ Mobile／Desktop 結果：
 - bruce23 的案例敘事、GitHub、Zeabur、Live Demo 與 readiness score 一致。
 - 代理每 30 分鐘能從本文件與 state 繼續，不需要重新猜測進度。
 
+
+
+## 19. 全作品線上可操作與資訊完整硬性 Gate
+
+本作品集的完成條件不是「大部分作品可以展示」。
+
+官方清單內的 17 個專案必須全部完成：
+
+- 17/17 有可開啟的正式線上網址。
+- 17/17 正式網址可在公開網路正常載入。
+- 17/17 可以完成各自定義的核心使用旅程。
+- 17/17 至少達到 readiness score 70 分。
+- 17/17 有完整的 GitHub／來源狀態。
+- 17/17 有完整的 Zeabur／部署狀態。
+- 17/17 有真實縮圖或經過標記的實際畫面。
+- 17/17 有完整的中文作品說明。
+- 17/17 有英文基本說明或英文補助資訊。
+- 17/17 有明確的操作步驟。
+- 17/17 有技術堆疊與功能範圍。
+- 17/17 有限制、登入需求與資料安全說明。
+- 17/17 通過手機與桌面 smoke test。
+- 17/17 不得存在未處理的 broken link、broken image、主要路由 404 或持續 5xx。
+
+### 整體完成判定
+
+只有以下條件全部成立，才可以把 Portfolio Agent Plan 標記為完成：
+
+ONLINE_READY_COUNT = 17
+CORE_FLOW_PASS_COUNT = 17
+READINESS_SCORE_GE_70_COUNT = 17
+COMPLETE_INFO_COUNT = 17
+THUMBNAIL_VERIFIED_COUNT = 17
+MOBILE_SMOKE_PASS_COUNT = 17
+DESKTOP_SMOKE_PASS_COUNT = 17
+SECURITY_BLOCKER_COUNT = 0
+
+任何一項不是 17，整體狀態必須保持：
+
+PORTFOLIO_STATUS = IN_PROGRESS
+
+不得使用「幾乎完成」、「大致可用」、「部分完成」取代數字證據。
+
+## 20. 每個作品的完整資料契約
+
+每個專案在 registry 與 CMS 都不得缺少以下欄位：
+
+### 身分
+
+- slug
+- title
+- titleEn
+- repository URL
+- repository visibility
+- canonical live URL
+- Zeabur service identity
+- current deployed commit 或 deployment reference
+
+### 作品說明
+
+- 一句話定位
+- 解決的問題
+- 目標使用者
+- 主要功能
+- 使用者核心旅程
+- 代理或作者在其中做了什麼
+- 技術堆疊
+- 多模態能力
+- 目前狀態
+- 版本或最後更新時間
+
+### 線上操作
+
+- 線上網址
+- 公開／需登入／受限狀態
+- 開啟方式
+- 三至五個操作步驟
+- 預期結果
+- 可重現測試步驟
+- 最後驗證時間
+- HTTP status
+- page title
+- mobile smoke status
+- desktop smoke status
+
+### 視覺素材
+
+- 主縮圖
+- 手機截圖
+- 桌面截圖
+- alt text
+- 圖片來源
+- 圖片 provenance
+- 圖片產生時間
+- 是否為實際產品畫面
+
+### 技術證據
+
+- GitHub README 狀態
+- latest commit
+- language
+- topics
+- 重要檔案路徑
+- Zeabur deployment status
+- runtime health
+- 依賴服務
+- 目前限制
+- 尚未完成項目
+
+### 資安與資料
+
+- 是否需要登入
+- 是否使用真實資料
+- 是否使用隔離 demo data
+- 訪客能做什麼
+- 訪客不能做什麼
+- 是否含個資
+- 是否有管理員邊界
+- 是否有 API 或 provider 依賴
+
+任何欄位缺少時，該作品的 COMPLETE_INFO 狀態必須是 false。
+
+## 21. 全部專案線上修復流程
+
+代理不能因為某個專案現在無法操作，就把它從作品集移除或標記完成。
+
+每一個無法線上操作的專案必須：
+
+1. 查明是 GitHub build、Zeabur deploy、環境變數、資料庫、runtime、路由、登入或外部 provider 哪一層失敗。
+2. 建立可重現的 failure report。
+3. 在該 repository 建立獨立修復 branch。
+4. 建立修復 PR。
+5. 修復核心功能。
+6. 執行本地 build 與測試。
+7. 部署到正式線上服務或可驗證的 preview。
+8. 用手機與桌面 Playwright 驗證。
+9. 更新 readiness score。
+10. 回寫 bruce23 registry。
+11. 重新驗證作品集入口。
+12. 只有完整通過後，才可將該專案標記為 online-ready。
+
+如果遇到：
+
+- 沒有 repository 寫入權限。
+- 沒有 Zeabur 部署權限。
+- 缺少必要 provider credential。
+- 私有資料不可安全展示。
+- 原專案已無法恢復。
+- 外部服務已停止且沒有替代方案。
+
+代理必須在報告中明確標記 BLOCKED，並持續列為未完成項目。不得使用假網址、假的 demo、假的 API 回應或假的完成狀態。
+
+## 22. 全作品連續驗證
+
+每次 bruce23 部署前後，都要對 17 個專案執行完整檢查：
+
+### 入口檢查
+
+- canonical URL 可以連線。
+- HTTP status 為可接受狀態。
+- page title 與作品身份一致。
+- 沒有被導向錯誤專案。
+- 沒有使用重複或過期網址。
+
+### 操作檢查
+
+- 首頁可開啟。
+- 核心 CTA 可點擊。
+- 核心輸入可完成。
+- 主要結果可出現。
+- 重新整理後狀態符合產品設計。
+- 錯誤狀態可恢復。
+- 登入邊界正確。
+- 不會寫入不應寫入的真實資料。
+
+### 視覺檢查
+
+- 主縮圖存在。
+- 手機截圖存在。
+- 桌面截圖存在。
+- alt text 存在。
+- 來源標籤正確。
+- 圖片不會 broken。
+- 案例頁與實際網站不矛盾。
+
+### 資訊檢查
+
+- 中文說明存在。
+- 英文基本資訊存在。
+- 操作步驟存在。
+- 技術堆疊存在。
+- 限制存在。
+- GitHub 狀態存在。
+- Zeabur 狀態存在。
+- readiness score 存在。
+- 最後驗證時間存在。
+
+## 23. 最終公開呈現規則
+
+在所有 17 個專案都達標前：
+
+- 首頁可以顯示進度，但不可宣稱完成。
+- Featured 區域只能放已達 70 分且 online-ready 的作品。
+- 未達標作品必須顯示「修復中」而不是假裝可操作。
+- 作品集總覽必須顯示實際完成數，例如 12/17。
+- 「全部作品已完成」按鈕或文案不得出現。
+- 不可以用靜態 mockup 取代真正的線上操作。
+- 不可以只因為 GitHub 存在，就把作品標記為 online-ready。
+
+最終必須看到：
+
+17/17 ONLINE
+17/17 CORE FLOW PASS
+17/17 COMPLETE INFO
+17/17 READY >= 70
+
