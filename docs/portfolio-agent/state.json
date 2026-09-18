@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-18T23:06:56Z",
+  "overallStatus": "IN_PROGRESS",
+  "verificationStatus": "BASELINE_NOT_VERIFIED",
+  "scope": {
+    "portfolioRepository": "aa0968111723-prog/bruce23",
+    "planPullRequest": 6,
+    "officialProjectCount": 17,
+    "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
+  },
+  "gates": {
+    "online": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "coreFlow": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "completeInfo": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "readiness70": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "mobileSmoke": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "desktopSmoke": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "securityBlockers": {
+      "verifiedCount": null,
+      "status": "NOT_VERIFIED"
+    }
+  },
+  "activeTask": "baseline-public-and-black-box-verification",
+  "highestPriorityIssue": {
+    "id": "PORTFOLIO-STATE-001",
+    "title": "Shared runtime state files were missing",
+    "severity": "high",
+    "status": "addressed_in_this_pr",
+    "evidence": [
+      "docs/portfolio-agent/state.json was absent on the plan branch",
+      "docs/portfolio-agent/runtime-report.json was absent on the plan branch"
+    ],
+    "impact": "The main agent and Grok Bot could not share a durable per-project verification baseline."
+  },
+  "inspectionLimitations": [
+    "The current runner could not reach the 17 public hosts: curl failed at proxy CONNECT timeout and the web reader reported the hosts as inaccessible.",
+    "No deployment, core-flow, mobile, desktop, thumbnail, or security gate is marked as passed without direct evidence."
+  ],
+  "nextTask": "Run authenticated/public endpoint verification from a network that can reach the configured hosts, then test one highest-priority repair target.",
+  "projects": [
+    {
+      "key": "forge-bloom-quiet-falcon",
+      "repository": "aa0968111723-prog/forge-bloom-quiet-falcon",
+      "publicUrl": "https://forge-bloom-k7xq.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "lunar-crystal-falcon-granite",
+      "repository": "aa0968111723-prog/lunar-crystal-falcon-granite",
+      "publicUrl": "https://lunar-falcon-8p2r.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "tku-tamsui-drama-world",
+      "repository": "aa0968111723-prog/tku-tamsui-drama-world",
+      "publicUrl": "https://tku-tamsui-drama-world-k4x9.zeabur.app/",
+      "urlStatus": "candidate_requires_confirmation",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "dd",
+      "repository": "aa0968111723-prog/dd",
+      "publicUrl": "https://dd-k3f9.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "canva2",
+      "repository": "aa0968111723-prog/canva2",
+      "publicUrl": "https://canva2-k7qm.zeabur.app/",
+      "urlStatus": "candidate_requires_confirmation",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "delta-horizon-cliff-fern",
+      "repository": "aa0968111723-prog/delta-horizon-cliff-fern",
+      "publicUrl": "https://delta-horizon-k7f2.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "ty",
+      "repository": "aa0968111723-prog/ty",
+      "publicUrl": "https://leader-dna-mcp-a7k2.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "cabin-shale-raven-swift",
+      "repository": "aa0968111723-prog/cabin-shale-raven-swift",
+      "publicUrl": "https://cabin-shale-k7q2.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "hermes-agent",
+      "repository": null,
+      "publicUrl": "https://455.zeabur.app/sessions",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "hermes-console",
+      "repository": null,
+      "publicUrl": "https://344.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "wood-ivory-blaze-maple",
+      "repository": "aa0968111723-prog/wood-ivory-blaze-maple",
+      "publicUrl": "https://ai-chat-8rq3.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "-1",
+      "repository": "aa0968111723-prog/-1",
+      "publicUrl": "https://untitled-5.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "tku-zen-agent",
+      "repository": "aa0968111723-prog/tku-zen-agent",
+      "publicUrl": "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "duigao",
+      "repository": "aa0968111723-prog/duigao",
+      "publicUrl": "https://duigao-k7q2.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "planform-iso",
+      "repository": "aa0968111723-prog/planform-iso",
+      "publicUrl": "https://planform-iso-k7d2.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "ai_os",
+      "repository": "aa0968111723-prog/ai_os",
+      "publicUrl": "https://vexlark.co/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    },
+    {
+      "key": "CUTOS",
+      "repository": "aa0968111723-prog/CUTOS",
+      "publicUrl": "https://cutos.zeabur.app/",
+      "urlStatus": "configured",
+      "verificationStatus": "not_verified"
+    }
+  ]
+}
