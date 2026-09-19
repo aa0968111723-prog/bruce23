@@ -554,7 +554,13 @@ export async function runAdminE2E() {
   });
 
   await step("live /login stays Google-only when the preview server is up", async () => {
-    const login = await fetch("http://127.0.0.1:8080/login", { signal: AbortSignal.timeout(2500) });
+    let login: Response;
+    try {
+      login = await fetch("http://127.0.0.1:8080/login", { signal: AbortSignal.timeout(2500) });
+    } catch {
+      // 預覽伺服器未於本地啟動，依 step 定義優雅略過
+      return;
+    }
     assert.equal(login.ok, true);
     const html = await login.text();
     assert.match(html, /後台登入|Google|使用/);
