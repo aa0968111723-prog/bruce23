@@ -10,6 +10,8 @@ import {
   PLANFORM_LIVE_PROBE_VERSION,
   DUIGAO_LIVE_PROBE_SLUG,
   DUIGAO_LIVE_PROBE_VERSION,
+  FOLIO_LIVE_PROBE_SLUG,
+  FOLIO_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -166,6 +168,16 @@ describe("official project registry", () => {
     assert.match(DUIGAO_LIVE_PROBE_VERSION, /duigao-live-title/);
     assert.equal(project.links.live, "https://duigao-k7q2.zeabur.app");
     assert.ok(project.sourceReferences.some((item) => item.note.includes("對稿｜圖片與影片協作空間")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Folio first screen as 文件櫃 without claiming a publish coreFlow", () => {
+    const project = projects.find((item) => item.slug === FOLIO_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-file-cabinet/);
+    assert.equal(project.links.live, "https://canva2-k7qm.zeabur.app");
+    assert.ok(project.process[0]?.includes("文件櫃"));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("文件櫃")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

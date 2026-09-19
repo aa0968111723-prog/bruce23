@@ -887,6 +887,38 @@ describe("cms persistence", () => {
     assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Folio process to start at the live file cabinet", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "folio",
+        JSON.stringify(["在畫布建立文字／形狀／元件"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · canva2-k7qm.zeabur.app",
+            href: "https://canva2-k7qm.zeabur.app",
+            note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'folio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const folio = await getPublishedProject(sql, "folio");
+    assert.ok(folio.process[0]?.includes("文件櫃"));
+    assert.match(
+      folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
+      /文件櫃/,
+    );
+    assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

@@ -308,6 +308,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No accounts by default; drafts live in device IndexedDB.",
       ],
       [
+        "Open the file cabinet (on this device, no sign-in)",
         "Create text / shapes / components on the canvas",
         "Design checks (contrast, overflow, safe area)",
         "Optional 3-mode external site import",
@@ -322,6 +323,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No standalone bitmap object type; images exist as a pixel layer or Snapshot.",
         "Write tokens do not auto-expire; republish to rotate.",
         "External MCP connections live in one Node process memory and are not shared across instances.",
+        "Probed 2026-09-19: GET / HTTP 200, title Folio. First screen is the file cabinet, local, no sign-in. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.folio,

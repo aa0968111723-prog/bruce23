@@ -98,6 +98,10 @@ export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-title-20260919";
 
 export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
 
+export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
+
+export const FOLIO_LIVE_PROBE_SLUG = "folio";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

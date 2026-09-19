@@ -154,6 +154,10 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
       {
+        title: "文件櫃",
+        body: "公開站 canva2-k7qm 首屏是文件櫃。存在這台裝置，不必登入。",
+      },
+      {
         title: "畫布",
         body: "文字、形狀與元件走同一套文件模型。",
         path: "src/components/editor/canvas-stage.tsx",
