@@ -26,6 +26,8 @@ import {
   TAMSUI_DRAMA_LIVE_PROBE_VERSION,
   POSTER_VISION_NO_HOST_SLUG,
   POSTER_VISION_NO_HOST_VERSION,
+  HERMES_AGENT_SIGNIN_SLUG,
+  HERMES_AGENT_SIGNIN_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -271,5 +273,18 @@ describe("official project registry", () => {
     assert.ok(project.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("查無公開 Zeabur 網域")));
+  });
+
+  it("records Hermes Agent first screen as Sign in without claiming dashboard coreFlow", () => {
+    const project = projects.find((item) => item.slug === HERMES_AGENT_SIGNIN_SLUG);
+    assert.ok(project);
+    assert.match(HERMES_AGENT_SIGNIN_VERSION, /hermes-agent-signin/);
+    assert.equal(project.links.live, "https://hermes-agent-k7q2.zeabur.app/");
+    assert.ok(project.process[0]?.includes("/login"));
+    assert.ok(project.process.some((item) => item.includes("Sign in — Hermes Agent")));
+    assert.ok(project.process.every((item) => !item.includes("輸入關鍵詞")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("Sign in — Hermes Agent")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("/login")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

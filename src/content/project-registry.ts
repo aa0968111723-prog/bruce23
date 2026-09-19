@@ -130,6 +130,10 @@ export const POSTER_VISION_NO_HOST_VERSION = "poster-vision-no-public-host-20260
 
 export const POSTER_VISION_NO_HOST_SLUG = "poster-vision-ai";
 
+export const HERMES_AGENT_SIGNIN_VERSION = "hermes-agent-signin-20260920";
+
+export const HERMES_AGENT_SIGNIN_SLUG = "hermes-agent";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
