@@ -7,6 +7,7 @@ import { resolveCanvaShareUrl } from "../canva/resolve.ts";
 import { CANVA_SHORTLINK_CANDIDATES, collectCanvaShortUrlsFromText } from "../canva/inventory.ts";
 import { catalogSourcePaths } from "../experiences/catalog.ts";
 import { parseCanvaDesign } from "../canva/parse.ts";
+import { skipGithubHydrate } from "../../content/project-registry.ts";
 
 export const GITHUB_HYDRATE_KEY = "github_hydrate";
 export const GITHUB_HYDRATE_VERSION = "5";
@@ -166,6 +167,7 @@ async function hydratePendingGithubOnce(
   let rateLimited = false;
 
   for (const row of rows) {
+    if (skipGithubHydrate(row.slug)) continue;
     try {
       const result = await fetchPublicRepo(row.github_url, {
         ...clientOptions,

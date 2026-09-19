@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-tku-zen-ai-welcome",
-  "updatedAt": "2026-09-20T19:50:00Z",
+  "runId": "grok-impl-20260920-tku-zen-agent-gate-github",
+  "updatedAt": "2026-09-20T20:40:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "tku-zen-ai",
+  "currentProject": "tku-zen-agent",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/tku-zen-ai-welcome",
+  "currentBranch": "fix/tku-zen-agent-gate-github",
   "currentPR": null,
-  "currentTask": "tku-zen-ai-welcome",
+  "currentTask": "tku-zen-agent-gate-github",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -39,19 +39,20 @@
     "CUTOS live home merged as PR #38 and live on production /work/cutos (載入示範影片)",
     "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)",
     "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)",
-    "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)"
+    "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)",
+    "TKU Zen AI welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)"
   ],
   "remainingSteps": [
-    "Land tku-zen-ai welcome first-screen honesty repair",
-    "After deploy, verify production /work/tku-zen-ai process quotes Welcome to TKU Zen AI, not 輸入一句心情",
+    "Land tku-zen-agent access-code gate + GitHub tree honesty repair",
+    "After deploy, verify production /work/tku-zen-agent process quotes 請輸入授權碼 and does not call GitHub a clean 公開儲存庫",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 116,
+  "testsPassed": 165,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR41_DUIGAO_LIVE_TKU_ZEN_AI_PROCESS_STILL_GENERIC_MOOD",
+  "productionStatus": "PR42_TKU_ZEN_AI_WELCOME_LIVE_TKU_ZEN_AGENT_GITHUB_STILL_CLEAN_PUBLIC",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -70,6 +71,15 @@
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
       "nextAction": "Do not invent a flow. Keep PORTFOLIO_READY false until 17/17 gates have evidence."
+    },
+    {
+      "id": "TKU_ZEN_AGENT_PUBLIC_GITHUB",
+      "severity": "high",
+      "error": "tku-zen-agent GitHub is public while README says the repo must not be public.",
+      "evidence": "2026-09-20 unauthenticated GET api.github.com/repos/aa0968111723-prog/tku-zen-agent private:false. README: 這個 repo 不可以轉成 public. Portfolio will not copy knowledge/雲端文件.",
+      "requiredAccess": "repo visibility change is outside bruce23; portfolio must not hydrate or republish that tree",
+      "blocks17of17": true,
+      "nextAction": "Keep GitHub sync off for this slug. Do not claim security VERIFIED_PASS."
     }
   ],
   "gates": {
@@ -81,5 +91,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/tku-zen-ai process starts at the public page.tsx welcome Welcome to TKU Zen AI and English suggestion chips. Do not claim a chat coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/tku-zen-agent process starts at the access-code gate (h1 淡江大學領袖禪學社 / 請輸入授權碼 / 進入工作台) and GitHub evidence warns the repo must not be public. Do not claim a desk coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

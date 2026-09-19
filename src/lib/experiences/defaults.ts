@@ -197,26 +197,26 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "tku-zen-agent") {
     return {
       ...base,
-      intro: "公開站是淡江大學領袖禪學社工作台。未輸入授權碼時只看得到登入邊界。",
+      intro: "公開站未授權首屏是授權門：h1「淡江大學領袖禪學社」、請輸入授權碼、進入工作台。不是工作台聊天。",
       conversation: {
         engine: "hermes-preview",
         disclaimer: "這是作品集預覽，沒有連到社團資料庫，也不是 Hermes Agent。",
-        starter: "公開站需要授權碼。未登入時只看得到「請輸入授權碼 進入工作台」。這裡不會假裝已經進入。",
-        placeholder: "輸入一句社團文書或現場問題",
-        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。草稿模式不會自動發布。",
-        suggestions: ["授權碼", "做網宣", "草稿"],
+        starter: "公開站未授權只看得到 h1「淡江大學領袖禪學社」與「請輸入授權碼」「進入工作台」。這裡不會假裝已經進入，也不展示社團文件樹。",
+        placeholder: "輸入授權碼、草稿、GitHub",
+        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。本站不複製 knowledge/雲端文件。",
+        suggestions: ["授權碼", "草稿", "GitHub"],
         replies: [
           {
             match: "授權",
-            reply: "真實工作台要輸入授權碼。作品集這一頁不會幫你登入，也不會讀社團資料。",
-          },
-          {
-            match: "網宣",
-            reply: "公開站有「做網宣」入口。產出標示為草稿，不會自動發布。",
+            reply: "GET /api/auth 是 token 模式且未登入。作品集不會幫你送授權碼，也不會讀社團資料。",
           },
           {
             match: "草稿",
-            reply: "公開站寫「目前為草稿模式——不會自動發布任何內容」。本頁不展示真實社團檔。",
+            reply: "授權後的草稿列寫「目前為草稿模式——不會自動發布任何內容」。那不是訪客首屏。",
+          },
+          {
+            match: "GitHub",
+            reply: "倉庫現在是 public，README 卻寫不可轉 public。本站不複製 knowledge/雲端文件，也不展示那棵檔案樹。",
           },
         ],
       },

@@ -68,6 +68,7 @@ const SKIP_FRAGMENTS = [
   "pnpm-lock",
   "package-lock.json",
   ".grok/",
+  "knowledge/雲端文件/",
 ];
 
 const LOW_VALUE_PREFIXES = [".github/", ".grok/", ".cursor/", ".vscode/", ".manus/"];
