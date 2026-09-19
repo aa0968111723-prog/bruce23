@@ -290,8 +290,8 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "media-gallery",
     honestyLabel: "公開站是小財記帳，不是 Folio 編輯器",
     walkthrough: [
-      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。2026-09-19 探測 HTTP 200，標題「小財記帳」。" },
-      { title: "記一筆", body: "記收支、看分類。作品集尚未驗證這一步是否真的寫入。" },
+      { title: "打開帳本", body: "公開站 untitled-5。標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。" },
+      { title: "記一筆", body: "離線也可記。作品集尚未驗證這一步是否真的寫入。" },
       { title: "這個月", body: "看這個月花到哪。不是作品集後台。" },
     ],
   },

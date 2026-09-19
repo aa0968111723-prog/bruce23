@@ -490,9 +490,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "Xiaocai ledger",
     subtitle: "A small bright book for personal money",
     summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
-    process: ["Open untitled-5.zeabur.app", "Log income or spend", "See categories", "See this month"],
+    process: [
+      "Open untitled-5.zeabur.app",
+      "First screen says tap to log a line quickly",
+      "It can log offline on the device",
+      "Sign-in syncs to the account",
+    ],
     limitations: [
-      "Public host HTTP 200, title Xiaocai ledger. The page is client-rendered; the ledger core flow is not verified here.",
+      "Probed 2026-09-20: HTTP 200, title Xiaocai ledger. JS first screen: tap to log a line. Offline works; sign-in syncs. This portfolio has not logged a real line, so coreFlow is not passed.",
       "This is not the portfolio admin.",
     ],
   },

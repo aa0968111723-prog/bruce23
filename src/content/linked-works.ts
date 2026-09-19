@@ -317,11 +317,17 @@ export const linkedWorks: Project[] = [
     role: "個人工具：記帳、分類、月覽。",
     decisions: ["公開站 untitled-5；GitHub 倉庫名是 -1。"],
     modalities: ["互動", "數字"],
-    process: ["打開 untitled-5.zeabur.app", "記一筆收支", "看分類", "看這個月"],
+    process: [
+      "打開 untitled-5.zeabur.app",
+      "首屏是「點我一下，快速記一筆吧」",
+      "沒有網路也能記，資料先存在裝置",
+      "登入後才與帳號同步",
+    ],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
-      "公開站 HTTP 200、標題「小財記帳」。頁面是前端渲染，作品集未驗證記帳核心流程。",
+      "公開站 HTTP 200、標題「小財記帳」。",
+      "2026-09-20 JS 首屏「點我一下，快速記一筆吧」。離線可記；登入後同步。作品集未記一筆真實收支，coreFlow 未過。",
       "不是作品集後台。",
     ],
     links: {
@@ -333,7 +339,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。核心記帳流程尚未黑箱驗證。",
+        note: "2026-09-20 HTTP 200，標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。離線可記。不是 502，也不是 Folio。",
       },
       {
         label: "GitHub · -1",
