@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T20:40:00Z",
-  "runId": "grok-impl-20260920-tku-zen-agent-gate-github",
+  "generatedAt": "2026-09-20T21:20:00Z",
+  "runId": "grok-impl-20260920-github-visibility-public",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T20:10:00Z",
+  "startedAt": "2026-09-20T20:50:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,15 +12,15 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "tku-zen-agent-gate-github",
-  "inspectedCommit": "a7af6b3",
+  "task": "github-visibility-public-probe",
+  "inspectedCommit": "64f2d01",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + registry/catalog/config/schema/store/hydrate/locale 165 + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + project-registry 22 + cms store 51 + vite build",
     "browser": "BLOCKED",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
@@ -29,26 +29,33 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/tku-zen-ai",
+      "url": "https://bruce23-k7m2.zeabur.app/work/tku-zen-agent",
       "status": 200,
-      "pr42Landed": true,
-      "copy": "process Welcome to TKU Zen AI; English chips; not 輸入一句心情",
+      "pr43Landed": true,
+      "copy": "process 請輸入授權碼 / 淡江大學領袖禪學社; GitHub note 不可以轉成 public / knowledge/雲端文件",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T20:15:00Z"
+      "checkedAt": "2026-09-20T20:55:00Z"
     },
     {
-      "url": "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+      "url": "https://api.github.com/repos/aa0968111723-prog/forge-bloom-quiet-falcon",
       "status": 200,
-      "copy": "title 淡江大學領袖禪學社 · 工作台; GET /api/auth mode=token authenticated=false; GET /api/health 401 請先輸入授權碼; unsigned first screen is the gate, workbench is hidden",
+      "copy": "unauthenticated private:false. Production /work/tamkang-world still says 目前為私有 / 訪客打不開原始碼.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T20:25:00Z"
+      "checkedAt": "2026-09-20T21:00:00Z"
     },
     {
-      "url": "https://api.github.com/repos/aa0968111723-prog/tku-zen-agent",
+      "url": "https://api.github.com/repos/aa0968111723-prog/cabin-shale-raven-swift",
       "status": 200,
-      "copy": "unauthenticated private:false. README says the repo must not be public. Portfolio must not copy knowledge/雲端文件.",
+      "copy": "unauthenticated private:false. FrameLab card still labels cabin/lunar GitHub 目前為私有.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T20:30:00Z"
+      "checkedAt": "2026-09-20T21:00:00Z"
+    },
+    {
+      "url": "https://api.github.com/repos/aa0968111723-prog/lunar-crystal-falcon-granite",
+      "status": 200,
+      "copy": "unauthenticated private:false. Canonical product source remains public FrameLab.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T21:00:00Z"
     }
   ],
   "gates": {
@@ -63,11 +70,11 @@
   "blockers": [
     "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
-    "tku-zen-agent GitHub is public while README forbids it; portfolio must not hydrate knowledge/雲端文件"
+    "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件"
   ],
   "nextSteps": [
-    "Land tku-zen-agent access-code gate + GitHub tree honesty repair",
-    "After deploy, verify production /work/tku-zen-agent quotes the gate and the README public-repo warning",
+    "Land GitHub visibility honesty for tamkang and FrameLab locale deploys",
+    "After deploy, verify production no longer claims those repos are private",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }

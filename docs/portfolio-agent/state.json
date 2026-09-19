@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-tku-zen-agent-gate-github",
-  "updatedAt": "2026-09-20T20:40:00Z",
+  "runId": "grok-impl-20260920-github-visibility-public",
+  "updatedAt": "2026-09-20T21:20:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "tku-zen-agent",
+  "currentProject": "tamkang-world",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/tku-zen-agent-gate-github",
+  "currentBranch": "fix/github-visibility-public-probe",
   "currentPR": null,
-  "currentTask": "tku-zen-agent-gate-github",
+  "currentTask": "github-visibility-public-probe",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -40,19 +40,21 @@
     "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)",
     "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)",
     "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)",
-    "TKU Zen AI welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)"
+    "TKU Zen AI welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)",
+    "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)"
   ],
   "remainingSteps": [
-    "Land tku-zen-agent access-code gate + GitHub tree honesty repair",
-    "After deploy, verify production /work/tku-zen-agent process quotes 請輸入授權碼 and does not call GitHub a clean 公開儲存庫",
+    "Land GitHub visibility honesty: tamkang / FrameLab locale deploys are public, not 私有",
+    "After deploy, verify production /work/tamkang-world no longer says 訪客打不開原始碼",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
+    "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 165,
+  "testsPassed": 73,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR42_TKU_ZEN_AI_WELCOME_LIVE_TKU_ZEN_AGENT_GITHUB_STILL_CLEAN_PUBLIC",
+  "productionStatus": "PR43_TKU_ZEN_AGENT_GATE_LIVE_TAMKANG_GITHUB_STILL_FALSE_PRIVATE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -77,7 +79,7 @@
       "severity": "high",
       "error": "tku-zen-agent GitHub is public while README says the repo must not be public.",
       "evidence": "2026-09-20 unauthenticated GET api.github.com/repos/aa0968111723-prog/tku-zen-agent private:false. README: 這個 repo 不可以轉成 public. Portfolio will not copy knowledge/雲端文件.",
-      "requiredAccess": "repo visibility change is outside bruce23; portfolio must not hydrate or republish that tree",
+      "requiredAccess": "repo visibility change is HUMAN_DECISION_REQUIRED; do not change it from bruce23",
       "blocks17of17": true,
       "nextAction": "Keep GitHub sync off for this slug. Do not claim security VERIFIED_PASS."
     }
@@ -91,5 +93,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/tku-zen-agent process starts at the access-code gate (h1 淡江大學領袖禪學社 / 請輸入授權碼 / 進入工作台) and GitHub evidence warns the repo must not be public. Do not claim a desk coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/tamkang-world GitHub evidence says private:false / 公開儲存庫, not 訪客打不開原始碼. FrameLab cabin/lunar notes should not say 目前為私有. Do not claim a 3D coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
