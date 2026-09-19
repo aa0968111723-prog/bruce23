@@ -73,6 +73,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "zen-studio") {
+    return {
+      ...base,
+      intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+    };
+  }
+
   if (slug === "skatehub") {
     return {
       ...base,

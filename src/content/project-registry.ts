@@ -118,7 +118,7 @@ export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 
-export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 
