@@ -7,7 +7,7 @@ import { verifyDemoUrl, framingBlocked } from "../demo/verify.ts";
 import { projectInputSchema, archiveInputSchema, sourceEvidenceSchema, parseProjectPatch } from "./schema.ts";
 import { serializeJsonLd } from "./jsonld.ts";
 import { toPublicProject } from "./store.ts";
-import { canvaViewerState, demoViewerState, stripSecrets } from "./privacy.ts";
+import { canvaViewerState, demoViewerState, showDemoAbsenceNote, stripSecrets } from "./privacy.ts";
 
 describe("github url validation", () => {
   it("accepts public github urls", () => {
@@ -470,6 +470,9 @@ describe("privacy", () => {
       ),
       "fallback",
     );
+    assert.equal(showDemoAbsenceNote("empty"), true);
+    assert.equal(showDemoAbsenceNote("embed"), false);
+    assert.equal(showDemoAbsenceNote("fallback"), false);
   });
 
   it("CanvaStage and LiveDemoStage never put an iframe in empty/local/fallback branches", () => {
