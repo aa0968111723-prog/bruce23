@@ -66,17 +66,17 @@ export const linkedWorks: Project[] = [
   {
     slug: "tamsui-drama",
     title: "淡江新生導覽",
-    subtitle: "校園闖關 · 戲劇虛擬世界",
+    subtitle: "校園闘關 · 戲劇虛擬世界",
     category: "Real-world Experience",
     year: "2026",
     status: "prototype",
     featured: false,
-    summary: "把淡江／淡水寫成可持續開發的劇本、場景與角色。公開站是柏能的校園闖關，不是 FrameLab。",
-    problem: "迎新資料是 PDF 與路線圖，身體感不夠。需要一個能闖關、能走進場景的入口。",
+    summary: "把淡江／淡水寫成可持續開發的劇本、場景與角色。公開站是柏能的校園闘關，不是 FrameLab。",
+    problem: "迎新資料是 PDF 與路線圖，身體感不夠。需要一個能闘關、能走進場景的入口。",
     role: "敘事與互動設計：關卡節奏、角色與淡水場景。",
     decisions: [
       "獨立網域 tku-tamsui-drama-world-k4x9，不要跟 FrameLab 的 lunar-falcon 混用。",
-      "開場是「安倢的校園闖關」，先玩再講系統。",
+      "開場是「安倕的校園闘關」，先玩再講系統。",
     ],
     modalities: ["互動", "敘事", "3D"],
     process: [
@@ -85,7 +85,7 @@ export const linkedWorks: Project[] = [
       "從第一集宮燈下的迎新開始",
       "依關卡走完校園",
     ],
-    outputs: ["校園闖關公開站"],
+    outputs: ["校園闘關公開站"],
     stack: ["Web", "Zeabur"],
     limitations: ["內容會隨學期更新，不宣稱完整學年劇本。"],
     links: {
@@ -93,7 +93,7 @@ export const linkedWorks: Project[] = [
       live: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
     },
     media: [
-      cover("tamsui-drama.jpg", "淡江新生導覽光域靜物：宮燈、闖關地圖與玻璃角色"),
+      cover("tamsui-drama.jpg", "淡江新生導覽光域靜物：宮燈、闘關地圖與玻璃角色"),
       shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡"),
     ],
     sourceReferences: [
@@ -160,7 +160,7 @@ export const linkedWorks: Project[] = [
     year: "2026",
     status: "in-progress",
     featured: false,
-    summary: "給淡江禪學社用的工作室殼：文宣、場次與日常作業放在同一盞燈下，而不是再開一個雲端硬碟資料夾。",
+    summary: "給淡江禪學社用的工作室殼：文宣、場次與日常作業放在同一盎燈下，而不是再開一個雲端硬碟資料夾。",
     problem: "社團文宣、場次與靈感散落。需要一個「今天可以創作什麼」的工作台。",
     role: "社團工具設計：日曆、活動、生成入口與素材庫。",
     decisions: [
@@ -176,7 +176,7 @@ export const linkedWorks: Project[] = [
     ],
     outputs: ["禪學社 Studio 公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["連 IG 官方發布需額外授權，未接上時只在工作室內排程。"],
+    limitations: ["連 IG 官方發佈需額外授權，未接上時只在工作室內排程。"],
     links: {
       github: "https://github.com/aa0968111723-prog/delta-horizon-cliff-fern",
       live: "https://delta-horizon-k7f2.zeabur.app",
@@ -416,6 +416,7 @@ export const linkedWorks: Project[] = [
       "公開站是 Zeabur 服務 hermes-agent（Dashboard），不是本作品集的原始碼。",
       "本頁不展示 API key、Dashboard 密碼或 GitHub PAT。",
       "未登入只看得到 Sign in，不假裝已經進入 Dashboard。",
+      "舊網域 455.zeabur.app 於 2026-09-19 整站 HTTP 502，標 stale-502；現行 Dashboard 是 hermes-agent-k7q2.zeabur.app。",
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
@@ -426,7 +427,10 @@ export const linkedWorks: Project[] = [
     ],
     outputs: ["公開網域 hermes-agent-k7q2.zeabur.app（Dashboard）"],
     stack: ["Hermes Agent", "Docker", "Zeabur"],
-    limitations: ["需要登入。作品集訪客看不到 Dashboard 內容。"],
+    limitations: [
+      "需要登入。作品集訪客看不到 Dashboard 內容。",
+      "舊網域 455.zeabur.app 為 stale-502，不是現行 Live Demo。",
+    ],
     links: {
       live: "https://hermes-agent-k7q2.zeabur.app/",
     },
@@ -438,7 +442,11 @@ export const linkedWorks: Project[] = [
       {
         label: "Dashboard · hermes-agent-k7q2.zeabur.app",
         href: "https://hermes-agent-k7q2.zeabur.app/",
-        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。",
+        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。這是現行 Live 入口。",
+      },
+      {
+        label: "舊網域 455.zeabur.app（stale-502）",
+        note: "2026-09-19 探測根路徑與 /sessions 皆 HTTP 502。不是現行 Dashboard。僅作 stale-502 證據，不作為 Live Demo 連結。",
       },
     ],
     visibility: "public",
