@@ -144,6 +144,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Inbetween gets a Motion Plan first, then a linear-blend candidate; only bad frames are regenerated.",
         "Wan / RIFE and other GPU adapters report PROVIDER_NOT_AVAILABLE when unloaded — no fake depth or fake pose.",
         "UI, REST, and MCP share the same application commands.",
+        "cabin-shale-k7q2 (Chinese) and lunar-falcon-8p2r (English) are the same FrameLab 0.4.0, not two products. The Chinese portfolio uses the Chinese public host as Live Demo.",
       ],
       [
         "Import a video or image sequence",
@@ -161,6 +162,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "SAM 2, RTMPose, SEA-RAFT, RIFE, and Wan are adapters only — unavailable until a model is registered.",
         "Not an NLE, and not a full production pipeline export.",
         "Grok vision needs XAI_API_KEY and only frames the user sends.",
+        "The public landing and /api/health are viewable. The studio needs sign-in. The lunar / cabin GitHub deploy repos are private; public source is FrameLab.",
       ],
     ),
     ...featuredListExtras.framelab,

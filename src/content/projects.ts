@@ -195,6 +195,7 @@ const featuredWorks: Project[] = [
       "Inbetween 先給 Motion Plan，再用 linear-blend 產生候選，只重產壞幀。",
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
+      "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [
@@ -214,10 +215,11 @@ const featuredWorks: Project[] = [
       "SAM 2、RTMPose、SEA-RAFT、RIFE、Wan 僅適配器，模型未註冊時不可用。",
       "不是 NLE，也不輸出完整製片管線。",
       "Grok vision 需 XAI_API_KEY，且僅使用者主動送出的幀。",
+      "公開站可看 landing 與 /api/health。工作室需登入。lunar / cabin 的 GitHub 部署倉目前為私有，公開原始碼在 FrameLab。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
-      live: "https://lunar-falcon-8p2r.zeabur.app",
+      live: "https://cabin-shale-k7q2.zeabur.app",
     },
     media: [
       {
@@ -244,38 +246,38 @@ const featuredWorks: Project[] = [
         src: "/media/shots/framelab-en.jpg",
         alt: "FrameLab 英文公開站：Give it keyframes. Repair only the frames that break.",
         kind: "image",
-        caption: "公開站 lunar-falcon-8p2r 實際畫面。",
+        caption: "英文公開站 lunar-falcon-8p2r 實際畫面。與中文站 cabin-shale-k7q2 是同一套 FrameLab 0.4.0。",
       },
     ],
     sourceReferences: [
       {
         label: "GitHub README · FrameLab",
         href: "https://github.com/aa0968111723-prog/FrameLab",
-        note: "能力邊界與模型表直接取自公開 README。",
+        note: "公開原始碼。能力邊界與模型表直接取自公開 README。",
       },
       githubExportEvidence(
         "FrameLab",
         "本站 /media/github-exports/framelab 複製自公開 repo screenshots。不是 Canva 原作，也不是 Drive 私有檔。",
       ),
       {
-        label: "公開站 · lunar-falcon-8p2r.zeabur.app",
-        href: "https://lunar-falcon-8p2r.zeabur.app",
-        note: "Zeabur 服務 lunar-crystal-falcon-granite，英文 FrameLab 公開站。本次探測 RUNNING。不是淡江戲劇世界。",
-      },
-      {
-        label: "GitHub · lunar-crystal-falcon-granite",
-        href: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
-        note: "FrameLab 公開站對應倉庫。",
-      },
-      {
-        label: "工作站 · cabin-shale-k7q2.zeabur.app",
+        label: "中文公開站 · cabin-shale-k7q2.zeabur.app",
         href: "https://cabin-shale-k7q2.zeabur.app",
-        note: "Zeabur 服務 cabin-shale-raven-swift，完整 FrameLab 工作站。本次探測可能 502。GitHub 目前為私有。",
+        note: "中文 FrameLab landing。標題 FrameLab；主標「給它關鍵影格。只修壞掉的那幾格。」/api/health 回 0.4.0。2026-09-19 探測 RUNNING，不是 502。這是中文作品集的 Live Demo。工作室需登入。",
+      },
+      {
+        label: "英文公開站 · lunar-falcon-8p2r.zeabur.app",
+        href: "https://lunar-falcon-8p2r.zeabur.app",
+        note: "英文 FrameLab landing。標題 FrameLab；主標 Give it keyframes. Repair only the frames that break. /api/health 同樣 0.4.0。2026-09-19 探測 RUNNING。不是淡江戲劇世界，也不是另一個產品。",
       },
       {
         label: "GitHub · cabin-shale-raven-swift",
         href: "https://github.com/aa0968111723-prog/cabin-shale-raven-swift",
-        note: "FrameLab 工作站倉庫，目前為私有。",
+        note: "中文站部署來源倉庫，目前為私有。訪客打不開。公開原始碼在 FrameLab。",
+      },
+      {
+        label: "GitHub · lunar-crystal-falcon-granite",
+        href: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
+        note: "英文站部署來源倉庫，目前為私有。訪客打不開。公開原始碼在 FrameLab。",
       },
     ],
     visibility: "public",

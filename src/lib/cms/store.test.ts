@@ -706,6 +706,43 @@ describe("cms persistence", () => {
     assert.equal(hermes.locale.en?.title, "Hermes Agent - Dashboard");
   });
 
+  it("rewrites FrameLab live URL and cabin 502 notes to the ZH canonical host", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set live_demo_url = $2,
+           source_evidence = $3::jsonb,
+           decisions = $4::jsonb,
+           limitations = $5::jsonb
+       where slug = $1`,
+      [
+        "framelab",
+        "https://lunar-falcon-8p2r.zeabur.app",
+        JSON.stringify([
+          {
+            label: "工作站 · cabin-shale-k7q2.zeabur.app",
+            href: "https://cabin-shale-k7q2.zeabur.app",
+            note: "Zeabur 服務 cabin-shale-raven-swift，完整 FrameLab 工作站。本次探測可能 502。GitHub 目前為私有。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify(["stale identity"]),
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'framelab_identity_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const frame = await getPublishedProject(sql, "framelab");
+    assert.equal(frame.demo.url, "https://cabin-shale-k7q2.zeabur.app");
+    assert.ok(frame.sourceEvidence.some((item) => item.href === "https://cabin-shale-k7q2.zeabur.app"));
+    assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
+    assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
+    assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
+    assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
+  });
+
   it("saves homepage highlight slugs without wiping locale_json", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
