@@ -1,0 +1,105 @@
+{
+  "version": 2,
+  "generatedAt": "2026-09-19T09:24:22.147153Z",
+  "runStatus": "IN_PROGRESS",
+  "scope": {
+    "portfolioRepository": "aa0968111723-prog/bruce23",
+    "planPullRequest": 6,
+    "officialProjectCount": 17,
+    "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
+  },
+  "task": "correct-hermes-service-identity",
+  "inspectedCommit": "19b853d",
+  "github": {
+    "planPullRequest": 6,
+    "repairIssue": 7,
+    "externalRepairPr": "NOT_CREATED: deployed source identity and root cause unconfirmed"
+  },
+  "publicEndpointCheck": {
+    "attempted": 18,
+    "result": "HTTP_ONLY_NOT_CORE_FLOW_VERIFIED",
+    "externalHttp200": 17,
+    "evidence": "docs/portfolio-agent/endpoint-evidence.json",
+    "externalHttp502": 0,
+    "http200": 18,
+    "http502": 0,
+    "freshness": "Mixed timestamps: Hermes corrected and rechecked this cycle; other endpoint observations retained from preceding run."
+  },
+  "validation": {
+    "documentChecks": "PASS: corrected service/domain/status, 18 endpoint observations, unchanged unverified readiness, and no credential patterns",
+    "buildAndTypecheck": "NOT_RERUN: documentation/state only; previous baseline recorded in commit 300277d",
+    "browser": "PASS_LOGIN_BOUNDARY_ONLY: corrected /sessions redirects to sign-in form",
+    "mobileSmoke": "NOT_VERIFIED: viewport override did not apply",
+    "desktopSmoke": "NOT_VERIFIED: viewport override did not apply",
+    "deployment": "Corrected Hermes service RUNNING with provisioned web domain; legacy SUSPENDED service is not current target.",
+    "security": "NOT_VERIFIED"
+  },
+  "automation": {
+    "grokBot": "NOT_ACTIVATED",
+    "id": "bruce23",
+    "schedule": "Hourly at minute 00",
+    "status": "ACTIVE"
+  },
+  "gates": {
+    "online": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "coreFlow": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "completeInfo": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "readiness70": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "mobileSmoke": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "desktopSmoke": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "securityBlockers": {
+      "verifiedCount": null,
+      "status": "NOT_VERIFIED"
+    }
+  },
+  "highestPriorityIssue": {
+    "id": "HERMES-SOURCE-CORRECTION",
+    "title": "Portfolio content and CMS need corrected Hermes service URL",
+    "severity": "high",
+    "status": "open",
+    "evidence": [
+      "User corrected service ID",
+      "Zeabur confirms RUNNING; browser confirms login boundary"
+    ],
+    "impact": "Old URL points to a suspended legacy service. Correct service is available behind login; core flow remains unverified."
+  },
+  "blockers": [
+    "Correct service login boundary verified; authenticated core flow, persistence and mobile/desktop acceptance not verified.",
+    "Old service remains untouched; resume authorization request withdrawn as wrong target.",
+    "Current product fallback and existing CMS may still use old URL; this cycle corrects agent registry/evidence only.",
+    "Current service exposes only the web domain; previous API domain belongs to old service and cannot be reassigned by assumption."
+  ],
+  "nextSteps": [
+    "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation."
+  ],
+  "actionsTaken": [
+    "Accepted user correction and verified service 6aad03324850645efd210d94.",
+    "Confirmed HTTP 200 and browser sign-in boundary at corrected domain.",
+    "Withdrew old-service resume request; no service mutations.",
+    "Updated agent registry and evidence; product fallback/CMS alignment is next task."
+  ]
+}
