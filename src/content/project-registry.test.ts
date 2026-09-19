@@ -12,6 +12,16 @@ import {
   DUIGAO_LIVE_PROBE_VERSION,
   FOLIO_LIVE_PROBE_SLUG,
   FOLIO_LIVE_PROBE_VERSION,
+  HERMES_CONSOLE_LIVE_PROBE_SLUG,
+  HERMES_CONSOLE_LIVE_PROBE_VERSION,
+  SKATEHUB_LIVE_PROBE_SLUG,
+  SKATEHUB_LIVE_PROBE_VERSION,
+  TAMKANG_LIVE_PROBE_SLUG,
+  TAMKANG_LIVE_PROBE_VERSION,
+  LUMEN_LIVE_PROBE_SLUG,
+  LUMEN_LIVE_PROBE_VERSION,
+  ZEN_STUDIO_LIVE_PROBE_SLUG,
+  ZEN_STUDIO_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -178,6 +188,61 @@ describe("official project registry", () => {
     assert.equal(project.links.live, "https://canva2-k7qm.zeabur.app");
     assert.ok(project.process[0]?.includes("文件櫃"));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("文件櫃")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Hermes Console live home without claiming Agent execution", () => {
+    const project = projects.find((item) => item.slug === HERMES_CONSOLE_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(HERMES_CONSOLE_LIVE_PROBE_VERSION, /hermes-console-live-home/);
+    assert.equal(project.links.live, "https://344.zeabur.app");
+    assert.ok(project.process[0]?.includes("344.zeabur.app"));
+    assert.ok(project.process.some((item) => item.includes("今天想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("今天想做什麼")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records SkateHub live slogan without claiming a mileage coreFlow", () => {
+    const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-live-slogan/);
+    assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
+    assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
+    const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-campus-pass/);
+    assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("校園通行證")));
+    assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));
+    assert.ok(project.process.every((item) => !item.includes("開始巡禮")));
+    assert.ok(project.process.every((item) => !item.includes("校園圖鑑")));
+    assert.ok(project.process.every((item) => !item.includes("WASD")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("校園通行證")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Lumen first screen without Hermes conversation chrome", () => {
+    const project = projects.find((item) => item.slug === LUMEN_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-not-hermes/);
+    assert.equal(project.links.live, "https://ai-chat-8rq3.zeabur.app");
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 Hermes")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
+    const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-home/);
+    assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

@@ -95,6 +95,14 @@ describe("experience catalog", () => {
     );
   });
 
+  it("keeps tamkang-world walkthrough on the live campus pass", () => {
+    const steps = experienceCatalog["tamkang-world"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "校園通行證"));
+    assert.ok(steps.some((step) => step.title === "先以訪客巡禮"));
+    assert.equal(steps.some((step) => step.title === "開始巡禮"), false);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
+  });
+
   it("keeps ty focus-challenge walkthrough on the probed public flow", () => {
     const steps = experienceCatalog["focus-challenge"].walkthrough ?? [];
     assert.equal(steps.some((step) => step.title === "暖身"), false);

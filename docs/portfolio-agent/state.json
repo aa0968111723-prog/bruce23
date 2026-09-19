@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-3",
-  "updatedAt": "2026-09-19T23:00:00Z",
+  "runId": "portfolio-agent-hour-4",
+  "updatedAt": "2026-09-20T00:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -773,18 +773,33 @@
     }
   ],
   "portfolioReady": false,
+<<<<<<< HEAD
+=======
+  "currentProject": "tamkang-world",
+  "currentRepository": "aa0968111723-prog/bruce23",
+  "currentBranch": "fix/tamkang-campus-pass",
+  "currentPR": null,
+  "currentTask": "tamkang-campus-pass",
+  "taskStatus": "implementing",
+>>>>>>> origin/main
   "completedSteps": [
     "Hermes k7q2 URL already on production",
-    "FrameLab identity split merged as PR #11 and live on production (cabin-shale-k7q2)",
+    "FrameLab identity split merged as PR #11 and live",
     "Xiaocai/Zen stale 502 notes merged as PR #13 and live",
     "PLANFORM empty-demo sentence hidden (PR #14 live)",
-    "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
+    "Non-Folio walkthrough branding fixed (PR #15 live)",
     "Zeabur service IDs recorded (PR #16)",
+<<<<<<< HEAD
     "AI Director OS stale 502/paused note repair merged as PR #17 and live",
     "TY focus-challenge copy aligned with product contract as PR #18 and live",
     "TY public-flow honesty merged as PR #20 and live",
     "CUTOS stale 502 dropped as PR #21 and live",
     "PLANFORM version.json probe merged as PR #22 and live",
+    "PLANFORM public-home 我的專案 / 新建專案 merged as PR #23 and live on production",
+    "duigao live title merged as PR #24 and live",
+    "Folio file-cabinet merged as PR #25 and live",
+    "Hermes Console live home merged as PR #26 and live",
+    "SkateHub live slogan merged as PR #28 and live",
     "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
@@ -802,7 +817,7 @@
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed 2026-09-19",
+      "evidence": "get-me failed 2026-09-19; GraphQL token unset in this shell",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"

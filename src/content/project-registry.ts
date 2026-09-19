@@ -102,6 +102,26 @@ export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
 
 export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
+export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260919";
+
+export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
+
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
+
+export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
+
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
+
+export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
+
+export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
+
+export const LUMEN_LIVE_PROBE_SLUG = "lumen";
+
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
+
+export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

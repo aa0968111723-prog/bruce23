@@ -348,16 +348,17 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "The backend rejects browser-sent service URLs or keys.",
       ],
       [
-        "Open the workspace",
-        "Optionally set a Hermes connection",
-        "Probe Lumen / FrameLab / Duigao MCP",
-        "Hand poster, animation, and review intent to the matching tools",
+        "Open 344.zeabur.app (no sign-in)",
+        "First screen is “What do you want to do today?” and a personal workspace",
+        "Optionally open Settings and connections",
+        "The portfolio conversation preview is not an Agent execution",
       ],
       ["Public repo hermes-console", "Workspace API and readiness checks"],
       [
         "Needs persistent disk and a long-lived Node process — not a fit for stateless serverless.",
         "Contract tests are not live third-party verification.",
         "This page shows no keys, invite codes, or secrets from internal console screenshots.",
+        "Probed 2026-09-19: GET / HTTP 200, title Hermes. First screen is the turtle assistant / what-do-you-want-today workspace. This portfolio has not sent a real task, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras["hermes-console"],
@@ -401,10 +402,15 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A 3D campus walk on Wuhu Hill",
     summary: "Walk Tamkang in the browser. The hill becomes a visitable campus — not a PDF tour, and not a Google Earth screenshot.",
     process: [
-      "Open forge-bloom-k7xq.zeabur.app",
-      "Tap Start tour",
-      "WASD to move, mouse to look",
-      "Open the campus atlas",
+      "Open forge-bloom-k7xq.zeabur.app (title Tamkang World)",
+      "The public gate is Campus pass: guests can tour Wuhu Hill, or continue with Google / X",
+      "Tap Tour as guest to return to the 3D home",
+    ],
+    limitations: [
+      "GitHub forge-bloom-quiet-falcon is private.",
+      "Performance depends on the device; this is not a full digital twin.",
+      "Probed 2026-09-19: GET / HTTP 200, title Tamkang World. Description lists Kenan Slope, lantern avenue, maritime museum, and Chueh-sheng Library. og: a 3D campus walk on Wuhu Hill.",
+      "GET /login HTTP 200, h1 Campus pass. Guests can tour; sign-in saves stamps. Public JS has no Start tour, campus atlas, or WASD. This portfolio has not finished a guest 3D walk, so coreFlow is not passed.",
     ],
   },
   "tamsui-drama": {
@@ -423,6 +429,9 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "Toward health, toward sunlight",
     summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
     process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS slogan catalogs gear and mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
+    ],
   },
   "zen-studio": {
     title: "TKU Zen Studio",
@@ -430,9 +439,12 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "Print, events, and daily making under one lamp — not another Drive folder.",
     process: [
       "Open delta-horizon-k7f2.zeabur.app",
-      "Read today's prompt and upcoming events",
-      "Start an IG post / carousel / story",
-      "Edit due items on the calendar",
+      "First screen is “What can we make today?”",
+      "Read upcoming events and AI suggestions",
+      "Due items have no reviewer; opening the studio auto-publishes them",
+    ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title 禪學社 Studio. First screen is What can we make today? The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
     ],
   },
   "focus-challenge": {
@@ -465,6 +477,9 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
       "Tap to listen or hold to speak",
       "Pick poster / photo / video / long task",
       "Continue from recent projects",
+    ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title Lumen. First screen is What do you want to do? / tap to listen. This portfolio has not held-to-speak, so coreFlow is not passed.",
     ],
   },
   xiaocai: {

@@ -919,6 +919,168 @@ describe("cms persistence", () => {
     assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Hermes Console process to the live unsigned home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "hermes-console",
+        JSON.stringify(["開啟工作區"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · 344.zeabur.app",
+            href: "https://344.zeabur.app",
+            note: "FEATURE_AUDIT_EDU.md 記載的正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_console_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const desk = await getPublishedProject(sql, "hermes-console");
+    assert.ok(desk.process[0]?.includes("344.zeabur.app"));
+    assert.match(
+      desk.sourceEvidence.find((item) => item.href?.includes("344.zeabur.app"))?.note ?? "",
+      /今天想做什麼/,
+    );
+    assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites SkateHub evidence with the live slogan probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "skatehub",
+        JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · dd-k3f9.zeabur.app",
+            href: "https://dd-k3f9.zeabur.app",
+            note: "Zeabur 服務 dd。本次探測 RUNNING。不是 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'skatehub_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const hub = await getPublishedProject(sql, "skatehub");
+    assert.match(
+      hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
+      /走向健康，走向陽光/,
+    );
+    assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Tamkang World process to the live campus pass", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "tamkang-world",
+        JSON.stringify(["點「開始巡禮」進入 3D", "WASD 移動", "開「校園圖鑑」對照建築"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · forge-bloom-k7xq.zeabur.app",
+            href: "https://forge-bloom-k7xq.zeabur.app",
+            note: "Zeabur 服務 forge-bloom-quiet-falcon。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamkang_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const world = await getPublishedProject(sql, "tamkang-world");
+    assert.ok(world.process.some((item) => item.includes("校園通行證")));
+    assert.equal(world.process.some((item) => item.includes("開始巡禮")), false);
+    assert.equal(world.process.some((item) => item.includes("WASD")), false);
+    assert.match(
+      world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-k7xq"))?.note ?? "",
+      /校園通行證/,
+    );
+    assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Lumen conversation so it is not Hermes chrome", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb, experience_config = $4::jsonb
+       where slug = $1`,
+      [
+        "lumen",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · ai-chat-8rq3.zeabur.app",
+            href: "https://ai-chat-8rq3.zeabur.app",
+            note: "Zeabur 服務 wood-ivory-blaze-maple。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'lumen_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const orb = await getPublishedProject(sql, "lumen");
+    assert.match(
+      orb.sourceEvidence.find((item) => item.href?.includes("ai-chat-8rq3"))?.note ?? "",
+      /想做什麼/,
+    );
+    assert.doesNotMatch(orb.experienceConfig.conversation?.starter ?? "", /Hermes 執行期/);
+    assert.match(orb.experienceConfig.conversation?.starter ?? "", /想做什麼/);
+    assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Zen Studio process to the live What can we make today home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["從「生成 IG 貼文／Carousel／Story」開始"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · delta-horizon-k7f2.zeabur.app",
+            href: "https://delta-horizon-k7f2.zeabur.app",
+            note: "Zeabur 服務 delta-horizon-cliff-fern。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.match(
+      studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
+      /今天可以創作什麼/,
+    );
+    assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
