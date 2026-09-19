@@ -1,49 +1,58 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-19T09:04:00Z",
+  "updatedAt": "2026-09-19T13:39:00Z",
   "portfolioReady": false,
-  "adoptedTech": [],
+  "adoptedTech": [
+    {
+      "id": "HERMES_DASHBOARD_STATUS_IS_PUBLIC",
+      "source": "https://hermes-agent.nousresearch.com/docs/user-guide/features/web-dashboard",
+      "note": "GET /api/status is a public readiness probe; Chat/PTY sockets are authenticated. Do not treat status 200 as core flow."
+    }
+  ],
   "rejectedTech": [
     {
       "id": "REPLACE_FRAMELAB_WITH_OPENCHATCUT",
-      "reason": "lunar and cabin are already FrameLab. Replacing the product is out of scope. Research only the identity split and portfolio mapping."
+      "reason": "lunar and cabin are already FrameLab. Replacing the product is out of scope."
     },
     {
       "id": "TREAT_HTTP_200_AS_CORE_FLOW",
       "reason": "PR #6 forbids scoring online-ready from status code alone."
+    },
+    {
+      "id": "UPGRADE_HERMES_0182_TO_0213_THIS_HOUR",
+      "reason": "Production dashboard reports 0.18.2. Upstream MIT line is 0.21.3. Upgrade is a separate ops task, not a portfolio copy fix."
     }
   ],
   "identityDecisions": [
     {
       "key": "hermes-agent",
       "canonicalPublicUrl": "https://hermes-agent-k7q2.zeabur.app/",
-      "staleUrl": "https://455.zeabur.app/sessions",
-      "evidence": [
-        "2026-09-19 curl 455.zeabur.app and /sessions both HTTP 502, 11-byte body",
-        "2026-09-19 hermes-agent-k7q2.zeabur.app HTTP 302 -> /login HTTP 200 title Sign in — Hermes Agent",
-        "login HTML references @nous-research/ui fonts"
-      ],
-      "status": "canonical_url_proposed"
+      "staleUrl": "https://455.zeabur.app/",
+      "productionStatus": "portfolio page already links k7q2 + Sign in; 455 remains HTTP 502",
+      "runtimeVersion": "0.18.2",
+      "upstreamLine": "NousResearch/hermes-agent MIT ~0.21.3",
+      "status": "canonical_url_live_on_portfolio_page"
     },
     {
       "key": "cabin-shale-raven-swift",
-      "liveTitle": "FrameLab",
-      "repoReadmeTitle": "FrameLab",
-      "packageName": "framelab",
-      "packageRepository": "https://github.com/aa0968111723-prog/FrameLab.git",
       "canonicalProductName": "FrameLab",
+      "officialRepo": "aa0968111723-prog/FrameLab",
       "status": "identity_confirmed_as_framelab"
     },
     {
       "key": "lunar-crystal-falcon-granite",
-      "liveTitle": "FrameLab",
-      "repoReadmeTitle": "FrameLab",
-      "packageName": "app-builder-workspace",
-      "relationship": "duplicate_or_older_framelab_deploy",
+      "relationship": "duplicate FrameLab deploy, not a second product",
       "status": "do_not_invent_new_product"
+    },
+    {
+      "key": "ty",
+      "canonicalLiveUrl": "https://leader-dna-mcp-a7k2.zeabur.app/",
+      "portfolioSlug": "focus-challenge",
+      "contract": "rules → tutorial + 15s practice → 60s Stroop → masked leaderboard",
+      "status": "copy_merged_pr18_production_walkthrough_still_stale"
     }
   ],
-  "nextRepairTask": "HERMES-AGENT-URL-CANONICAL",
-  "nextUpgradeTask": "FRAMELAB-IDENTITY-SPLIT",
-  "nextResearchHour": "Write Playwright smoke scaffold for portfolio homepage + one public tool; do not score 70."
+  "nextRepairTask": "TY-CORE-FLOW-PUBLIC",
+  "nextUpgradeTask": "HERMES-VERSION-HONESTY-0182-vs-0213",
+  "nextResearchHour": "Black-box operate ty public flow without sheet credentials; confirm PR #18 copy on production."
 }
