@@ -1,0 +1,17 @@
+{
+  "updatedAt": "2026-09-19T20:01:00-06:00",
+  "runId": "TECH-RND-002",
+  "portfolioReady": false,
+  "adopted": [
+    "Canonical Hermes dashboard is https://hermes-agent-k7q2.zeabur.app/ (Sign in).",
+    "455.zeabur.app remains HTTP 502 and is stale, not the current product.",
+    "lunar-falcon-8p2r and cabin-shale-k7q2 are duplicate FrameLab deploys of official repo aa0968111723-prog/FrameLab.",
+    "tku-tamsui-drama-world-k4x9 is drama world; canva2-k7qm is Folio; dd-k3f9 is SkateHub."
+  ],
+  "rejected": [
+    "Do not mark READY from HTTP 200.",
+    "Do not invent lunar or cabin product names.",
+    "Do not treat deployed Hermes 0.18.2 as upstream 0.21.3 without an upgrade task."
+  ],
+  "nextRepairTask": "HERMES-CMS-FALLBACK-ALIGN"
+}
