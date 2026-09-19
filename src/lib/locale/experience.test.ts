@@ -26,6 +26,8 @@ describe("experience playable chrome", () => {
     assert.equal(en.hintInTree, "In the synced tree");
     assert.equal(zh.hintMissingFromTree, "不在這次有限檔案樹裡");
     assert.equal(en.hintMissingFromTree, "Not in this limited file tree");
+    assert.equal(zh.previewWorkspace, "作品集預覽");
+    assert.equal(en.previewOffline, "Not connected to the live product");
     assert.equal(zh.tabVisual, "視覺展示");
     assert.equal(en.tabVisual, "Visual");
     assert.notEqual(zh.tabGithub, en.tabGithub);
