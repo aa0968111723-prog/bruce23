@@ -840,7 +840,7 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
        where slug = $1`,
       [
         "planform",
@@ -854,6 +854,7 @@ describe("cms persistence", () => {
             kind: "demo",
           },
         ]),
+        JSON.stringify({ intro: "等角場佈示意：旋轉、拖動物件、看用途與尺寸。" }),
       ],
     );
     await sql.query(`delete from cms_meta where key = 'planform_live_probe_version'`);
@@ -864,6 +865,9 @@ describe("cms persistence", () => {
     assert.equal(plan.process.some((item) => item === "選教室模板與人數"), false);
     assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /1\.0\.0/);
     assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /我的專案/);
+    assert.match(plan.experienceConfig.intro ?? "", /我的專案/);
+    assert.match(plan.experienceConfig.intro ?? "", /新建專案/);
+    assert.doesNotMatch(plan.experienceConfig.intro ?? "", /旋轉、拖動物件/);
     assert.ok(plan.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(plan.limitations.some((item) => item.includes("不做容留人數計算")));
     assert.ok(plan.sourceEvidence.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));

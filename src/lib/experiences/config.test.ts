@@ -239,6 +239,10 @@ describe("experience config merge", () => {
     const review = defaultExperienceConfig("duigao");
     assert.match(review.intro ?? "", /今天要對什麼/);
     assert.doesNotMatch(review.intro ?? "", /立刻上傳/);
+    const planform = defaultExperienceConfig("planform");
+    assert.match(planform.intro ?? "", /我的專案/);
+    assert.match(planform.intro ?? "", /新建專案/);
+    assert.doesNotMatch(planform.intro ?? "", /旋轉、拖動物件/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });

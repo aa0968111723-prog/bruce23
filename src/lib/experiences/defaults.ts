@@ -63,7 +63,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "planform") {
     return {
       ...base,
-      intro: "等角場佈示意：旋轉、拖動物件、看用途與尺寸。",
+      intro: "公開站首屏是「我的專案」與「＋ 新建專案」。這裡是作品集場佈示意，不是線上專案，也不假裝已經拖過物件。",
       spatial: {
         objects: DEFAULT_SPATIAL,
         circulationNote: "薄荷色曲線是示意動線，不是法定避難寬度。",

@@ -183,7 +183,7 @@ describe("official project registry", () => {
   it("records PLANFORM public home as 我的專案 without claiming canvas coreFlow", () => {
     const project = projects.find((item) => item.slug === PLANFORM_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-public-home/);
+    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-project-home/);
     assert.equal(project.links.live, "https://planform-iso-k7d2.zeabur.app");
     assert.ok(project.process[0]?.includes("我的專案"));
     assert.ok(project.process[0]?.includes("新建專案"));
