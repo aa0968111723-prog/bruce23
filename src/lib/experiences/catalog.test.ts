@@ -162,6 +162,13 @@ describe("frontend contract", () => {
     assert.match(localeView, /跳到內容/);
     const toggle = readFileSync(new URL("../../../src/components/site/LocaleToggle.tsx", import.meta.url), "utf8");
     assert.match(toggle, /role="radiogroup"/);
+    const walk = readFileSync(
+      new URL("../../../src/components/experience/modes/FolioWalkthrough.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(walk, /project.slug === "folio"/);
+    assert.match(walk, /walkDemoCanvas/);
+    assert.match(walk, /isFolio \? walkthroughStageKind/);
     assert.match(toggle, /min-h-11/);
     assert.match(toggle, /min-w-11/);
     assert.match(header, /LocaleToggle/);
