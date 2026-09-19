@@ -951,6 +951,36 @@ describe("cms persistence", () => {
     assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites SkateHub evidence with the live slogan probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "skatehub",
+        JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · dd-k3f9.zeabur.app",
+            href: "https://dd-k3f9.zeabur.app",
+            note: "Zeabur 服務 dd。本次探測 RUNNING。不是 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'skatehub_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const hub = await getPublishedProject(sql, "skatehub");
+    assert.match(
+      hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
+      /走向健康，走向陽光/,
+    );
+    assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

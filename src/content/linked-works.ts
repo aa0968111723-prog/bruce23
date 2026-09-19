@@ -129,7 +129,10 @@ export const linkedWorks: Project[] = [
     process: ["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程", "回來看自己的基地"],
     outputs: ["直排輪基地公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["個人紀錄依部署資料庫，不在此公開他人資料。"],
+    limitations: [
+      "個人紀錄依部署資料庫，不在此公開他人資料。",
+      "2026-09-19 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「收錄市售直排輪款式與配件圖鑑…不要在家玩手機，穿上輪鞋出發吧！」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/dd",
       live: "https://dd-k3f9.zeabur.app",
@@ -142,7 +145,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · dd-k3f9.zeabur.app",
         href: "https://dd-k3f9.zeabur.app",
-        note: "Zeabur 服務 dd。本次探測 RUNNING。不是 Folio。",
+        note: "2026-09-19 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan 含圖鑑與里程。不是 Folio。",
       },
       {
         label: "GitHub · dd",

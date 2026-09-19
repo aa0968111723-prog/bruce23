@@ -253,7 +253,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "打開基地", body: "公開站 dd-k3f9。標題是「走向健康，走向陽光」，不是 Folio。" },
+      { title: "打開基地", body: "公開站 dd-k3f9。標題「直排輪基地 SkateHub｜走向健康，走向陽光」。slogan 要人穿上輪鞋出發，不是 Folio。" },
       { title: "裝備圖鑑", body: "看直排輪款式與配件。" },
       { title: "里程", body: "記錄滑行里程，回到自己的基地。" },
     ],

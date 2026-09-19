@@ -14,6 +14,8 @@ import {
   FOLIO_LIVE_PROBE_VERSION,
   HERMES_CONSOLE_LIVE_PROBE_SLUG,
   HERMES_CONSOLE_LIVE_PROBE_VERSION,
+  SKATEHUB_LIVE_PROBE_SLUG,
+  SKATEHUB_LIVE_PROBE_VERSION,
   TY_CONTRACT_SLUGS,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
@@ -158,6 +160,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshDuigaoLiveProbe(sql);
   await refreshFolioLiveProbe(sql);
   await refreshHermesConsoleLiveProbe(sql);
+  await refreshSkatehubLiveProbe(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -919,6 +922,42 @@ async function refreshHermesConsoleLiveProbe(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('hermes_console_live_probe_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [HERMES_CONSOLE_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshSkatehubLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'skatehub_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === SKATEHUB_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set limitations = $2::jsonb,
+         source_evidence = $3::jsonb,
+         locale_json = $4::jsonb,
+         experience_mode = coalesce($5, experience_mode),
+         experience_config = $6::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('skatehub_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [SKATEHUB_LIVE_PROBE_VERSION],
   );
 }
 

@@ -106,6 +106,10 @@ export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260
 
 export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
 
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
+
+export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

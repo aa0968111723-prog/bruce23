@@ -14,6 +14,8 @@ import {
   FOLIO_LIVE_PROBE_VERSION,
   HERMES_CONSOLE_LIVE_PROBE_SLUG,
   HERMES_CONSOLE_LIVE_PROBE_VERSION,
+  SKATEHUB_LIVE_PROBE_SLUG,
+  SKATEHUB_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -191,6 +193,16 @@ describe("official project registry", () => {
     assert.ok(project.process[0]?.includes("344.zeabur.app"));
     assert.ok(project.process.some((item) => item.includes("今天想做什麼")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("今天想做什麼")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records SkateHub live slogan without claiming a mileage coreFlow", () => {
+    const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-live-slogan/);
+    assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
+    assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

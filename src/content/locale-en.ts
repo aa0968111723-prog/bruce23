@@ -424,6 +424,9 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "Toward health, toward sunlight",
     summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
     process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS slogan catalogs gear and mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
+    ],
   },
   "zen-studio": {
     title: "TKU Zen Studio",
