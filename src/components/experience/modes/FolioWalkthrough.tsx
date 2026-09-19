@@ -138,6 +138,7 @@ function FolioStage({
         </span>
       </div>
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface shadow-card">
+        {kind === "cabinet" ? <CabinetStage title={step.title} ex={ex} /> : null}
         {kind === "canvas" ? <CanvasStage file={file} ex={ex} /> : null}
         {kind === "artboard" ? <ArtboardStage file={file} ex={ex} /> : null}
         {kind === "command" ? <CommandStage file={file} ex={ex} /> : null}
@@ -146,6 +147,45 @@ function FolioStage({
         {kind === "document" ? <DocumentStage title={step.title} file={file} ex={ex} /> : null}
       </div>
     </div>
+  );
+}
+
+function CabinetStage({ title, ex }: { title: string; ex: ExperienceChrome }) {
+  return (
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={title} data-folio-cabinet="true">
+      <rect width="320" height="200" className="fill-surface-blue" />
+      <rect x="0" y="0" width="320" height="22" className="fill-surface stroke-line" />
+      <text x="8" y="15" className="fill-ink" fontSize="7">
+        Folio
+      </text>
+      <text x="248" y="15" className="fill-muted" fontSize="7">
+        {ex.folioNoLogin}
+      </text>
+      <rect x="16" y="36" width="88" height="72" rx="8" className="fill-mint" />
+      <text x="24" y="58" className="fill-primary-foreground" fontSize="8">
+        {ex.folioNewDoc}
+      </text>
+      <text x="24" y="74" className="fill-primary-foreground" fontSize="7">
+        +
+      </text>
+      <rect x="116" y="36" width="88" height="72" rx="8" className="fill-surface stroke-line" />
+      <rect x="128" y="48" width="64" height="8" rx="2" className="fill-surface-mint" />
+      <rect x="128" y="62" width="48" height="6" rx="2" className="fill-line" />
+      <rect x="216" y="36" width="88" height="72" rx="8" className="fill-surface stroke-line" />
+      <rect x="228" y="48" width="64" height="8" rx="2" className="fill-sky" />
+      <rect x="228" y="62" width="40" height="6" rx="2" className="fill-line" />
+      <rect x="16" y="118" width="88" height="52" rx="8" className="fill-surface stroke-line" />
+      <text x="24" y="140" className="fill-ink" fontSize="7">
+        MCP
+      </text>
+      <rect x="116" y="118" width="88" height="52" rx="8" className="fill-surface stroke-line" />
+      <text x="124" y="140" className="fill-ink" fontSize="7">
+        embed
+      </text>
+      <text x="16" y="190" className="fill-muted" fontSize="7">
+        {ex.folioOnDevice}
+      </text>
+    </svg>
   );
 }
 

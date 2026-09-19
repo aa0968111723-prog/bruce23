@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T22:50:00Z",
-  "runId": "grok-impl-20260920-planform-project-home",
+  "generatedAt": "2026-09-20T23:40:00Z",
+  "runId": "grok-impl-20260920-folio-cabinet-intro",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T22:20:00Z",
+  "startedAt": "2026-09-20T23:20:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,11 +12,11 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "planform-project-home",
-  "inspectedCommit": "c787bb3",
+  "task": "folio-cabinet-intro",
+  "inspectedCommit": "c624ae2",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
     "doNotMerge": [10]
   },
   "validation": {
@@ -29,33 +29,33 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/hermes-console",
-      "status": 200,
-      "pr45Landed": true,
-      "copy": "Canvas quotes 今天想做什麼 / 研究／創作／分析. No 輸入關鍵詞看說明.",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T22:30:00Z"
-    },
-    {
-      "url": "https://344.zeabur.app/",
-      "status": 200,
-      "copy": "title Hermes. h1 今天想做什麼？ quick-actions 研究／創作／分析／客群／靈感／設計.",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T22:30:00Z"
-    },
-    {
       "url": "https://bruce23-k7m2.zeabur.app/work/planform",
       "status": 200,
-      "copy": "Process already 我的專案 / 新建專案. Canvas intro still 等角場佈示意：旋轉、拖動物件、看用途與尺寸.",
+      "pr46Landed": true,
+      "copy": "Canvas intro quotes 公開站首屏是「我的專案」與「＋ 新建專案」. No 等角場佈示意：旋轉、拖動物件.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T22:35:00Z"
+      "checkedAt": "2026-09-20T23:25:00Z"
     },
     {
       "url": "https://planform-iso-k7d2.zeabur.app/",
       "status": 200,
       "copy": "title PLANFORM｜活動空間彩排. JS h1 我的專案 and ＋ 新建專案. Drag is after new project, not first screen.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T22:35:00Z"
+      "checkedAt": "2026-09-20T23:25:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/folio",
+      "status": 200,
+      "copy": "Process already 文件櫃. Walkthrough step 1 文件櫃. Canvas intro still 依公開 canva2／Folio 指令層走一遍. EN overlay first step was Canvas by index.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T23:30:00Z"
+    },
+    {
+      "url": "https://canva2-k7qm.zeabur.app/",
+      "status": 200,
+      "copy": "title Folio. First screen 文件櫃. On this device, no sign-in.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T23:30:00Z"
     }
   ],
   "gates": {
@@ -73,8 +73,8 @@
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件"
   ],
   "nextSteps": [
-    "Land PLANFORM canvas stamp to live 我的專案 home",
-    "After deploy, verify production canvas no longer says 旋轉、拖動物件",
+    "Land Folio canvas intro stamp to live 文件櫃 home",
+    "After deploy, verify production canvas no longer says 指令層走一遍",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }

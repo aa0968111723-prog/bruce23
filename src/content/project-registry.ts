@@ -98,7 +98,7 @@ export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-home-20260920";
 
 export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
 
-export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
+export const FOLIO_LIVE_PROBE_VERSION = "folio-cabinet-intro-20260920";
 
 export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
