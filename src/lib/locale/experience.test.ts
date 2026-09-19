@@ -63,8 +63,15 @@ describe("experience playable chrome", () => {
       assert.notEqual(zh.honestyLabel, en.honestyLabel);
     }
     const frameEn = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "en");
+    const frameZh = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "zh");
     assert.equal(frameEn.honestyLabel, PORTFOLIO_DEMO_EN);
     assert.match(frameEn.timeline?.demoDisclaimer ?? "", /not GPU/i);
+    assert.match(frameZh.intro ?? "", /進入工作室要登入/);
+    assert.match(frameEn.intro ?? "", /landing page/i);
+    const reviewZh = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "zh");
+    const reviewEn = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "en");
+    assert.match(reviewZh.intro ?? "", /今天要對什麼/);
+    assert.match(reviewEn.intro ?? "", /What are we reviewing today/i);
     const posterEn = overlayExperienceConfig(defaultExperienceConfig("poster-vision-ai"), "poster-vision-ai", "en");
     assert.match(posterEn.honestyLabel ?? "", /not eye-tracking/i);
     assert.match(posterEn.comparison?.estimateDisclaimer ?? "", /not eye-tracking/i);

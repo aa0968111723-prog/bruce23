@@ -197,14 +197,14 @@ const featuredWorks: Project[] = [
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
       "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
+      "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入；未登入不能匯入或修幀。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [
-      "匯入影片或圖序",
-      "時間軸標記 key / breakdown / generated",
-      "onion skin、pose ghost、motion path",
-      "框選區域後 Ask / Repair",
-      "Accept 候選或只重產問題窗",
+      "打開 cabin-shale-k7q2.zeabur.app（標題 FrameLab）",
+      "首屏副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」",
+      "主按鈕「登入工作室」到 /login；也可看「系統狀態」/api/health",
+      "登入後同一鏡頭會成為範例時間軸；作品集未登入、未匯入、未修幀",
     ],
     outputs: [
       "可跑的工作站 UI 與 REST / MCP",
@@ -217,6 +217,7 @@ const featuredWorks: Project[] = [
       "不是 NLE，也不輸出完整製片管線。",
       "Grok vision 需 XAI_API_KEY，且僅使用者主動送出的幀。",
       "公開站可看 landing 與 /api/health。工作室需登入。主倉庫 FrameLab 與部署倉 cabin / lunar 均已完全公開。",
+      "2026-09-20 GET / HTTP 200，h1「給它關鍵影格。只修壞掉的那幾格。」主 CTA「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。工作室需登入。作品集未登入、未匯入影片、未修幀，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
@@ -263,7 +264,7 @@ const featuredWorks: Project[] = [
       {
         label: "中文公開站 · cabin-shale-k7q2.zeabur.app",
         href: "https://cabin-shale-k7q2.zeabur.app",
-        note: "中文 FrameLab landing。標題 FrameLab；主標「給它關鍵影格。只修壞掉的那幾格。」/api/health 回 0.4.0。2026-09-19 探測 RUNNING，不是 502。這是中文作品集的 Live Demo。工作室需登入。",
+        note: "中文 FrameLab landing。2026-09-20 GET / HTTP 200，標題 FrameLab。h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。不是 502。這是中文作品集的 Live Demo。工作室需登入。未登入不能匯入或修幀。",
       },
       {
         label: "英文公開站 · lunar-falcon-8p2r.zeabur.app",
@@ -464,14 +465,13 @@ const featuredWorks: Project[] = [
       "分享連結用 #room + invite 高熵秘密；資料庫只存雜湊。",
       "前端只放 publishable key，不放 service role。",
       "雲端房間建立失敗時直接說暫時無法分享，不退回「看起來成功但其實要主辦方開著頁面」的連結。",
+      "公開站首屏是「今天要對什麼？」的空間選擇，不是立刻上傳文宣。做一張圖／建立活動房才進房間。",
     ],
     modalities: ["圖像", "影片時間點", "註記", "LINE 分享"],
     process: [
-      "上傳文宣版本",
-      "點位置或圈範圍留意見",
-      "待修改／已完成",
-      "可選視覺提案層",
-      "複製連結傳到 LINE",
+      "打開 duigao-k7q2.zeabur.app（標題「對稿｜圖片與影片協作空間」）",
+      "首屏「開始新的工作」，h2「今天要對什麼？」；可選「做一張圖」或「建立活動房」",
+      "頁上三步驟是「上傳作品 → 分享連結 → 集中定稿」；作品集未上傳、未點位留言",
     ],
     outputs: [
       "手機與桌機同一套狀態、不同外殼",
@@ -483,7 +483,7 @@ const featuredWorks: Project[] = [
       "影片單次上傳、無續傳；上限刻意保守。",
       "HEVC 的 .mov 在部分瀏覽器播不出，會說明而不是給黑畫面。",
       "本作品集不會讀取對稿的私人資料表或 token。",
-      "2026-09-19 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。README 標題仍是文宣討論區。作品集未上傳真實文宣完成點位留言，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。公開 JS 首屏 h2「今天要對什麼？」；可選「做一張圖」「建立活動房」。三步驟文案是上傳作品→分享連結→集中定稿。影片上傳需登入。作品集未建立房間、未上傳真實文宣、未點位留言，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
@@ -524,7 +524,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「對稿｜圖片與影片協作空間」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
+        note: "2026-09-20 HTTP 200，標題「對稿｜圖片與影片協作空間」。JS 首屏「今天要對什麼？」與「做一張圖／建立活動房」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
       },
     ],
     visibility: "public",

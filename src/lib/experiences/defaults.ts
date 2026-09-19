@@ -50,7 +50,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "framelab") {
     return {
       ...base,
-      intro: "作品集示範時間軸，概念對齊 FrameLab 的 sample-ball / timeline-engine。",
+      intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
       timeline: {
         frames: DEFAULT_FRAMES,
         onionDefault: true,
@@ -76,7 +76,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "duigao") {
     return {
       ...base,
-      intro: "作品集對稿示意：點位置留言、切版本、比較。",
+      intro: "公開站首屏是「今天要對什麼？」；可選做一張圖或建立活動房。這裡是作品集對稿示意，不是真實房間。",
       comparison: {
         variant: "annotate",
         versions: [

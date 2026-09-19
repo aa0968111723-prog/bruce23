@@ -714,7 +714,8 @@ describe("cms persistence", () => {
        set live_demo_url = $2,
            source_evidence = $3::jsonb,
            decisions = $4::jsonb,
-           limitations = $5::jsonb
+           process = $5::jsonb,
+           limitations = $6::jsonb
        where slug = $1`,
       [
         "framelab",
@@ -728,6 +729,7 @@ describe("cms persistence", () => {
           },
         ]),
         JSON.stringify(["stale identity"]),
+        JSON.stringify(["匯入影片或圖序"]),
         JSON.stringify(["stale limitation"]),
       ],
     );
@@ -739,7 +741,12 @@ describe("cms persistence", () => {
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
     assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
+    assert.ok(frame.process.some((item) => item.includes("登入工作室")));
+    assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
+    assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
+    assert.match(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
     assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
   });
 
@@ -858,15 +865,17 @@ describe("cms persistence", () => {
     assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
   });
 
-  it("rewrites duigao evidence with the live page title", async () => {
+  it("rewrites duigao process to the live What are we reviewing today home", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, decisions = $3::jsonb, limitations = $4::jsonb, source_evidence = $5::jsonb
        where slug = $1`,
       [
         "duigao",
+        JSON.stringify(["上傳文宣版本"]),
+        JSON.stringify(["stale decision"]),
         JSON.stringify(["stale limitation"]),
         JSON.stringify([
           {
@@ -881,11 +890,17 @@ describe("cms persistence", () => {
     await sql.query(`delete from cms_meta where key = 'duigao_live_probe_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const room = await getPublishedProject(sql, "duigao");
+    assert.ok(room.process[0]?.includes("duigao-k7q2.zeabur.app"));
+    assert.ok(room.process.some((item) => item.includes("今天要對什麼")));
+    assert.ok(room.process.every((item) => !item.includes("上傳文宣版本")));
+    assert.ok(room.decisions.some((item) => item.includes("今天要對什麼")));
     assert.match(
       room.sourceEvidence.find((item) => item.href?.includes("duigao-k7q2"))?.note ?? "",
-      /對稿｜圖片與影片協作空間/,
+      /今天要對什麼/,
     );
+    assert.match(room.experienceConfig.intro ?? "", /今天要對什麼/);
     assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.match(room.locale.en?.process?.[1] ?? "", /What are we reviewing today/i);
   });
 
   it("rewrites Folio process to start at the live file cabinet", async () => {

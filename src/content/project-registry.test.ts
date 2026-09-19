@@ -66,7 +66,7 @@ describe("official project registry", () => {
     assert.equal(FRAMELAB_IDENTITY.canonicalLiveUrl, zh?.liveUrl);
     assert.equal(FRAMELAB_IDENTITY.health.name, "FrameLab");
     assert.equal(FRAMELAB_IDENTITY.health.version, "0.4.0");
-    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-identity/);
+    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-live-home/);
   });
 
   it("points the FrameLab portfolio card at the ZH live host and keeps the EN host as evidence", () => {
@@ -82,6 +82,11 @@ describe("official project registry", () => {
     );
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
     assert.ok(frame.sourceReferences.every((item) => !/可能 502/.test(item.note)));
+    assert.ok(frame.process.some((item) => item.includes("登入工作室")));
+    assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
+    assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
+    assert.ok(frame.sourceReferences.some((item) => item.note.includes("登入工作室") && item.href === FRAMELAB_IDENTITY.canonicalLiveUrl));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     const cabinGit = frame.sourceReferences.find((item) =>
       item.href?.includes("cabin-shale-raven-swift"),
     );
@@ -186,12 +191,17 @@ describe("official project registry", () => {
     assert.ok(project.limitations.every((item) => !/已符合所有法規/.test(item)));
   });
 
-  it("records duigao live title without claiming a pin-comment coreFlow", () => {
+  it("records duigao live home without claiming a pin-comment coreFlow", () => {
     const project = projects.find((item) => item.slug === DUIGAO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(DUIGAO_LIVE_PROBE_VERSION, /duigao-live-title/);
+    assert.match(DUIGAO_LIVE_PROBE_VERSION, /duigao-live-home/);
     assert.equal(project.links.live, "https://duigao-k7q2.zeabur.app");
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("對稿｜圖片與影片協作空間")));
+    assert.ok(project.process[0]?.includes("duigao-k7q2.zeabur.app"));
+    assert.ok(project.process.some((item) => item.includes("今天要對什麼")));
+    assert.ok(project.process.some((item) => item.includes("建立活動房")));
+    assert.ok(project.process.every((item) => !item.includes("上傳文宣版本")));
+    assert.ok(project.decisions.some((item) => item.includes("今天要對什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("今天要對什麼")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
