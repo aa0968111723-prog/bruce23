@@ -8,6 +8,8 @@ import {
   CUTOS_LIVE_PROBE_VERSION,
   PLANFORM_LIVE_PROBE_SLUG,
   PLANFORM_LIVE_PROBE_VERSION,
+  DUIGAO_LIVE_PROBE_SLUG,
+  DUIGAO_LIVE_PROBE_VERSION,
   TY_CONTRACT_SLUGS,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
@@ -149,6 +151,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshTyContractCopy(sql);
   await refreshCutosLiveProbe(sql);
   await refreshPlanformLiveProbe(sql);
+  await refreshDuigaoLiveProbe(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -804,6 +807,36 @@ async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('planform_live_probe_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [PLANFORM_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshDuigaoLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'duigao_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === DUIGAO_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === DUIGAO_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set limitations = $2::jsonb,
+         source_evidence = $3::jsonb,
+         locale_json = $4::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('duigao_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [DUIGAO_LIVE_PROBE_VERSION],
   );
 }
 

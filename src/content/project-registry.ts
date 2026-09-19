@@ -94,6 +94,10 @@ export const PLANFORM_LIVE_PROBE_VERSION = "planform-public-home-20260919";
 
 export const PLANFORM_LIVE_PROBE_SLUG = "planform";
 
+export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-title-20260919";
+
+export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

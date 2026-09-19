@@ -857,6 +857,36 @@ describe("cms persistence", () => {
     assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
   });
 
+  it("rewrites duigao evidence with the live page title", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "duigao",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · duigao-k7q2.zeabur.app",
+            href: "https://duigao-k7q2.zeabur.app",
+            note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'duigao_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const room = await getPublishedProject(sql, "duigao");
+    assert.match(
+      room.sourceEvidence.find((item) => item.href?.includes("duigao-k7q2"))?.note ?? "",
+      /對稿｜圖片與影片協作空間/,
+    );
+    assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
