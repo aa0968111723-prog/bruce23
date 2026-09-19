@@ -740,6 +740,11 @@ describe("cms persistence", () => {
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://cabin-shale-k7q2.zeabur.app"));
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
     assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(frame.sourceEvidence.every((item) => !/目前為私有/.test(item.note ?? "")));
+    assert.match(
+      frame.sourceEvidence.find((item) => item.href?.includes("cabin-shale-raven-swift"))?.note ?? "",
+      /private:false/,
+    );
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
     assert.ok(frame.process.some((item) => item.includes("登入工作室")));
     assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
@@ -1029,6 +1034,11 @@ describe("cms persistence", () => {
       /校園通行證/,
     );
     assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(world.limitations.every((item) => !item.includes("目前為私有")));
+    assert.match(
+      world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-quiet-falcon"))?.note ?? "",
+      /private:false/,
+    );
   });
 
   it("rewrites Lumen conversation so it is not Hermes chrome", async () => {
@@ -1241,6 +1251,8 @@ describe("cms persistence", () => {
     assert.match(zen.experienceConfig.conversation?.starter ?? "", /Take a breath/);
     assert.ok(zen.experienceConfig.conversation?.suggestions?.includes("I feel stressed about my exams"));
     assert.ok(zen.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(zen.limitations.some((item) => item.includes("公開站需授權碼")));
+    assert.ok(zen.limitations.every((item) => !/代理，私有/.test(item)));
   });
 
   it("rewrites the Zen desk to the access-code gate and disables GitHub tree hydrate", async () => {

@@ -27,7 +27,7 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
       "公開入口是「校園通行證」：訪客可直接遊覽；Google / X 登入後巡禮蓋章才跟著帳號保存。",
-      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前為私有，公開操作走 Zeabur。",
+      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前是公開儲存庫；公開操作仍走 Zeabur。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
@@ -38,7 +38,7 @@ export const linkedWorks: Project[] = [
     outputs: ["可逛的 3D 校園公開站"],
     stack: ["WebGL / 3D", "Zeabur"],
     limitations: [
-      "GitHub forge-bloom-quiet-falcon 目前為私有，訪客打不開原始碼。",
+      "2026-09-20 未登入 GET api.github.com/repos/aa0968111723-prog/forge-bloom-quiet-falcon private:false。不是私有倉庫。",
       "效能依裝置而變，不宣稱完整數位雙生。",
       "2026-09-19 GET / HTTP 200，標題「淡江世界」。description「以淡江大學淡水校園真實地標打造的 3D 巡禮世界：克難坡、宮燈大道、海事博物館與覺生紀念圖書館」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」",
       "GET /login HTTP 200，h1「校園通行證」。訪客可直接遊覽；登入後保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。作品集未走完訪客 3D 巡禮，coreFlow 未過。",
@@ -60,7 +60,7 @@ export const linkedWorks: Project[] = [
       {
         label: "GitHub · forge-bloom-quiet-falcon",
         href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
-        note: "倉庫存在，目前為私有。公開操作請走 Zeabur。",
+        note: "2026-09-20 未登入 API private:false。公開儲存庫。公開操作請走 Zeabur。",
       },
     ],
     visibility: "public",

@@ -53,7 +53,7 @@ export const FRAMELAB_IDENTITY = {
       locale: "zh" as const,
       title: "FrameLab",
       headline: "給它關鍵影格。只修壞掉的那幾格。",
-      githubVisibility: "private" as const,
+      githubVisibility: "public" as const,
       githubUrl: "https://github.com/aa0968111723-prog/cabin-shale-raven-swift",
       role: "zh-public-landing",
       runtimeStatus: "RUNNING" as const,
@@ -64,7 +64,7 @@ export const FRAMELAB_IDENTITY = {
       locale: "en" as const,
       title: "FrameLab",
       headline: "Give it keyframes. Repair only the frames that break.",
-      githubVisibility: "private" as const,
+      githubVisibility: "public" as const,
       githubUrl: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
       role: "en-public-landing",
       runtimeStatus: "RUNNING" as const,
@@ -72,7 +72,7 @@ export const FRAMELAB_IDENTITY = {
   ],
 } as const;
 
-export const FRAMELAB_IDENTITY_VERSION = "framelab-live-home-20260920";
+export const FRAMELAB_IDENTITY_VERSION = "framelab-github-public-20260920";
 
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
@@ -110,7 +110,7 @@ export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
-export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-github-public-20260920";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
@@ -138,7 +138,7 @@ export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
-export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-welcome-20260920";
+export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-agent-not-private-20260920";
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
 

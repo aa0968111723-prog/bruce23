@@ -391,7 +391,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
       ["Next.js app and /api/chat", "Unit tests covering the response engine"],
       [
         "Not a large language model; it does not pretend to have long memory or multi-turn reasoning.",
-        "Not tku-zen-agent (the private club document agent). This page only shows public tku-zen-ai.",
+        "Not tku-zen-agent (the club document agent behind an access-code gate). This page only shows public tku-zen-ai.",
         "Read 2026-09-20 public src/app/page.tsx: h1 TKU Zen AI, Take a breath welcome, English suggestion chips. No public Zeabur host. This portfolio has not sent a real mood line, so coreFlow is not passed.",
       ],
     ),
@@ -414,7 +414,7 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
       "Tap Tour as guest to return to the 3D home",
     ],
     limitations: [
-      "GitHub forge-bloom-quiet-falcon is private.",
+      "GitHub forge-bloom-quiet-falcon is public (unauthenticated private:false on 2026-09-20).",
       "Performance depends on the device; this is not a full digital twin.",
       "Probed 2026-09-19: GET / HTTP 200, title Tamkang World. Description lists Kenan Slope, lantern avenue, maritime museum, and Chueh-sheng Library. og: a 3D campus walk on Wuhu Hill.",
       "GET /login HTTP 200, h1 Campus pass. Guests can tour; sign-in saves stamps. Public JS has no Start tour, campus atlas, or WASD. This portfolio has not finished a guest 3D walk, so coreFlow is not passed.",
