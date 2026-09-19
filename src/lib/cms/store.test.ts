@@ -919,6 +919,38 @@ describe("cms persistence", () => {
     assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Hermes Console process to the live unsigned home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "hermes-console",
+        JSON.stringify(["開啟工作區"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · 344.zeabur.app",
+            href: "https://344.zeabur.app",
+            note: "FEATURE_AUDIT_EDU.md 記載的正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_console_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const desk = await getPublishedProject(sql, "hermes-console");
+    assert.ok(desk.process[0]?.includes("344.zeabur.app"));
+    assert.match(
+      desk.sourceEvidence.find((item) => item.href?.includes("344.zeabur.app"))?.note ?? "",
+      /今天想做什麼/,
+    );
+    assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
