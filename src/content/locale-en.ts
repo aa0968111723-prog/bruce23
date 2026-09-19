@@ -523,13 +523,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
     process: [
       "Open cutos.zeabur.app",
-      "Import one video",
+      "First screen is Conversational Video Editor; load the demo clip or upload your own",
       "Describe the cut in one sentence",
       "Review the Edit Plan, then apply it on a non-destructive timeline",
     ],
     limitations: [
-      "Probed 2026-09-19: HTTP 200, title CUTOS — Conversational Video Editor. /api/health ok, /api/ready ready. Not 502.",
-      "This portfolio has not imported a real video through import→plan→export, so coreFlow is not passed.",
+      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. First screen offers a demo clip or upload. /api/health ok.",
+      "This portfolio has not loaded the demo clip or uploaded a real video, so coreFlow is not passed.",
     ],
   },
   "hermes-agent": {
