@@ -112,7 +112,7 @@ export const experienceChrome = {
     sizeLabel: "尺寸",
     sourceLabel: "來源",
     emptyVersions: "尚未設定對稿版本。",
-    duigaoDefaultIntro: "作品集對稿示意：點位置留言、切版本、比較。",
+    duigaoDefaultIntro: "公開站首屏是「今天要對什麼？」；可選做一張圖或建立活動房。這裡是作品集對稿示意，不是真實房間。",
     duigaoPrivateNote: "這裡不連真實房間、不放邀請連結或私人討論。",
     compare: "比較",
     addNote: "加上註記",
@@ -277,7 +277,7 @@ export const experienceChrome = {
     sizeLabel: "Size",
     sourceLabel: "Source",
     emptyVersions: "No review versions are set yet.",
-    duigaoDefaultIntro: "Portfolio review sketch: click to comment, switch versions, compare.",
+    duigaoDefaultIntro: "The public first screen is “What are we reviewing today?” — pick Make an image or Create an event room. This is a portfolio review sketch, not a live room.",
     duigaoPrivateNote: "This does not connect to a real room, invite link, or private thread.",
     compare: "Compare",
     addNote: "Add note",
@@ -543,7 +543,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   duigao: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "Portfolio review sketch: click to comment, switch versions, compare.",
+    intro: "The public first screen is “What are we reviewing today?” — pick Make an image or Create an event room. This is a portfolio review sketch, not a live room.",
     comparison: {
       versions: [
         { id: "v1", label: "v1 color" },

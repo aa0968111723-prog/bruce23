@@ -464,14 +464,13 @@ const featuredWorks: Project[] = [
       "分享連結用 #room + invite 高熵秘密；資料庫只存雜湊。",
       "前端只放 publishable key，不放 service role。",
       "雲端房間建立失敗時直接說暫時無法分享，不退回「看起來成功但其實要主辦方開著頁面」的連結。",
+      "公開站首屏是「今天要對什麼？」的空間選擇，不是立刻上傳文宣。做一張圖／建立活動房才進房間。",
     ],
     modalities: ["圖像", "影片時間點", "註記", "LINE 分享"],
     process: [
-      "上傳文宣版本",
-      "點位置或圈範圍留意見",
-      "待修改／已完成",
-      "可選視覺提案層",
-      "複製連結傳到 LINE",
+      "打開 duigao-k7q2.zeabur.app（標題「對稿｜圖片與影片協作空間」）",
+      "首屏「開始新的工作」，h2「今天要對什麼？」；可選「做一張圖」或「建立活動房」",
+      "頁上三步驟是「上傳作品 → 分享連結 → 集中定稿」；作品集未上傳、未點位留言",
     ],
     outputs: [
       "手機與桌機同一套狀態、不同外殼",
@@ -483,7 +482,7 @@ const featuredWorks: Project[] = [
       "影片單次上傳、無續傳；上限刻意保守。",
       "HEVC 的 .mov 在部分瀏覽器播不出，會說明而不是給黑畫面。",
       "本作品集不會讀取對稿的私人資料表或 token。",
-      "2026-09-19 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。README 標題仍是文宣討論區。作品集未上傳真實文宣完成點位留言，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。公開 JS 首屏 h2「今天要對什麼？」；可選「做一張圖」「建立活動房」。三步驟文案是上傳作品→分享連結→集中定稿。影片上傳需登入。作品集未建立房間、未上傳真實文宣、未點位留言，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
@@ -524,7 +523,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「對稿｜圖片與影片協作空間」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
+        note: "2026-09-20 HTTP 200，標題「對稿｜圖片與影片協作空間」。JS 首屏「今天要對什麼？」與「做一張圖／建立活動房」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
       },
     ],
     visibility: "public",

@@ -865,18 +865,28 @@ async function refreshDuigaoLiveProbe(sql: Sql): Promise<void> {
   if (!project) return;
   const seedEn = localeEnForSlug(project.slug);
   const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
   await sql.query(
     `update projects
-     set limitations = $2::jsonb,
-         source_evidence = $3::jsonb,
-         locale_json = $4::jsonb,
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
          updated_at = now()
      where slug = $1`,
     [
       project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
       JSON.stringify(project.limitations),
       JSON.stringify(projectEvidence(project)),
       JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
     ],
   );
   await sql.query(

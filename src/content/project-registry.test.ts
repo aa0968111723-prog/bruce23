@@ -191,12 +191,17 @@ describe("official project registry", () => {
     assert.ok(project.limitations.every((item) => !/已符合所有法規/.test(item)));
   });
 
-  it("records duigao live title without claiming a pin-comment coreFlow", () => {
+  it("records duigao live home without claiming a pin-comment coreFlow", () => {
     const project = projects.find((item) => item.slug === DUIGAO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(DUIGAO_LIVE_PROBE_VERSION, /duigao-live-title/);
+    assert.match(DUIGAO_LIVE_PROBE_VERSION, /duigao-live-home/);
     assert.equal(project.links.live, "https://duigao-k7q2.zeabur.app");
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("對稿｜圖片與影片協作空間")));
+    assert.ok(project.process[0]?.includes("duigao-k7q2.zeabur.app"));
+    assert.ok(project.process.some((item) => item.includes("今天要對什麼")));
+    assert.ok(project.process.some((item) => item.includes("建立活動房")));
+    assert.ok(project.process.every((item) => !item.includes("上傳文宣版本")));
+    assert.ok(project.decisions.some((item) => item.includes("今天要對什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("今天要對什麼")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

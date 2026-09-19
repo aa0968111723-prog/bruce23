@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T18:10:00Z",
-  "runId": "grok-impl-20260920-framelab-live-home",
+  "generatedAt": "2026-09-20T19:10:00Z",
+  "runId": "grok-impl-20260920-duigao-live-home",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T17:50:00Z",
+  "startedAt": "2026-09-20T18:40:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,15 +12,15 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "framelab-live-home",
-  "inspectedCommit": "c1db4f5",
+  "task": "duigao-live-home",
+  "inspectedCommit": "711f3d0",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + registry/catalog/config/store/experience 113 + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + registry/store/config/experience 102 + vite build",
     "browser": "BLOCKED",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
@@ -29,36 +29,27 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
-      "status": 200,
-      "pr39Landed": true,
-      "copy": "進入工作台; 把想法，變成團隊真正能完成的計畫; process intro is landing not 建立專案與世界觀快速層",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:50:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
-      "status": 200,
-      "pr38Landed": true,
-      "copy": "載入示範影片",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:50:00Z"
-    },
-    {
       "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
       "status": 200,
-      "copy": "process still 匯入影片或圖序; live JS is landing h1 給它關鍵影格 plus 登入工作室 → /login",
+      "pr40Landed": true,
+      "copy": "process 登入工作室; h1 給它關鍵影格。只修壞掉的那幾格。 not 匯入影片或圖序",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:55:00Z"
+      "checkedAt": "2026-09-20T18:45:00Z"
     },
     {
-      "url": "https://cabin-shale-k7q2.zeabur.app/",
+      "url": "https://bruce23-k7m2.zeabur.app/work/duigao",
       "status": 200,
-      "title": "FrameLab",
-      "firstScreen": "h1 給它關鍵影格。只修壞掉的那幾格。; CTA 登入工作室 → /login; 系統狀態 /api/health",
-      "health": "/api/health FrameLab 0.4.0 RUNNING",
+      "copy": "process still 上傳文宣版本; live JS is home h2 今天要對什麼 plus 做一張圖／建立活動房",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:55:00Z"
+      "checkedAt": "2026-09-20T18:55:00Z"
+    },
+    {
+      "url": "https://duigao-k7q2.zeabur.app/",
+      "status": 200,
+      "title": "對稿｜圖片與影片協作空間",
+      "firstScreen": "JS h2 今天要對什麼？; 做一張圖; 建立活動房; 三步驟 上傳作品→分享連結→集中定稿; video upload needs sign-in",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T18:55:00Z"
     }
   ],
   "gates": {
@@ -75,8 +66,8 @@
     "Folio / PLANFORM / CUTOS demo-clip coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass"
   ],
   "nextSteps": [
-    "Land FrameLab landing / login first-screen honesty repair",
-    "After deploy, verify production /work/framelab process is 登入工作室",
+    "Land duigao live-home first-screen honesty repair",
+    "After deploy, verify production /work/duigao process is 今天要對什麼",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }
