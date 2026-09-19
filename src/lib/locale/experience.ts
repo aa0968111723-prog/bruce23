@@ -657,18 +657,33 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   "tku-zen-ai": {
     honestyLabel: "Local reply engine, not a cloud LLM",
-    intro: "Aligned with tku-zen-ai src/lib/zen.ts. No network calls.",
+    intro: "The public chat first screen is the English welcome “Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.” This page runs the same local engine, not a cloud LLM.",
     conversation: {
       disclaimer: "This is a local reply engine, not a cloud LLM. The same line gets the same replies.",
-      starter: "This is a local reply engine, not a cloud LLM. The same line gets the same replies.",
-      placeholder: "Type a mood line",
-      sourceNote: "Aligned with tku-zen-ai src/lib/zen.ts. No network calls.",
+      starter: "Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.",
+      placeholder: "Share what's on your mind…",
+      sourceNote: "Aligned with public src/app/page.tsx and src/lib/zen.ts. No network calls. No public Zeabur host.",
       suggestions: ["I feel stressed about my exams", "Help me focus", "I can't sleep", "Thank you"],
     },
+    walkthrough: [
+      {
+        title: "Welcome",
+        body: "Public src/app/page.tsx first screen h1 “TKU Zen AI”, subtitle “A calm companion for a busy mind”. Welcome Take a breath. No public Zeabur host.",
+      },
+      {
+        title: "Suggestions",
+        body: "Four English chips match page.tsx: I feel stressed about my exams / Help me focus / I can't sleep / Thank you. Not Chinese chips.",
+      },
+      {
+        title: "Local engine",
+        body: "Submit goes through src/lib/zen.ts. Same input, same output. Not a cloud LLM. This portfolio has not sent a real mood line.",
+      },
+    ],
     fileHints: [
       { path: "src/lib/zen.ts", purpose: "Reproducible local engine", stage: "Talk" },
       { path: "src/app/api/chat/route.ts", purpose: "POST /api/chat", stage: "API" },
       { path: "src/lib/zen.test.ts", purpose: "Unit tests", stage: "Check" },
+      { path: "src/app/page.tsx", purpose: "Public chat first screen", stage: "Talk" },
     ],
   },
 };

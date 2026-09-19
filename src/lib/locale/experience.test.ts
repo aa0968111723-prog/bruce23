@@ -79,6 +79,8 @@ describe("experience playable chrome", () => {
     assert.match(planEn.honestyLabel ?? "", /not a code-compliance/i);
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
+    assert.match(zenEn.intro ?? "", /Take a breath/i);
+    assert.match(zenEn.conversation?.starter ?? "", /Welcome to TKU Zen AI/);
     assert.deepEqual(zenEn.conversation?.suggestions, [
       "I feel stressed about my exams",
       "Help me focus",
@@ -87,6 +89,8 @@ describe("experience playable chrome", () => {
     ]);
     const zenZh = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "zh");
     assert.match(zenZh.honestyLabel ?? "", /不是雲端/);
+    assert.match(zenZh.intro ?? "", /Welcome to TKU Zen AI/);
+    assert.match(zenZh.conversation?.starter ?? "", /Take a breath/);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(experienceCatalog["tku-zen-ai"].honestyLabel, /不是雲端/);

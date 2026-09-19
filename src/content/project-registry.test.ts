@@ -30,6 +30,8 @@ import {
   HERMES_AGENT_SIGNIN_VERSION,
   XIAOCAI_LIVE_PROBE_SLUG,
   XIAOCAI_LIVE_PROBE_VERSION,
+  TKU_ZEN_AI_LIVE_PROBE_SLUG,
+  TKU_ZEN_AI_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -314,5 +316,20 @@ describe("official project registry", () => {
     assert.ok(project.process.some((item) => item.includes("快速記一筆")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("快速記一筆")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records TKU Zen AI first screen as the public English welcome without claiming a chat coreFlow", () => {
+    const project = projects.find((item) => item.slug === TKU_ZEN_AI_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(TKU_ZEN_AI_LIVE_PROBE_VERSION, /tku-zen-ai-welcome/);
+    assert.equal(project.links.live, undefined);
+    assert.ok(project.process[0]?.includes("src/app/page.tsx"));
+    assert.ok(project.process.some((item) => item.includes("Welcome to TKU Zen AI")));
+    assert.ok(project.process.some((item) => item.includes("I feel stressed about my exams")));
+    assert.ok(project.process.every((item) => !item.includes("輸入一句心情")));
+    assert.ok(project.decisions.some((item) => item.includes("英文歡迎句")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("Welcome to TKU Zen AI")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.limitations.some((item) => item.includes("沒有公開 Zeabur 網域")));
   });
 });
