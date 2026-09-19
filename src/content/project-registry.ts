@@ -126,6 +126,10 @@ export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-drama-shot-alt-20260920";
 
 export const TAMSUI_DRAMA_LIVE_PROBE_SLUG = "tamsui-drama";
 
+export const POSTER_VISION_NO_HOST_VERSION = "poster-vision-no-public-host-20260920";
+
+export const POSTER_VISION_NO_HOST_SLUG = "poster-vision-ai";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

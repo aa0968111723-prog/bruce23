@@ -1123,6 +1123,29 @@ describe("cms persistence", () => {
     assert.ok(drama.media.every((item) => !item.alt.includes("第一集")));
   });
 
+  it("clears a fake Poster Vision live URL when no public host exists", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set live_demo_url = $2, live_demo_type = $3, limitations = $4::jsonb
+       where slug = $1`,
+      [
+        "poster-vision-ai",
+        "https://github.com/aa0968111723-prog/poster-vision-ai",
+        "link",
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'poster_vision_no_host_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const poster = await getPublishedProject(sql, "poster-vision-ai");
+    assert.equal(poster.demo.url, null);
+    assert.equal(poster.demo.type, "unavailable");
+    assert.ok(poster.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
+    assert.ok(poster.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

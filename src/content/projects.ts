@@ -320,6 +320,7 @@ const featuredWorks: Project[] = [
       "第一版回饋只存資料庫，尚未自我訓練。",
       "沒有 API key 時 OCR 降級為文字區域框。",
       "Vercel 若無 Python 會改用 JS 顯著性引擎。",
+      "2026-09-20 查無公開 Zeabur 網域。README 只提供本機與 Docker。作品集不假裝有 Live Demo。coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/poster-vision-ai",
@@ -352,7 +353,7 @@ const featuredWorks: Project[] = [
       {
         label: "GitHub README · poster-vision-ai",
         href: "https://github.com/aa0968111723-prog/poster-vision-ai",
-        note: "功能與限制原文來自 README。",
+        note: "功能與限制原文來自 README。2026-09-20 查無公開 Zeabur 網域；本機／Docker 不是作品集 Live Demo。",
       },
       githubExportEvidence(
         "poster-vision-ai",

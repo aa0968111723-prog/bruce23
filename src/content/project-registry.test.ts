@@ -24,6 +24,8 @@ import {
   ZEN_STUDIO_LIVE_PROBE_VERSION,
   TAMSUI_DRAMA_LIVE_PROBE_SLUG,
   TAMSUI_DRAMA_LIVE_PROBE_VERSION,
+  POSTER_VISION_NO_HOST_SLUG,
+  POSTER_VISION_NO_HOST_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -259,5 +261,15 @@ describe("official project registry", () => {
     assert.ok(project.sourceReferences.some((item) => item.note.includes("載入淡江·淡水世界")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("沒有「第一集」")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Poster Vision as having no public host, not a fake Live Demo", () => {
+    const project = projects.find((item) => item.slug === POSTER_VISION_NO_HOST_SLUG);
+    assert.ok(project);
+    assert.match(POSTER_VISION_NO_HOST_VERSION, /poster-vision-no-public-host/);
+    assert.equal(project.links.live, undefined);
+    assert.ok(project.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("查無公開 Zeabur 網域")));
   });
 });
