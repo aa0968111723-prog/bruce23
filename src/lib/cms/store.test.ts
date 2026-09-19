@@ -945,11 +945,11 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
        where slug = $1`,
       [
         "hermes-console",
-        JSON.stringify(["開啟工作區"]),
+        JSON.stringify(["開啟工作區", "輸入關鍵詞看說明"]),
         JSON.stringify(["stale limitation"]),
         JSON.stringify([
           {
@@ -959,16 +959,28 @@ describe("cms persistence", () => {
             kind: "demo",
           },
         ]),
+        JSON.stringify({
+          conversation: {
+            engine: "hermes-preview",
+            starter: "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。",
+            suggestions: ["海報", "連線", "任務"],
+          },
+        }),
       ],
     );
     await sql.query(`delete from cms_meta where key = 'hermes_console_live_probe_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const desk = await getPublishedProject(sql, "hermes-console");
     assert.ok(desk.process[0]?.includes("344.zeabur.app"));
+    assert.ok(desk.process.some((item) => item.includes("研究／創作／分析")));
     assert.match(
       desk.sourceEvidence.find((item) => item.href?.includes("344.zeabur.app"))?.note ?? "",
       /今天想做什麼/,
     );
+    assert.match(desk.experienceConfig.conversation?.starter ?? "", /今天想做什麼/);
+    assert.doesNotMatch(desk.experienceConfig.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.ok(desk.experienceConfig.conversation?.suggestions?.includes("研究"));
+    assert.ok(!desk.experienceConfig.conversation?.suggestions?.includes("海報"));
     assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

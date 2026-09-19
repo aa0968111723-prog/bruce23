@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-9",
-  "updatedAt": "2026-09-20T05:00:00Z",
+  "runId": "portfolio-agent-hour-10",
+  "updatedAt": "2026-09-20T06:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -806,7 +806,7 @@
     }
   ],
   "portfolioReady": false,
-  "currentProject": "tamkang-world",
+  "currentProject": "hermes-console",
   "currentRepository": "aa0968111723-prog/bruce23",
   "currentBranch": "codex/portfolio-agent-plan",
   "currentPR": 6,
@@ -844,7 +844,8 @@
     "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)",
     "tku-zen-ai welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)",
     "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)",
-    "GitHub visibility honesty merged as PR #44 (tamkang and FrameLab locale deploys are public, not 私有)",
+    "GitHub visibility public probe merged as PR #44 and live: tamkang / FrameLab cabin+lunar no longer 訪客打不開原始碼 / 目前為私有",
+    "Hermes Console conversation starter merged as PR #45 and live on production /work/hermes-console (今天想做什麼 quick-action chips, not 輸入關鍵詞看說明)",
     "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"

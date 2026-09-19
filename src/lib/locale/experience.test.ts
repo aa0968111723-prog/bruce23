@@ -93,6 +93,10 @@ describe("experience playable chrome", () => {
     assert.match(zenZh.conversation?.starter ?? "", /Take a breath/);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
+    assert.match(hermesEn.intro ?? "", /What do you want to do today/i);
+    assert.match(hermesEn.conversation?.starter ?? "", /What do you want to do today/i);
+    assert.doesNotMatch(hermesEn.conversation?.starter ?? "", /Type a keyword/);
+    assert.deepEqual(hermesEn.conversation?.suggestions, ["Research", "Create", "Analyze"]);
     assert.match(experienceCatalog["tku-zen-ai"].honestyLabel, /不是雲端/);
     assert.match(experienceCatalog["ai-director-os"].honestyLabel, /作品集/);
   });

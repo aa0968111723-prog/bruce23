@@ -102,7 +102,7 @@ export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
 
 export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
-export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260919";
+export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260920";
 
 export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
 
