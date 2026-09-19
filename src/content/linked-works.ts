@@ -99,7 +99,7 @@ export const linkedWorks: Project[] = [
     },
     media: [
       cover("tamsui-drama.jpg", "淡江新生導覽光域靜物：宮燈、闖關地圖與玻璃角色"),
-      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡"),
+      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：宮燈與闖關地圖"),
     ],
     sourceReferences: [
       {

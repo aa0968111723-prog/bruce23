@@ -1106,6 +1106,7 @@ async function refreshTamsuiDramaLiveProbe(sql: Sql): Promise<void> {
          locale_json = $5::jsonb,
          experience_mode = coalesce($6, experience_mode),
          experience_config = $7::jsonb,
+         media = $8::jsonb,
          updated_at = now()
      where slug = $1`,
     [
@@ -1116,6 +1117,7 @@ async function refreshTamsuiDramaLiveProbe(sql: Sql): Promise<void> {
       JSON.stringify({ zh: seedZh, en: seedEn }),
       catalog?.mode ?? null,
       JSON.stringify(experience),
+      JSON.stringify(project.media),
     ],
   );
   await sql.query(

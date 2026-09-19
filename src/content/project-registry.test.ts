@@ -251,10 +251,11 @@ describe("official project registry", () => {
   it("records Tamsui drama load splash without inventing episode one", () => {
     const project = projects.find((item) => item.slug === TAMSUI_DRAMA_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMSUI_DRAMA_LIVE_PROBE_VERSION, /tamsui-drama-live-load/);
+    assert.match(TAMSUI_DRAMA_LIVE_PROBE_VERSION, /tamsui-drama-shot-alt/);
     assert.equal(project.links.live, "https://tku-tamsui-drama-world-k4x9.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("載入淡江·淡水世界")));
     assert.ok(project.process.every((item) => !item.includes("第一集")));
+    assert.ok(project.media.every((item) => !item.alt.includes("第一集")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("載入淡江·淡水世界")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("沒有「第一集」")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));

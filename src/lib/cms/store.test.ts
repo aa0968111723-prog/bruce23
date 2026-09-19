@@ -1086,7 +1086,7 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, media = $5::jsonb
        where slug = $1`,
       [
         "tamsui-drama",
@@ -1098,6 +1098,13 @@ describe("cms persistence", () => {
             href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
             note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。",
             kind: "demo",
+          },
+        ]),
+        JSON.stringify([
+          {
+            src: "/media/shots/tamsui-drama.jpg",
+            alt: "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡",
+            kind: "image",
           },
         ]),
       ],
@@ -1113,6 +1120,7 @@ describe("cms persistence", () => {
     );
     assert.ok(drama.limitations.some((item) => item.includes("沒有「第一集」")));
     assert.ok(drama.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(drama.media.every((item) => !item.alt.includes("第一集")));
   });
 
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
