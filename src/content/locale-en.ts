@@ -104,13 +104,13 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Worldview, characters, and the asset library enter prompts automatically so people copy-paste less.",
         "Deduct estimated points first, refund on failure. External citations stay drafts; important copy needs lead review.",
         "MCP uses revocable, expiring, personal connection keys — not a shared superadmin key as the production default.",
+        "The public first screen is a landing page, not Create project. Entering the workbench needs sign-in; without a group you cannot create a project.",
       ],
       [
-        "Create a project and a worldview quick layer",
-        "Multimodal generation (image / video / audio / text) into the asset library",
-        "Storyboard order and short-video master copy",
-        "Lead 3-state review",
-        "Export a timeline and asset pack to an NLE",
+        "Open ai-os-app.zeabur.app (title Aios · AI creation OS | turn an idea into a team plan)",
+        "First screen eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.”",
+        "Primary CTA “Enter the workbench” goes to /login; header also has “Sign in to the workbench”",
+        "Creating a project needs sign-in and a group. This portfolio did not sign in.",
       ],
       [
         "Public repo ai_os (the creation system)",
@@ -120,7 +120,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
       [
         "The asset knowledge base (RAG) is not done.",
         "Database-layer RLS as a second isolation boundary is not done.",
-        "Probed 2026-09-19: ai-os-app.zeabur.app and vexlark.co both HTTP 200, title Aios. Not 502 and not paused. The team OS core flow is not verified here.",
+        "Probed 2026-09-20: JS first screen is the landing h1 plus Enter the workbench → /login. /api/health ok. Not 502 and not paused. The team OS core flow is not verified here; coreFlow stays false.",
         "The public deploy URL changes with the environment; this page does not claim a stable SLA or user count.",
         "Dev-time fake identities and seed accounts do not appear on this site.",
       ],

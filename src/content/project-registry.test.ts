@@ -114,12 +114,17 @@ describe("official project registry", () => {
     assert.equal(probe.coreFlowPass, false);
     assert.equal(project.links.live, probe.liveUrl);
     assert.equal(project.links.demo, probe.customDomain);
-    assert.match(AIOS_LIVE_PROBE_VERSION, /aios-live-probe/);
+    assert.match(AIOS_LIVE_PROBE_VERSION, /aios-live-home/);
     assert.ok(project.sourceReferences.every((item) => !/可能 502|可能暫停/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.liveUrl));
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.customDomain));
+    assert.ok(project.process.some((item) => item.includes("進入工作台")));
+    assert.ok(project.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
+    assert.ok(project.process.every((item) => !item.includes("建立專案與世界觀快速層")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("進入工作台") && item.href === probe.liveUrl));
     assert.ok(project.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("records the ty public flow probe without claiming coreFlow", () => {

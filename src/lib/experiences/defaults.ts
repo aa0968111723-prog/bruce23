@@ -250,7 +250,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "ai-director-os") {
     return {
       ...base,
-      intro: "這是作品集互動展示，把公開 repo 的流程串成可點的節點。不是線上產品控制台。",
+      intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
     };
   }
 

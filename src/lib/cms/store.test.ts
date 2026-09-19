@@ -1257,13 +1257,15 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb,
-           source_evidence = $3::jsonb,
-           live_demo_status = $4,
-           live_demo_error = $5
+       set process = $2::jsonb,
+           limitations = $3::jsonb,
+           source_evidence = $4::jsonb,
+           live_demo_status = $5,
+           live_demo_error = $6
        where slug = $1`,
       [
         "ai-director-os",
+        JSON.stringify(["建立專案與世界觀快速層"]),
         JSON.stringify(["公開部署網址狀態會隨環境變動。"]),
         JSON.stringify([
           {
@@ -1291,7 +1293,12 @@ describe("cms persistence", () => {
     assert.ok(aios.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
     assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://ai-os-app.zeabur.app"));
     assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://vexlark.co"));
+    assert.ok(aios.process.some((item) => item.includes("進入工作台")));
+    assert.ok(aios.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
+    assert.ok(aios.process.every((item) => !item.includes("建立專案與世界觀快速層")));
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
     assert.ok(aios.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
+    assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(aios.locale.en?.limitations?.join(" ") ?? "", /Not 502 and not paused/i);
     assert.equal(aiosAdmin.live_demo_status, "pending");
     assert.equal(aiosAdmin.live_demo_error, null);
