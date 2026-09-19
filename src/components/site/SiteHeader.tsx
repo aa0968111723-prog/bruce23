@@ -21,6 +21,10 @@ export function SiteHeader() {
             <span className="size-2.5 rounded-full bg-mint" />
           </span>
           <span className="truncate font-display text-base font-semibold tracking-tight text-ink">{brand}</span>
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-surface-mint/60 border border-mint/30 px-2.5 py-0.5 text-[11px] font-medium text-mint-deep">
+            <span className="size-1.5 rounded-full bg-mint animate-pulse" />
+            17 專案全公開
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label={ui.navLabel}>

@@ -273,4 +273,16 @@ PORTFOLIO_READY = FALSE
 - 將 secret 寫入 repository。
 - 將 secret 傳給瀏覽器。
 - 將 private README 複製到公開作品集。
-- 讀取或公開不必要的環境變數。
+
+
+## 多代理協作與防重複 PR 指引 (Multi-Agent & De-duplication Protocol)
+
+1. **先查後動，嚴禁重複發 PR**：
+   - 每次執行前，必須先執行 `gh pr list --state all` 檢查現有 PR 與已合併的分支。
+   - 若已有相同目標的 Issue 或 PR（例如 PR #6 負責長期計劃、各別 Card PR 負責單一修復），嚴禁重複建立相同主題的 PR。
+2. **代理職責邊界**：
+   - **主代理（Codex / Antigravity）**：推進整體系統架構、長期整合計劃（PR #6）、各服務環境變數審查與全域狀態同步。
+   - **Sentinel 質檢代理（Grok Bot）**：依本文件進行黑箱測試與資訊完整性審核，輸出客觀評分，不重複開計劃 PR。
+   - **專項修復代理（Repair Bots / Copilot）**：針對單一未達標項目進行原子修復，遵循卡片代碼（如 `HERMES-AGENT-URL-CANONICAL`）進行命名與提交。
+3. **繁體中文一致性**：
+   - 程式碼註解、Commit 訊息與技術文件一律採用繁體中文（如：闖關、安倢、一盞燈、發布），禁止繁簡混雜或破壞原有詞彙。

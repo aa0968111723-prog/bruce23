@@ -88,6 +88,19 @@ function Home() {
                 {ui.aboutCta}
               </Link>
             </div>
+            <div className="mt-6 flex flex-wrap items-center gap-2.5 text-xs text-muted">
+              <span className="inline-flex items-center gap-1.5 font-medium text-ink/80">
+                <span className="size-1.5 rounded-full bg-mint" /> 17 個全公開專案
+              </span>
+              <span>·</span>
+              <span className="inline-flex items-center gap-1 font-medium text-mint-deep">
+                ⚡ MCP 協定就緒
+              </span>
+              <span>·</span>
+              <span className="inline-flex items-center gap-1 font-medium text-sky">
+                💬 懸浮 AI 客服導覽
+              </span>
+            </div>
           </div>
           <div className="relative mx-auto w-full max-w-lg">
             <div className="float-card overflow-hidden rounded-2xl bg-surface p-1.5">
