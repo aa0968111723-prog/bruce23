@@ -793,6 +793,35 @@ describe("cms persistence", () => {
     assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
   });
 
+  it("rewrites CUTOS 502 notes after a live health/ready probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "cutos",
+        JSON.stringify(["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · cutos.zeabur.app",
+            href: "https://cutos.zeabur.app",
+            note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'cutos_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const cutos = await getPublishedProject(sql, "cutos");
+    assert.ok(cutos.limitations.every((item) => !/SUSPENDED／502/.test(item)));
+    assert.ok(cutos.sourceEvidence.every((item) => !/SUSPENDED／502/.test(item.note ?? "")));
+    assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

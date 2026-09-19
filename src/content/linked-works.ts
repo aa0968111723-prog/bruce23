@@ -392,10 +392,18 @@ export const linkedWorks: Project[] = [
     role: "剪輯入口設計：對話、時間軸、計畫。",
     decisions: ["與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。"],
     modalities: ["影片", "對話", "時間軸"],
-    process: ["打開 cutos.zeabur.app", "用一句話描述要找的精華", "看時間軸候選", "產出剪輯計畫"],
+    process: [
+      "打開 cutos.zeabur.app",
+      "匯入一支影片",
+      "用一句話描述要剪的意圖",
+      "檢查 Edit Plan 後套用非破壞時間軸",
+    ],
     outputs: ["CUTOS 公開站"],
-    stack: ["Web", "Postgres", "Zeabur"],
-    limitations: ["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"],
+    stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
+    limitations: [
+      "2026-09-19 GET / 標題 CUTOS — Conversational Video Editor。/api/health ok，/api/ready ready。不是 502。",
+      "作品集尚未匯入真實影片跑完 import→plan→export，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/CUTOS",
       live: "https://cutos.zeabur.app",
@@ -405,7 +413,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+        note: "Zeabur 服務 cutos。2026-09-19 HTTP 200，標題 CUTOS — Conversational Video Editor。/api/health ok，/api/ready ready。不是 502。",
       },
       {
         label: "GitHub · CUTOS",
