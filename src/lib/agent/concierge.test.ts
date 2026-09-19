@@ -52,6 +52,26 @@ describe("portfolio concierge agent", () => {
     assert.ok(reply.text.includes("GitHub 倉庫已完全公開"));
   });
 
+  it("answers Tamkang World 3D campus pass and WebGL details", () => {
+    const reply = answerQuestion("淡江世界 3D 怎麼逛？");
+    assert.ok(reply.text.includes("五虎崗"));
+    assert.ok(reply.text.includes("校園通行證"));
+    assert.ok(reply.actions?.some((a) => a.href?.includes("forge-bloom")));
+  });
+
+  it("answers SkateHub roller skate platform features", () => {
+    const reply = answerQuestion("介紹 SkateHub 直排輪平台");
+    assert.ok(reply.text.includes("款式圖鑑"));
+    assert.ok(reply.text.includes("輪滑的世界"));
+    assert.ok(reply.actions?.some((a) => a.href?.includes("dd-k3f9")));
+  });
+
+  it("answers CUTOS video editing conversational workflow", () => {
+    const reply = answerQuestion("CUTOS 對話影片剪輯是做什麼的？");
+    assert.ok(reply.text.includes("對話直接剪輯"));
+    assert.ok(reply.actions?.some((a) => a.href?.includes("cutos.zeabur.app")));
+  });
+
   it("gracefully falls back for unknown topics", () => {
     const reply = answerQuestion("宇宙大爆炸是哪一年發生的？");
     assert.ok(reply.text.includes("感謝您的提問"));

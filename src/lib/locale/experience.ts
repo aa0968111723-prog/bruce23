@@ -112,7 +112,7 @@ export const experienceChrome = {
     sizeLabel: "尺寸",
     sourceLabel: "來源",
     emptyVersions: "尚未設定對稿版本。",
-    duigaoDefaultIntro: "作品集對稿示意：點位置留言、切版本、比較。",
+    duigaoDefaultIntro: "公開站首屏是「今天要對什麼？」；可選做一張圖或建立活動房。這裡是作品集對稿示意，不是真實房間。",
     duigaoPrivateNote: "這裡不連真實房間、不放邀請連結或私人討論。",
     compare: "比較",
     addNote: "加上註記",
@@ -167,6 +167,8 @@ export const experienceChrome = {
     zenBreath: "呼吸",
     hermesDisconnected: "尚未連線",
     hermesWorkspace: "工作區預覽",
+    previewWorkspace: "作品集預覽",
+    previewOffline: "未接上產品執行期",
     frameKindKey: "關鍵幀",
     frameKindBreakdown: "中間幀",
     frameKindGenerated: "生成幀",
@@ -275,7 +277,7 @@ export const experienceChrome = {
     sizeLabel: "Size",
     sourceLabel: "Source",
     emptyVersions: "No review versions are set yet.",
-    duigaoDefaultIntro: "Portfolio review sketch: click to comment, switch versions, compare.",
+    duigaoDefaultIntro: "The public first screen is “What are we reviewing today?” — pick Make an image or Create an event room. This is a portfolio review sketch, not a live room.",
     duigaoPrivateNote: "This does not connect to a real room, invite link, or private thread.",
     compare: "Compare",
     addNote: "Add note",
@@ -330,6 +332,8 @@ export const experienceChrome = {
     zenBreath: "Breath",
     hermesDisconnected: "Not connected",
     hermesWorkspace: "Workspace preview",
+    previewWorkspace: "Portfolio preview",
+    previewOffline: "Not connected to the live product",
     frameKindKey: "Key",
     frameKindBreakdown: "Breakdown",
     frameKindGenerated: "Generated",
@@ -411,7 +415,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   "ai-director-os": {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:
-      "This is a portfolio interactive demo that turns the public repo flow into tappable nodes. It is not a live product console.",
+      "The public site opens on a landing page: “Turn an idea into a plan the team can actually finish.” Entering the workbench requires sign-in. These nodes are the public repo flow, not a live console.",
     processNodes: [
       {
         id: "project",
@@ -478,7 +482,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   framelab: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "A portfolio demo timeline, conceptually aligned with FrameLab’s sample-ball / timeline-engine.",
+    intro: "The public site opens on a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in. This is a portfolio demo timeline, not the live workstation.",
     timeline: {
       demoDisclaimer: "Frames labeled “demo” are not GPU model output. Real Wan / RIFE / SAM adapters are not loaded.",
     },
@@ -539,7 +543,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   duigao: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "Portfolio review sketch: click to comment, switch versions, compare.",
+    intro: "The public first screen is “What are we reviewing today?” — pick Make an image or Create an event room. This is a portfolio review sketch, not a live room.",
     comparison: {
       versions: [
         { id: "v1", label: "v1 color" },

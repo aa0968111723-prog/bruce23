@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-1",
-  "updatedAt": "2026-09-19T22:00:00Z",
+  "runId": "portfolio-gate-audit-20260920",
+  "updatedAt": "2026-09-19T19:11:41Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -37,6 +37,11 @@
       "status": "NOT_VERIFIED"
     },
     "desktopSmoke": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
+    "thumbnail": {
       "verifiedPass": 0,
       "total": 17,
       "status": "NOT_VERIFIED"
@@ -773,45 +778,72 @@
     }
   ],
   "portfolioReady": false,
+  "currentProject": "duigao",
+  "currentRepository": "aa0968111723-prog/bruce23",
+  "currentBranch": "codex/portfolio-agent-plan",
+  "currentPR": 6,
+  "currentTask": "hourly-multi-agent-sentinel-inspection",
+  "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
-    "FrameLab identity split merged as PR #11 and live on production (cabin-shale-k7q2)",
+    "FrameLab identity split merged as PR #11 and live",
     "Xiaocai/Zen stale 502 notes merged as PR #13 and live",
     "PLANFORM empty-demo sentence hidden (PR #14 live)",
-    "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
+    "Non-Folio walkthrough branding fixed (PR #15 live)",
     "Zeabur service IDs recorded (PR #16)",
-    "AI Director OS stale 502/paused note repair merged as PR #17",
-    "TY focus-challenge copy aligned with product contract as PR #18",
-    "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency"
+    "AI Director OS stale 502/paused note repair merged as PR #17 and live",
+    "TY focus-challenge copy aligned with product contract as PR #18 and live",
+    "TY public-flow honesty merged as PR #20 and live",
+    "CUTOS stale 502 dropped as PR #21 and live",
+    "PLANFORM version.json probe merged as PR #22 and live",
+    "PLANFORM public-home 我的專案 / 新建專案 merged as PR #23 and live on production",
+    "duigao live title merged as PR #24 and live",
+    "Folio file-cabinet merged as PR #25 and live",
+    "Hermes Console live home merged as PR #26 and live",
+    "SkateHub live slogan merged as PR #28 and live",
+    "Tamkang campus-pass merged as PR #29 and live on production /work/tamkang-world",
+    "Lumen not-Hermes defaults merged as PR #30 and live",
+    "Zen Studio live home merged as PR #31 and live on production /work/zen-studio",
+    "Tamsui drama load-splash honesty merged as PR #32 and live on production /work/tamsui-drama",
+    "Lumen generic preview chrome merged as PR #33 and live (工作區預覽 only on hermes-console)",
+    "Tamsui shot alt merged as PR #34",
+    "Poster Vision no public host merged as PR #35 and live",
+    "Hermes Agent Sign in merged as PR #36 and live on production /work/hermes-agent",
+    "Xiaocai tap-to-log merged as PR #37 and live",
+    "CUTOS live home merged as PR #38 and live on production /work/cutos (載入示範影片)",
+    "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)",
+    "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)",
+    "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency",
+    "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
+    "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
     "Merge PR #6 long-term integration plan onto main",
     "Operate ty core flow on leader-dna-mcp-a7k2 without sheet credentials",
-    "Verify production /work/ai-director-os and /work/focus-challenge after deploy",
-    "Continuous UI/UX polish and hourly multi-agent sentinel inspections"
+    "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
   ],
-  "testsPassed": 262,
+  "testsPassed": 272,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
-      "error": "Zeabur MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed 2026-09-19",
+      "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
-      "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"
+      "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
+    },
+    {
+      "id": "BROWSER_COREFLOW",
+      "severity": "high",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, and CUTOS 載入示範影片 need a real browser.",
+      "evidence": "No headless browser in this agent loop; copy probes only",
+      "requiredAccess": "browser coreFlow operator",
+      "blocks17of17": true,
+      "nextAction": "Do not invent a flow. Keep PORTFOLIO_READY false until 17/17 gates have evidence."
     }
   ],
-  "gates": {
-    "online": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "completeInfo": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "readiness70": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "mobileSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
-  },
   "nextExactStep": "Merge PR #6 to establish the official long-term portfolio plan on main. Guide Grok Bot on hourly sentinel inspections and repair bots on atomic cards without duplicate PRs."
 }

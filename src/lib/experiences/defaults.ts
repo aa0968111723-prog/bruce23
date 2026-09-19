@@ -50,7 +50,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "framelab") {
     return {
       ...base,
-      intro: "作品集示範時間軸，概念對齊 FrameLab 的 sample-ball / timeline-engine。",
+      intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
       timeline: {
         frames: DEFAULT_FRAMES,
         onionDefault: true,
@@ -76,7 +76,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "duigao") {
     return {
       ...base,
-      intro: "作品集對稿示意：點位置留言、切版本、比較。",
+      intro: "公開站首屏是「今天要對什麼？」；可選做一張圖或建立活動房。這裡是作品集對稿示意，不是真實房間。",
       comparison: {
         variant: "annotate",
         versions: [
@@ -146,6 +146,35 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "lumen") {
+    return {
+      ...base,
+      intro: "公開站首屏是「想做什麼？」。這是作品集說明，沒有接上麥克風，也不是 Hermes。",
+      conversation: {
+        engine: "hermes-preview",
+        disclaimer: "這是作品集預覽，不是 Lumen 語音執行期，也不是 Hermes Agent。",
+        starter: "公開站是「想做什麼？ 點一下開始聽 · 按住說話」。這裡不會假裝已經在聽。",
+        placeholder: "輸入做海報、拍照、做影片",
+        sourceNote: "作品集沒有接麥克風。雲端模型依金鑰；沒有金鑰應誠實降級。",
+        suggestions: ["做海報", "拍照", "做影片"],
+        replies: [
+          {
+            match: "海報",
+            reply: "公開站有「做海報」入口。作品集這一頁沒有生成海報。",
+          },
+          {
+            match: "拍照",
+            reply: "公開站有「拍照開始」。這裡沒有相機權限。",
+          },
+          {
+            match: "影片",
+            reply: "公開站有「開始做影片」。未生成的結果不會假裝完成。",
+          },
+        ],
+      },
+    };
+  }
+
   if (slug === "folio") {
     return {
       ...base,
@@ -189,10 +218,39 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "hermes-agent") {
+    return {
+      ...base,
+      intro: "公開站 hermes-agent-k7q2 未登入會轉到 /login。標題「Sign in — Hermes Agent」。這是作品集說明，不是 Dashboard 執行期。",
+      conversation: {
+        engine: "hermes-preview",
+        disclaimer: "這是作品集預覽，沒有連到 Hermes Agent 執行期，也不是免登入 Console。",
+        starter: "公開站首屏是「Sign in — Hermes Agent」。選帳密登入才能進 Dashboard。這裡不會假裝已經登入。",
+        placeholder: "輸入登入、Dashboard、Console",
+        sourceNote: "作品集訪客只能看到登入頁。455.zeabur.app 是舊站，不要再開。",
+        suggestions: ["登入", "Dashboard", "Console"],
+        replies: [
+          {
+            match: "登入",
+            reply: "公開站轉到 /login，標題「Sign in — Hermes Agent」。帳密登入。作品集這一頁不會幫你登入。",
+          },
+          {
+            match: "Dashboard",
+            reply: "登入後才是 Dashboard。訪客看不到會話內容。",
+          },
+          {
+            match: "Console",
+            reply: "免登入工作區是 344 的 Hermes Console，不是這個 Dashboard。",
+          },
+        ],
+      },
+    };
+  }
+
   if (slug === "ai-director-os") {
     return {
       ...base,
-      intro: "這是作品集互動展示，把公開 repo 的流程串成可點的節點。不是線上產品控制台。",
+      intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
     };
   }
 

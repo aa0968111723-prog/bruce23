@@ -1,68 +1,49 @@
 {
-  "version": 3,
-  "generatedAt": "2026-09-19T16:40:00Z",
-  "runId": "grok-impl-20260919-aios-live",
+  "version": 9,
+  "generatedAt": "2026-09-19T19:18:30Z",
+  "runId": "portfolio-gate-audit-20260920",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-19T16:00:00Z",
-  "endedAt": null,
+  "startedAt": "2026-09-19T19:07:42Z",
+  "endedAt": "2026-09-19T19:18:30Z",
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
     "planPullRequest": 6,
-    "implementationPullRequest": null,
+    "implementationPullRequest": 27,
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "rewrite-stale-502-notes-ai-director-os",
-  "inspectedCommit": "cc46fff",
-  "github": {
-    "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16],
-    "doNotMerge": [10]
+  "task": "repair-unsupported-aggregate-gate-claims",
+  "inspectedCommit": "a91a230c20587eae2a9d8092082a9cd085c27015",
+  "highestPriorityIssue": {
+    "id": "PORTFOLIO-GATE-AGGREGATE-MISMATCH",
+    "severity": "critical",
+    "status": "FIXED_IN_PR_27_PENDING_MERGE",
+    "observed": "The shared state had two top-level gates objects. JSON.parse retained the later stale object, reporting online and completeInfo 17/17 plus security VERIFIED_PASS while all 17 project records were false or unreviewed.",
+    "impact": "Agents and reports could mistake HTTP reachability or zero known incidents for completed functional, information or security acceptance."
+  },
+  "correction": {
+    "duplicateGateObjectRemoved": true,
+    "unsupportedTotalsReset": true,
+    "thumbnailGateAdded": true,
+    "canonicalProjectKeyValidationAdded": true,
+    "portfolioReadyGuardAdded": true,
+    "productOrDeploymentChanged": false
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 41 unit tests (registry + cms store) + vite build",
-    "browser": "NOT_YET",
-    "mobileSmoke": "NOT_YET",
-    "desktopSmoke": "NOT_YET",
-    "deployment": "code on branch fix/stale-502-aios-live; production still has stale AIOS 502/paused notes",
-    "security": "NOT_VERIFIED"
+    "gateAudit": "PASS: seven project counters are 0/17 with zero consistency errors",
+    "gateTests": "PASS: 7/7",
+    "build": "PASS: npm run build",
+    "typecheck": "PASS: tsc --noEmit",
+    "scriptTests": "PASS: 218/218",
+    "nodeTests": "PASS: 306/306",
+    "adminE2E": "PASS",
+    "liveAdminE2E": "BLOCKED_BY_RUNNER: local preview origin 127.0.0.1:8080 was unavailable",
+    "fullTestSuite": "PARTIAL_PASS: all preceding suites passed; final live-preview E2E could not start in this runner",
+    "liveCoreFlows": "NOT_RUN_IN_THIS_AUDIT",
+    "mobileSmoke": "NOT_RUN_IN_THIS_AUDIT",
+    "desktopSmoke": "NOT_RUN_IN_THIS_AUDIT",
+    "securityReview": "NOT_RUN_IN_THIS_AUDIT"
   },
-  "probes": [
-    {
-      "url": "https://ai-os-app.zeabur.app/",
-      "status": 200,
-      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
-      "checkedAt": "2026-09-19T16:20:00Z"
-    },
-    {
-      "url": "https://vexlark.co/",
-      "status": 200,
-      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
-      "checkedAt": "2026-09-19T16:20:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
-      "status": 200,
-      "liveDemo": "https://cabin-shale-k7q2.zeabur.app",
-      "cabinNote": "RUNNING, not 502",
-      "pr11Landed": true,
-      "checkedAt": "2026-09-19T16:10:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
-      "status": 200,
-      "staleNotes": ["本次探測服務可能暫停", "本次探測可能 502／暫停"],
-      "prAiosLanded": false,
-      "checkedAt": "2026-09-19T16:10:00Z"
-    },
-    {
-      "url": "https://leader-dna-mcp-a7k2.zeabur.app/",
-      "status": 200,
-      "title": "淡江大學禪學社｜專注力挑戰賽",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-19T16:20:00Z"
-    }
-  ],
   "gates": {
     "online": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
@@ -70,14 +51,18 @@
     "readiness70": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "mobileSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
+    "thumbnail": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "securityBlockers": { "verifiedCount": null, "status": "NOT_VERIFIED" }
   },
+  "portfolioReady": false,
   "blockers": [
-    "Zeabur MCP ERROR_INVALID_TOKEN; cannot inspect or trigger bruce23 deploy"
+    "No project has a verified core flow, readiness score, mobile smoke test, desktop smoke test, thumbnail review or security review in the canonical project records.",
+    "HTTP 200 endpoint evidence does not satisfy onlineReady or any functional acceptance gate.",
+    "PR #27 must be reviewed and merged into the PR #6 branch before this guard protects the shared plan line."
   ],
   "nextSteps": [
-    "Open PR for AI Director OS stale 502/paused note repair",
-    "After deploy, verify production /work/ai-director-os",
-    "Then operate ty core flow on leader-dna-mcp-a7k2"
+    "Review and merge PR #27 into codex/portfolio-agent-plan without bypassing its tests.",
+    "After synchronization, select one official project and capture reproducible core-flow, mobile, desktop, visual and security evidence before changing any gate.",
+    "Keep overallStatus IN_PROGRESS and portfolioReady false until every hard gate is supported by all 17 project records."
   ]
 }

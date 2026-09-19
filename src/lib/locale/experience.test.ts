@@ -26,6 +26,8 @@ describe("experience playable chrome", () => {
     assert.equal(en.hintInTree, "In the synced tree");
     assert.equal(zh.hintMissingFromTree, "不在這次有限檔案樹裡");
     assert.equal(en.hintMissingFromTree, "Not in this limited file tree");
+    assert.equal(zh.previewWorkspace, "作品集預覽");
+    assert.equal(en.previewOffline, "Not connected to the live product");
     assert.equal(zh.tabVisual, "視覺展示");
     assert.equal(en.tabVisual, "Visual");
     assert.notEqual(zh.tabGithub, en.tabGithub);
@@ -61,8 +63,15 @@ describe("experience playable chrome", () => {
       assert.notEqual(zh.honestyLabel, en.honestyLabel);
     }
     const frameEn = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "en");
+    const frameZh = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "zh");
     assert.equal(frameEn.honestyLabel, PORTFOLIO_DEMO_EN);
     assert.match(frameEn.timeline?.demoDisclaimer ?? "", /not GPU/i);
+    assert.match(frameZh.intro ?? "", /進入工作室要登入/);
+    assert.match(frameEn.intro ?? "", /landing page/i);
+    const reviewZh = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "zh");
+    const reviewEn = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "en");
+    assert.match(reviewZh.intro ?? "", /今天要對什麼/);
+    assert.match(reviewEn.intro ?? "", /What are we reviewing today/i);
     const posterEn = overlayExperienceConfig(defaultExperienceConfig("poster-vision-ai"), "poster-vision-ai", "en");
     assert.match(posterEn.honestyLabel ?? "", /not eye-tracking/i);
     assert.match(posterEn.comparison?.estimateDisclaimer ?? "", /not eye-tracking/i);
@@ -93,6 +102,8 @@ describe("experience playable chrome", () => {
     assert.equal(enNode?.label, "Project");
     assert.equal(enNode?.githubPath, "server/services/projectCore.ts");
     assert.equal(zhNode?.githubPath, enNode?.githubPath);
+    assert.match(zh.intro ?? "", /進入工作台要登入/);
+    assert.match(en.intro ?? "", /landing page/i);
     const hint = en.fileHints?.find((item) => item.path === "shared/worldview.ts");
     assert.equal(hint?.path, "shared/worldview.ts");
     assert.match(hint?.purpose ?? "", /Worldview/i);

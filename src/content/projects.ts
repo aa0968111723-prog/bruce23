@@ -79,14 +79,14 @@ const featuredWorks: Project[] = [
       "世界觀、角色與素材庫自動帶進提示詞，減少複製貼上。",
       "先扣點數預估、失敗退回；外部引文只當草稿，重要內容需組長審核。",
       "MCP 使用可撤銷、可到期、綁定個人的連線金鑰，不用共用超管金鑰當正式站預設。",
+      "公開站首屏是登陸頁，不是立刻建立專案。進入工作台要登入；未入組不能建立專案。",
     ],
     modalities: ["文字", "圖像", "影片", "音訊", "審批流程"],
     process: [
-      "建立專案與世界觀快速層",
-      "多模態生成（圖／影／音／文字）並自動入素材庫",
-      "分鏡排序、短影音母版複製",
-      "組長審批三態機",
-      "匯出時間軸與素材包給剪輯軟體",
+      "打開 ai-os-app.zeabur.app（標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」）",
+      "首屏 eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」",
+      "主按鈕「進入工作台」到 /login；頁首也有「登入工作台」",
+      "登入且加入組別後才能建立專案；作品集未登入",
     ],
     outputs: [
       "公開儲存庫 ai_os（創作系統）",
@@ -97,7 +97,7 @@ const featuredWorks: Project[] = [
     limitations: [
       "素材知識庫（RAG）尚未完成。",
       "資料庫層 RLS 第二道隔離尚未完成。",
-      "2026-09-19 探測 ai-os-app.zeabur.app 與 vexlark.co 均 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。頁面是前端渲染，作品集未驗證團隊創作核心流程。",
+      "2026-09-20 JS 首屏「把想法，變成團隊真正能完成的計畫。」主 CTA「進入工作台」→ /login。/api/health ok。不是 502、也不是暫停。作品集未登入、未入組、未建立專案，未驗證團隊創作核心流程，coreFlow 未過。",
       "公開部署網址狀態會隨環境變動，不在此宣稱穩定 SLA 或使用者數。",
       "開發期假身分與種子帳號不會出現在本站。",
     ],
@@ -163,12 +163,12 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · ai-os-app.zeabur.app",
         href: "https://ai-os-app.zeabur.app",
-        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。2026-09-19 探測 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。核心流程尚未黑箱驗證。",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。2026-09-20 GET / HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。JS 首屏 h1「把想法，變成團隊真正能完成的計畫。」主按鈕「進入工作台」→ /login。/api/health ok。不是 502、也不是暫停。未登入不能建立專案。",
       },
       {
         label: "自訂網域 · vexlark.co",
         href: "https://vexlark.co",
-        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。2026-09-19 探測 HTTP 200，標題與公開站相同。不是 502、也不是暫停。",
+        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。2026-09-20 GET / HTTP 200，標題與公開站相同。JS 登陸頁與 /login 相同。不是 502、也不是暫停。",
       },
       {
         label: "GitHub homepage · ai-os-ten.vercel.app",
@@ -197,14 +197,14 @@ const featuredWorks: Project[] = [
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
       "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
+      "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入；未登入不能匯入或修幀。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [
-      "匯入影片或圖序",
-      "時間軸標記 key / breakdown / generated",
-      "onion skin、pose ghost、motion path",
-      "框選區域後 Ask / Repair",
-      "Accept 候選或只重產問題窗",
+      "打開 cabin-shale-k7q2.zeabur.app（標題 FrameLab）",
+      "首屏副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」",
+      "主按鈕「登入工作室」到 /login；也可看「系統狀態」/api/health",
+      "登入後同一鏡頭會成為範例時間軸；作品集未登入、未匯入、未修幀",
     ],
     outputs: [
       "可跑的工作站 UI 與 REST / MCP",
@@ -217,6 +217,7 @@ const featuredWorks: Project[] = [
       "不是 NLE，也不輸出完整製片管線。",
       "Grok vision 需 XAI_API_KEY，且僅使用者主動送出的幀。",
       "公開站可看 landing 與 /api/health。工作室需登入。主倉庫 FrameLab 與部署倉 cabin / lunar 均已完全公開。",
+      "2026-09-20 GET / HTTP 200，h1「給它關鍵影格。只修壞掉的那幾格。」主 CTA「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。工作室需登入。作品集未登入、未匯入影片、未修幀，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
@@ -263,7 +264,7 @@ const featuredWorks: Project[] = [
       {
         label: "中文公開站 · cabin-shale-k7q2.zeabur.app",
         href: "https://cabin-shale-k7q2.zeabur.app",
-        note: "中文 FrameLab landing。標題 FrameLab；主標「給它關鍵影格。只修壞掉的那幾格。」/api/health 回 0.4.0。2026-09-19 探測 RUNNING，不是 502。這是中文作品集的 Live Demo。工作室需登入。",
+        note: "中文 FrameLab landing。2026-09-20 GET / HTTP 200，標題 FrameLab。h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。不是 502。這是中文作品集的 Live Demo。工作室需登入。未登入不能匯入或修幀。",
       },
       {
         label: "英文公開站 · lunar-falcon-8p2r.zeabur.app",
@@ -320,6 +321,7 @@ const featuredWorks: Project[] = [
       "第一版回饋只存資料庫，尚未自我訓練。",
       "沒有 API key 時 OCR 降級為文字區域框。",
       "Vercel 若無 Python 會改用 JS 顯著性引擎。",
+      "2026-09-20 查無公開 Zeabur 網域。README 只提供本機與 Docker。作品集不假裝有 Live Demo。coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/poster-vision-ai",
@@ -352,7 +354,7 @@ const featuredWorks: Project[] = [
       {
         label: "GitHub README · poster-vision-ai",
         href: "https://github.com/aa0968111723-prog/poster-vision-ai",
-        note: "功能與限制原文來自 README。",
+        note: "功能與限制原文來自 README。2026-09-20 查無公開 Zeabur 網域；本機／Docker 不是作品集 Live Demo。",
       },
       githubExportEvidence(
         "poster-vision-ai",
@@ -375,18 +377,19 @@ const featuredWorks: Project[] = [
       "淡江教室與禪學社茶會／演講／新生場，現場才發現報到桌擋門、地墊不夠走道。需要不用 CAD 的場佈工具。",
     role: "空間體驗設計與產品建構：預設模板、動線、人流模擬與分享圖。",
     decisions: [
+      "開 app 先看到「我的專案」與「＋ 新建專案」，不是立刻進 3D 畫布。",
       "Preset-first，但一切可自訂。一場活動一份專案，不會互相覆蓋。",
       "AI 只負責理解句子與目標；座標、碰撞、走道、容量由程式計算。",
       "沒有雲端金鑰時，本機結構化解析器仍可用，結果可重現。",
-      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。",
+      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
     ],
     modalities: ["3D", "平面圖", "動線", "物資清單", "自然語言"],
     process: [
-      "選教室模板與人數",
-      "排地墊與區域",
+      "打開 planform-iso-k7d2.zeabur.app（首頁是「我的專案」，按鈕「＋ 新建專案」）",
+      "新建專案後選淡江教室模板與人數（純前端，寫入本機 localStorage）",
+      "畫布上拖曳物件，或「排地墊」選人數出 A/B/C 方案",
       "畫動線",
-      "本地 DES 模擬排隊",
-      "分享場刊圖與夥伴唯讀視圖",
+      "分享場刊圖與夥伴唯讀視圖（無後端 API）",
     ],
     outputs: [
       "可安裝 PWA",
@@ -395,9 +398,10 @@ const featuredWorks: Project[] = [
     ],
     stack: ["Vite", "TypeScript", "Three.js", "PWA", "localStorage / IndexedDB"],
     limitations: [
-      "不做容留人數或避難寬度法定計算。",
+      "不做容留人數或避難寬度法定計算。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
       "不上架 App Store。",
       "本工具是場前彩排，不是現場指揮系統。",
+      "2026-09-19 GET / HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。公開 JS 首屏 h1「我的專案」與「＋ 新建專案」。無 /api 路由。作品集未在瀏覽器完成「新建專案→拖動物件」，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
@@ -438,7 +442,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · planform-iso-k7d2.zeabur.app",
         href: "https://planform-iso-k7d2.zeabur.app",
-        note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。本次探測為 HTML，沒有 frame-bust，可當 Live Demo。狀態會隨部署變動。",
+        note: "docs/agent-handoff/AGENT_PROTOCOL.md 記載的 Zeabur 正式站。2026-09-19 HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。PWA manifest 與 sw.js 存在。公開 JS 首屏是「我的專案」與「＋ 新建專案」，不是立刻進畫布。無 /api 路由。",
       },
     ],
     visibility: "public",
@@ -461,14 +465,13 @@ const featuredWorks: Project[] = [
       "分享連結用 #room + invite 高熵秘密；資料庫只存雜湊。",
       "前端只放 publishable key，不放 service role。",
       "雲端房間建立失敗時直接說暫時無法分享，不退回「看起來成功但其實要主辦方開著頁面」的連結。",
+      "公開站首屏是「今天要對什麼？」的空間選擇，不是立刻上傳文宣。做一張圖／建立活動房才進房間。",
     ],
     modalities: ["圖像", "影片時間點", "註記", "LINE 分享"],
     process: [
-      "上傳文宣版本",
-      "點位置或圈範圍留意見",
-      "待修改／已完成",
-      "可選視覺提案層",
-      "複製連結傳到 LINE",
+      "打開 duigao-k7q2.zeabur.app（標題「對稿｜圖片與影片協作空間」）",
+      "首屏「開始新的工作」，h2「今天要對什麼？」；可選「做一張圖」或「建立活動房」",
+      "頁上三步驟是「上傳作品 → 分享連結 → 集中定稿」；作品集未上傳、未點位留言",
     ],
     outputs: [
       "手機與桌機同一套狀態、不同外殼",
@@ -480,6 +483,7 @@ const featuredWorks: Project[] = [
       "影片單次上傳、無續傳；上限刻意保守。",
       "HEVC 的 .mov 在部分瀏覽器播不出，會說明而不是給黑畫面。",
       "本作品集不會讀取對稿的私人資料表或 token。",
+      "2026-09-20 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。公開 JS 首屏 h2「今天要對什麼？」；可選「做一張圖」「建立活動房」。三步驟文案是上傳作品→分享連結→集中定稿。影片上傳需登入。作品集未建立房間、未上傳真實文宣、未點位留言，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
@@ -520,7 +524,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
-        note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+        note: "2026-09-20 HTTP 200，標題「對稿｜圖片與影片協作空間」。JS 首屏「今天要對什麼？」與「做一張圖／建立活動房」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
       },
     ],
     visibility: "public",
@@ -546,6 +550,7 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["畫布", "設計 token", "嵌入", "MCP"],
     process: [
+      "打開文件櫃（存在這台裝置，不必登入）",
       "在畫布建立文字／形狀／元件",
       "設計檢查（對比、溢出、安全區）",
       "可選匯入外部網站三種模式",
@@ -561,6 +566,7 @@ const featuredWorks: Project[] = [
       "沒有獨立點陣圖片物件型別，圖片以 pixel layer 或 Snapshot 存在。",
       "寫入 token 不會自動過期，需重新發布才輪替。",
       "外部 MCP 連線在單一 Node 行程記憶體，多實例不共享。",
+      "2026-09-19 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，文案「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
@@ -612,7 +618,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · canva2-k7qm.zeabur.app",
         href: "https://canva2-k7qm.zeabur.app",
-        note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。不是 dd-k3f9（直排輪基地）。",
+        note: "Zeabur 服務 canva2。2026-09-19 HTTP 200，標題 Folio。首屏「文件櫃」。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",
@@ -638,10 +644,10 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
-      "開啟工作區",
-      "設定 Hermes 連線（可選）",
-      "探測 Lumen / FrameLab / 對稿 MCP",
-      "把海報、動畫、對稿意圖交給對應工具",
+      "打開 344.zeabur.app（免登入）",
+      "首屏是「今天想做什麼？」與個人工作區",
+      "可選「設定與連線」",
+      "作品集這一頁的對話預覽不是 Agent 執行結果",
     ],
     outputs: ["公開儲存庫 hermes-console", "工作區 API 與就緒檢查"],
     stack: ["TypeScript", "Node", "SQLite / Postgres", "MCP"],
@@ -649,6 +655,7 @@ const featuredWorks: Project[] = [
       "需要持久化磁碟與長駐 Node，不適用無狀態 serverless。",
       "契約測試不是第三方服務的實機驗證。",
       "此頁不展示任何金鑰、邀請碼或內部控制台截圖中的秘密。",
+      "2026-09-19 GET / HTTP 200，標題 Hermes。首屏「龜龜創作助手／今天想做什麼？」。作品集未送出真實任務，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/hermes-console",
@@ -696,7 +703,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · 344.zeabur.app",
         href: "https://344.zeabur.app",
-        note: "FEATURE_AUDIT_EDU.md 記載的正式站。禁止嵌入時只開新分頁。",
+        note: "2026-09-19 HTTP 200，標題 Hermes。免登入工作區，首屏「今天想做什麼？」。禁止嵌入時只開新分頁。",
       },
     ],
     visibility: "public",

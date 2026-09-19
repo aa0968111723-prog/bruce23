@@ -95,6 +95,39 @@ describe("experience catalog", () => {
     );
   });
 
+  it("keeps tamkang-world walkthrough on the live campus pass", () => {
+    const steps = experienceCatalog["tamkang-world"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "校園通行證"));
+    assert.ok(steps.some((step) => step.title === "先以訪客巡禮"));
+    assert.equal(steps.some((step) => step.title === "開始巡禮"), false);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
+  });
+
+  it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
+    const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "Sign in"));
+    assert.match(steps[0]?.body ?? "", /Sign in — Hermes Agent/);
+    assert.match(steps.map((step) => step.body).join("\n"), /\/login/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入關鍵詞看說明/);
+  });
+
+  it("keeps tamsui-drama walkthrough on the live load splash", () => {
+    const steps = experienceCatalog["tamsui-drama"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "載入世界"));
+    assert.equal(steps.some((step) => step.title === "第一集"), false);
+    assert.match(steps[0]?.body ?? "", /載入淡江·淡水世界/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /從宮燈下的迎新開始/);
+  });
+
+  it("keeps ty focus-challenge walkthrough on the probed public flow", () => {
+    const steps = experienceCatalog["focus-challenge"].walkthrough ?? [];
+    assert.equal(steps.some((step) => step.title === "暖身"), false);
+    assert.ok(steps.some((step) => step.title === "教學／練習"));
+    assert.match(steps[0]?.body ?? "", /登記畫面/);
+    assert.match(steps.at(-1)?.body ?? "", /67 筆/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /即時看活動狀態/);
+  });
+
   it("pins catalog source paths for GitHub tree keepPaths", () => {
     assert.deepEqual(catalogSourcePaths(), []);
     assert.deepEqual(catalogSourcePaths("unknown-slug"), []);
@@ -361,6 +394,8 @@ describe("frontend contract", () => {
     );
     assert.match(hermes, /data-hermes-preview/);
     assert.match(hermes, /hermesDisconnected/);
+    assert.match(hermes, /previewWorkspace/);
+    assert.match(hermes, /project.slug === "hermes-console"/);
     const hermesHook = hermes.match(/const \{([^}]+)\} = useExperienceView/);
     assert.ok(hermesHook);
     if (/\blang\b/.test(hermes.replace(hermesHook[0], ""))) {

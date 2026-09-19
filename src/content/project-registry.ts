@@ -72,19 +72,71 @@ export const FRAMELAB_IDENTITY = {
   ],
 } as const;
 
-export const FRAMELAB_IDENTITY_VERSION = "framelab-identity-zh-canonical-20260919";
+export const FRAMELAB_IDENTITY_VERSION = "framelab-live-home-20260920";
 
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
 
-export const AIOS_LIVE_PROBE_VERSION = "aios-live-probe-20260919";
+export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
-export const TY_CONTRACT_VERSION = "ty-contract-health-20260919";
+export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
+
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-home-20260920";
+
+export const CUTOS_LIVE_PROBE_SLUG = "cutos";
+
+export const PLANFORM_LIVE_PROBE_VERSION = "planform-public-home-20260919";
+
+export const PLANFORM_LIVE_PROBE_SLUG = "planform";
+
+export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-home-20260920";
+
+export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
+
+export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
+
+export const FOLIO_LIVE_PROBE_SLUG = "folio";
+
+export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260919";
+
+export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
+
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
+
+export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
+
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
+
+export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
+
+export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
+
+export const LUMEN_LIVE_PROBE_SLUG = "lumen";
+
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
+
+export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
+
+export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-drama-shot-alt-20260920";
+
+export const TAMSUI_DRAMA_LIVE_PROBE_SLUG = "tamsui-drama";
+
+export const POSTER_VISION_NO_HOST_VERSION = "poster-vision-no-public-host-20260920";
+
+export const POSTER_VISION_NO_HOST_SLUG = "poster-vision-ai";
+
+export const HERMES_AGENT_SIGNIN_VERSION = "hermes-agent-signin-20260920";
+
+export const HERMES_AGENT_SIGNIN_SLUG = "hermes-agent";
+
+export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
+
+export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.

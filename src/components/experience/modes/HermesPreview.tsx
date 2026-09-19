@@ -9,6 +9,9 @@ export function HermesPreview({ project }: { project: PublicProject }) {
   const replies = conversation?.replies ?? [];
   const suggestions = conversation?.suggestions ?? [];
   const starter = conversation?.starter ?? ex.hermesStarter;
+  const isHermesConsole = project.slug === "hermes-console";
+  const workspaceLabel = isHermesConsole ? ex.hermesWorkspace : ex.previewWorkspace;
+  const statusLabel = isHermesConsole ? ex.hermesDisconnected : ex.previewOffline;
   const [log, setLog] = useState<Array<{ role: "you" | "console"; text: string }>>([
     { role: "console", text: starter },
   ]);
@@ -44,8 +47,8 @@ export function HermesPreview({ project }: { project: PublicProject }) {
       {conversation?.disclaimer ? <p className="mt-2 text-xs text-mint-deep">{conversation.disclaimer}</p> : null}
       <div className="mt-4 overflow-hidden rounded-2xl bg-surface shadow-card" data-hermes-preview="true">
         <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-          <p className="font-medium">{ex.hermesWorkspace}</p>
-          <p className="text-xs text-mint-deep">{ex.hermesDisconnected}</p>
+          <p className="font-medium">{workspaceLabel}</p>
+          <p className="text-xs text-mint-deep">{statusLabel}</p>
         </header>
         <div className="grid gap-2 p-4">
           {log.map((item, index) => (

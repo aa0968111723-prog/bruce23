@@ -154,6 +154,10 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
       {
+        title: "文件櫃",
+        body: "公開站 canva2-k7qm 首屏是文件櫃。存在這台裝置，不必登入。",
+      },
+      {
         title: "畫布",
         body: "文字、形狀與元件走同一套文件模型。",
         path: "src/components/editor/canvas-stage.tsx",
@@ -195,7 +199,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     walkthrough: [
       {
         title: "工作區",
-        body: "聊天、任務與工具入口同一處。未設定 HERMES_API_URL 時仍應開啟並顯示尚未連線。",
+        body: "公開站 344 免登入。首屏「龜龜創作助手／今天想做什麼？」。作品集這一頁仍是本地說明，不是 Agent 執行。",
         path: "app/api/chat/route.ts",
       },
       {
@@ -231,25 +235,25 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "開始巡禮", body: "公開站 forge-bloom-k7xq。點「開始巡禮」進 3D；「校園圖鑑」看建築。WASD 移動、滑鼠視角。" },
-      { title: "逛五虎崗", body: "在瀏覽器裡走校園，辨認建築與山勢。效能依裝置而變。" },
-      { title: "對照現場", body: "巡禮是身體感，不是完整數位雙生。回到淡水現場再對一次。" },
+      { title: "校園通行證", body: "公開站 forge-bloom-k7xq。標題「淡江世界」。/login h1「校園通行證」：訪客可直接遊覽五虎崗，或 Google／X 登入保存蓋章。" },
+      { title: "先以訪客巡禮", body: "不必登入。點「先以訪客巡禮」回首頁 3D 世界。作品集未記錄 3D 操作鍵位。" },
+      { title: "地標", body: "公開 description 寫克難坡、宮燈大道、海事博物館與覺生紀念圖書館。效能依裝置而變，不是完整數位雙生。" },
     ],
   },
   "tamsui-drama": {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "載入世界", body: "打開 tku-tamsui-drama-world-k4x9。等「淡江·淡水世界」載入，不是 FrameLab。" },
-      { title: "第一集", body: "從宮燈下的迎新開始，依關卡走校園闖關。" },
-      { title: "關卡", body: "把淡江／淡水當成可持續開發的劇本，而不是一次導覽 PDF。" },
+      { title: "載入世界", body: "公開站 tku-tamsui-drama-world-k4x9。標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。不是 FrameLab。" },
+      { title: "描述", body: "公開 JS 的 description 寫走訪宮燈大道、圖書館與驚聲大樓。作品集還沒看到第一集畫面。" },
+      { title: "闖關", body: "作品集未走完迎新闖關。HTTP 200 不是 coreFlow。" },
     ],
   },
   skatehub: {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "打開基地", body: "公開站 dd-k3f9。標題是「走向健康，走向陽光」，不是 Folio。" },
+      { title: "打開基地", body: "公開站 dd-k3f9。標題「直排輪基地 SkateHub｜走向健康，走向陽光」。slogan 要人穿上輪鞋出發，不是 Folio。" },
       { title: "裝備圖鑑", body: "看直排輪款式與配件。" },
       { title: "里程", body: "記錄滑行里程，回到自己的基地。" },
     ],
@@ -258,7 +262,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "今天可以創作什麼", body: "打開 delta-horizon-k7f2。先看今日靈感與近期活動。" },
+      { title: "今天可以創作什麼", body: "公開站 delta-horizon-k7f2 首屏「今天可以創作什麼？」。標題「禪學社 Studio」。" },
       { title: "生成", body: "從 IG 貼文／Carousel／Story／畫布開始，不要先開雲端硬碟。" },
       { title: "月曆", body: "到期內容在月曆裡改。未接 IG 時只在工作室內排程。" },
     ],
@@ -267,17 +271,17 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: "現場遊戲，不是心理測驗",
     walkthrough: [
-      { title: "打開", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。" },
-      { title: "暖身", body: "兩題教學與 15 秒練習不計分、不登記。" },
-      { title: "60 秒", body: "正式 Stroop：字義與顏色永遠不同。這是攤位遊戲，不是心理測驗。" },
-      { title: "排行榜", body: "公開列只顯示遮罩姓名與成績。電話與完整名冊只在 /admin。" },
+      { title: "打開", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。" },
+      { title: "教學／練習", body: "兩題教學與 15 秒練習不計分、不登記。正式賽前仍要先填關主與基本資料。" },
+      { title: "60 秒", body: "正式 Stroop 會 POST /api/register 與 /api/result。作品集未送出個資，也未操作這一局。" },
+      { title: "排行榜", body: "GET /api/leaderboard?scope=history 回 67 筆遮罩姓名。今日 0 筆。電話與完整名冊只在 /admin。" },
     ],
   },
   lumen: {
     mode: "conversation-preview",
-    honestyLabel: PORTFOLIO_DEMO,
+    honestyLabel: "作品集預覽，不是 Lumen 語音執行期",
     walkthrough: [
-      { title: "想做什麼", body: "打開 ai-chat-8rq3。點一下開始聽，或按住說話。" },
+      { title: "想做什麼", body: "公開站 ai-chat-8rq3 首屏「想做什麼？」「點一下開始聽 · 按住說話」。這頁不是語音執行期。" },
       { title: "入口", body: "做海報、拍照、開始做影片、長任務。" },
       { title: "最近", body: "從最近專案繼續，不要把未生成的結果假裝完成。" },
     ],
@@ -286,8 +290,8 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "media-gallery",
     honestyLabel: "公開站是小財記帳，不是 Folio 編輯器",
     walkthrough: [
-      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。2026-09-19 探測 HTTP 200，標題「小財記帳」。" },
-      { title: "記一筆", body: "記收支、看分類。作品集尚未驗證這一步是否真的寫入。" },
+      { title: "打開帳本", body: "公開站 untitled-5。標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。" },
+      { title: "記一筆", body: "離線也可記。作品集尚未驗證這一步是否真的寫入。" },
       { title: "這個月", body: "看這個月花到哪。不是作品集後台。" },
     ],
   },
@@ -304,18 +308,18 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。用對話剪影片。" },
-      { title: "找精華", body: "用一句話描述要找的段落。" },
-      { title: "計畫", body: "看時間軸候選，產出剪輯計畫。服務暫停時連結仍保留。" },
+      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。首屏「AI 對話式影片剪輯」。可載入示範影片或上傳。" },
+      { title: "匯入", body: "示範片含停頓。作品集這一頁沒有代替你上傳。" },
+      { title: "計畫", body: "用一句話產生可檢查的 Edit Plan，再套用非破壞時間軸。" },
     ],
   },
   "hermes-agent": {
     mode: "conversation-preview",
     honestyLabel: "需登入的 Dashboard，不是免登入 Console",
     walkthrough: [
-      { title: "Dashboard", body: "打開 hermes-agent-k7q2.zeabur.app。未登入會到 Sign in — Hermes Agent。" },
-      { title: "執行層", body: "這是 Hermes Agent Dashboard，不是 344 的 Console。" },
-      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。" },
+      { title: "Sign in", body: "公開站 hermes-agent-k7q2 未登入轉到 /login。標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。" },
+      { title: "不是 Console", body: "這是需登入的 Dashboard，不是 344 的免登入工作區。" },
+      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。HTTP 200 不是 coreFlow。" },
     ],
   },
 };

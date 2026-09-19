@@ -214,9 +214,19 @@ describe("experience config merge", () => {
     const zenDesk = defaultExperienceConfig("tku-zen-agent");
     assert.match(zenDesk.conversation?.starter ?? "", /授權碼/);
     assert.doesNotMatch(zenDesk.conversation?.starter ?? "", /Hermes 執行期/);
+    const lumen = defaultExperienceConfig("lumen");
+    assert.match(lumen.conversation?.starter ?? "", /想做什麼/);
+    assert.doesNotMatch(lumen.conversation?.starter ?? "", /Hermes 執行期/);
+    const agent = defaultExperienceConfig("hermes-agent");
+    assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
+    assert.doesNotMatch(agent.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.doesNotMatch(agent.intro ?? "", /輸入關鍵詞看說明/);
     const ledger = defaultExperienceConfig("xiaocai");
     assert.match(ledger.intro ?? "", /小財記帳/);
     assert.doesNotMatch(ledger.intro ?? "", /Folio 指令層/);
+    const review = defaultExperienceConfig("duigao");
+    assert.match(review.intro ?? "", /今天要對什麼/);
+    assert.doesNotMatch(review.intro ?? "", /立刻上傳/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });
@@ -261,7 +271,11 @@ describe("experience config merge", () => {
       process: ["在畫布建立文字／形狀／元件", "設計檢查（對比、溢出、安全區）"],
     });
     assert.ok(uncustomizedSeed.some((step) => step.includes("畫布")));
-    assert.ok(uncustomizedSeed[0]?.includes("文件模型") || uncustomizedSeed[0]?.includes("畫布"));
+    assert.ok(
+      uncustomizedSeed[0]?.includes("文件櫃") ||
+        uncustomizedSeed[0]?.includes("文件模型") ||
+        uncustomizedSeed[0]?.includes("畫布"),
+    );
   });
 
   it("maps Folio walkthrough steps onto distinct visual stages from config", () => {

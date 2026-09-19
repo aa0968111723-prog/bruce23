@@ -26,19 +26,21 @@ export const linkedWorks: Project[] = [
     role: "空間體驗設計：場景節奏、校園識別與可立即操作的瀏覽器巡禮。",
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
+      "公開入口是「校園通行證」：訪客可直接遊覽；Google / X 登入後巡禮蓋章才跟著帳號保存。",
       "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
-      "打開 forge-bloom-k7xq.zeabur.app",
-      "點「開始巡禮」進入 3D",
-      "WASD 移動、滑鼠轉視角，滾輪拉近",
-      "開「校園圖鑑」對照建築",
+      "打開 forge-bloom-k7xq.zeabur.app（標題「淡江世界」）",
+      "公開入口是「校園通行證」：訪客可直接遊覽五虎崗，或使用 Google／X 繼續",
+      "點「先以訪客巡禮」回首頁 3D 世界",
     ],
     outputs: ["可逛的 3D 校園公開站"],
     stack: ["WebGL / 3D", "Zeabur"],
     limitations: [
       "效能依裝置而變，不宣稱完整數位雙生。",
+      "2026-09-19 GET / HTTP 200，標題「淡江世界」。description「以淡江大學淡水校園真實地標打造的 3D 巡禮世界：克難坡、宮燈大道、海事博物館與覺生紀念圖書館」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」",
+      "GET /login HTTP 200，h1「校園通行證」。訪客可直接遊覽；登入後保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。作品集未走完訪客 3D 巡禮，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
@@ -46,13 +48,13 @@ export const linkedWorks: Project[] = [
     },
     media: [
       cover("tamkang-world.jpg", "淡江世界光域靜物：晨光中的玻璃校園模型"),
-      shot("tamkang-world.jpg", "淡江世界開場：開始巡禮、校園圖鑑、登入，背景是夕陽海岸"),
+      shot("tamkang-world.jpg", "淡江世界校園通行證：訪客巡禮與登入保存蓋章"),
     ],
     sourceReferences: [
       {
         label: "公開站 · forge-bloom-k7xq.zeabur.app",
         href: "https://forge-bloom-k7xq.zeabur.app",
-        note: "Zeabur 服務 forge-bloom-quiet-falcon。本次探測 RUNNING。og：五虎崗上的 3D 校園巡禮。",
+        note: "2026-09-19 HTTP 200，標題「淡江世界」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」/login h1「校園通行證」：訪客可直接遊覽五虎崗，或 Google／X 登入保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。",
       },
       {
         label: "GitHub · forge-bloom-quiet-falcon",
@@ -80,26 +82,29 @@ export const linkedWorks: Project[] = [
     modalities: ["互動", "敘事", "3D"],
     process: [
       "打開 tku-tamsui-drama-world-k4x9.zeabur.app",
-      "等世界載入",
-      "從第一集宮燈下的迎新開始",
-      "依關卡走完校園",
+      "標題「淡江新生導覽 — 安倢的校園闖關」",
+      "首屏「載入淡江·淡水世界…」",
+      "公開 JS 寫走訪宮燈大道、圖書館與驚聲大樓",
     ],
     outputs: ["校園闖關公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["內容會隨學期更新，不宣稱完整學年劇本。"],
+    limitations: [
+      "內容會隨學期更新，不宣稱完整學年劇本。",
+      "2026-09-19 GET / HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。HTML 首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。作品集未走完闖關，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-tamsui-drama-world",
       live: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
     },
     media: [
       cover("tamsui-drama.jpg", "淡江新生導覽光域靜物：宮燈、闖關地圖與玻璃角色"),
-      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡"),
+      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：宮燈與闖關地圖"),
     ],
     sourceReferences: [
       {
         label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
         href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
-        note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。不是 lunar-falcon-8p2r（那是 FrameLab）。",
+        note: "2026-09-19 HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。不是 FrameLab。",
       },
       {
         label: "GitHub · tku-tamsui-drama-world",
@@ -128,7 +133,10 @@ export const linkedWorks: Project[] = [
     process: ["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程", "回來看自己的基地"],
     outputs: ["直排輪基地公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["個人紀錄依部署資料庫，不在此公開他人資料。"],
+    limitations: [
+      "個人紀錄依部署資料庫，不在此公開他人資料。",
+      "2026-09-19 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「收錄市售直排輪款式與配件圖鑑…不要在家玩手機，穿上輪鞋出發吧！」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/dd",
       live: "https://dd-k3f9.zeabur.app",
@@ -141,7 +149,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · dd-k3f9.zeabur.app",
         href: "https://dd-k3f9.zeabur.app",
-        note: "Zeabur 服務 dd。本次探測 RUNNING。不是 Folio。",
+        note: "2026-09-19 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan 含圖鑑與里程。不是 Folio。",
       },
       {
         label: "GitHub · dd",
@@ -169,13 +177,16 @@ export const linkedWorks: Project[] = [
     modalities: ["圖像", "文宣", "日曆"],
     process: [
       "打開 delta-horizon-k7f2.zeabur.app",
-      "看今日靈感與近期活動",
-      "從「生成 IG 貼文／Carousel／Story」開始",
-      "進畫布或月曆改一則到期內容",
+      "首屏「今天可以創作什麼？」",
+      "看近期活動與 AI 建議",
+      "到期內容沒有審核人，打開工作室會自動發",
     ],
     outputs: ["禪學社 Studio 公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["連 IG 官方發布需額外授權，未接上時只在工作室內排程。"],
+    limitations: [
+      "連 IG 官方發布需額外授權，未接上時只在工作室內排程。",
+      "2026-09-19 GET / HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/delta-horizon-cliff-fern",
       live: "https://delta-horizon-k7f2.zeabur.app",
@@ -185,7 +196,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · delta-horizon-k7f2.zeabur.app",
         href: "https://delta-horizon-k7f2.zeabur.app",
-        note: "Zeabur 服務 delta-horizon-cliff-fern。本次探測 RUNNING。",
+        note: "2026-09-19 HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。到期內容寫明沒有審核人、打開會自動發。",
       },
       {
         label: "GitHub · delta-horizon-cliff-fern",
@@ -203,28 +214,28 @@ export const linkedWorks: Project[] = [
     year: "2026",
     status: "in-progress",
     featured: false,
-    summary: "社博／活動現場的 60 秒專注力挑戰：暖身、正式挑戰、即時看活動狀態。這是現場遊戲，不是心理測驗。",
-    problem: "攤位需要立刻能玩、立刻能看到狀態的遊戲，而不是再填一張表。",
-    role: "現場體驗設計：暖身、計時、成績與表單同步。",
+    summary: "社博現場 60 秒 Stroop：首頁先填關主與基本資料，再兩題教學與 15 秒練習（不登記），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
+    problem: "攤位需要能立刻玩的 60 秒遊戲。正式賽仍要先填關主、姓名、科系、年級、電話，不是「完全不填表就能開打」。",
+    role: "現場體驗設計：登記、教學、計時、成績寫入與公開排行榜。",
     decisions: [
-      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。",
+      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。",
       "GitHub 是 ty；Zeabur 服務 leader-dna-sheet-sync。",
-      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。",
+      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。作品集不送出姓名或電話。",
     ],
     modalities: ["互動", "現場"],
     process: [
-      "打開 leader-dna-mcp-a7k2.zeabur.app",
-      "看懂字義／顏色兩種規則",
+      "打開 leader-dna-mcp-a7k2.zeabur.app（首頁是登記畫面）",
+      "填關主、姓名、科系、年級、電話後才進入教學（作品集不送出）",
       "兩題新手教學與 15 秒練習（不計分、不登記）",
-      "開始 60 秒正式 Stroop",
+      "開始 60 秒正式 Stroop（會 POST /api/register 與 /api/result）",
       "看分數與公開排行榜（遮罩姓名）",
     ],
     outputs: ["現場挑戰公開站", "公開排行榜（遮罩姓名）"],
     stack: ["Web", "Google Sheets", "Zeabur"],
     limitations: [
       "2026-09-19 GET /api/health 回 ok，sheets true，smtp false。",
-      "公開排行榜 API 不含電話或完整姓名。本作品集不展示名冊。",
-      "作品集尚未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
+      "GET /api/leaderboard?scope=history 回 67 筆公開列：遮罩姓名、分數、正確率、稱號、時間。不含電話或完整姓名。今日 scope 為 0 筆。",
+      "正式 60 秒需先填表並寫入遊戲分頁。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ty",
@@ -235,7 +246,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · leader-dna-mcp-a7k2.zeabur.app",
         href: "https://leader-dna-mcp-a7k2.zeabur.app",
-        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。",
+        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。首頁是登記畫面。",
       },
       {
         label: "GitHub · ty",
@@ -269,7 +280,10 @@ export const linkedWorks: Project[] = [
     ],
     outputs: ["Lumen 公開站"],
     stack: ["TanStack Start", "Postgres", "Zeabur"],
-    limitations: ["雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。"],
+    limitations: [
+      "雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。",
+      "2026-09-19 GET / HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。作品集未按住說話，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/wood-ivory-blaze-maple",
       live: "https://ai-chat-8rq3.zeabur.app",
@@ -279,7 +293,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · ai-chat-8rq3.zeabur.app",
         href: "https://ai-chat-8rq3.zeabur.app",
-        note: "Zeabur 服務 wood-ivory-blaze-maple。本次探測 RUNNING。",
+        note: "2026-09-19 HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。不是 Hermes。",
       },
       {
         label: "GitHub · wood-ivory-blaze-maple",
@@ -302,11 +316,17 @@ export const linkedWorks: Project[] = [
     role: "個人工具：記帳、分類、月覽。",
     decisions: ["公開站 untitled-5；GitHub 倉庫名是 -1。"],
     modalities: ["互動", "數字"],
-    process: ["打開 untitled-5.zeabur.app", "記一筆收支", "看分類", "看這個月"],
+    process: [
+      "打開 untitled-5.zeabur.app",
+      "首屏是「點我一下，快速記一筆吧」",
+      "沒有網路也能記，資料先存在裝置",
+      "登入後才與帳號同步",
+    ],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
-      "公開站 HTTP 200、標題「小財記帳」。頁面是前端渲染，作品集未驗證記帳核心流程。",
+      "公開站 HTTP 200、標題「小財記帳」。",
+      "2026-09-20 JS 首屏「點我一下，快速記一筆吧」。離線可記；登入後同步。作品集未記一筆真實收支，coreFlow 未過。",
       "不是作品集後台。",
     ],
     links: {
@@ -318,7 +338,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。核心記帳流程尚未黑箱驗證。",
+        note: "2026-09-20 HTTP 200，標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。離線可記。不是 502，也不是 Folio。",
       },
       {
         label: "GitHub · -1",
@@ -391,10 +411,18 @@ export const linkedWorks: Project[] = [
     role: "剪輯入口設計：對話、時間軸、計畫。",
     decisions: ["與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。"],
     modalities: ["影片", "對話", "時間軸"],
-    process: ["打開 cutos.zeabur.app", "用一句話描述要找的精華", "看時間軸候選", "產出剪輯計畫"],
+    process: [
+      "打開 cutos.zeabur.app",
+      "首屏「AI 對話式影片剪輯」，可載入示範影片或上傳自己的影片",
+      "用一句話描述要剪的意圖",
+      "檢查 Edit Plan 後套用非破壞時間軸",
+    ],
     outputs: ["CUTOS 公開站"],
-    stack: ["Web", "Postgres", "Zeabur"],
-    limitations: ["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"],
+    stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
+    limitations: [
+      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。首屏「AI 對話式影片剪輯」「載入示範影片／上傳影片」。/api/health ok。",
+      "作品集未載入示範片也未上傳真實影片，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/CUTOS",
       live: "https://cutos.zeabur.app",
@@ -404,7 +432,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。首屏「AI 對話式影片剪輯」「載入示範影片／上傳影片」。/api/health ok。不是 502。",
       },
       {
         label: "GitHub · CUTOS",
@@ -433,14 +461,17 @@ export const linkedWorks: Project[] = [
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
-      "開啟 hermes-agent-k7q2.zeabur.app",
-      "未登入會到 Sign in — Hermes Agent",
-      "登入（擁有者）後進入 Dashboard",
-      "查看 sessions 與工具狀態",
+      "打開 hermes-agent-k7q2.zeabur.app（未登入轉到 /login）",
+      "標題「Sign in — Hermes Agent」；h1 Sign in；Username & Password",
+      "登入（擁有者）後才進 Dashboard",
+      "作品集不送出帳密，看不到 sessions",
     ],
     outputs: ["公開網域 hermes-agent-k7q2.zeabur.app（Dashboard）"],
     stack: ["Hermes Agent", "Docker", "Zeabur"],
-    limitations: ["需要登入。作品集訪客看不到 Dashboard 內容。"],
+    limitations: [
+      "需要登入。作品集訪客看不到 Dashboard 內容。",
+      "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。作品集未登入，coreFlow 未過。",
+    ],
     links: {
       live: "https://hermes-agent-k7q2.zeabur.app/",
     },
@@ -452,7 +483,7 @@ export const linkedWorks: Project[] = [
       {
         label: "Dashboard · hermes-agent-k7q2.zeabur.app",
         href: "https://hermes-agent-k7q2.zeabur.app/",
-        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。",
+        note: "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。不是 344 Console，也不是 455 舊站。作品集未登入。",
       },
     ],
     visibility: "public",

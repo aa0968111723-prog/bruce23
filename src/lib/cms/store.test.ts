@@ -714,7 +714,8 @@ describe("cms persistence", () => {
        set live_demo_url = $2,
            source_evidence = $3::jsonb,
            decisions = $4::jsonb,
-           limitations = $5::jsonb
+           process = $5::jsonb,
+           limitations = $6::jsonb
        where slug = $1`,
       [
         "framelab",
@@ -728,6 +729,7 @@ describe("cms persistence", () => {
           },
         ]),
         JSON.stringify(["stale identity"]),
+        JSON.stringify(["匯入影片或圖序"]),
         JSON.stringify(["stale limitation"]),
       ],
     );
@@ -739,7 +741,12 @@ describe("cms persistence", () => {
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
     assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
+    assert.ok(frame.process.some((item) => item.includes("登入工作室")));
+    assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
+    assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
+    assert.match(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
     assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
   });
 
@@ -793,21 +800,471 @@ describe("cms persistence", () => {
     assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
   });
 
+  it("rewrites CUTOS 502 notes after a live health/ready probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "cutos",
+        JSON.stringify(["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · cutos.zeabur.app",
+            href: "https://cutos.zeabur.app",
+            note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'cutos_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const cutos = await getPublishedProject(sql, "cutos");
+    assert.ok(cutos.limitations.every((item) => !/SUSPENDED／502/.test(item)));
+    assert.ok(cutos.sourceEvidence.every((item) => !/SUSPENDED／502/.test(item.note ?? "")));
+    assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.ok(cutos.process.some((item) => item.includes("載入示範影片")));
+    assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites PLANFORM process to the live 我的專案 home without claiming canvas coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "planform",
+        JSON.stringify(["選教室模板與人數"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · planform-iso-k7d2.zeabur.app",
+            href: "https://planform-iso-k7d2.zeabur.app",
+            note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'planform_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const plan = await getPublishedProject(sql, "planform");
+    assert.ok(plan.process[0]?.includes("我的專案"));
+    assert.ok(plan.process[0]?.includes("新建專案"));
+    assert.equal(plan.process.some((item) => item === "選教室模板與人數"), false);
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /1\.0\.0/);
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /我的專案/);
+    assert.ok(plan.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(plan.limitations.some((item) => item.includes("不做容留人數計算")));
+    assert.ok(plan.sourceEvidence.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
+    assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
+  });
+
+  it("rewrites duigao process to the live What are we reviewing today home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, decisions = $3::jsonb, limitations = $4::jsonb, source_evidence = $5::jsonb
+       where slug = $1`,
+      [
+        "duigao",
+        JSON.stringify(["上傳文宣版本"]),
+        JSON.stringify(["stale decision"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · duigao-k7q2.zeabur.app",
+            href: "https://duigao-k7q2.zeabur.app",
+            note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'duigao_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const room = await getPublishedProject(sql, "duigao");
+    assert.ok(room.process[0]?.includes("duigao-k7q2.zeabur.app"));
+    assert.ok(room.process.some((item) => item.includes("今天要對什麼")));
+    assert.ok(room.process.every((item) => !item.includes("上傳文宣版本")));
+    assert.ok(room.decisions.some((item) => item.includes("今天要對什麼")));
+    assert.match(
+      room.sourceEvidence.find((item) => item.href?.includes("duigao-k7q2"))?.note ?? "",
+      /今天要對什麼/,
+    );
+    assert.match(room.experienceConfig.intro ?? "", /今天要對什麼/);
+    assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.match(room.locale.en?.process?.[1] ?? "", /What are we reviewing today/i);
+  });
+
+  it("rewrites Folio process to start at the live file cabinet", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "folio",
+        JSON.stringify(["在畫布建立文字／形狀／元件"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · canva2-k7qm.zeabur.app",
+            href: "https://canva2-k7qm.zeabur.app",
+            note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'folio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const folio = await getPublishedProject(sql, "folio");
+    assert.ok(folio.process[0]?.includes("文件櫃"));
+    assert.match(
+      folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
+      /文件櫃/,
+    );
+    assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Hermes Console process to the live unsigned home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "hermes-console",
+        JSON.stringify(["開啟工作區"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · 344.zeabur.app",
+            href: "https://344.zeabur.app",
+            note: "FEATURE_AUDIT_EDU.md 記載的正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_console_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const desk = await getPublishedProject(sql, "hermes-console");
+    assert.ok(desk.process[0]?.includes("344.zeabur.app"));
+    assert.match(
+      desk.sourceEvidence.find((item) => item.href?.includes("344.zeabur.app"))?.note ?? "",
+      /今天想做什麼/,
+    );
+    assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites SkateHub evidence with the live slogan probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "skatehub",
+        JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · dd-k3f9.zeabur.app",
+            href: "https://dd-k3f9.zeabur.app",
+            note: "Zeabur 服務 dd。本次探測 RUNNING。不是 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'skatehub_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const hub = await getPublishedProject(sql, "skatehub");
+    assert.match(
+      hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
+      /走向健康，走向陽光/,
+    );
+    assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Tamkang World process to the live campus pass", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "tamkang-world",
+        JSON.stringify(["點「開始巡禮」進入 3D", "WASD 移動", "開「校園圖鑑」對照建築"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · forge-bloom-k7xq.zeabur.app",
+            href: "https://forge-bloom-k7xq.zeabur.app",
+            note: "Zeabur 服務 forge-bloom-quiet-falcon。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamkang_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const world = await getPublishedProject(sql, "tamkang-world");
+    assert.ok(world.process.some((item) => item.includes("校園通行證")));
+    assert.equal(world.process.some((item) => item.includes("開始巡禮")), false);
+    assert.equal(world.process.some((item) => item.includes("WASD")), false);
+    assert.match(
+      world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-k7xq"))?.note ?? "",
+      /校園通行證/,
+    );
+    assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Lumen conversation so it is not Hermes chrome", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb, experience_config = $4::jsonb
+       where slug = $1`,
+      [
+        "lumen",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · ai-chat-8rq3.zeabur.app",
+            href: "https://ai-chat-8rq3.zeabur.app",
+            note: "Zeabur 服務 wood-ivory-blaze-maple。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'lumen_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const orb = await getPublishedProject(sql, "lumen");
+    assert.match(
+      orb.sourceEvidence.find((item) => item.href?.includes("ai-chat-8rq3"))?.note ?? "",
+      /想做什麼/,
+    );
+    assert.doesNotMatch(orb.experienceConfig.conversation?.starter ?? "", /Hermes 執行期/);
+    assert.match(orb.experienceConfig.conversation?.starter ?? "", /想做什麼/);
+    assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Zen Studio process to the live What can we make today home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["從「生成 IG 貼文／Carousel／Story」開始"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · delta-horizon-k7f2.zeabur.app",
+            href: "https://delta-horizon-k7f2.zeabur.app",
+            note: "Zeabur 服務 delta-horizon-cliff-fern。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.match(
+      studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
+      /今天可以創作什麼/,
+    );
+    assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Tamsui drama process to the live load splash without inventing episode one", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, media = $5::jsonb
+       where slug = $1`,
+      [
+        "tamsui-drama",
+        JSON.stringify(["從第一集宮燈下的迎新開始", "依關卡走完校園"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
+            href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
+            note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify([
+          {
+            src: "/media/shots/tamsui-drama.jpg",
+            alt: "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡",
+            kind: "image",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamsui_drama_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const drama = await getPublishedProject(sql, "tamsui-drama");
+    assert.ok(drama.process.some((item) => item.includes("載入淡江·淡水世界")));
+    assert.equal(drama.process.some((item) => item.includes("第一集")), false);
+    assert.match(
+      drama.sourceEvidence.find((item) => item.href?.includes("tku-tamsui-drama-world-k4x9"))?.note ?? "",
+      /載入淡江·淡水世界/,
+    );
+    assert.ok(drama.limitations.some((item) => item.includes("沒有「第一集」")));
+    assert.ok(drama.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(drama.media.every((item) => !item.alt.includes("第一集")));
+  });
+
+  it("rewrites Hermes Agent conversation to the live Sign in screen", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
+       where slug = $1`,
+      [
+        "hermes-agent",
+        JSON.stringify(["開啟工作區", "輸入關鍵詞看說明"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "Dashboard · hermes-agent-k7q2.zeabur.app",
+            href: "https://hermes-agent-k7q2.zeabur.app/",
+            note: "Zeabur 服務 hermes-agent（Dashboard）。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_agent_signin_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const agent = await getPublishedProject(sql, "hermes-agent");
+    assert.ok(agent.process[0]?.includes("/login"));
+    assert.match(
+      agent.sourceEvidence.find((item) => item.href?.includes("hermes-agent-k7q2"))?.note ?? "",
+      /Sign in — Hermes Agent/,
+    );
+    assert.match(agent.experienceConfig.conversation?.starter ?? "", /Sign in — Hermes Agent/);
+    assert.doesNotMatch(agent.experienceConfig.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.ok(agent.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Xiaocai process to the live tap-to-log slogan", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["記一筆收支"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · untitled-5.zeabur.app",
+            href: "https://untitled-5.zeabur.app",
+            note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'xiaocai_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const ledger = await getPublishedProject(sql, "xiaocai");
+    assert.ok(ledger.process.some((item) => item.includes("快速記一筆")));
+    assert.match(
+      ledger.sourceEvidence.find((item) => item.href?.includes("untitled-5"))?.note ?? "",
+      /快速記一筆/,
+    );
+    assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("clears a fake Poster Vision live URL when no public host exists", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set live_demo_url = $2, live_demo_type = $3, limitations = $4::jsonb
+       where slug = $1`,
+      [
+        "poster-vision-ai",
+        "https://github.com/aa0968111723-prog/poster-vision-ai",
+        "link",
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'poster_vision_no_host_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const poster = await getPublishedProject(sql, "poster-vision-ai");
+    assert.equal(poster.demo.url, null);
+    assert.equal(poster.demo.type, "unavailable");
+    assert.ok(poster.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
+    assert.ok(poster.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
-    await sql.query(`update projects set process = $2::jsonb, limitations = $3::jsonb where slug = $1`, [
-      "focus-challenge",
-      JSON.stringify(["stale process"]),
-      JSON.stringify(["stale limitation"]),
-    ]);
+    await sql.query(
+      `update projects
+       set summary = $2,
+           problem = $3,
+           process = $4::jsonb,
+           limitations = $5::jsonb
+       where slug = $1`,
+      [
+        "focus-challenge",
+        "stale summary：暖身、正式挑戰、即時看活動狀態。",
+        "stale problem：不是再填一張表。",
+        JSON.stringify(["stale process"]),
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
     await sql.query(`delete from cms_meta where key = 'ty_contract_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const game = await getPublishedProject(sql, "focus-challenge");
+    assert.doesNotMatch(game.summary, /即時看活動狀態/);
+    assert.doesNotMatch(game.problem, /不是再填一張表/);
+    assert.match(game.summary, /登記|填關主/);
+    assert.match(game.problem, /仍要先填/);
+    assert.ok(game.process.some((item) => item.includes("登記畫面")));
     assert.ok(game.process.some((item) => item.includes("60 秒正式 Stroop")));
     assert.ok(game.limitations.some((item) => item.includes("/api/health")));
+    assert.ok(game.limitations.some((item) => item.includes("67 筆")));
     assert.ok(game.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(game.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.match(game.sourceEvidence[0]?.note ?? "", /登記畫面/);
+    const walk = game.experienceConfig.walkthrough ?? [];
+    assert.ok(walk.some((step) => step.title === "教學／練習"));
+    assert.equal(walk.some((step) => step.title === "暖身"), false);
+    assert.match(game.locale.en?.summary ?? "", /not an activity-status dashboard/i);
   });
 
   it("rewrites stale 502/paused notes for AI Director OS after a live 200 probe", async () => {
@@ -815,13 +1272,15 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb,
-           source_evidence = $3::jsonb,
-           live_demo_status = $4,
-           live_demo_error = $5
+       set process = $2::jsonb,
+           limitations = $3::jsonb,
+           source_evidence = $4::jsonb,
+           live_demo_status = $5,
+           live_demo_error = $6
        where slug = $1`,
       [
         "ai-director-os",
+        JSON.stringify(["建立專案與世界觀快速層"]),
         JSON.stringify(["公開部署網址狀態會隨環境變動。"]),
         JSON.stringify([
           {
@@ -849,7 +1308,12 @@ describe("cms persistence", () => {
     assert.ok(aios.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
     assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://ai-os-app.zeabur.app"));
     assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://vexlark.co"));
+    assert.ok(aios.process.some((item) => item.includes("進入工作台")));
+    assert.ok(aios.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
+    assert.ok(aios.process.every((item) => !item.includes("建立專案與世界觀快速層")));
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
     assert.ok(aios.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
+    assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(aios.locale.en?.limitations?.join(" ") ?? "", /Not 502 and not paused/i);
     assert.equal(aiosAdmin.live_demo_status, "pending");
     assert.equal(aiosAdmin.live_demo_error, null);
