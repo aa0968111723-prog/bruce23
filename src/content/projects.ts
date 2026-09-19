@@ -398,6 +398,7 @@ const featuredWorks: Project[] = [
       "不做容留人數或避難寬度法定計算。",
       "不上架 App Store。",
       "本工具是場前彩排，不是現場指揮系統。",
+      "2026-09-19 GET /version.json 回 version 1.0.0、commit 1b8513b。公開站是 SPA，作品集未完成「建立專案→拖動物件」黑箱操作，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
@@ -438,7 +439,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · planform-iso-k7d2.zeabur.app",
         href: "https://planform-iso-k7d2.zeabur.app",
-        note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。本次探測為 HTML，沒有 frame-bust，可當 Live Demo。狀態會隨部署變動。",
+        note: "docs/agent-handoff/AGENT_PROTOCOL.md 記載的 Zeabur 正式站。2026-09-19 HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。PWA manifest 與 sw.js 存在。",
       },
     ],
     visibility: "public",

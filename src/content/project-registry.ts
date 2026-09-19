@@ -90,6 +90,10 @@ export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-200-20260919";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
+export const PLANFORM_LIVE_PROBE_VERSION = "planform-version-json-20260919";
+
+export const PLANFORM_LIVE_PROBE_SLUG = "planform";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
