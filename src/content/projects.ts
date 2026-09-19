@@ -79,14 +79,14 @@ const featuredWorks: Project[] = [
       "世界觀、角色與素材庫自動帶進提示詞，減少複製貼上。",
       "先扣點數預估、失敗退回；外部引文只當草稿，重要內容需組長審核。",
       "MCP 使用可撤銷、可到期、綁定個人的連線金鑰，不用共用超管金鑰當正式站預設。",
+      "公開站首屏是登陸頁，不是立刻建立專案。進入工作台要登入；未入組不能建立專案。",
     ],
     modalities: ["文字", "圖像", "影片", "音訊", "審批流程"],
     process: [
-      "建立專案與世界觀快速層",
-      "多模態生成（圖／影／音／文字）並自動入素材庫",
-      "分鏡排序、短影音母版複製",
-      "組長審批三態機",
-      "匯出時間軸與素材包給剪輯軟體",
+      "打開 ai-os-app.zeabur.app（標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」）",
+      "首屏 eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」",
+      "主按鈕「進入工作台」到 /login；頁首也有「登入工作台」",
+      "登入且加入組別後才能建立專案；作品集未登入",
     ],
     outputs: [
       "公開儲存庫 ai_os（創作系統）",
@@ -97,7 +97,7 @@ const featuredWorks: Project[] = [
     limitations: [
       "素材知識庫（RAG）尚未完成。",
       "資料庫層 RLS 第二道隔離尚未完成。",
-      "2026-09-19 探測 ai-os-app.zeabur.app 與 vexlark.co 均 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。頁面是前端渲染，作品集未驗證團隊創作核心流程。",
+      "2026-09-20 JS 首屏「把想法，變成團隊真正能完成的計畫。」主 CTA「進入工作台」→ /login。/api/health ok。不是 502、也不是暫停。作品集未登入、未入組、未建立專案，未驗證團隊創作核心流程，coreFlow 未過。",
       "公開部署網址狀態會隨環境變動，不在此宣稱穩定 SLA 或使用者數。",
       "開發期假身分與種子帳號不會出現在本站。",
     ],
@@ -163,12 +163,12 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · ai-os-app.zeabur.app",
         href: "https://ai-os-app.zeabur.app",
-        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。2026-09-19 探測 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。核心流程尚未黑箱驗證。",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。2026-09-20 GET / HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。JS 首屏 h1「把想法，變成團隊真正能完成的計畫。」主按鈕「進入工作台」→ /login。/api/health ok。不是 502、也不是暫停。未登入不能建立專案。",
       },
       {
         label: "自訂網域 · vexlark.co",
         href: "https://vexlark.co",
-        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。2026-09-19 探測 HTTP 200，標題與公開站相同。不是 502、也不是暫停。",
+        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。2026-09-20 GET / HTTP 200，標題與公開站相同。JS 登陸頁與 /login 相同。不是 502、也不是暫停。",
       },
       {
         label: "GitHub homepage · ai-os-ten.vercel.app",

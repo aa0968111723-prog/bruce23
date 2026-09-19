@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-5",
-  "updatedAt": "2026-09-20T01:00:00Z",
+  "runId": "portfolio-agent-hour-6",
+  "updatedAt": "2026-09-20T02:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -775,15 +775,19 @@
   "portfolioReady": false,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "currentProject": "tamkang-world",
 =======
   "currentProject": "hermes-agent",
 >>>>>>> origin/main
+=======
+  "currentProject": "ai-director-os",
+>>>>>>> origin/main
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/hermes-agent-signin",
+  "currentBranch": "fix/aios-live-home",
   "currentPR": null,
-  "currentTask": "hermes-agent-signin",
+  "currentTask": "aios-live-home",
   "taskStatus": "implementing",
 >>>>>>> origin/main
   "completedSteps": [
@@ -811,8 +815,10 @@
     "Lumen generic preview chrome merged as PR #33 and live (工作區預覽 only on hermes-console)",
     "Tamsui shot alt merged as PR #34",
     "Poster Vision no public host merged as PR #35 and live",
-    "Hermes Agent Sign in merged as PR #36 and live",
+    "Hermes Agent Sign in merged as PR #36 and live on production /work/hermes-agent",
     "Xiaocai tap-to-log merged as PR #37 and live",
+    "CUTOS live home merged as PR #38 and live",
+    "AI Director OS landing merged as PR #39 and live",
     "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
@@ -830,7 +836,7 @@
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
+      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"

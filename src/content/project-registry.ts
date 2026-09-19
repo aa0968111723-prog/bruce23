@@ -78,7 +78,7 @@ export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
 
-export const AIOS_LIVE_PROBE_VERSION = "aios-live-probe-20260919";
+export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
@@ -86,7 +86,7 @@ export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-200-20260919";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-home-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
