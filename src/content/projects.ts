@@ -482,6 +482,7 @@ const featuredWorks: Project[] = [
       "影片單次上傳、無續傳；上限刻意保守。",
       "HEVC 的 .mov 在部分瀏覽器播不出，會說明而不是給黑畫面。",
       "本作品集不會讀取對稿的私人資料表或 token。",
+      "2026-09-19 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。README 標題仍是文宣討論區。作品集未上傳真實文宣完成點位留言，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
@@ -522,7 +523,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
-        note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+        note: "2026-09-19 HTTP 200，標題「對稿｜圖片與影片協作空間」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
       },
     ],
     visibility: "public",

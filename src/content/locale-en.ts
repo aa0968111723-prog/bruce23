@@ -283,6 +283,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Single video upload, no resume; the cap is deliberately conservative.",
         "HEVC .mov may not play in some browsers — the page explains instead of showing a black frame.",
         "This portfolio never reads Duigao private tables or tokens.",
+        "Probed 2026-09-19: GET / HTTP 200, title 對稿｜圖片與影片協作空間. README heading is still 文宣討論區. This portfolio has not uploaded a real poster and left a pin, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.duigao,
