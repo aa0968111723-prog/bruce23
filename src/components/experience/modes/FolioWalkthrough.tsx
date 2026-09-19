@@ -14,7 +14,9 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   const owner = project.github.owner;
   const repo = project.github.repo;
   const branch = project.github.branch ?? "main";
-  const kind = step ? walkthroughStageKind(step) : "document";
+  const isFolio = project.slug === "folio";
+  const kind = step ? (isFolio ? walkthroughStageKind(step) : "document") : "document";
+  const canvasLabel = isFolio ? ex.folioDemoCanvas : ex.walkDemoCanvas;
 
   function go(next: number) {
     if (!steps.length) return;
@@ -34,7 +36,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   if (!step) return <p className="text-sm text-muted">{ex.emptyWalkthrough}</p>;
 
   return (
-    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.walkAria}>
+    <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={isFolio ? ex.walkAria : ex.walkStepsAria}>
       <p className="text-sm text-muted">
         {joinSentences(
           config.intro ?? (project.slug === "folio" ? ex.folioDefaultIntro : ex.walkDefaultIntro),
@@ -62,7 +64,14 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
         data-walkthrough-stage={kind}
         data-walkthrough-path={step.path ?? ""}
       >
-        <FolioStage step={step} kind={kind} index={index} total={steps.length} ex={ex} />
+        <FolioStage
+          step={step}
+          kind={kind}
+          index={index}
+          total={steps.length}
+          ex={ex}
+          canvasLabel={canvasLabel}
+        />
       </div>
       <div className="mt-4 rounded-2xl bg-surface p-5 shadow-card">
         <p className="text-xs text-mint-deep">
@@ -110,18 +119,20 @@ function FolioStage({
   index,
   total,
   ex,
+  canvasLabel,
 }: {
   step: WalkthroughStep;
   kind: WalkthroughStageKind;
   index: number;
   total: number;
   ex: ExperienceChrome;
+  canvasLabel: string;
 }) {
   const file = step.path?.split("/").pop() ?? step.path ?? "document";
   return (
     <div className="bg-surface-blue/70 p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between gap-2 text-[11px] text-muted">
-        <span>{ex.folioDemoCanvas}</span>
+        <span>{canvasLabel}</span>
         <span>
           {index + 1}/{total}
         </span>
