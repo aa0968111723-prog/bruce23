@@ -40,6 +40,23 @@ describe("readme and rate-limit states", () => {
     assert.equal(limited[0].path, "src/lib/zen.ts");
   });
 
+  it("skips ingested club Drive dumps under knowledge/雲端文件", () => {
+    const limited = limitGithubTree(
+      [
+        { path: "README.md", type: "blob", size: 40 },
+        { path: "app/main.py", type: "blob", size: 20 },
+        { path: "knowledge/雲端文件/108學年度/活動企劃書.md", type: "blob", size: 80 },
+      ],
+      { maxDepth: 4, maxEntries: 80 },
+    );
+    assert.ok(limited.some((item) => item.path === "README.md"));
+    assert.ok(limited.some((item) => item.path === "app/main.py"));
+    assert.equal(
+      limited.some((item) => item.path.includes("knowledge/雲端文件")),
+      false,
+    );
+  });
+
   it("does not let .grok/.github files crowd out README and src", () => {
     const junk = Array.from({ length: 90 }, (_, index) => ({
       path: `.grok/file-${index}.md`,

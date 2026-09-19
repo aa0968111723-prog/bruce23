@@ -142,6 +142,17 @@ export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-welcome-20260920";
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
 
+export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-gate-github-20260920";
+
+export const TKU_ZEN_AGENT_LIVE_PROBE_SLUG = "tku-zen-agent";
+
+/** Public GitHub trees that still contain club Drive dumps. Do not hydrate into the portfolio. */
+export const GITHUB_HYDRATE_SKIP_SLUGS = ["tku-zen-agent"] as const;
+
+export function skipGithubHydrate(slug: string): boolean {
+  return (GITHUB_HYDRATE_SKIP_SLUGS as readonly string[]).includes(slug);
+}
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
