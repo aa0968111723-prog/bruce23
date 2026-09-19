@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-19T16:40:00Z",
-  "runId": "grok-impl-20260919-aios-live",
+  "generatedAt": "2026-09-19T14:10:00Z",
+  "runId": "grok-impl-20260919-ty-public-flow",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-19T16:00:00Z",
+  "startedAt": "2026-09-19T13:50:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,33 +12,28 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "rewrite-stale-502-notes-ai-director-os",
-  "inspectedCommit": "cc46fff",
+  "task": "ty-public-flow-honesty",
+  "inspectedCommit": "a909d60",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 41 unit tests (registry + cms store) + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + 51 unit tests (registry + catalog + cms store) + vite build",
     "browser": "NOT_YET",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "code on branch fix/stale-502-aios-live; production still has stale AIOS 502/paused notes",
+    "deployment": "code on branch fix/ty-public-flow-honesty; production still has booth-status summary",
     "security": "NOT_VERIFIED"
   },
   "probes": [
     {
-      "url": "https://ai-os-app.zeabur.app/",
+      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
       "status": 200,
-      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
-      "checkedAt": "2026-09-19T16:20:00Z"
-    },
-    {
-      "url": "https://vexlark.co/",
-      "status": 200,
-      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
-      "checkedAt": "2026-09-19T16:20:00Z"
+      "staleNotes": [],
+      "pr17Landed": true,
+      "checkedAt": "2026-09-19T13:55:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
@@ -46,21 +41,37 @@
       "liveDemo": "https://cabin-shale-k7q2.zeabur.app",
       "cabinNote": "RUNNING, not 502",
       "pr11Landed": true,
-      "checkedAt": "2026-09-19T16:10:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
-      "status": 200,
-      "staleNotes": ["本次探測服務可能暫停", "本次探測可能 502／暫停"],
-      "prAiosLanded": false,
-      "checkedAt": "2026-09-19T16:10:00Z"
+      "checkedAt": "2026-09-19T13:55:00Z"
     },
     {
       "url": "https://leader-dna-mcp-a7k2.zeabur.app/",
       "status": 200,
       "title": "淡江大學禪學社｜專注力挑戰賽",
+      "homepage": "registration screen",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-19T16:20:00Z"
+      "checkedAt": "2026-09-19T13:57:00Z"
+    },
+    {
+      "url": "https://leader-dna-mcp-a7k2.zeabur.app/api/health",
+      "status": 200,
+      "body": { "status": "ok", "sheets": true, "smtp": false },
+      "checkedAt": "2026-09-19T13:57:00Z"
+    },
+    {
+      "url": "https://leader-dna-mcp-a7k2.zeabur.app/api/leaderboard?scope=history",
+      "status": 200,
+      "count": 67,
+      "public": true,
+      "pii": "masked names only",
+      "checkedAt": "2026-09-19T13:57:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
+      "status": 200,
+      "staleSummary": "暖身、正式挑戰、即時看活動狀態",
+      "staleProblem": "不是再填一張表",
+      "pr18ProcessLanded": true,
+      "checkedAt": "2026-09-19T13:56:00Z"
     }
   ],
   "gates": {
@@ -76,8 +87,8 @@
     "Zeabur MCP ERROR_INVALID_TOKEN; cannot inspect or trigger bruce23 deploy"
   ],
   "nextSteps": [
-    "Open PR for AI Director OS stale 502/paused note repair",
-    "After deploy, verify production /work/ai-director-os",
-    "Then operate ty core flow on leader-dna-mcp-a7k2"
+    "Open PR for ty public-flow honesty",
+    "After deploy, verify production /work/focus-challenge",
+    "Then operate planform core flow on planform-iso-k7d2"
   ]
 }

@@ -796,18 +796,39 @@ describe("cms persistence", () => {
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
-    await sql.query(`update projects set process = $2::jsonb, limitations = $3::jsonb where slug = $1`, [
-      "focus-challenge",
-      JSON.stringify(["stale process"]),
-      JSON.stringify(["stale limitation"]),
-    ]);
+    await sql.query(
+      `update projects
+       set summary = $2,
+           problem = $3,
+           process = $4::jsonb,
+           limitations = $5::jsonb
+       where slug = $1`,
+      [
+        "focus-challenge",
+        "stale summary：暖身、正式挑戰、即時看活動狀態。",
+        "stale problem：不是再填一張表。",
+        JSON.stringify(["stale process"]),
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
     await sql.query(`delete from cms_meta where key = 'ty_contract_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const game = await getPublishedProject(sql, "focus-challenge");
+    assert.doesNotMatch(game.summary, /即時看活動狀態/);
+    assert.doesNotMatch(game.problem, /不是再填一張表/);
+    assert.match(game.summary, /登記|填關主/);
+    assert.match(game.problem, /仍要先填/);
+    assert.ok(game.process.some((item) => item.includes("登記畫面")));
     assert.ok(game.process.some((item) => item.includes("60 秒正式 Stroop")));
     assert.ok(game.limitations.some((item) => item.includes("/api/health")));
+    assert.ok(game.limitations.some((item) => item.includes("67 筆")));
     assert.ok(game.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(game.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.match(game.sourceEvidence[0]?.note ?? "", /登記畫面/);
+    const walk = game.experienceConfig.walkthrough ?? [];
+    assert.ok(walk.some((step) => step.title === "教學／練習"));
+    assert.equal(walk.some((step) => step.title === "暖身"), false);
+    assert.match(game.locale.en?.summary ?? "", /not an activity-status dashboard/i);
   });
 
   it("rewrites stale 502/paused notes for AI Director OS after a live 200 probe", async () => {

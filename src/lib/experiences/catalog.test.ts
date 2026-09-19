@@ -95,6 +95,15 @@ describe("experience catalog", () => {
     );
   });
 
+  it("keeps ty focus-challenge walkthrough on the probed public flow", () => {
+    const steps = experienceCatalog["focus-challenge"].walkthrough ?? [];
+    assert.equal(steps.some((step) => step.title === "暖身"), false);
+    assert.ok(steps.some((step) => step.title === "教學／練習"));
+    assert.match(steps[0]?.body ?? "", /登記畫面/);
+    assert.match(steps.at(-1)?.body ?? "", /67 筆/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /即時看活動狀態/);
+  });
+
   it("pins catalog source paths for GitHub tree keepPaths", () => {
     assert.deepEqual(catalogSourcePaths(), []);
     assert.deepEqual(catalogSourcePaths("unknown-slug"), []);

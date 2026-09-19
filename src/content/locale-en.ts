@@ -433,18 +433,22 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
   "focus-challenge": {
     title: "Focus challenge",
     subtitle: "60 seconds on the TKU Zen booth",
-    summary: "A 60-second booth game: warm-up, official run, live status. Not a psychological test.",
+    summary:
+      "Booth Stroop: register host and basics first, then two tutorial questions and a 15-second practice (not saved), then the official 60 seconds. A live game, not a psychological test, and not an activity-status dashboard.",
+    problem:
+      "The booth needs a 60-second game people can play on the spot. The official run still starts with host, name, department, grade, and phone — it is not tap-and-play with no form.",
+    role: "Booth experience: registration, tutorial, timer, score write, and the public leaderboard.",
     process: [
-      "Open leader-dna-mcp-a7k2.zeabur.app",
-      "Read the meaning vs color rules",
+      "Open leader-dna-mcp-a7k2.zeabur.app (the homepage is the registration screen)",
+      "Fill host, name, department, grade, and phone before the tutorial (this portfolio does not submit that)",
       "Two tutorial questions and a 15-second practice (not scored, not saved)",
-      "Start the official 60-second Stroop",
+      "Start the official 60-second Stroop (POST /api/register and /api/result)",
       "See the score and the public leaderboard (masked names)",
     ],
     limitations: [
       "2026-09-19 GET /api/health returned ok, sheets true, smtp false.",
-      "The public leaderboard API does not include phone numbers or full names.",
-      "This portfolio has not yet completed an official 60-second black-box run, so coreFlow is not passed.",
+      "GET /api/leaderboard?scope=history returned 67 public rows: masked name, score, accuracy, title, time. No phone numbers or full names. Today's scope is 0 rows.",
+      "The official 60-second run requires the form and writes the game sheet. This portfolio did not submit PII and has not completed an official 60-second black-box run, so coreFlow is not passed.",
     ],
   },
   lumen: {
