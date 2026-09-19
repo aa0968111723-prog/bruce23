@@ -208,7 +208,10 @@ describe("experience config merge", () => {
   it("seeds local chat suggestions for Zen and Hermes", () => {
     const zen = defaultExperienceConfig("tku-zen-ai");
     assert.equal(zen.conversation?.suggestions?.length, 4);
-    assert.ok(zen.conversation?.suggestions?.includes("考試好有壓力"));
+    assert.ok(zen.conversation?.suggestions?.includes("I feel stressed about my exams"));
+    assert.match(zen.intro ?? "", /Welcome to TKU Zen AI/);
+    assert.match(zen.conversation?.starter ?? "", /Take a breath/);
+    assert.doesNotMatch(zen.conversation?.starter ?? "", /輸入一句心情/);
     const hermes = defaultExperienceConfig("hermes-console");
     assert.ok(hermes.conversation?.suggestions?.includes("海報"));
     const zenDesk = defaultExperienceConfig("tku-zen-agent");

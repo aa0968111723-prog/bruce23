@@ -186,6 +186,35 @@ export function answerQuestion(query: string): ConciergeMessage {
     };
   }
 
+  // 11. 詢問 TKU Zen AI / 心情陪伴
+  if (q.includes("zen ai") || q.includes("tku zen") || q.includes("心情") || q.includes("陪伴") || q.includes("平靜")) {
+    return {
+      id,
+      sender: "concierge",
+      text: "【TKU Zen AI 平靜對話陪伴引擎】：\n\n- 理念：為忙碌心靈打造的平靜數位夥伴（A calm companion for a busy mind）。\n- 首頁體驗：進入即有「Welcome to TKU Zen AI」與四個心靈引導標籤（「考試壓力 / 協助我專注 / 失眠困擾 / 表達感謝」）。\n- 技術特色：完全本地化確定性情緒標註引擎（Local Sentiment Engine），無需外部 API Key 即可快速給予溫暖指引，保護隱私不外洩！\n- 原始碼：GitHub 儲存庫已完全公開！",
+      actions: [
+        { label: "查看 GitHub 倉庫", href: "https://github.com/aa0968111723-prog/tku-zen-ai" },
+        { label: "體驗禪學社工作台", href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask" },
+      ],
+      timestamp: Date.now(),
+    };
+  }
+
+  // 12. 詢問全部網站狀態 / 端點健康
+  if (q.includes("全部網站") || q.includes("端點") || q.includes("健康") || q.includes("在線") || q.includes("延遲") || q.includes("public-status")) {
+    return {
+      id,
+      sender: "concierge",
+      text: "【全專案 19 個端點即時健康巡檢狀態 (Iteration 7)】：\n\n🟢 全部 19 個端點 100% HTTP 200 OK 在線運行中！\n\n- ⚡ 極速組 (<500ms)：淡江世界 3D (218ms)、FrameLab 英文 (345ms)、淡江戲劇 (395ms)、SkateHub (488ms)、Luminous 主站 (469ms)\n- 🚀 敏捷組 (<1000ms)：Folio (596ms)、禪學社 Studio (722ms)、專注力挑戰 (821ms)、FrameLab 中文 (911ms)\n- 🛡️ 完備組 (1~2s)：Hermes Console (1061ms)、Lumen (1103ms)、小財記帳 (1238ms)、禪學社問答 (1303ms)、對稿白板 (1312ms)、PLANFORM (1477ms)、AI Director OS (1534ms)、CUTOS (1676ms)\n\n所有名下 8 個 GitHub 倉庫均已設為 Public 公開，所有訪客皆可自由檢視與體驗！",
+      actions: [
+        { label: "進入淡江世界 3D", href: "https://forge-bloom-k7xq.zeabur.app" },
+        { label: "進入對稿白板", href: "https://duigao-k7q2.zeabur.app" },
+        { label: "查看 AI Director OS", href: "https://vexlark.co" },
+      ],
+      timestamp: Date.now(),
+    };
+  }
+
   // 通用匹配專案
   const matched = projects.find((p) => q.includes(p.slug) || q.includes(p.title.toLowerCase()));
   if (matched) {

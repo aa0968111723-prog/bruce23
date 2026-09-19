@@ -138,6 +138,10 @@ export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
+export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-welcome-20260920";
+
+export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

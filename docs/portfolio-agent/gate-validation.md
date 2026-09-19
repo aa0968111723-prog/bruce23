@@ -57,3 +57,11 @@ Never flip project booleans just to make aggregate totals pass.
   not alter product code, deployments, environment variables or credentials.
 - Overall acceptance remains IN_PROGRESS. This run performs no live functional
   or security tests and awards no project readiness points.
+
+## Run codex-conflict-2001
+
+- Reconciled PR #27 with PR #6 base `4621dd72ace6ec4df641b4980b682a5643825a94`; resolved only state/report conflicts. Product source matches that base exactly.
+- Preserved prior audit results separately from this run. Incoming probe claims have future timestamps and remain explicitly unverified.
+- Gate audit, 7 gate tests and typecheck pass. Broad scripts: 209/218 pass; remaining failures concern Windows symlink permissions, command quoting, path separators and missing build assets. Node tests: 306 assertions pass, but the CMS store test child required termination after approximately 70 seconds without exiting, so the suite is not a clean pass.
+- No functional acceptance added: all seven project gates remain 0/17, security NOT_VERIFIED, portfolioReady false.
+- Next: review the conflict repair in PR #27, then obtain real PLANFORM desktop/mobile core-flow evidence.

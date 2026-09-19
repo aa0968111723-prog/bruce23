@@ -105,14 +105,19 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "tku-zen-ai") {
     return {
       ...base,
-      intro: "來源對齊 tku-zen-ai 的 src/lib/zen.ts。全程無網路呼叫。",
+      intro: "公開對話頁首屏是英文歡迎句「Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.」。這裡跑同一套本地引擎，不是雲端 LLM。",
       conversation: {
         engine: "zen-local",
         disclaimer: "這是本地回應引擎，不是雲端 LLM。同一句話會得到同一組回覆。",
-        starter: "這是本地回應引擎，不是雲端 LLM。同一句話會得到同一組回覆。",
-        placeholder: "輸入一句心情",
-        sourceNote: "來源對齊 tku-zen-ai 的 src/lib/zen.ts。全程無網路呼叫。",
-        suggestions: ["考試好有壓力", "幫我專注", "睡不著", "謝謝"],
+        starter: "Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.",
+        placeholder: "Share what's on your mind…",
+        sourceNote: "來源對齊公開 src/app/page.tsx 與 src/lib/zen.ts。全程無網路呼叫。沒有 Zeabur 公開站。",
+        suggestions: [
+          "I feel stressed about my exams",
+          "Help me focus",
+          "I can't sleep",
+          "Thank you",
+        ],
       },
     };
   }
