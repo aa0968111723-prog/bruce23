@@ -832,6 +832,11 @@ describe("cms persistence", () => {
     assert.ok(cutos.sourceEvidence.every((item) => !/SUSPENDED／502/.test(item.note ?? "")));
     assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
     assert.ok(cutos.process.some((item) => item.includes("載入示範影片")));
+    assert.ok(cutos.process.some((item) => item.includes("匯入影片")));
+    assert.match(cutos.experienceConfig.intro ?? "", /匯入影片/);
+    assert.match(cutos.experienceConfig.intro ?? "", /載入示範影片/);
+    assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
+    assert.equal(cutos.experienceConfig.walkthrough?.[0]?.title, "匯入影片");
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
