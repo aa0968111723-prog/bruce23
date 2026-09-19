@@ -241,7 +241,7 @@ describe("official project registry", () => {
   it("records SkateHub live slogan without claiming a mileage coreFlow", () => {
     const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-live-slogan/);
+    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-canvas-intro/);
     assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
     assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
     assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));

@@ -73,6 +73,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "skatehub") {
+    return {
+      ...base,
+      intro: "公開站首屏 slogan 要人穿上輪鞋出發、記錄里程。這是作品集走查，不是線上基地。",
+    };
+  }
+
   if (slug === "duigao") {
     return {
       ...base,
