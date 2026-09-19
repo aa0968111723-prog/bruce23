@@ -36,7 +36,10 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   return (
     <div tabIndex={0} onKeyDown={onKey} className="outline-none" aria-label={ex.walkAria}>
       <p className="text-sm text-muted">
-        {joinSentences(config.intro ?? ex.folioDefaultIntro, ex.folioNotCounter)}
+        {joinSentences(
+          config.intro ?? (project.slug === "folio" ? ex.folioDefaultIntro : ex.walkDefaultIntro),
+          ex.folioNotCounter,
+        )}
       </p>
       <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label={ex.walkStepsAria}>
         {steps.map((item, stepIndex) => (

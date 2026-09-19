@@ -743,6 +743,56 @@ describe("cms persistence", () => {
     assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
   });
 
+  it("rewrites stale 502 notes for 小財 and the Zen desk after a live 200 probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb, experience_mode = $4
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["本次探測曾出現 502。連結保留，狀態會隨部署變動。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · untitled-5.zeabur.app",
+            href: "https://untitled-5.zeabur.app",
+            note: "Zeabur 服務 untitled-5。本次探測可能 502，仍保留連結。",
+            kind: "demo",
+          },
+        ]),
+        "interactive-walkthrough",
+      ],
+    );
+    await sql.query(
+      `update projects set limitations = $2::jsonb, source_evidence = $3::jsonb where slug = $1`,
+      [
+        "tku-zen-agent",
+        JSON.stringify(["本次探測曾出現 502。與本地 tku-zen-ai 不是同一個產品。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · tku-zen-agent-k7f2.zeabur.app",
+            href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+            note: "Zeabur 服務 tku-zen-agent。建議 ?mode=ask。本次探測可能 502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'stale_502_note_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const xiaocai = await getPublishedProject(sql, "xiaocai");
+    const zen = await getPublishedProject(sql, "tku-zen-agent");
+    assert.ok(xiaocai.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(xiaocai.limitations.every((item) => !/曾出現 502/.test(item)));
+    assert.match(xiaocai.sourceEvidence[0]?.note ?? "", /HTTP 200/);
+    assert.ok(zen.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.match(zen.sourceEvidence[0]?.note ?? "", /授權碼/);
+    assert.ok(zen.limitations.some((item) => item.includes("授權碼")));
+    const xiaocaiAdmin = await getAdminProjectBySlug(sql, "xiaocai");
+    assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
+  });
+
   it("saves homepage highlight slugs without wiping locale_json", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

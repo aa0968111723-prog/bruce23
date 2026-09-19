@@ -4,7 +4,9 @@ import { projects } from "./projects.ts";
 import {
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
+  LIVE_PROBES_20260919,
   OFFICIAL_PROJECT_KEYS,
+  STALE_502_NOTE_SLUGS,
   framelabDeployByKey,
   isOfficialProjectKey,
   officialProjectCount,
@@ -57,5 +59,19 @@ describe("official project registry", () => {
     );
     assert.match(cabinGit?.note ?? "", /私有/);
     assert.match(lunarGit?.note ?? "", /私有/);
+  });
+
+  it("records live 200 probes for 小財 and the Zen desk instead of stale 502 notes", () => {
+    assert.deepEqual([...STALE_502_NOTE_SLUGS], ["xiaocai", "tku-zen-agent"]);
+    assert.equal(LIVE_PROBES_20260919.xiaocai.httpStatus, 200);
+    assert.equal(LIVE_PROBES_20260919.xiaocai.title, "小財記帳");
+    assert.equal(LIVE_PROBES_20260919["tku-zen-agent"].httpStatus, 200);
+    assert.equal(LIVE_PROBES_20260919["tku-zen-agent"].authBoundary, "authorization-code");
+    for (const slug of STALE_502_NOTE_SLUGS) {
+      const project = projects.find((item) => item.slug === slug);
+      assert.ok(project);
+      assert.ok(project.sourceReferences.every((item) => !/可能 502/.test(item.note)));
+      assert.ok(project.limitations.every((item) => !/曾出現 502/.test(item)));
+    }
   });
 });

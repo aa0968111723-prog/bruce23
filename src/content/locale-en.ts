@@ -456,6 +456,10 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A small bright book for personal money",
     summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
     process: ["Open untitled-5.zeabur.app", "Log income or spend", "See categories", "See this month"],
+    limitations: [
+      "Public host HTTP 200, title Xiaocai ledger. The page is client-rendered; the ledger core flow is not verified here.",
+      "This is not the portfolio admin.",
+    ],
   },
   "tku-zen-agent": {
     title: "TKU Zen desk",
@@ -463,8 +467,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A club writing and Q&A desk. Public site tku-zen-agent-k7f2 with ?mode=ask. Not the local tku-zen-ai companion.",
     process: [
       "Open tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-      "Ask a club-writing or booth question",
-      "Do not treat replies as approved notices",
+      "Without an access code you only see the sign-in gate",
+      "Draft mode does not auto-publish",
+      "Do not treat output as approved notices",
+    ],
+    limitations: [
+      "Probed 2026-09-19: HTTP 200, title Tamkang Leader Zen club desk. Not 502.",
+      "The desk needs an access code. Portfolio visitors cannot see club data.",
+      "Not the local tku-zen-ai companion.",
     ],
   },
   cutos: {
