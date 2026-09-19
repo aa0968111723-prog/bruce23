@@ -154,6 +154,10 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
       {
+        title: "文件櫃",
+        body: "公開站 canva2-k7qm 首屏是文件櫃。存在這台裝置，不必登入。",
+      },
+      {
         title: "畫布",
         body: "文字、形狀與元件走同一套文件模型。",
         path: "src/components/editor/canvas-stage.tsx",
@@ -267,10 +271,10 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: "現場遊戲，不是心理測驗",
     walkthrough: [
-      { title: "打開", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。" },
-      { title: "暖身", body: "兩題教學與 15 秒練習不計分、不登記。" },
-      { title: "60 秒", body: "正式 Stroop：字義與顏色永遠不同。這是攤位遊戲，不是心理測驗。" },
-      { title: "排行榜", body: "公開列只顯示遮罩姓名與成績。電話與完整名冊只在 /admin。" },
+      { title: "打開", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。" },
+      { title: "教學／練習", body: "兩題教學與 15 秒練習不計分、不登記。正式賽前仍要先填關主與基本資料。" },
+      { title: "60 秒", body: "正式 Stroop 會 POST /api/register 與 /api/result。作品集未送出個資，也未操作這一局。" },
+      { title: "排行榜", body: "GET /api/leaderboard?scope=history 回 67 筆遮罩姓名。今日 0 筆。電話與完整名冊只在 /admin。" },
     ],
   },
   lumen: {
@@ -304,9 +308,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。用對話剪影片。" },
-      { title: "找精華", body: "用一句話描述要找的段落。" },
-      { title: "計畫", body: "看時間軸候選，產出剪輯計畫。服務暫停時連結仍保留。" },
+      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。標題 CUTOS — Conversational Video Editor。" },
+      { title: "匯入", body: "匯入一支影片。作品集這一頁沒有代替你上傳。" },
+      { title: "計畫", body: "用一句話產生可檢查的 Edit Plan，再套用非破壞時間軸。" },
     ],
   },
   "hermes-agent": {

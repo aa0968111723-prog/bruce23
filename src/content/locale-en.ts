@@ -221,17 +221,18 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
     role: "Spatial experience design and product building: presets, circulation, crowd simulation, and share graphics.",
     ...lists(
       [
+        "Opening the app shows “My projects” and “+ New project”, not the 3D canvas first.",
         "Preset-first, everything customizable. One project per event — they do not overwrite each other.",
         "AI only understands sentences and goals; coordinates, collision, aisles, and capacity are computed in code.",
         "Without a cloud key, the local structured parser still works and results are reproducible.",
-        "Fire or accessibility items are design reminders; the program forbids writing “meets all codes.”",
+        "Fire or accessibility items are design reminders; the program forbids writing “meets all codes.” The live JS says the tool does not compute occupancy or egress width.",
       ],
       [
-        "Pick a classroom template and headcount",
-        "Place mats and zones",
+        "Open planform-iso-k7d2.zeabur.app (home is “My projects”, button “+ New project”)",
+        "Create a project, then pick a Tamkang classroom template and headcount (frontend-only, localStorage)",
+        "Drag objects on the canvas, or use mat layout A/B/C by headcount",
         "Draw circulation",
-        "Local DES queue simulation",
-        "Share a run-of-show graphic and a partner read-only view",
+        "Share a run-of-show graphic and a partner read-only view (no backend API)",
       ],
       [
         "Installable PWA",
@@ -239,9 +240,10 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Print with both metres and millimetres",
       ],
       [
-        "No legal occupancy or egress-width calculation.",
+        "No legal occupancy or egress-width calculation. Live JS: this tool does not compute occupancy or egress width.",
         "Not listed on the App Store.",
         "This is pre-event rehearsal, not a live command system.",
+        "Probed 2026-09-19: GET / HTTP 200, title PLANFORM｜活動空間彩排. /version.json 1.0.0 (1b8513b). Live JS first screen is “My projects” and “+ New project”. No /api routes. This portfolio has not completed new-project → drag-object in a browser, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.planform,
@@ -281,6 +283,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Single video upload, no resume; the cap is deliberately conservative.",
         "HEVC .mov may not play in some browsers — the page explains instead of showing a black frame.",
         "This portfolio never reads Duigao private tables or tokens.",
+        "Probed 2026-09-19: GET / HTTP 200, title 對稿｜圖片與影片協作空間. README heading is still 文宣討論區. This portfolio has not uploaded a real poster and left a pin, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.duigao,
@@ -305,6 +308,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No accounts by default; drafts live in device IndexedDB.",
       ],
       [
+        "Open the file cabinet (on this device, no sign-in)",
         "Create text / shapes / components on the canvas",
         "Design checks (contrast, overflow, safe area)",
         "Optional 3-mode external site import",
@@ -319,6 +323,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No standalone bitmap object type; images exist as a pixel layer or Snapshot.",
         "Write tokens do not auto-expire; republish to rotate.",
         "External MCP connections live in one Node process memory and are not shared across instances.",
+        "Probed 2026-09-19: GET / HTTP 200, title Folio. First screen is the file cabinet, local, no sign-in. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.folio,
@@ -433,18 +438,22 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
   "focus-challenge": {
     title: "Focus challenge",
     subtitle: "60 seconds on the TKU Zen booth",
-    summary: "A 60-second booth game: warm-up, official run, live status. Not a psychological test.",
+    summary:
+      "Booth Stroop: register host and basics first, then two tutorial questions and a 15-second practice (not saved), then the official 60 seconds. A live game, not a psychological test, and not an activity-status dashboard.",
+    problem:
+      "The booth needs a 60-second game people can play on the spot. The official run still starts with host, name, department, grade, and phone — it is not tap-and-play with no form.",
+    role: "Booth experience: registration, tutorial, timer, score write, and the public leaderboard.",
     process: [
-      "Open leader-dna-mcp-a7k2.zeabur.app",
-      "Read the meaning vs color rules",
+      "Open leader-dna-mcp-a7k2.zeabur.app (the homepage is the registration screen)",
+      "Fill host, name, department, grade, and phone before the tutorial (this portfolio does not submit that)",
       "Two tutorial questions and a 15-second practice (not scored, not saved)",
-      "Start the official 60-second Stroop",
+      "Start the official 60-second Stroop (POST /api/register and /api/result)",
       "See the score and the public leaderboard (masked names)",
     ],
     limitations: [
       "2026-09-19 GET /api/health returned ok, sheets true, smtp false.",
-      "The public leaderboard API does not include phone numbers or full names.",
-      "This portfolio has not yet completed an official 60-second black-box run, so coreFlow is not passed.",
+      "GET /api/leaderboard?scope=history returned 67 public rows: masked name, score, accuracy, title, time. No phone numbers or full names. Today's scope is 0 rows.",
+      "The official 60-second run requires the form and writes the game sheet. This portfolio did not submit PII and has not completed an official 60-second black-box run, so coreFlow is not passed.",
     ],
   },
   lumen: {
@@ -490,9 +499,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
     process: [
       "Open cutos.zeabur.app",
-      "Describe the highlight in one sentence",
-      "Review timeline candidates",
-      "Export a cut plan",
+      "Import one video",
+      "Describe the cut in one sentence",
+      "Review the Edit Plan, then apply it on a non-destructive timeline",
+    ],
+    limitations: [
+      "Probed 2026-09-19: HTTP 200, title CUTOS — Conversational Video Editor. /api/health ok, /api/ready ready. Not 502.",
+      "This portfolio has not imported a real video through import→plan→export, so coreFlow is not passed.",
     ],
   },
   "hermes-agent": {

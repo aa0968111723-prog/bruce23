@@ -375,18 +375,19 @@ const featuredWorks: Project[] = [
       "淡江教室與禪學社茶會／演講／新生場，現場才發現報到桌擋門、地墊不夠走道。需要不用 CAD 的場佈工具。",
     role: "空間體驗設計與產品建構：預設模板、動線、人流模擬與分享圖。",
     decisions: [
+      "開 app 先看到「我的專案」與「＋ 新建專案」，不是立刻進 3D 畫布。",
       "Preset-first，但一切可自訂。一場活動一份專案，不會互相覆蓋。",
       "AI 只負責理解句子與目標；座標、碰撞、走道、容量由程式計算。",
       "沒有雲端金鑰時，本機結構化解析器仍可用，結果可重現。",
-      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。",
+      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
     ],
     modalities: ["3D", "平面圖", "動線", "物資清單", "自然語言"],
     process: [
-      "選教室模板與人數",
-      "排地墊與區域",
+      "打開 planform-iso-k7d2.zeabur.app（首頁是「我的專案」，按鈕「＋ 新建專案」）",
+      "新建專案後選淡江教室模板與人數（純前端，寫入本機 localStorage）",
+      "畫布上拖曳物件，或「排地墊」選人數出 A/B/C 方案",
       "畫動線",
-      "本地 DES 模擬排隊",
-      "分享場刊圖與夥伴唯讀視圖",
+      "分享場刊圖與夥伴唯讀視圖（無後端 API）",
     ],
     outputs: [
       "可安裝 PWA",
@@ -395,9 +396,10 @@ const featuredWorks: Project[] = [
     ],
     stack: ["Vite", "TypeScript", "Three.js", "PWA", "localStorage / IndexedDB"],
     limitations: [
-      "不做容留人數或避難寬度法定計算。",
+      "不做容留人數或避難寬度法定計算。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
       "不上架 App Store。",
       "本工具是場前彩排，不是現場指揮系統。",
+      "2026-09-19 GET / HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。公開 JS 首屏 h1「我的專案」與「＋ 新建專案」。無 /api 路由。作品集未在瀏覽器完成「新建專案→拖動物件」，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
@@ -438,7 +440,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · planform-iso-k7d2.zeabur.app",
         href: "https://planform-iso-k7d2.zeabur.app",
-        note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。本次探測為 HTML，沒有 frame-bust，可當 Live Demo。狀態會隨部署變動。",
+        note: "docs/agent-handoff/AGENT_PROTOCOL.md 記載的 Zeabur 正式站。2026-09-19 HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。PWA manifest 與 sw.js 存在。公開 JS 首屏是「我的專案」與「＋ 新建專案」，不是立刻進畫布。無 /api 路由。",
       },
     ],
     visibility: "public",
@@ -480,6 +482,7 @@ const featuredWorks: Project[] = [
       "影片單次上傳、無續傳；上限刻意保守。",
       "HEVC 的 .mov 在部分瀏覽器播不出，會說明而不是給黑畫面。",
       "本作品集不會讀取對稿的私人資料表或 token。",
+      "2026-09-19 GET / HTTP 200，標題「對稿｜圖片與影片協作空間」。README 標題仍是文宣討論區。作品集未上傳真實文宣完成點位留言，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/duigao",
@@ -520,7 +523,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · duigao-k7q2.zeabur.app",
         href: "https://duigao-k7q2.zeabur.app",
-        note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+        note: "2026-09-19 HTTP 200，標題「對稿｜圖片與影片協作空間」。不是 Folio、不是 SkateHub。BASELINE.md 記載的 production 站。",
       },
     ],
     visibility: "public",
@@ -546,6 +549,7 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["畫布", "設計 token", "嵌入", "MCP"],
     process: [
+      "打開文件櫃（存在這台裝置，不必登入）",
       "在畫布建立文字／形狀／元件",
       "設計檢查（對比、溢出、安全區）",
       "可選匯入外部網站三種模式",
@@ -561,6 +565,7 @@ const featuredWorks: Project[] = [
       "沒有獨立點陣圖片物件型別，圖片以 pixel layer 或 Snapshot 存在。",
       "寫入 token 不會自動過期，需重新發布才輪替。",
       "外部 MCP 連線在單一 Node 行程記憶體，多實例不共享。",
+      "2026-09-19 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，文案「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
@@ -612,7 +617,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · canva2-k7qm.zeabur.app",
         href: "https://canva2-k7qm.zeabur.app",
-        note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。不是 dd-k3f9（直排輪基地）。",
+        note: "Zeabur 服務 canva2。2026-09-19 HTTP 200，標題 Folio。首屏「文件櫃」。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",

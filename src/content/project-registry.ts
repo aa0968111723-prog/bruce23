@@ -82,9 +82,25 @@ export const AIOS_LIVE_PROBE_VERSION = "aios-live-probe-20260919";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
-export const TY_CONTRACT_VERSION = "ty-contract-health-20260919";
+export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
+
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-200-20260919";
+
+export const CUTOS_LIVE_PROBE_SLUG = "cutos";
+
+export const PLANFORM_LIVE_PROBE_VERSION = "planform-public-home-20260919";
+
+export const PLANFORM_LIVE_PROBE_SLUG = "planform";
+
+export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-title-20260919";
+
+export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
+
+export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
+
+export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.

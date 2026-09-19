@@ -203,28 +203,28 @@ export const linkedWorks: Project[] = [
     year: "2026",
     status: "in-progress",
     featured: false,
-    summary: "社博／活動現場的 60 秒專注力挑戰：暖身、正式挑戰、即時看活動狀態。這是現場遊戲，不是心理測驗。",
-    problem: "攤位需要立刻能玩、立刻能看到狀態的遊戲，而不是再填一張表。",
-    role: "現場體驗設計：暖身、計時、成績與表單同步。",
+    summary: "社博現場 60 秒 Stroop：首頁先填關主與基本資料，再兩題教學與 15 秒練習（不登記），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
+    problem: "攤位需要能立刻玩的 60 秒遊戲。正式賽仍要先填關主、姓名、科系、年級、電話，不是「完全不填表就能開打」。",
+    role: "現場體驗設計：登記、教學、計時、成績寫入與公開排行榜。",
     decisions: [
-      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。",
+      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。",
       "GitHub 是 ty；Zeabur 服務 leader-dna-sheet-sync。",
-      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。",
+      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。作品集不送出姓名或電話。",
     ],
     modalities: ["互動", "現場"],
     process: [
-      "打開 leader-dna-mcp-a7k2.zeabur.app",
-      "看懂字義／顏色兩種規則",
+      "打開 leader-dna-mcp-a7k2.zeabur.app（首頁是登記畫面）",
+      "填關主、姓名、科系、年級、電話後才進入教學（作品集不送出）",
       "兩題新手教學與 15 秒練習（不計分、不登記）",
-      "開始 60 秒正式 Stroop",
+      "開始 60 秒正式 Stroop（會 POST /api/register 與 /api/result）",
       "看分數與公開排行榜（遮罩姓名）",
     ],
     outputs: ["現場挑戰公開站", "公開排行榜（遮罩姓名）"],
     stack: ["Web", "Google Sheets", "Zeabur"],
     limitations: [
       "2026-09-19 GET /api/health 回 ok，sheets true，smtp false。",
-      "公開排行榜 API 不含電話或完整姓名。本作品集不展示名冊。",
-      "作品集尚未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
+      "GET /api/leaderboard?scope=history 回 67 筆公開列：遮罩姓名、分數、正確率、稱號、時間。不含電話或完整姓名。今日 scope 為 0 筆。",
+      "正式 60 秒需先填表並寫入遊戲分頁。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ty",
@@ -235,7 +235,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · leader-dna-mcp-a7k2.zeabur.app",
         href: "https://leader-dna-mcp-a7k2.zeabur.app",
-        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。",
+        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。首頁是登記畫面。",
       },
       {
         label: "GitHub · ty",
@@ -391,10 +391,18 @@ export const linkedWorks: Project[] = [
     role: "剪輯入口設計：對話、時間軸、計畫。",
     decisions: ["與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。"],
     modalities: ["影片", "對話", "時間軸"],
-    process: ["打開 cutos.zeabur.app", "用一句話描述要找的精華", "看時間軸候選", "產出剪輯計畫"],
+    process: [
+      "打開 cutos.zeabur.app",
+      "匯入一支影片",
+      "用一句話描述要剪的意圖",
+      "檢查 Edit Plan 後套用非破壞時間軸",
+    ],
     outputs: ["CUTOS 公開站"],
-    stack: ["Web", "Postgres", "Zeabur"],
-    limitations: ["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"],
+    stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
+    limitations: [
+      "2026-09-19 GET / 標題 CUTOS — Conversational Video Editor。/api/health ok，/api/ready ready。不是 502。",
+      "作品集尚未匯入真實影片跑完 import→plan→export，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/CUTOS",
       live: "https://cutos.zeabur.app",
@@ -404,7 +412,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+        note: "Zeabur 服務 cutos。2026-09-19 HTTP 200，標題 CUTOS — Conversational Video Editor。/api/health ok，/api/ready ready。不是 502。",
       },
       {
         label: "GitHub · CUTOS",

@@ -4,6 +4,14 @@ import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFro
 import {
   AIOS_LIVE_PROBE_SLUG,
   AIOS_LIVE_PROBE_VERSION,
+  CUTOS_LIVE_PROBE_SLUG,
+  CUTOS_LIVE_PROBE_VERSION,
+  PLANFORM_LIVE_PROBE_SLUG,
+  PLANFORM_LIVE_PROBE_VERSION,
+  DUIGAO_LIVE_PROBE_SLUG,
+  DUIGAO_LIVE_PROBE_VERSION,
+  FOLIO_LIVE_PROBE_SLUG,
+  FOLIO_LIVE_PROBE_VERSION,
   TY_CONTRACT_SLUGS,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
@@ -143,6 +151,10 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshStale502Notes(sql);
   await refreshAiosLiveProbe(sql);
   await refreshTyContractCopy(sql);
+  await refreshCutosLiveProbe(sql);
+  await refreshPlanformLiveProbe(sql);
+  await refreshDuigaoLiveProbe(sql);
+  await refreshFolioLiveProbe(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -685,20 +697,28 @@ async function refreshTyContractCopy(sql: Sql): Promise<void> {
     const experience = defaultExperienceConfig(project.slug);
     await sql.query(
       `update projects
-       set decisions = $2::jsonb,
-           process = $3::jsonb,
-           limitations = $4::jsonb,
-           source_evidence = $5::jsonb,
-           locale_json = $6::jsonb,
-           experience_mode = coalesce($7, experience_mode),
-           experience_config = $8::jsonb,
+       set summary = $2,
+           problem = $3,
+           role = $4,
+           decisions = $5::jsonb,
+           process = $6::jsonb,
+           limitations = $7::jsonb,
+           seo_description = $8,
+           source_evidence = $9::jsonb,
+           locale_json = $10::jsonb,
+           experience_mode = coalesce($11, experience_mode),
+           experience_config = $12::jsonb,
            updated_at = now()
        where slug = $1`,
       [
         project.slug,
+        project.summary,
+        project.problem,
+        project.role,
         JSON.stringify(project.decisions),
         JSON.stringify(project.process),
         JSON.stringify(project.limitations),
+        project.summary,
         JSON.stringify(projectEvidence(project)),
         JSON.stringify({ zh: seedZh, en: seedEn }),
         catalog?.mode ?? null,
@@ -710,6 +730,154 @@ async function refreshTyContractCopy(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('ty_contract_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [TY_CONTRACT_VERSION],
+  );
+}
+
+async function refreshCutosLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'cutos_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === CUTOS_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === CUTOS_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set process = $2::jsonb,
+         limitations = $3::jsonb,
+         source_evidence = $4::jsonb,
+         locale_json = $5::jsonb,
+         experience_mode = coalesce($6, experience_mode),
+         experience_config = $7::jsonb,
+         live_demo_status = case
+           when live_demo_status in ('failed', 'unavailable') then 'pending'
+           else live_demo_status
+         end,
+         live_demo_error = case
+           when live_demo_status in ('failed', 'unavailable') then null
+           else live_demo_error
+         end,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('cutos_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [CUTOS_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'planform_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === PLANFORM_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === PLANFORM_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('planform_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [PLANFORM_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshDuigaoLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'duigao_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === DUIGAO_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === DUIGAO_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set limitations = $2::jsonb,
+         source_evidence = $3::jsonb,
+         locale_json = $4::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('duigao_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [DUIGAO_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshFolioLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'folio_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === FOLIO_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === FOLIO_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set process = $2::jsonb,
+         limitations = $3::jsonb,
+         source_evidence = $4::jsonb,
+         locale_json = $5::jsonb,
+         experience_mode = coalesce($6, experience_mode),
+         experience_config = $7::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('folio_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [FOLIO_LIVE_PROBE_VERSION],
   );
 }
 

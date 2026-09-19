@@ -793,21 +793,168 @@ describe("cms persistence", () => {
     assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
   });
 
+  it("rewrites CUTOS 502 notes after a live health/ready probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "cutos",
+        JSON.stringify(["本次 Zeabur 狀態 SUSPENDED／502。連結保留。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · cutos.zeabur.app",
+            href: "https://cutos.zeabur.app",
+            note: "Zeabur 服務 cutos。本次探測 SUSPENDED／502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'cutos_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const cutos = await getPublishedProject(sql, "cutos");
+    assert.ok(cutos.limitations.every((item) => !/SUSPENDED／502/.test(item)));
+    assert.ok(cutos.sourceEvidence.every((item) => !/SUSPENDED／502/.test(item.note ?? "")));
+    assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites PLANFORM process to the live 我的專案 home without claiming canvas coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "planform",
+        JSON.stringify(["選教室模板與人數"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · planform-iso-k7d2.zeabur.app",
+            href: "https://planform-iso-k7d2.zeabur.app",
+            note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'planform_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const plan = await getPublishedProject(sql, "planform");
+    assert.ok(plan.process[0]?.includes("我的專案"));
+    assert.ok(plan.process[0]?.includes("新建專案"));
+    assert.equal(plan.process.some((item) => item === "選教室模板與人數"), false);
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /1\.0\.0/);
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /我的專案/);
+    assert.ok(plan.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(plan.limitations.some((item) => item.includes("不做容留人數計算")));
+    assert.ok(plan.sourceEvidence.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
+    assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
+  });
+
+  it("rewrites duigao evidence with the live page title", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "duigao",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · duigao-k7q2.zeabur.app",
+            href: "https://duigao-k7q2.zeabur.app",
+            note: "BASELINE.md 記載的 production 站。狀態會隨部署變動。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'duigao_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const room = await getPublishedProject(sql, "duigao");
+    assert.match(
+      room.sourceEvidence.find((item) => item.href?.includes("duigao-k7q2"))?.note ?? "",
+      /對稿｜圖片與影片協作空間/,
+    );
+    assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Folio process to start at the live file cabinet", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "folio",
+        JSON.stringify(["在畫布建立文字／形狀／元件"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · canva2-k7qm.zeabur.app",
+            href: "https://canva2-k7qm.zeabur.app",
+            note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'folio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const folio = await getPublishedProject(sql, "folio");
+    assert.ok(folio.process[0]?.includes("文件櫃"));
+    assert.match(
+      folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
+      /文件櫃/,
+    );
+    assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
-    await sql.query(`update projects set process = $2::jsonb, limitations = $3::jsonb where slug = $1`, [
-      "focus-challenge",
-      JSON.stringify(["stale process"]),
-      JSON.stringify(["stale limitation"]),
-    ]);
+    await sql.query(
+      `update projects
+       set summary = $2,
+           problem = $3,
+           process = $4::jsonb,
+           limitations = $5::jsonb
+       where slug = $1`,
+      [
+        "focus-challenge",
+        "stale summary：暖身、正式挑戰、即時看活動狀態。",
+        "stale problem：不是再填一張表。",
+        JSON.stringify(["stale process"]),
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
     await sql.query(`delete from cms_meta where key = 'ty_contract_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const game = await getPublishedProject(sql, "focus-challenge");
+    assert.doesNotMatch(game.summary, /即時看活動狀態/);
+    assert.doesNotMatch(game.problem, /不是再填一張表/);
+    assert.match(game.summary, /登記|填關主/);
+    assert.match(game.problem, /仍要先填/);
+    assert.ok(game.process.some((item) => item.includes("登記畫面")));
     assert.ok(game.process.some((item) => item.includes("60 秒正式 Stroop")));
     assert.ok(game.limitations.some((item) => item.includes("/api/health")));
+    assert.ok(game.limitations.some((item) => item.includes("67 筆")));
     assert.ok(game.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(game.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.match(game.sourceEvidence[0]?.note ?? "", /登記畫面/);
+    const walk = game.experienceConfig.walkthrough ?? [];
+    assert.ok(walk.some((step) => step.title === "教學／練習"));
+    assert.equal(walk.some((step) => step.title === "暖身"), false);
+    assert.match(game.locale.en?.summary ?? "", /not an activity-status dashboard/i);
   });
 
   it("rewrites stale 502/paused notes for AI Director OS after a live 200 probe", async () => {
