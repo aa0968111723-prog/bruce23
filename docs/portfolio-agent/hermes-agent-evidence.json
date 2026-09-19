@@ -1,0 +1,44 @@
+{
+  "runId": "codex-20260919-0903",
+  "httpProbes": [
+    {
+      "url": "https://455.zeabur.app/sessions",
+      "checkedAt": "2026-09-19T09:06:53.8754167Z",
+      "httpStatus": 502,
+      "contentType": ["text/plain"],
+      "bodySummary": "Bad Gateway"
+    },
+    {
+      "url": "https://455.zeabur.app/",
+      "checkedAt": "2026-09-19T09:06:54.0757038Z",
+      "httpStatus": 502,
+      "contentType": ["text/plain"],
+      "bodySummary": "Bad Gateway"
+    },
+    {
+      "url": "https://hermes-agent-api.zeabur.app/",
+      "checkedAt": "2026-09-19T09:06:54.3702174Z",
+      "httpStatus": 502,
+      "contentType": ["text/plain"],
+      "bodySummary": "Bad Gateway"
+    }
+  ],
+  "browser": {
+    "requestedViewportsApplied": false,
+    "requestId": "f012f7c2-d37b-4999-99c5-3d02c35ac51d",
+    "observedViewport": {
+      "width": 1280,
+      "height": 721
+    },
+    "url": "https://455.zeabur.app/sessions",
+    "title": "502: SERVICE_UNAVAILABLE",
+    "coreFlow": "FAIL_AT_ENTRY"
+  },
+  "sourceIdentity": {
+    "serviceId": null,
+    "inspectedUpstreamCommit": "44945d224c2ccd6e0a55f16223c7ab0dd39331bf",
+    "deployedImageVerified": false,
+    "upstream": "https://github.com/NousResearch/hermes-agent",
+    "reason": "Zeabur metadata unavailable"
+  }
+}

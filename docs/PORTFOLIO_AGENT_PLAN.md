@@ -904,3 +904,15 @@ Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、�
 
 下一輪唯一任務：確認 Hermes Agent 的 repo 與 Zeabur service 身分，定位重複 HTTP 502 的原因，再依外部修復流程處理。
 
+## 26. Hermes Agent 502 診斷（2026-09-19 09:03 UTC 輪次）
+
+- RUN_ID：`codex-20260919-0903`。唯一任務：核對來源並建立可重現的 502 診斷。
+- 主網域 `/sessions`、根頁及既有 API 網域均失敗；瀏覽器確認 Zeabur `502: SERVICE_UNAVAILABLE`，尚未到登入頁。
+- 已讀取公開上游 NousResearch/hermes-agent 的 Dockerfile/Compose；實際部署映像 digest、service ID 與 runtime 日誌仍未確認，不把上游最新版本當作部署證據。
+- 目前沒有可用 Zeabur connector／CLI／API token，使用中的瀏覽器控制台未登入；故障根因判定被部署觀測權限阻塞。
+- 修復規格與證據：`docs/portfolio-agent/hermes-agent-failure.md`、`hermes-agent-evidence.json`；追蹤 [issue #7](https://github.com/aa0968111723-prog/bruce23/issues/7)。未修改外部 repo 或服務。
+- 重新探測全部官方入口，結果見 endpoint-evidence.json。HTTP 可達仍不等於完成核心操作。瀏覽器尺寸 override 未生效，實際為 1280×721，未將其算作 mobile／desktop pass。
+- 本輪只更新文件／狀態，執行 JSON、17 筆資料一致性、gate 與 diff 驗證，不重跑未改動產品的 build。
+- 整體維持 IN_PROGRESS，所有驗收通過數仍為 0/17，資安未驗證。
+- 下一輪唯一可獨立進行任務：修復 bruce23 Windows command launcher，完成標準建置驗證。有 Zeabur 唯讀服務資訊後再恢復 Hermes 診斷，避免每輪無效重試。
+

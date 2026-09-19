@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-19T09:01:13.2070164Z",
+  "updatedAt": "2026-09-19T09:07:58.9674127Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -45,24 +45,26 @@
       "status": "NOT_VERIFIED"
     }
   },
-  "activeTask": "phase-0-lock-and-execution-baseline",
+  "activeTask": "hermes-agent-502-diagnosis",
   "highestPriorityIssue": {
     "id": "HERMES-AGENT-HTTP-502",
     "title": "Hermes Agent public sessions route repeatedly returns HTTP 502",
     "severity": "high",
-    "status": "open",
+    "status": "blocked_deployment_observability",
     "evidence": [
-      "docs/portfolio-agent/endpoint-evidence.json",
-      "Three requests returned HTTP 502 this run."
+      "docs/portfolio-agent/hermes-agent-evidence.json",
+      "docs/portfolio-agent/hermes-agent-failure.md",
+      "https://github.com/aa0968111723-prog/bruce23/issues/7"
     ],
     "impact": "Blocks online and core-flow readiness."
   },
   "inspectionLimitations": [
-    "HTTP checks do not verify rendered pages, core flows, UX, or deployed identity.",
-    "Zeabur deployment metadata and repository/service mappings remain unverified.",
-    "Grok Bot is not activated: no execution channel configured."
+    "Zeabur connector/CLI/API credential unavailable and inspected browser not signed in. Deployed image/service identity cannot be verified.",
+    "Browser shows SERVICE_UNAVAILABLE. Requested viewport overrides did not apply (actual 1280x721); mobile/desktop gates remain unverified.",
+    "Public upstream existence does not prove deployed source or version.",
+    "Grok Bot not activated."
   ],
-  "nextTask": "Identify Hermes Agent repository and Zeabur service from authoritative metadata, then diagnose repeated HTTP 502 without changing service secrets.",
+  "nextTask": "Fix the bruce23 Windows command launcher in a separate verified cycle. Resume Hermes diagnosis when authenticated read-only Zeabur metadata is available; do not repeatedly guess service identity.",
   "projects": [
     {
       "key": "forge-bloom-quiet-falcon",
@@ -86,7 +88,7 @@
           "<meta property=\"og:title\" content=\"淡江世界\"/>",
           "<meta property=\"og:description\" content=\"五虎崗上的 3D 校園巡禮。樸實剛毅。\"/>"
         ],
-        "checkedAt": "2026-09-19T08:58:57.0931106Z"
+        "checkedAt": "2026-09-19T09:07:57.7009358Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -114,7 +116,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:56.9724713Z"
+        "checkedAt": "2026-09-19T09:07:57.6065625Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -137,7 +139,7 @@
         "status": 200,
         "title": "淡江新生導覽 — 安倢的校園闖關",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:57.1876802Z"
+        "checkedAt": "2026-09-19T09:07:57.5749744Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -160,7 +162,7 @@
         "status": 200,
         "title": "直排輪基地 SkateHub｜走向健康，走向陽光",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:56.9724658Z"
+        "checkedAt": "2026-09-19T09:07:57.5690509Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -188,7 +190,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:56.9724657Z"
+        "checkedAt": "2026-09-19T09:07:57.5791924Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -216,7 +218,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:57.5917832Z"
+        "checkedAt": "2026-09-19T09:07:58.2215164Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -247,7 +249,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:57.1362258Z"
+        "checkedAt": "2026-09-19T09:07:58.0138820Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -275,7 +277,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:57.5415492Z"
+        "checkedAt": "2026-09-19T09:07:58.0456653Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -286,10 +288,10 @@
       "publicUrl": "https://455.zeabur.app/sessions",
       "urlStatus": "configured",
       "verificationStatus": "http_failure",
-      "scoreEvidence": [],
+      "scoreEvidence": ["docs/portfolio-agent/hermes-agent-evidence.json"],
       "coreFlowPass": false,
       "onlineReady": false,
-      "nextRepairTask": "Identify Hermes Agent repository and Zeabur service from authoritative metadata, then diagnose repeated HTTP 502 without changing service secrets.",
+      "nextRepairTask": "Obtain authenticated read-only Zeabur service identity, image digest, port and sanitized runtime failure evidence. See issue #7.",
       "readinessStatus": "repair-needed",
       "completeInfo": false,
       "endpointEvidence": {
@@ -298,10 +300,14 @@
         "status": 502,
         "title": "",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:57.1791603Z"
+        "checkedAt": "2026-09-19T09:07:58.1338262Z"
       },
       "failedCriteria": ["Public sessions endpoint returns HTTP 502"],
-      "readinessScore": null
+      "readinessScore": null,
+      "repairIssueUrl": "https://github.com/aa0968111723-prog/bruce23/issues/7",
+      "deployedSourceVerified": false,
+      "upstreamRepository": "https://github.com/NousResearch/hermes-agent",
+      "repairStatus": "blocked"
     },
     {
       "key": "hermes-console",
@@ -321,7 +327,7 @@
         "status": 200,
         "title": "Hermes",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:57.698589Z"
+        "checkedAt": "2026-09-19T09:07:58.1831021Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -351,7 +357,7 @@
           "<meta property=\"og:image:width\" content=\"1200\">",
           "<meta property=\"og:image:height\" content=\"630\">"
         ],
-        "checkedAt": "2026-09-19T08:58:57.7149968Z"
+        "checkedAt": "2026-09-19T09:07:58.2952909Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -374,7 +380,7 @@
         "status": 200,
         "title": "小財記帳",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:57.7978778Z"
+        "checkedAt": "2026-09-19T09:07:58.5175141Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -397,7 +403,7 @@
         "status": 200,
         "title": "淡江大學領袖禪學社 · 工作台",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:58.2055648Z"
+        "checkedAt": "2026-09-19T09:07:58.6469069Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -420,7 +426,7 @@
         "status": 200,
         "title": "對稿｜圖片與影片協作空間",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:57.9292089Z"
+        "checkedAt": "2026-09-19T09:07:58.7405123Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -443,7 +449,7 @@
         "status": 200,
         "title": "PLANFORM｜活動空間彩排",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:58.0055798Z"
+        "checkedAt": "2026-09-19T09:07:58.8108561Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -477,7 +483,7 @@
           "<meta property=\"og:image:width\" content=\"1280\" />",
           "<meta property=\"og:image:height\" content=\"800\" />"
         ],
-        "checkedAt": "2026-09-19T08:58:58.0048475Z"
+        "checkedAt": "2026-09-19T09:07:58.8391517Z"
       },
       "failedCriteria": [],
       "readinessScore": null
@@ -500,7 +506,7 @@
         "status": 200,
         "title": "CUTOS — Conversational Video Editor",
         "ogTags": [],
-        "checkedAt": "2026-09-19T08:58:58.1724393Z"
+        "checkedAt": "2026-09-19T09:07:58.8810437Z"
       },
       "failedCriteria": [],
       "readinessScore": null
