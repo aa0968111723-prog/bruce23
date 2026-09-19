@@ -1015,6 +1015,39 @@ describe("cms persistence", () => {
     assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Lumen conversation so it is not Hermes chrome", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb, experience_config = $4::jsonb
+       where slug = $1`,
+      [
+        "lumen",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · ai-chat-8rq3.zeabur.app",
+            href: "https://ai-chat-8rq3.zeabur.app",
+            note: "Zeabur 服務 wood-ivory-blaze-maple。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'lumen_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const orb = await getPublishedProject(sql, "lumen");
+    assert.match(
+      orb.sourceEvidence.find((item) => item.href?.includes("ai-chat-8rq3"))?.note ?? "",
+      /想做什麼/,
+    );
+    assert.doesNotMatch(orb.experienceConfig.conversation?.starter ?? "", /Hermes 執行期/);
+    assert.match(orb.experienceConfig.conversation?.starter ?? "", /想做什麼/);
+    assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

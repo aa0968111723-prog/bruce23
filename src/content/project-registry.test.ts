@@ -18,6 +18,8 @@ import {
   SKATEHUB_LIVE_PROBE_VERSION,
   TAMKANG_LIVE_PROBE_SLUG,
   TAMKANG_LIVE_PROBE_VERSION,
+  LUMEN_LIVE_PROBE_SLUG,
+  LUMEN_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -219,6 +221,16 @@ describe("official project registry", () => {
     assert.ok(project.process.every((item) => !item.includes("校園圖鑑")));
     assert.ok(project.process.every((item) => !item.includes("WASD")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("校園通行證")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Lumen first screen without Hermes conversation chrome", () => {
+    const project = projects.find((item) => item.slug === LUMEN_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-not-hermes/);
+    assert.equal(project.links.live, "https://ai-chat-8rq3.zeabur.app");
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 Hermes")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });
