@@ -130,7 +130,7 @@ Zeabur 權限：
 | delta-horizon-cliff-fern | 禪學社 Studio、文宣與排程 | Creative Tool | delta-horizon-k7f2 |
 | ty | 專注力挑戰賽、活動資料同步 | Real-world Experience | leader-dna-mcp-a7k2 |
 | cabin-shale-raven-swift | 待讀取 README 與部署頁面 | 待分類 | cabin-shale-k7q2 |
-| hermes-agent | Agent Runtime、Sessions、Tools、API | Agent Runtime | 455.zeabur.app/sessions，需登入 |
+| hermes-agent | Agent Runtime、Sessions、Tools、API | Agent Runtime | hermes-agent-k7q2.zeabur.app/sessions，需登入；service 6aad03324850645efd210d94 |
 | hermes-console | Agent Control Plane、Memory、MCP、Projects | AI Product | 344.zeabur.app |
 | wood-ivory-blaze-maple | Lumen、多模態語音創作 | Multimodal | ai-chat-8rq3 |
 | -1 | 小財記帳 | Real-world Tool | untitled-5 |
@@ -927,4 +927,13 @@ Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、�
 - Hermes 映像 tag 為 `v2026.7.7.2`，dashboard 9119、API 5000，兩個 domain 已配置。現階段不是未取得 API 權限，而是服務暫停。
 - 已提出沿用既有設定恢復服務的明確授權請求；在收到同意前不執行 resume／restart 或變更環境變數。
 - RUNNING、domain 與 repo 核對不等於核心流程完成；所有功能 gate 維持未通過。
+
+## 28. 使用者更正 Hermes 服務（取代第 26、27 節的目前對象）
+
+- 正確 service ID：`6aad03324850645efd210d94`；API 確認 RUNNING。
+- 正確入口：`https://hermes-agent-k7q2.zeabur.app/sessions`；HTTP 200，瀏覽器導向登入頁，顯示 AUTH REQUIRED。
+- 舊 `6a9a385273ef6eb935f2f8a2`／455 網域不是目前作品的服務，撤回恢復請求並保持原狀。舊 502 追蹤由此次身分更正取代。
+- 更新 agent registry、endpoint 與 Zeabur 證據；沒有改環境變數、服務狀態或嘗試登入。
+- 合併最近探測證據為 17/17 HTTP 200（各筆時間不同），仍是 0/17 功能驗收通過。
+- 下一輪：同步產品 fallback、英文內容與既有 CMS 的正確 Hermes 入口；不得只改 seed 就宣稱已更新 production 資料。其後驗證隔離的登入後流程。
 

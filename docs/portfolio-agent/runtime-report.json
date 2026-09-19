@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-09-19T09:20:42.0156024Z",
+  "generatedAt": "2026-09-19T09:24:22.147153Z",
   "runStatus": "IN_PROGRESS",
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -8,8 +8,8 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "zeabur-service-identity-and-hermes-suspension",
-  "inspectedCommit": "a2f4c4c0a152959cbfced509627b89e4b26e0dbd",
+  "task": "correct-hermes-service-identity",
+  "inspectedCommit": "19b853d",
   "github": {
     "planPullRequest": 6,
     "repairIssue": 7,
@@ -18,19 +18,20 @@
   "publicEndpointCheck": {
     "attempted": 18,
     "result": "HTTP_ONLY_NOT_CORE_FLOW_VERIFIED",
-    "externalHttp200": 16,
+    "externalHttp200": 17,
     "evidence": "docs/portfolio-agent/endpoint-evidence.json",
-    "externalHttp502": 1,
-    "http200": 17,
-    "http502": 1
+    "externalHttp502": 0,
+    "http200": 18,
+    "http502": 0,
+    "freshness": "Mixed timestamps: Hermes corrected and rechecked this cycle; other endpoint observations retained from preceding run."
   },
   "validation": {
-    "documentChecks": "PASS: 17 entries have service IDs, canonical URLs and timestamped metadata; all readiness flags unchanged; no credential patterns in agent reports",
+    "documentChecks": "PASS: corrected service/domain/status, 18 endpoint observations, unchanged unverified readiness, and no credential patterns",
     "buildAndTypecheck": "NOT_RERUN: documentation/state only; previous baseline recorded in commit 300277d",
-    "browser": "FAIL_AT_ENTRY: Zeabur SERVICE_UNAVAILABLE at 1280x721",
+    "browser": "PASS_LOGIN_BOUNDARY_ONLY: corrected /sessions redirects to sign-in form",
     "mobileSmoke": "NOT_VERIFIED: viewport override did not apply",
     "desktopSmoke": "NOT_VERIFIED: viewport override did not apply",
-    "deployment": "READ_ONLY: portfolio and 16 external services RUNNING; Hermes SUSPENDED. 18 service-domain mappings and 17 Git-based deployment records confirmed.",
+    "deployment": "Corrected Hermes service RUNNING with provisioned web domain; legacy SUSPENDED service is not current target.",
     "security": "NOT_VERIFIED"
   },
   "automation": {
@@ -76,29 +77,29 @@
     }
   },
   "highestPriorityIssue": {
-    "id": "HERMES-AGENT-HTTP-502",
-    "title": "Hermes Agent is SUSPENDED in Zeabur",
+    "id": "HERMES-SOURCE-CORRECTION",
+    "title": "Portfolio content and CMS need corrected Hermes service URL",
     "severity": "high",
-    "status": "awaiting_resume_authorization",
+    "status": "open",
     "evidence": [
-      "docs/portfolio-agent/hermes-zeabur-evidence.json",
-      "https://github.com/aa0968111723-prog/bruce23/issues/7"
+      "User corrected service ID",
+      "Zeabur confirms RUNNING; browser confirms login boundary"
     ],
-    "impact": "Blocks online and core-flow readiness."
+    "impact": "Old URL points to a suspended legacy service. Correct service is available behind login; core flow remains unverified."
   },
   "blockers": [
-    "Resume requires explicit authorization under plan section 3; no service mutations performed.",
-    "Hermes configured image tag confirmed but digest is null; no deployment records returned. Reason for suspension remains unknown.",
-    "Runtime RUNNING and service-domain identity do not prove core flows or complete info.",
-    "No credentials copied to repository, PR or reports."
+    "Correct service login boundary verified; authenticated core flow, persistence and mobile/desktop acceptance not verified.",
+    "Old service remains untouched; resume authorization request withdrawn as wrong target.",
+    "Current product fallback and existing CMS may still use old URL; this cycle corrects agent registry/evidence only.",
+    "Current service exposes only the web domain; previous API domain belongs to old service and cannot be reassigned by assumption."
   ],
   "nextSteps": [
-    "If authorized, resume Hermes Agent unchanged and verify its two public domains. Otherwise continue the independent Windows launcher task."
+    "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation."
   ],
   "actionsTaken": [
-    "Authenticated Zeabur read-only queries now succeed using credentials supplied for this task.",
-    "Confirmed Hermes service image tag, ports and provisioned domains; SUSPENDED is the current direct availability blocker.",
-    "Verified all supplied portfolio service IDs, canonical domains and available deployed repo/commit metadata.",
-    "Requested explicit resume authorization; no mutations, secret changes or credential persistence."
+    "Accepted user correction and verified service 6aad03324850645efd210d94.",
+    "Confirmed HTTP 200 and browser sign-in boundary at corrected domain.",
+    "Withdrew old-service resume request; no service mutations.",
+    "Updated agent registry and evidence; product fallback/CMS alignment is next task."
   ]
 }

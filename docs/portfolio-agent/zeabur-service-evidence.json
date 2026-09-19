@@ -191,28 +191,23 @@
       ]
     },
     "s9": {
-      "_id": "6a9a385273ef6eb935f2f8a2",
+      "_id": "6aad03324850645efd210d94",
       "name": "hermes-agent",
-      "status": "SUSPENDED",
+      "status": "RUNNING",
       "project": {
-        "_id": "6a9a380f39c2940e7ee0754a",
+        "_id": "6aad03311f9db09fade7b78c",
         "environments": [
           {
-            "_id": "6a9a380fa34c0097521b74ae",
+            "_id": "6aad03314eff8b1a632f15c2",
             "name": "production"
           }
         ]
       },
       "domains": [
         {
-          "domain": "455.zeabur.app",
+          "domain": "hermes-agent-k7q2.zeabur.app",
           "status": "PROVISIONED",
           "portName": "web"
-        },
-        {
-          "domain": "hermes-agent-api.zeabur.app",
-          "status": "PROVISIONED",
-          "portName": "api"
         }
       ]
     },
@@ -632,5 +627,11 @@
         }
       ]
     }
+  },
+  "hermesCorrection": {
+    "serviceId": "6aad03324850645efd210d94",
+    "checkedAt": "2026-09-19T09:22:45.9737556Z",
+    "supersedesServiceId": "6a9a385273ef6eb935f2f8a2",
+    "latestDeploymentStatus": "NOT_QUERIED_FOR_CORRECTED_SERVICE"
   }
 }

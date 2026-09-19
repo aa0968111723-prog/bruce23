@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-09-19T09:18:17.4050833Z",
-  "environmentId": "6a9a380fa34c0097521b74ae",
+  "checkedAt": "2026-09-19T09:22:45.9737556Z",
+  "environmentId": "6aad03314eff8b1a632f15c2",
   "evidence": {
     "service": {
-      "_id": "6a9a385273ef6eb935f2f8a2",
+      "_id": "6aad03324850645efd210d94",
       "name": "hermes-agent",
-      "status": "SUSPENDED",
+      "status": "RUNNING",
       "image": {
         "reference": "nousresearch/hermes-agent:v2026.7.7.2",
         "name": "docker.io/nousresearch/hermes-agent",
@@ -26,23 +26,15 @@
       ],
       "domains": [
         {
-          "domain": "455.zeabur.app",
+          "domain": "hermes-agent-k7q2.zeabur.app",
           "status": "PROVISIONED",
           "portName": "web"
-        },
-        {
-          "domain": "hermes-agent-api.zeabur.app",
-          "status": "PROVISIONED",
-          "portName": "api"
         }
       ],
       "project": {
-        "_id": "6a9a380f39c2940e7ee0754a",
-        "name": "untitled-9"
+        "_id": "6aad03311f9db09fade7b78c",
+        "name": "untitled-9-bled"
       }
-    },
-    "deployments": {
-      "edges": []
     }
   }
 }

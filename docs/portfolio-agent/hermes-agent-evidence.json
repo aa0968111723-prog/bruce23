@@ -1,44 +1,23 @@
 {
-  "runId": "codex-20260919-0903",
-  "httpProbes": [
-    {
-      "url": "https://455.zeabur.app/sessions",
-      "checkedAt": "2026-09-19T09:06:53.8754167Z",
-      "httpStatus": 502,
-      "contentType": ["text/plain"],
-      "bodySummary": "Bad Gateway"
-    },
-    {
-      "url": "https://455.zeabur.app/",
-      "checkedAt": "2026-09-19T09:06:54.0757038Z",
-      "httpStatus": 502,
-      "contentType": ["text/plain"],
-      "bodySummary": "Bad Gateway"
-    },
-    {
-      "url": "https://hermes-agent-api.zeabur.app/",
-      "checkedAt": "2026-09-19T09:06:54.3702174Z",
-      "httpStatus": 502,
-      "contentType": ["text/plain"],
-      "bodySummary": "Bad Gateway"
-    }
-  ],
-  "browser": {
-    "requestedViewportsApplied": false,
-    "requestId": "f012f7c2-d37b-4999-99c5-3d02c35ac51d",
-    "observedViewport": {
-      "width": 1280,
-      "height": 721
-    },
-    "url": "https://455.zeabur.app/sessions",
-    "title": "502: SERVICE_UNAVAILABLE",
-    "coreFlow": "FAIL_AT_ENTRY"
+  "runId": "codex-hermes-identity-correction",
+  "checkedAt": "2026-09-19T09:22:46.98019Z",
+  "serviceId": "6aad03324850645efd210d94",
+  "environmentId": "6aad03314eff8b1a632f15c2",
+  "publicProbe": {
+    "key": "hermes-agent",
+    "url": "https://hermes-agent-k7q2.zeabur.app/sessions",
+    "status": 200,
+    "title": "Sign in — Hermes Agent",
+    "checkedAt": "2026-09-19T09:22:46.98019Z",
+    "browserFinalUrl": "https://hermes-agent-k7q2.zeabur.app/login?next=%2Fsessions",
+    "browserResult": "Sign-in form; PUBLIC BIND / AUTH REQUIRED",
+    "coreFlowVerified": false
   },
-  "sourceIdentity": {
-    "serviceId": null,
-    "inspectedUpstreamCommit": "44945d224c2ccd6e0a55f16223c7ab0dd39331bf",
-    "deployedImageVerified": false,
-    "upstream": "https://github.com/NousResearch/hermes-agent",
-    "reason": "Zeabur metadata unavailable"
-  }
+  "supersededServiceId": "6a9a385273ef6eb935f2f8a2",
+  "oldServiceChanged": false,
+  "loginAttempted": false,
+  "readinessScore": null,
+  "coreFlowVerified": false,
+  "source": "Zeabur read-only API plus real browser",
+  "priorEvidence": "Old-service HTTP 502 evidence remains in Git history; not current Hermes target."
 }

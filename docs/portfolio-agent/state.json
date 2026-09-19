@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-19T09:20:42.0156024Z",
+  "updatedAt": "2026-09-19T09:24:22.1471530Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -45,25 +45,25 @@
       "status": "NOT_VERIFIED"
     }
   },
-  "activeTask": "zeabur-service-identity-and-hermes-suspension",
+  "activeTask": "correct-hermes-service-identity",
   "highestPriorityIssue": {
-    "id": "HERMES-AGENT-HTTP-502",
-    "title": "Hermes Agent is SUSPENDED in Zeabur",
+    "id": "HERMES-SOURCE-CORRECTION",
+    "title": "Portfolio content and CMS need corrected Hermes service URL",
     "severity": "high",
-    "status": "awaiting_resume_authorization",
+    "status": "open",
     "evidence": [
-      "docs/portfolio-agent/hermes-zeabur-evidence.json",
-      "https://github.com/aa0968111723-prog/bruce23/issues/7"
+      "User corrected service ID",
+      "Zeabur confirms RUNNING; browser confirms login boundary"
     ],
-    "impact": "Blocks online and core-flow readiness."
+    "impact": "Old URL points to a suspended legacy service. Correct service is available behind login; core flow remains unverified."
   },
   "inspectionLimitations": [
-    "Resume requires explicit authorization under plan section 3; no service mutations performed.",
-    "Hermes configured image tag confirmed but digest is null; no deployment records returned. Reason for suspension remains unknown.",
-    "Runtime RUNNING and service-domain identity do not prove core flows or complete info.",
-    "No credentials copied to repository, PR or reports."
+    "Correct service login boundary verified; authenticated core flow, persistence and mobile/desktop acceptance not verified.",
+    "Old service remains untouched; resume authorization request withdrawn as wrong target.",
+    "Current product fallback and existing CMS may still use old URL; this cycle corrects agent registry/evidence only.",
+    "Current service exposes only the web domain; previous API domain belongs to old service and cannot be reassigned by assumption."
   ],
-  "nextTask": "If authorized, resume Hermes Agent unchanged and verify its two public domains. Otherwise continue the independent Windows launcher task.",
+  "nextTask": "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation.",
   "projects": [
     {
       "key": "forge-bloom-quiet-falcon",
@@ -404,37 +404,43 @@
     {
       "key": "hermes-agent",
       "repository": null,
-      "publicUrl": "https://455.zeabur.app/sessions",
+      "publicUrl": "https://hermes-agent-k7q2.zeabur.app/sessions",
       "urlStatus": "service_domain_verified",
-      "verificationStatus": "http_failure",
+      "verificationStatus": "auth_boundary_verified_core_flow_not_verified",
       "scoreEvidence": ["docs/portfolio-agent/hermes-agent-evidence.json"],
       "coreFlowPass": false,
       "onlineReady": false,
-      "nextRepairTask": "Await explicit authorization to resume existing service without changing image, ports or variables; then verify runtime, authentication boundary and safe core flow.",
-      "readinessStatus": "repair-needed",
+      "nextRepairTask": "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation.",
+      "readinessStatus": "unknown",
       "completeInfo": false,
       "endpointEvidence": {
         "key": "hermes-agent",
-        "url": "https://455.zeabur.app/sessions",
-        "status": 502,
-        "title": "",
-        "ogTags": [],
-        "checkedAt": "2026-09-19T09:07:58.1338262Z"
+        "url": "https://hermes-agent-k7q2.zeabur.app/sessions",
+        "status": 200,
+        "title": "Sign in — Hermes Agent",
+        "checkedAt": "2026-09-19T09:22:46.98019Z",
+        "browserFinalUrl": "https://hermes-agent-k7q2.zeabur.app/login?next=%2Fsessions",
+        "browserResult": "Sign-in form; PUBLIC BIND / AUTH REQUIRED",
+        "coreFlowVerified": false
       },
-      "failedCriteria": ["Zeabur service is SUSPENDED; public endpoints return HTTP 502"],
+      "failedCriteria": [],
       "readinessScore": null,
       "repairIssueUrl": "https://github.com/aa0968111723-prog/bruce23/issues/7",
       "deployedSourceVerified": true,
       "upstreamRepository": "https://github.com/NousResearch/hermes-agent",
-      "repairStatus": "awaiting_resume_authorization",
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "repairStatus": "old_service_incident_superseded",
+      "sourceEvidence": [
+        "User service-ID correction on 2026-09-19",
+        "docs/portfolio-agent/hermes-zeabur-evidence.json",
+        "docs/portfolio-agent/hermes-agent-evidence.json"
+      ],
       "deploymentReference": null,
-      "runtimeCheckedAt": "2026-09-19T09:18:56.2677889Z",
-      "zeaburProjectId": "6a9a380f39c2940e7ee0754a",
-      "runtimeStatus": "SUSPENDED",
-      "zeaburServiceId": "6a9a385273ef6eb935f2f8a2",
-      "canonicalLiveUrl": "https://455.zeabur.app/sessions",
-      "zeaburEnvironmentId": "6a9a380fa34c0097521b74ae",
+      "runtimeCheckedAt": "2026-09-19T09:22:45.9737556Z",
+      "zeaburProjectId": "6aad03311f9db09fade7b78c",
+      "runtimeStatus": "RUNNING",
+      "zeaburServiceId": "6aad03324850645efd210d94",
+      "canonicalLiveUrl": "https://hermes-agent-k7q2.zeabur.app/sessions",
+      "zeaburEnvironmentId": "6aad03314eff8b1a632f15c2",
       "deployedImage": {
         "reference": "nousresearch/hermes-agent:v2026.7.7.2",
         "name": "docker.io/nousresearch/hermes-agent",

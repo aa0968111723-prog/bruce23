@@ -67,7 +67,7 @@
       "<meta property=\"og:image:width\" content=\"1200\">",
       "<meta property=\"og:image:height\" content=\"630\">"
     ],
-    "checkedAt": "2026-09-19T09:07:58.0138820Z"
+    "checkedAt": "2026-09-19T09:07:58.013882Z"
   },
   {
     "key": "cabin-shale-raven-swift",
@@ -84,11 +84,13 @@
   },
   {
     "key": "hermes-agent",
-    "url": "https://455.zeabur.app/sessions",
-    "status": 502,
-    "title": "",
-    "ogTags": [],
-    "checkedAt": "2026-09-19T09:07:58.1338262Z"
+    "url": "https://hermes-agent-k7q2.zeabur.app/sessions",
+    "status": 200,
+    "title": "Sign in — Hermes Agent",
+    "checkedAt": "2026-09-19T09:22:46.98019Z",
+    "browserFinalUrl": "https://hermes-agent-k7q2.zeabur.app/login?next=%2Fsessions",
+    "browserResult": "Sign-in form; PUBLIC BIND / AUTH REQUIRED",
+    "coreFlowVerified": false
   },
   {
     "key": "hermes-console",

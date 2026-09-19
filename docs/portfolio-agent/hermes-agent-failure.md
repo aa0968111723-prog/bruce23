@@ -2,6 +2,14 @@
 
 初次 RUN_ID：codex-20260919-0903。後續 RUN_ID：codex-20260919-zeabur。
 
+## 使用者更正後結論：先前調查對象為舊服務
+
+2026-09-19 使用者指出目前 Hermes Agent 是 `6aad03324850645efd210d94`。API 已確認該服務 RUNNING，production environment 為 `6aad03314eff8b1a632f15c2`。正式入口為 `https://hermes-agent-k7q2.zeabur.app/sessions`，HTTP 200，真實瀏覽器轉向 `/login?next=%2Fsessions`，顯示 Sign in 與 AUTH REQUIRED。
+
+先前 `6a9a385273ef6eb935f2f8a2` 與 455/API 網域屬於舊服務，SUSPENDED／502 證據有效但不適用於目前作品。**恢復舊服務的授權請求撤回，不需要重啟。** 沒有對任何服務執行 mutation。
+
+本 issue 的舊服務診斷已被身分更正取代；目前作品的核心旅程尚未驗證，不能因此標記 ready。下一步須同步作品集 fallback／既有 CMS 中的旧網址，再以安全隔離方式驗證登入後流程。API port 5000 存在，但新服務僅有 web domain，不能沿用舊 API 網域。以下內容為歷史紀錄。
+
 ## 最新確認：服務已暫停（取代下方歷史存取阻塞）
 
 使用者提供連線資訊後，Zeabur 唯讀 API 已可查詢。服務 `6a9a385273ef6eb935f2f8a2` 在 production 環境 `6a9a380fa34c0097521b74ae` 的狀態為 **SUSPENDED**。這是目前入口不可用的直接阻塞；暫停原因仍未知，不推測為 port 或程式錯誤。
