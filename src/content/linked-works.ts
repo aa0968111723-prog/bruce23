@@ -175,13 +175,16 @@ export const linkedWorks: Project[] = [
     modalities: ["圖像", "文宣", "日曆"],
     process: [
       "打開 delta-horizon-k7f2.zeabur.app",
-      "看今日靈感與近期活動",
-      "從「生成 IG 貼文／Carousel／Story」開始",
-      "進畫布或月曆改一則到期內容",
+      "首屏「今天可以創作什麼？」",
+      "看近期活動與 AI 建議",
+      "到期內容沒有審核人，打開工作室會自動發",
     ],
     outputs: ["禪學社 Studio 公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["連 IG 官方發布需額外授權，未接上時只在工作室內排程。"],
+    limitations: [
+      "連 IG 官方發布需額外授權，未接上時只在工作室內排程。",
+      "2026-09-19 GET / HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/delta-horizon-cliff-fern",
       live: "https://delta-horizon-k7f2.zeabur.app",
@@ -191,7 +194,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · delta-horizon-k7f2.zeabur.app",
         href: "https://delta-horizon-k7f2.zeabur.app",
-        note: "Zeabur 服務 delta-horizon-cliff-fern。本次探測 RUNNING。",
+        note: "2026-09-19 HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。到期內容寫明沒有審核人、打開會自動發。",
       },
       {
         label: "GitHub · delta-horizon-cliff-fern",

@@ -262,7 +262,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "今天可以創作什麼", body: "打開 delta-horizon-k7f2。先看今日靈感與近期活動。" },
+      { title: "今天可以創作什麼", body: "公開站 delta-horizon-k7f2 首屏「今天可以創作什麼？」。標題「禪學社 Studio」。" },
       { title: "生成", body: "從 IG 貼文／Carousel／Story／畫布開始，不要先開雲端硬碟。" },
       { title: "月曆", body: "到期內容在月曆裡改。未接 IG 時只在工作室內排程。" },
     ],
