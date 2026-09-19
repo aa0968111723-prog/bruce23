@@ -3,6 +3,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 import { LocaleProvider, useViewerLocale } from "./LocaleProvider";
+import { PortfolioConcierge } from "./PortfolioConcierge";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -32,6 +33,7 @@ function PublicFrame({ children }: { children: ReactNode }) {
         {children}
       </main>
       <SiteFooter />
+      <PortfolioConcierge />
     </div>
   );
 }

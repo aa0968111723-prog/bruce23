@@ -26,7 +26,7 @@ export const linkedWorks: Project[] = [
     role: "空間體驗設計：場景節奏、校園識別與可立即操作的瀏覽器巡禮。",
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
-      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前為私有，公開操作走 Zeabur。",
+      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
@@ -38,7 +38,6 @@ export const linkedWorks: Project[] = [
     outputs: ["可逛的 3D 校園公開站"],
     stack: ["WebGL / 3D", "Zeabur"],
     limitations: [
-      "GitHub forge-bloom-quiet-falcon 目前為私有，訪客打不開原始碼。",
       "效能依裝置而變，不宣稱完整數位雙生。",
     ],
     links: {
@@ -58,7 +57,7 @@ export const linkedWorks: Project[] = [
       {
         label: "GitHub · forge-bloom-quiet-falcon",
         href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
-        note: "倉庫存在，目前為私有。公開操作請走 Zeabur。",
+        note: "公開儲存庫，3D 場景與瀏覽器巡禮原始碼完整公開。",
       },
     ],
     visibility: "public",

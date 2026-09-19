@@ -216,7 +216,7 @@ const featuredWorks: Project[] = [
       "SAM 2、RTMPose、SEA-RAFT、RIFE、Wan 僅適配器，模型未註冊時不可用。",
       "不是 NLE，也不輸出完整製片管線。",
       "Grok vision 需 XAI_API_KEY，且僅使用者主動送出的幀。",
-      "公開站可看 landing 與 /api/health。工作室需登入。lunar / cabin 的 GitHub 部署倉目前為私有，公開原始碼在 FrameLab。",
+      "公開站可看 landing 與 /api/health。工作室需登入。主倉庫 FrameLab 與部署倉 cabin / lunar 均已完全公開。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
@@ -273,12 +273,12 @@ const featuredWorks: Project[] = [
       {
         label: "GitHub · cabin-shale-raven-swift",
         href: "https://github.com/aa0968111723-prog/cabin-shale-raven-swift",
-        note: "中文站部署來源倉庫，目前為私有。訪客打不開。公開原始碼在 FrameLab。",
+        note: "中文站部署來源倉庫，原為私有，現已設為公開儲存庫。",
       },
       {
         label: "GitHub · lunar-crystal-falcon-granite",
         href: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
-        note: "英文站部署來源倉庫，目前為私有。訪客打不開。公開原始碼在 FrameLab。",
+        note: "英文站部署來源倉庫，原為私有，現已設為公開儲存庫。",
       },
     ],
     visibility: "public",

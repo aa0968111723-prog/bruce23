@@ -34,8 +34,8 @@ describe("official project registry", () => {
     assert.equal(en?.title, "FrameLab");
     assert.equal(zh?.runtimeStatus, "RUNNING");
     assert.equal(en?.runtimeStatus, "RUNNING");
-    assert.equal(zh?.githubVisibility, "private");
-    assert.equal(en?.githubVisibility, "private");
+    assert.equal(zh?.githubVisibility, "public");
+    assert.equal(en?.githubVisibility, "public");
     assert.equal(FRAMELAB_IDENTITY.canonicalLiveUrl, zh?.liveUrl);
     assert.equal(FRAMELAB_IDENTITY.health.name, "FrameLab");
     assert.equal(FRAMELAB_IDENTITY.health.version, "0.4.0");
