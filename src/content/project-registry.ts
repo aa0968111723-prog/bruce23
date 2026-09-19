@@ -94,7 +94,7 @@ export const PLANFORM_LIVE_PROBE_VERSION = "planform-public-home-20260919";
 
 export const PLANFORM_LIVE_PROBE_SLUG = "planform";
 
-export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-title-20260919";
+export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-home-20260920";
 
 export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
 

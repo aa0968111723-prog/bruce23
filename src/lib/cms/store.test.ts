@@ -865,15 +865,17 @@ describe("cms persistence", () => {
     assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
   });
 
-  it("rewrites duigao evidence with the live page title", async () => {
+  it("rewrites duigao process to the live What are we reviewing today home", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, decisions = $3::jsonb, limitations = $4::jsonb, source_evidence = $5::jsonb
        where slug = $1`,
       [
         "duigao",
+        JSON.stringify(["上傳文宣版本"]),
+        JSON.stringify(["stale decision"]),
         JSON.stringify(["stale limitation"]),
         JSON.stringify([
           {
@@ -888,11 +890,17 @@ describe("cms persistence", () => {
     await sql.query(`delete from cms_meta where key = 'duigao_live_probe_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const room = await getPublishedProject(sql, "duigao");
+    assert.ok(room.process[0]?.includes("duigao-k7q2.zeabur.app"));
+    assert.ok(room.process.some((item) => item.includes("今天要對什麼")));
+    assert.ok(room.process.every((item) => !item.includes("上傳文宣版本")));
+    assert.ok(room.decisions.some((item) => item.includes("今天要對什麼")));
     assert.match(
       room.sourceEvidence.find((item) => item.href?.includes("duigao-k7q2"))?.note ?? "",
-      /對稿｜圖片與影片協作空間/,
+      /今天要對什麼/,
     );
+    assert.match(room.experienceConfig.intro ?? "", /今天要對什麼/);
     assert.ok(room.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.match(room.locale.en?.process?.[1] ?? "", /What are we reviewing today/i);
   });
 
   it("rewrites Folio process to start at the live file cabinet", async () => {

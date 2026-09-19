@@ -76,7 +76,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "duigao") {
     return {
       ...base,
-      intro: "作品集對稿示意：點位置留言、切版本、比較。",
+      intro: "公開站首屏是「今天要對什麼？」；可選做一張圖或建立活動房。這裡是作品集對稿示意，不是真實房間。",
       comparison: {
         variant: "annotate",
         versions: [

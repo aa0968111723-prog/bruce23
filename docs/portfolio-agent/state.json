@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-framelab-live-home",
-  "updatedAt": "2026-09-20T18:10:00Z",
+  "runId": "grok-impl-20260920-duigao-live-home",
+  "updatedAt": "2026-09-20T19:10:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "framelab",
+  "currentProject": "duigao",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/framelab-live-home",
+  "currentBranch": "fix/duigao-live-home",
   "currentPR": null,
-  "currentTask": "framelab-live-home",
+  "currentTask": "duigao-live-home",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -37,19 +37,20 @@
     "Hermes Agent Sign in merged as PR #36 and live on production /work/hermes-agent (no 輸入關鍵詞看說明)",
     "Xiaocai tap-to-log merged as PR #37 and live",
     "CUTOS live home merged as PR #38 and live on production /work/cutos (載入示範影片)",
-    "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)"
+    "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)",
+    "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)"
   ],
   "remainingSteps": [
-    "Land FrameLab landing / login first-screen honesty repair",
-    "After deploy, verify production /work/framelab process is 登入工作室 not 匯入影片或圖序",
+    "Land duigao live-home first-screen honesty repair",
+    "After deploy, verify production /work/duigao process is 今天要對什麼 not 上傳文宣版本",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 113,
+  "testsPassed": 102,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "AIOS_PR39_LIVE_FRAMELAB_PROCESS_STILL_CLAIMS_IMPORT",
+  "productionStatus": "FRAMELAB_PR40_LIVE_DUIGAO_PROCESS_STILL_CLAIMS_UPLOAD",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -79,5 +80,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/framelab process starts at the live landing h1 and 登入工作室 → /login. Do not claim import/repair coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/duigao process starts at the live home h2 今天要對什麼 and 做一張圖／建立活動房. Do not claim upload/pin-comment coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

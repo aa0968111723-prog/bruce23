@@ -224,6 +224,9 @@ describe("experience config merge", () => {
     const ledger = defaultExperienceConfig("xiaocai");
     assert.match(ledger.intro ?? "", /小財記帳/);
     assert.doesNotMatch(ledger.intro ?? "", /Folio 指令層/);
+    const review = defaultExperienceConfig("duigao");
+    assert.match(review.intro ?? "", /今天要對什麼/);
+    assert.doesNotMatch(review.intro ?? "", /立刻上傳/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });
