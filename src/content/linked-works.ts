@@ -456,14 +456,17 @@ export const linkedWorks: Project[] = [
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
-      "開啟 hermes-agent-k7q2.zeabur.app",
-      "未登入會到 Sign in — Hermes Agent",
-      "登入（擁有者）後進入 Dashboard",
-      "查看 sessions 與工具狀態",
+      "打開 hermes-agent-k7q2.zeabur.app（未登入轉到 /login）",
+      "標題「Sign in — Hermes Agent」；h1 Sign in；Username & Password",
+      "登入（擁有者）後才進 Dashboard",
+      "作品集不送出帳密，看不到 sessions",
     ],
     outputs: ["公開網域 hermes-agent-k7q2.zeabur.app（Dashboard）"],
     stack: ["Hermes Agent", "Docker", "Zeabur"],
-    limitations: ["需要登入。作品集訪客看不到 Dashboard 內容。"],
+    limitations: [
+      "需要登入。作品集訪客看不到 Dashboard 內容。",
+      "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。作品集未登入，coreFlow 未過。",
+    ],
     links: {
       live: "https://hermes-agent-k7q2.zeabur.app/",
     },
@@ -475,7 +478,7 @@ export const linkedWorks: Project[] = [
       {
         label: "Dashboard · hermes-agent-k7q2.zeabur.app",
         href: "https://hermes-agent-k7q2.zeabur.app/",
-        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。",
+        note: "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。不是 344 Console，也不是 455 舊站。作品集未登入。",
       },
     ],
     visibility: "public",

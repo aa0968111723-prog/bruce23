@@ -533,10 +533,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary:
       "Nous Research Hermes Agent dashboard: sessions and the sign-in gate. Public domain hermes-agent-k7q2.zeabur.app. Unsigned visitors land on Sign in — Hermes Agent.",
     process: [
-      "Open hermes-agent-k7q2.zeabur.app",
-      "Unsigned visitors land on Sign in — Hermes Agent",
-      "Sign in as the owner to enter the dashboard",
-      "Read sessions and tool status",
+      "Open hermes-agent-k7q2.zeabur.app (unsigned visitors redirect to /login)",
+      "Title is Sign in — Hermes Agent; h1 Sign in; Username & Password",
+      "Only the owner can sign in to the dashboard",
+      "This portfolio does not submit credentials, so sessions stay hidden",
+    ],
+    limitations: [
+      "Sign-in required. Portfolio visitors cannot see dashboard contents.",
+      "Probed 2026-09-20: GET / redirects to /login?next=/, HTTP 200, title Sign in — Hermes Agent. h1 Sign in. Username & Password. This portfolio did not sign in, so coreFlow is not passed.",
     ],
   },
 };

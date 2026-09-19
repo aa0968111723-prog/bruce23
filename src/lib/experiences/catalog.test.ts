@@ -103,6 +103,14 @@ describe("experience catalog", () => {
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
   });
 
+  it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
+    const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "Sign in"));
+    assert.match(steps[0]?.body ?? "", /Sign in — Hermes Agent/);
+    assert.match(steps.map((step) => step.body).join("\n"), /\/login/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入關鍵詞看說明/);
+  });
+
   it("keeps tamsui-drama walkthrough on the live load splash", () => {
     const steps = experienceCatalog["tamsui-drama"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "載入世界"));

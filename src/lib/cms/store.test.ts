@@ -1123,6 +1123,41 @@ describe("cms persistence", () => {
     assert.ok(drama.media.every((item) => !item.alt.includes("第一集")));
   });
 
+  it("rewrites Hermes Agent conversation to the live Sign in screen", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
+       where slug = $1`,
+      [
+        "hermes-agent",
+        JSON.stringify(["開啟工作區", "輸入關鍵詞看說明"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "Dashboard · hermes-agent-k7q2.zeabur.app",
+            href: "https://hermes-agent-k7q2.zeabur.app/",
+            note: "Zeabur 服務 hermes-agent（Dashboard）。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_agent_signin_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const agent = await getPublishedProject(sql, "hermes-agent");
+    assert.ok(agent.process[0]?.includes("/login"));
+    assert.match(
+      agent.sourceEvidence.find((item) => item.href?.includes("hermes-agent-k7q2"))?.note ?? "",
+      /Sign in — Hermes Agent/,
+    );
+    assert.match(agent.experienceConfig.conversation?.starter ?? "", /Sign in — Hermes Agent/);
+    assert.doesNotMatch(agent.experienceConfig.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.ok(agent.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("clears a fake Poster Vision live URL when no public host exists", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

@@ -218,6 +218,35 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "hermes-agent") {
+    return {
+      ...base,
+      intro: "公開站 hermes-agent-k7q2 未登入會轉到 /login。標題「Sign in — Hermes Agent」。這是作品集說明，不是 Dashboard 執行期。",
+      conversation: {
+        engine: "hermes-preview",
+        disclaimer: "這是作品集預覽，沒有連到 Hermes Agent 執行期，也不是免登入 Console。",
+        starter: "公開站首屏是「Sign in — Hermes Agent」。選帳密登入才能進 Dashboard。這裡不會假裝已經登入。",
+        placeholder: "輸入登入、Dashboard、Console",
+        sourceNote: "作品集訪客只能看到登入頁。455.zeabur.app 是舊站，不要再開。",
+        suggestions: ["登入", "Dashboard", "Console"],
+        replies: [
+          {
+            match: "登入",
+            reply: "公開站轉到 /login，標題「Sign in — Hermes Agent」。帳密登入。作品集這一頁不會幫你登入。",
+          },
+          {
+            match: "Dashboard",
+            reply: "登入後才是 Dashboard。訪客看不到會話內容。",
+          },
+          {
+            match: "Console",
+            reply: "免登入工作區是 344 的 Hermes Console，不是這個 Dashboard。",
+          },
+        ],
+      },
+    };
+  }
+
   if (slug === "ai-director-os") {
     return {
       ...base,

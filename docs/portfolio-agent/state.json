@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260919-tamkang-campus-pass",
-  "updatedAt": "2026-09-19T15:50:00Z",
+  "runId": "grok-impl-20260920-hermes-agent-signin",
+  "updatedAt": "2026-09-20T16:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "tamkang-world",
+  "currentProject": "hermes-agent",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/tamkang-campus-pass",
+  "currentBranch": "fix/hermes-agent-signin",
   "currentPR": null,
-  "currentTask": "tamkang-campus-pass",
+  "currentTask": "hermes-agent-signin",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -27,27 +27,34 @@
     "Folio file-cabinet merged as PR #25 and live",
     "Hermes Console live home merged as PR #26 and live",
     "SkateHub live slogan merged as PR #28 and live",
-    "Probed forge-bloom-k7xq: title 淡江世界; /login h1 校園通行證; no 開始巡禮/校園圖鑑/WASD in public JS"
+    "Tamkang campus-pass merged as PR #29 and live on production /work/tamkang-world",
+    "Lumen not-Hermes defaults merged as PR #30 and live",
+    "Zen Studio live home merged as PR #31 and live on production /work/zen-studio",
+    "Tamsui drama load-splash honesty merged as PR #32 and live on production /work/tamsui-drama",
+    "Lumen generic preview chrome merged as PR #33 and live (工作區預覽 only on hermes-console)",
+    "Tamsui shot alt merged as PR #34",
+    "Poster Vision no public host merged as PR #35 and live"
   ],
   "remainingSteps": [
-    "Land tamkang campus-pass honesty repair",
-    "Verify production /work/tamkang-world after deploy",
-    "Probe next unrepaired official work public core flow (tamsui-drama / zen-studio / lumen)"
+    "Land hermes-agent Sign in first-screen honesty repair",
+    "Verify production /work/hermes-agent after deploy does not show 輸入關鍵詞看說明",
+    "Then stamp next unrepaired public first screen (xiaocai / cutos / ai-director-os)",
+    "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 66,
+  "testsPassed": 101,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "TAMKANG_PROCESS_STILL_INVENTS_START_TOUR_WASD_ATLAS",
+  "productionStatus": "TAMSUI_DRAMA_AND_LUMEN_CHROME_LIVE_HERMES_AGENT_STILL_LEAKS_CONSOLE_STARTER",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
-      "error": "Zeabur MCP ERROR_INVALID_TOKEN",
-      "evidence": "get-me failed 2026-09-19; GraphQL token unset in this shell",
+      "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
-      "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"
+      "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
     }
   ],
   "gates": {
@@ -59,5 +66,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/tamkang-world process starts at 校園通行證 / 先以訪客巡禮 and does not invent WASD. Then probe tamsui-drama, zen-studio, or lumen. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/hermes-agent starter is Sign in — Hermes Agent and does not leak 輸入關鍵詞看說明. Then stamp xiaocai or cutos first screen. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
