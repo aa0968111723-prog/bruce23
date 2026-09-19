@@ -1,10 +1,10 @@
 {
   "version": 9,
-  "generatedAt": "2026-09-19T19:18:30Z",
+  "generatedAt": "2026-09-19T19:24:12Z",
   "runId": "portfolio-gate-audit-20260920",
   "runStatus": "IN_PROGRESS",
   "startedAt": "2026-09-19T19:07:42Z",
-  "endedAt": "2026-09-19T19:18:30Z",
+  "endedAt": "2026-09-19T19:24:12Z",
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
     "planPullRequest": 6,
@@ -28,6 +28,29 @@
     "canonicalProjectKeyValidationAdded": true,
     "portfolioReadyGuardAdded": true,
     "productOrDeploymentChanged": false
+  },
+  "inspection": {
+    "githubRepositories": {
+      "checked": 16,
+      "latestCommitResolved": 16,
+      "openRepairPullRequests": 0,
+      "latestCommitCombinedStatus": {
+        "success": 1,
+        "noStatusContexts": 15
+      },
+      "planPullRequestStatus": "CodeRabbit success",
+      "repairPullRequestStatus": "CodeRabbit success"
+    },
+    "publicEndpoints": {
+      "attempted": 19,
+      "verifiedThisRun": 0,
+      "runnerResult": "All fetches aborted at the 8-second runner timeout.",
+      "interpretation": "Runner network failure does not prove that a public service is offline and does not preserve or promote a prior HTTP 200 result."
+    },
+    "grokBot": {
+      "taskFile": "docs/GROK_BOT_PORTFOLIO_TASK.md",
+      "independentReadinessOutputFound": false
+    }
   },
   "validation": {
     "gateAudit": "PASS: seven project counters are 0/17 with zero consistency errors",
@@ -58,6 +81,7 @@
   "blockers": [
     "No project has a verified core flow, readiness score, mobile smoke test, desktop smoke test, thumbnail review or security review in the canonical project records.",
     "HTTP 200 endpoint evidence does not satisfy onlineReady or any functional acceptance gate.",
+    "This runner could not freshly reach any of the 19 public endpoint probes; all requests timed out at 8 seconds, so no current endpoint result was promoted.",
     "PR #27 must be reviewed and merged into the PR #6 branch before this guard protects the shared plan line."
   ],
   "nextSteps": [
