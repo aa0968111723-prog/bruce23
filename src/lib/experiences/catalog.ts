@@ -225,10 +225,25 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
   "tku-zen-ai": {
     mode: "conversation-preview",
     honestyLabel: "本地回應引擎，不是雲端 LLM",
+    walkthrough: [
+      {
+        title: "歡迎",
+        body: "公開 src/app/page.tsx 首屏 h1「TKU Zen AI」、副標「A calm companion for a busy mind」。歡迎句 Take a breath。沒有 Zeabur 公開站。",
+      },
+      {
+        title: "建議句",
+        body: "四句英文建議與 page.tsx 相同：I feel stressed about my exams／Help me focus／I can't sleep／Thank you。不是中文晶片。",
+      },
+      {
+        title: "本地引擎",
+        body: "送出後走 src/lib/zen.ts。同輸入同輸出。不是雲端 LLM。作品集未送出真實心情。",
+      },
+    ],
     fileHints: [
       { path: "src/lib/zen.ts", purpose: "可重現的本地引擎", stage: "對話" },
       { path: "src/app/api/chat/route.ts", purpose: "POST /api/chat", stage: "API" },
       { path: "src/lib/zen.test.ts", purpose: "單元測試", stage: "驗證" },
+      { path: "src/app/page.tsx", purpose: "公開對話首屏", stage: "對話" },
     ],
   },
   "tamkang-world": {

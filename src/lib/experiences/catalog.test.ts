@@ -103,6 +103,15 @@ describe("experience catalog", () => {
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
   });
 
+  it("keeps tku-zen-ai walkthrough on the public English welcome", () => {
+    const steps = experienceCatalog["tku-zen-ai"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "歡迎"));
+    assert.match(steps[0]?.body ?? "", /Welcome to TKU Zen AI|Take a breath|TKU Zen AI/);
+    assert.match(steps.map((step) => step.body).join("\n"), /I feel stressed about my exams/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入一句心情/);
+    assert.ok((experienceCatalog["tku-zen-ai"].fileHints ?? []).some((item) => item.path === "src/app/page.tsx"));
+  });
+
   it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
     const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "Sign in"));

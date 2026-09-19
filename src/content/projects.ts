@@ -724,14 +724,21 @@ const featuredWorks: Project[] = [
       "回應引擎寫在 src/lib/zen.ts，同輸入同輸出。",
       "全程無網路呼叫。",
       "只展示公開產品行為，不放社團名冊或測試帳號。",
+      "公開對話頁首屏是英文歡迎句，不是立刻對應意圖。建議句與 src/app/page.tsx 相同。",
     ],
     modalities: ["文字", "呼吸提示"],
-    process: ["輸入一句心情", "對應意圖", "回覆訊息與呼吸", "可重測"],
+    process: [
+      "打開公開對話頁 src/app/page.tsx（沒有 Zeabur 公開網域）",
+      "首屏 h1「TKU Zen AI」、副標「A calm companion for a busy mind」",
+      "歡迎句「Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.」；呼吸「Inhale calm, exhale tension — three times.」",
+      "建議句是英文四句：I feel stressed about my exams／Help me focus／I can't sleep／Thank you。作品集這一頁跑同一套本地引擎，不是雲端 LLM",
+    ],
     outputs: ["Next.js 應用與 /api/chat", "單元測試覆蓋回應引擎"],
     stack: ["Next.js", "React", "TypeScript", "Tailwind", "Vitest"],
     limitations: [
       "不是大型語言模型，不會假裝有長期記憶或多輪推理。",
       "與 tku-zen-agent（社團文書代理，私有）不是同一個產品，本頁只展示公開的 tku-zen-ai。",
+      "2026-09-20 讀取公開 src/app/page.tsx：h1「TKU Zen AI」、歡迎句 Take a breath、英文建議句。沒有公開 Zeabur 網域。作品集未送出真實心情，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-zen-ai",
@@ -771,7 +778,7 @@ const featuredWorks: Project[] = [
       {
         label: "光域重建 · TKU Zen 對話",
         href: "https://github.com/aa0968111723-prog/tku-zen-ai/blob/main/src/app/page.tsx",
-        note: "本站 /media/studio/tku-zen-chat.svg 依公開 page.tsx／zen.ts 對話結構重建。亮色轉譯，不是產品截圖。",
+        note: "2026-09-20 公開 src/app/page.tsx 首屏 h1「TKU Zen AI」、副標「A calm companion for a busy mind」、歡迎句「Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.」、英文建議句。本站 /media/studio/tku-zen-chat.svg 是亮色轉譯，不是產品截圖。",
       },
     ],
     visibility: "public",

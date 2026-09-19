@@ -1206,6 +1206,43 @@ describe("cms persistence", () => {
     assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites TKU Zen AI process to the public English welcome without claiming a chat coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
+       where slug = $1`,
+      [
+        "tku-zen-ai",
+        JSON.stringify(["輸入一句心情", "對應意圖"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "光域重建 · TKU Zen 對話",
+            href: "https://github.com/aa0968111723-prog/tku-zen-ai/blob/main/src/app/page.tsx",
+            note: "亮色轉譯，不是產品截圖。",
+            kind: "github",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tku_zen_ai_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const zen = await getPublishedProject(sql, "tku-zen-ai");
+    assert.ok(zen.process[0]?.includes("src/app/page.tsx"));
+    assert.ok(zen.process.some((item) => item.includes("Welcome to TKU Zen AI")));
+    assert.equal(zen.process.some((item) => item.includes("輸入一句心情")), false);
+    assert.match(
+      zen.sourceEvidence.find((item) => item.href?.includes("page.tsx"))?.note ?? "",
+      /Welcome to TKU Zen AI/,
+    );
+    assert.match(zen.experienceConfig.conversation?.starter ?? "", /Take a breath/);
+    assert.ok(zen.experienceConfig.conversation?.suggestions?.includes("I feel stressed about my exams"));
+    assert.ok(zen.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("clears a fake Poster Vision live URL when no public host exists", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
