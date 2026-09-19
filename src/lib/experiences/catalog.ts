@@ -267,9 +267,10 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: "現場遊戲，不是心理測驗",
     walkthrough: [
-      { title: "暖身", body: "打開 leader-dna-mcp-a7k2。先暖身，再進 60 秒正式挑戰。" },
-      { title: "挑戰", body: "現場 60 秒。這是攤位遊戲，不是正式心理測驗。" },
-      { title: "狀態", body: "主辦方可看活動狀態。本站不展示名冊。" },
+      { title: "打開", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。" },
+      { title: "暖身", body: "兩題教學與 15 秒練習不計分、不登記。" },
+      { title: "60 秒", body: "正式 Stroop：字義與顏色永遠不同。這是攤位遊戲，不是心理測驗。" },
+      { title: "排行榜", body: "公開列只顯示遮罩姓名與成績。電話與完整名冊只在 /admin。" },
     ],
   },
   lumen: {
