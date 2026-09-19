@@ -120,6 +120,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
       [
         "The asset knowledge base (RAG) is not done.",
         "Database-layer RLS as a second isolation boundary is not done.",
+        "Probed 2026-09-19: ai-os-app.zeabur.app and vexlark.co both HTTP 200, title Aios. Not 502 and not paused. The team OS core flow is not verified here.",
         "The public deploy URL changes with the environment; this page does not claim a stable SLA or user count.",
         "Dev-time fake identities and seed accounts do not appear on this site.",
       ],

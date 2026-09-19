@@ -793,6 +793,68 @@ describe("cms persistence", () => {
     assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
   });
 
+  it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(`update projects set process = $2::jsonb, limitations = $3::jsonb where slug = $1`, [
+      "focus-challenge",
+      JSON.stringify(["stale process"]),
+      JSON.stringify(["stale limitation"]),
+    ]);
+    await sql.query(`delete from cms_meta where key = 'ty_contract_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const game = await getPublishedProject(sql, "focus-challenge");
+    assert.ok(game.process.some((item) => item.includes("60 秒正式 Stroop")));
+    assert.ok(game.limitations.some((item) => item.includes("/api/health")));
+    assert.ok(game.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.match(game.sourceEvidence[0]?.note ?? "", /health ok/);
+  });
+
+  it("rewrites stale 502/paused notes for AI Director OS after a live 200 probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb,
+           source_evidence = $3::jsonb,
+           live_demo_status = $4,
+           live_demo_error = $5
+       where slug = $1`,
+      [
+        "ai-director-os",
+        JSON.stringify(["公開部署網址狀態會隨環境變動。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · ai-os-app.zeabur.app",
+            href: "https://ai-os-app.zeabur.app",
+            note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。本次探測服務可能暫停。",
+            kind: "demo",
+          },
+          {
+            label: "自訂網域 · vexlark.co",
+            href: "https://vexlark.co",
+            note: "同一 Zeabur 服務 ai-os-app 的自訂網域。本次探測可能 502／暫停。",
+            kind: "demo",
+          },
+        ]),
+        "failed",
+        "本次探測可能 502",
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'aios_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const aios = await getPublishedProject(sql, "ai-director-os");
+    const aiosAdmin = await getAdminProjectBySlug(sql, "ai-director-os");
+    assert.ok(aios.sourceEvidence.every((item) => !/可能 502|可能暫停/.test(item.note ?? "")));
+    assert.ok(aios.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
+    assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://ai-os-app.zeabur.app"));
+    assert.ok(aios.sourceEvidence.some((item) => /HTTP 200/.test(item.note ?? "") && item.href === "https://vexlark.co"));
+    assert.ok(aios.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
+    assert.match(aios.locale.en?.limitations?.join(" ") ?? "", /Not 502 and not paused/i);
+    assert.equal(aiosAdmin.live_demo_status, "pending");
+    assert.equal(aiosAdmin.live_demo_error, null);
+  });
+
   it("saves homepage highlight slugs without wiping locale_json", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

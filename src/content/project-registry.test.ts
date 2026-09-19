@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { projects } from "./projects.ts";
 import {
+  AIOS_LIVE_PROBE_SLUG,
+  AIOS_LIVE_PROBE_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
   LIVE_PROBES_20260919,
@@ -75,6 +77,22 @@ describe("official project registry", () => {
       assert.ok(project.sourceReferences.every((item) => !/可能 502/.test(item.note)));
       assert.ok(project.limitations.every((item) => !/曾出現 502/.test(item)));
     }
+  });
+
+  it("records live 200 probes for AI Director OS instead of stale 502/paused notes", () => {
+    const probe = LIVE_PROBES_20260919["ai-director-os"];
+    const project = projects.find((item) => item.slug === AIOS_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.equal(probe.httpStatus, 200);
+    assert.equal(probe.coreFlowPass, false);
+    assert.equal(project.links.live, probe.liveUrl);
+    assert.equal(project.links.demo, probe.customDomain);
+    assert.match(AIOS_LIVE_PROBE_VERSION, /aios-live-probe/);
+    assert.ok(project.sourceReferences.every((item) => !/可能 502|可能暫停/.test(item.note)));
+    assert.ok(project.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
+    assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.liveUrl));
+    assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.customDomain));
+    assert.ok(project.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
   });
 
   it("keeps Zeabur provisioned domains, not the two swapped URLs from the owner dump", () => {

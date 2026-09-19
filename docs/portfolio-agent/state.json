@@ -1,31 +1,35 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260919-stale-502",
-  "updatedAt": "2026-09-19T13:10:00Z",
+  "runId": "grok-impl-20260919-aios-live",
+  "updatedAt": "2026-09-19T16:40:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "xiaocai + tku-zen-agent",
+  "currentProject": "ai-director-os",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/stale-502-xiaocai-zen-desk",
+  "currentBranch": "fix/stale-502-aios-live",
   "currentPR": null,
-  "currentTask": "rewrite-stale-502-notes-xiaocai-zen-desk",
+  "currentTask": "rewrite-stale-502-notes-ai-director-os",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
-    "FrameLab identity split merged as PR #11 (504318e)",
-    "Probed untitled-5 HTTP 200 title 小財記帳",
-    "Probed tku-zen-agent-k7f2 HTTP 200 auth-code gate"
+    "FrameLab identity split merged as PR #11 and live on production (cabin-shale-k7q2)",
+    "Xiaocai/Zen stale 502 notes merged as PR #13 and live",
+    "PLANFORM empty-demo sentence hidden (PR #14 live)",
+    "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
+    "Zeabur service IDs recorded (PR #16)",
+    "Probed ai-os-app.zeabur.app HTTP 200 title Aios",
+    "Probed vexlark.co HTTP 200 same title"
   ],
   "remainingSteps": [
-    "Land stale-502 note repair",
-    "Verify Zeabur deploy of 504318e on production FrameLab",
-    "Verify production xiaocai and tku-zen-agent pages after this PR deploys"
+    "Land AI Director OS stale 502/paused note repair",
+    "Verify production /work/ai-director-os after deploy",
+    "Operate ty core flow on leader-dna-mcp-a7k2 without sheet credentials"
   ],
-  "testsPassed": 78,
+  "testsPassed": 41,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
-  "deploymentStatus": "PR11_MERGED_PRODUCTION_NOT_YET_UPDATED",
-  "productionStatus": "STALE_CMS_COPY",
+  "deploymentStatus": "PR_NOT_YET_OPENED",
+  "productionStatus": "AIOS_STALE_502_COPY",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -46,5 +50,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this branch is PR'd: if production /work/framelab still has lunar live URL and cabin 502, diagnose Zeabur deploy of 504318e. Then after this PR deploys, confirm /work/xiaocai and /work/tku-zen-agent no longer say 502. Next product core flow: planform-iso or ty."
+  "nextExactStep": "After this PR deploys, verify production /work/ai-director-os no longer says 502 or 暫停. Then operate ty core flow on https://leader-dna-mcp-a7k2.zeabur.app/ without sheet credentials. Do not merge PR #10."
 }
