@@ -95,6 +95,8 @@ describe("experience playable chrome", () => {
     assert.equal(enNode?.label, "Project");
     assert.equal(enNode?.githubPath, "server/services/projectCore.ts");
     assert.equal(zhNode?.githubPath, enNode?.githubPath);
+    assert.match(zh.intro ?? "", /進入工作台要登入/);
+    assert.match(en.intro ?? "", /landing page/i);
     const hint = en.fileHints?.find((item) => item.path === "shared/worldview.ts");
     assert.equal(hint?.path, "shared/worldview.ts");
     assert.match(hint?.purpose ?? "", /Worldview/i);

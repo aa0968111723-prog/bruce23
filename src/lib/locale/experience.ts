@@ -415,7 +415,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   "ai-director-os": {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:
-      "This is a portfolio interactive demo that turns the public repo flow into tappable nodes. It is not a live product console.",
+      "The public site opens on a landing page: “Turn an idea into a plan the team can actually finish.” Entering the workbench requires sign-in. These nodes are the public repo flow, not a live console.",
     processNodes: [
       {
         id: "project",

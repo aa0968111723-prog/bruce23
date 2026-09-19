@@ -78,7 +78,7 @@ export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
 
-export const AIOS_LIVE_PROBE_VERSION = "aios-live-probe-20260919";
+export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 

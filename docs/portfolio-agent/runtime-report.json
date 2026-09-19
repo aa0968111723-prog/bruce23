@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T16:50:00Z",
-  "runId": "grok-impl-20260920-hermes-agent-signin",
+  "generatedAt": "2026-09-20T17:25:00Z",
+  "runId": "grok-impl-20260920-aios-live-home",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T16:20:00Z",
+  "startedAt": "2026-09-20T17:05:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,15 +12,15 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "hermes-agent-signin",
-  "inspectedCommit": "30fb9cc",
+  "task": "aios-live-home",
+  "inspectedCommit": "c19c82c",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + registry/catalog/config/store 101 + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + registry/catalog/config/store/experience 113 + vite build",
     "browser": "NOT_YET",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
@@ -29,43 +29,45 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/tamsui-drama",
-      "status": 200,
-      "pr32Landed": true,
-      "copy": "載入世界 / 載入淡江·淡水世界; process does not invent 第一集 as the start",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T16:30:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/lumen",
-      "status": 200,
-      "pr33Landed": true,
-      "copy": "作品集預覽 / 未接上產品執行期; no 工作區預覽 / 尚未連線",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T16:30:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/hermes-console",
-      "status": 200,
-      "copy": "工作區預覽 / 尚未連線 kept because slug is hermes-console",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T16:30:00Z"
-    },
-    {
       "url": "https://bruce23-k7m2.zeabur.app/work/hermes-agent",
       "status": 200,
-      "copy": "generic chrome OK; starter still 輸入關鍵詞看說明 (Hermes Console leak)",
+      "pr36Landed": true,
+      "copy": "Sign in — Hermes Agent; leak 輸入關鍵詞看說明 = false",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T16:35:00Z"
+      "checkedAt": "2026-09-20T17:10:00Z"
     },
     {
-      "url": "https://hermes-agent-k7q2.zeabur.app/",
+      "url": "https://bruce23-k7m2.zeabur.app/work/xiaocai",
       "status": 200,
-      "finalUrl": "https://hermes-agent-k7q2.zeabur.app/login?next=%2F",
-      "title": "Sign in — Hermes Agent",
-      "firstScreen": "Sign in / Username & Password / Public bind · Auth required",
+      "pr37Landed": true,
+      "copy": "點我一下，快速記一筆吧",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T16:35:00Z"
+      "checkedAt": "2026-09-20T17:10:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
+      "status": 200,
+      "pr38Landed": true,
+      "copy": "AI 對話式影片剪輯 / 載入示範影片／上傳",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T17:10:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
+      "status": 200,
+      "copy": "process still 建立專案與世界觀快速層; live JS is landing + 進入工作台",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T17:10:00Z"
+    },
+    {
+      "url": "https://ai-os-app.zeabur.app/",
+      "status": 200,
+      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
+      "js": "assets/index-C35UgZaf.js",
+      "firstScreen": "eyebrow 團隊日常的 AI 專案工作台; h1 把想法，變成團隊真正能完成的計畫。; CTA 進入工作台 → /login",
+      "health": "/api/health ok 0.1.0",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T17:19:00Z"
     }
   ],
   "gates": {
@@ -81,8 +83,8 @@
     "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments"
   ],
   "nextSteps": [
-    "Land hermes-agent Sign in first-screen honesty repair",
-    "After deploy, verify production /work/hermes-agent starter is Sign in — Hermes Agent",
+    "Land AI Director OS landing / login first-screen honesty repair",
+    "After deploy, verify production /work/ai-director-os process is 進入工作台",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }
