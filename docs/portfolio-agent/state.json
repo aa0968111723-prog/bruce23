@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260919-ty-public-flow",
-  "updatedAt": "2026-09-19T14:10:00Z",
+  "runId": "grok-impl-20260919-planform-public-home",
+  "updatedAt": "2026-09-19T15:10:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "focus-challenge",
+  "currentProject": "planform",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/ty-public-flow-honesty",
+  "currentBranch": "fix/planform-public-home",
   "currentPR": null,
-  "currentTask": "ty-public-flow-honesty",
+  "currentTask": "planform-public-home",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -19,18 +19,21 @@
     "Zeabur service IDs recorded (PR #16)",
     "AI Director OS stale 502/paused notes merged as PR #17 and live",
     "ty process copy aligned with PRODUCT_CONTRACT (PR #18 live)",
-    "Probed leader-dna-mcp-a7k2 homepage 200, health ok, leaderboard history 67 masked rows"
+    "ty public-flow honesty merged as PR #20 and live (registration-first copy)",
+    "CUTOS stale 502 dropped as PR #21 and live",
+    "PLANFORM version.json probe merged as PR #22 and live",
+    "Probed planform-iso-k7d2 public home: 我的專案 / ＋ 新建專案; no /api; occupancy calc refused in live JS"
   ],
   "remainingSteps": [
-    "Land ty public-flow honesty repair",
-    "Verify production /work/focus-challenge after deploy",
-    "Operate planform core flow on planform-iso-k7d2"
+    "Land planform public-home honesty repair",
+    "Verify production /work/planform after deploy",
+    "Probe next unrepaired official work public core flow"
   ],
-  "testsPassed": 51,
+  "testsPassed": 55,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "TY_SUMMARY_STILL_BOOTH_STATUS_COPY",
+  "productionStatus": "PLANFORM_PROCESS_STILL_STARTS_AT_TEMPLATE_NOT_PROJECT_HOME",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -51,5 +54,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/focus-challenge no longer says 即時看活動狀態 or 不是再填一張表. Then operate planform core flow on https://planform-iso-k7d2.zeabur.app/. Do not merge PR #10."
+  "nextExactStep": "After this PR deploys, verify production /work/planform process starts with 我的專案 / ＋ 新建專案. Then probe the next unrepaired official work. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

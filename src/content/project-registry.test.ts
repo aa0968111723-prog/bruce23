@@ -140,14 +140,21 @@ describe("official project registry", () => {
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
-  it("records PLANFORM live version.json without claiming canvas coreFlow", () => {
+  it("records PLANFORM public home as 我的專案 without claiming canvas coreFlow", () => {
     const project = projects.find((item) => item.slug === PLANFORM_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-version-json/);
+    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-public-home/);
     assert.equal(project.links.live, "https://planform-iso-k7d2.zeabur.app");
+    assert.ok(project.process[0]?.includes("我的專案"));
+    assert.ok(project.process[0]?.includes("新建專案"));
+    assert.ok(project.process.some((item) => item.includes("無後端 API")));
+    assert.ok(project.decisions.some((item) => item.includes("我的專案")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("1.0.0")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("1b8513b")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("我的專案")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
+    assert.ok(project.limitations.some((item) => item.includes("不做容留人數計算")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.limitations.every((item) => !/已符合所有法規/.test(item)));
   });
 });

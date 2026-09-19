@@ -822,15 +822,16 @@ describe("cms persistence", () => {
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
-  it("rewrites PLANFORM evidence with version.json probe and honest coreFlow gap", async () => {
+  it("rewrites PLANFORM process to the live 我的專案 home without claiming canvas coreFlow", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
        where slug = $1`,
       [
         "planform",
+        JSON.stringify(["選教室模板與人數"]),
         JSON.stringify(["stale limitation"]),
         JSON.stringify([
           {
@@ -845,9 +846,15 @@ describe("cms persistence", () => {
     await sql.query(`delete from cms_meta where key = 'planform_live_probe_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const plan = await getPublishedProject(sql, "planform");
+    assert.ok(plan.process[0]?.includes("我的專案"));
+    assert.ok(plan.process[0]?.includes("新建專案"));
+    assert.equal(plan.process.some((item) => item === "選教室模板與人數"), false);
     assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /1\.0\.0/);
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /我的專案/);
     assert.ok(plan.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(plan.limitations.some((item) => item.includes("不做容留人數計算")));
     assert.ok(plan.sourceEvidence.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
+    assert.match(plan.locale.en?.process?.[0] ?? "", /My projects/i);
   });
 
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {

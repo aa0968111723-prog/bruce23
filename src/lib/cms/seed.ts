@@ -784,13 +784,17 @@ async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
   const seedZh = localeZhFromProject(project.slug);
   await sql.query(
     `update projects
-     set limitations = $2::jsonb,
-         source_evidence = $3::jsonb,
-         locale_json = $4::jsonb,
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
          updated_at = now()
      where slug = $1`,
     [
       project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
       JSON.stringify(project.limitations),
       JSON.stringify(projectEvidence(project)),
       JSON.stringify({ zh: seedZh, en: seedEn }),

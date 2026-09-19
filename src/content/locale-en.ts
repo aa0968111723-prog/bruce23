@@ -221,17 +221,18 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
     role: "Spatial experience design and product building: presets, circulation, crowd simulation, and share graphics.",
     ...lists(
       [
+        "Opening the app shows “My projects” and “+ New project”, not the 3D canvas first.",
         "Preset-first, everything customizable. One project per event — they do not overwrite each other.",
         "AI only understands sentences and goals; coordinates, collision, aisles, and capacity are computed in code.",
         "Without a cloud key, the local structured parser still works and results are reproducible.",
-        "Fire or accessibility items are design reminders; the program forbids writing “meets all codes.”",
+        "Fire or accessibility items are design reminders; the program forbids writing “meets all codes.” The live JS says the tool does not compute occupancy or egress width.",
       ],
       [
-        "Pick a classroom template and headcount",
-        "Place mats and zones",
+        "Open planform-iso-k7d2.zeabur.app (home is “My projects”, button “+ New project”)",
+        "Create a project, then pick a Tamkang classroom template and headcount (frontend-only, localStorage)",
+        "Drag objects on the canvas, or use mat layout A/B/C by headcount",
         "Draw circulation",
-        "Local DES queue simulation",
-        "Share a run-of-show graphic and a partner read-only view",
+        "Share a run-of-show graphic and a partner read-only view (no backend API)",
       ],
       [
         "Installable PWA",
@@ -239,10 +240,10 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Print with both metres and millimetres",
       ],
       [
-        "No legal occupancy or egress-width calculation.",
+        "No legal occupancy or egress-width calculation. Live JS: this tool does not compute occupancy or egress width.",
         "Not listed on the App Store.",
         "This is pre-event rehearsal, not a live command system.",
-        "Probed 2026-09-19: GET /version.json returns 1.0.0 commit 1b8513b. The public site is an SPA; this portfolio has not completed create-project → drag-object, so coreFlow is not passed.",
+        "Probed 2026-09-19: GET / HTTP 200, title PLANFORM｜活動空間彩排. /version.json 1.0.0 (1b8513b). Live JS first screen is “My projects” and “+ New project”. No /api routes. This portfolio has not completed new-project → drag-object in a browser, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.planform,
