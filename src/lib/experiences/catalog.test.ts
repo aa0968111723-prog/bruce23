@@ -386,6 +386,8 @@ describe("frontend contract", () => {
     );
     assert.match(hermes, /data-hermes-preview/);
     assert.match(hermes, /hermesDisconnected/);
+    assert.match(hermes, /previewWorkspace/);
+    assert.match(hermes, /project.slug === "hermes-console"/);
     const hermesHook = hermes.match(/const \{([^}]+)\} = useExperienceView/);
     assert.ok(hermesHook);
     if (/\blang\b/.test(hermes.replace(hermesHook[0], ""))) {
