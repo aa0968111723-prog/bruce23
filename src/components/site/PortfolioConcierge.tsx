@@ -151,25 +151,32 @@ export function PortfolioConcierge() {
           </div>
 
           {/* 快捷提問導引 */}
-          {messages.length <= 2 && (
-            <div className="border-t border-line/60 bg-surface-blue/20 px-3 py-2">
-              <p className="text-[11px] text-muted mb-1.5 flex items-center gap-1 font-medium">
-                <Sparkles className="size-3 text-mint-deep" /> 常用提問快捷引導：
+          <div className="border-t border-line/60 bg-surface-blue/20 px-3 py-2">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-[11px] text-muted flex items-center gap-1 font-medium">
+                <Sparkles className="size-3 text-mint-deep" /> 快捷提問：
               </p>
-              <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-                {SUGGESTED_QUESTIONS.slice(0, 4).map((q, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSend(q)}
-                    className="shrink-0 rounded-lg bg-surface border border-line px-2.5 py-1 text-xs text-ink hover:border-mint transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => handleSend("全部網站端點健康狀態與在線延遲如何？")}
+                className="text-[10px] text-mint-deep hover:underline flex items-center gap-0.5"
+              >
+                🟢 19端點探測
+              </button>
             </div>
-          )}
+            <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+              {SUGGESTED_QUESTIONS.map((q, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSend(q)}
+                  className="shrink-0 rounded-lg bg-surface border border-line px-2.5 py-1 text-xs text-ink hover:border-mint hover:bg-surface-mint/30 transition-all shadow-xs"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* 輸入框 */}
           <form
