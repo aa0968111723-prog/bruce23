@@ -259,6 +259,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "cutos") {
+    return {
+      ...base,
+      intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+    };
+  }
+
   return base;
 }
 

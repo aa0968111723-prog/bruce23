@@ -119,6 +119,14 @@ describe("experience catalog", () => {
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入關鍵詞看說明/);
   });
 
+  it("keeps cutos walkthrough on the live import-video home", () => {
+    const steps = experienceCatalog.cutos.walkthrough ?? [];
+    assert.equal(steps[0]?.title, "匯入影片");
+    assert.match(steps[0]?.body ?? "", /AI 對話式影片剪輯/);
+    assert.match(steps[0]?.body ?? "", /載入示範影片/);
+    assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
+  });
+
   it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
     const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "Sign in"));

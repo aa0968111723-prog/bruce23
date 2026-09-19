@@ -417,14 +417,14 @@ export const linkedWorks: Project[] = [
     modalities: ["影片", "對話", "時間軸"],
     process: [
       "打開 cutos.zeabur.app",
-      "首屏「AI 對話式影片剪輯」，可載入示範影片或上傳自己的影片",
+      "首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」，可載入示範影片或上傳",
       "用一句話描述要剪的意圖",
       "檢查 Edit Plan 後套用非破壞時間軸",
     ],
     outputs: ["CUTOS 公開站"],
     stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
     limitations: [
-      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。首屏「AI 對話式影片剪輯」「載入示範影片／上傳影片」。/api/health ok。",
+      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。",
       "作品集未載入示範片也未上傳真實影片，coreFlow 未過。",
     ],
     links: {
@@ -436,7 +436,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。首屏「AI 對話式影片剪輯」「載入示範影片／上傳影片」。/api/health ok。不是 502。",
+        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。不是 502。",
       },
       {
         label: "GitHub · CUTOS",

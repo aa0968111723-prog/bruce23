@@ -93,6 +93,15 @@ describe("experience playable chrome", () => {
     assert.doesNotMatch(folioEn.intro ?? "", /command layer/i);
     assert.equal(folioZh.walkthrough?.[0]?.title, "文件櫃");
     assert.equal(folioEn.walkthrough?.[0]?.title, "File cabinet");
+    const cutosZh = overlayExperienceConfig(defaultExperienceConfig("cutos"), "cutos", "zh");
+    const cutosEn = overlayExperienceConfig(defaultExperienceConfig("cutos"), "cutos", "en");
+    assert.match(cutosZh.intro ?? "", /匯入影片/);
+    assert.match(cutosZh.intro ?? "", /載入示範影片/);
+    assert.doesNotMatch(cutosZh.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
+    assert.match(cutosEn.intro ?? "", /Import video/i);
+    assert.match(cutosEn.intro ?? "", /demo clip/i);
+    assert.equal(cutosZh.walkthrough?.[0]?.title, "匯入影片");
+    assert.equal(cutosEn.walkthrough?.[0]?.title, "Import video");
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
     assert.match(zenEn.intro ?? "", /Take a breath/i);

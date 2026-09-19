@@ -171,12 +171,14 @@ describe("official project registry", () => {
   it("records CUTOS as live HTTP 200, not suspended 502", () => {
     const project = projects.find((item) => item.slug === CUTOS_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-live-home/);
+    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-import-intro/);
     assert.equal(project.links.live, "https://cutos.zeabur.app");
     assert.ok(project.sourceReferences.every((item) => !/SUSPENDED／502/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/SUSPENDED／502/.test(item)));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 502")));
+    assert.ok(project.process.some((item) => item.includes("匯入影片")));
     assert.ok(project.process.some((item) => item.includes("載入示範影片")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("匯入影片")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

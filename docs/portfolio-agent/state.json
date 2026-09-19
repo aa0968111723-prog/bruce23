@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-folio-cabinet-intro",
-  "updatedAt": "2026-09-20T23:40:00Z",
+  "runId": "grok-impl-20260920-cutos-import-intro",
+  "updatedAt": "2026-09-20T23:55:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "folio",
+  "currentProject": "cutos",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/folio-cabinet-intro",
+  "currentBranch": "fix/cutos-import-intro",
   "currentPR": null,
-  "currentTask": "folio-cabinet-intro",
+  "currentTask": "cutos-import-intro",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -45,20 +45,22 @@
     "GitHub visibility public probe merged as PR #44 and live: tamkang / FrameLab cabin+lunar no longer 訪客打不開原始碼 / 目前為私有",
     "Hermes Console conversation stamp merged as PR #45 and live on production /work/hermes-console (今天想做什麼 / 研究／創作／分析, not 輸入關鍵詞看說明)",
     "PLANFORM canvas stamp merged as PR #46 and live on production /work/planform (我的專案 / ＋ 新建專案, not 等角場佈示意：旋轉、拖動物件)",
-    "Live Demo iframe enlarge merged as PR #47"
+    "Live Demo iframe enlarge merged as PR #47",
+    "Folio canvas intro stamp merged as PR #48 and live on production /work/folio (文件櫃 / 不必登入, not 指令層走一遍)"
   ],
   "remainingSteps": [
-    "Land Folio canvas intro stamp: 文件櫃 / 不必登入, not 指令層走一遍; EN first step File cabinet not Canvas",
-    "After deploy, verify production /work/folio canvas quotes 文件櫃, not 指令層走一遍",
+    "Land CUTOS canvas intro stamp: 匯入影片 / 載入示範影片, not generic 逐步走查",
+    "After deploy, verify production /work/cutos canvas quotes 匯入影片, not 這是作品集逐步走查",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
+    "SkateHub / Zen Studio canvas intros still use generic walkDefaultIntro",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 119,
+  "testsPassed": 120,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR46_PLANFORM_CANVAS_LIVE_FOLIO_INTRO_STALE",
+  "productionStatus": "PR48_FOLIO_CABINET_LIVE_CUTOS_INTRO_STALE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -97,5 +99,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/folio canvas quotes 文件櫃 / 不必登入, not 指令層走一遍. EN first walkthrough step is File cabinet, not Canvas. Do not mark Folio coreFlow. PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/cutos canvas quotes 匯入影片 / 載入示範影片, not 這是作品集逐步走查. EN first walkthrough step is Import video. Do not mark CUTOS coreFlow. Folio/PLANFORM coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
