@@ -282,7 +282,7 @@ describe("official project registry", () => {
   it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
     const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-home/);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-canvas-intro/);
     assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
     assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
