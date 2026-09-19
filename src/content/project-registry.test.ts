@@ -28,6 +28,8 @@ import {
   POSTER_VISION_NO_HOST_VERSION,
   HERMES_AGENT_SIGNIN_SLUG,
   HERMES_AGENT_SIGNIN_VERSION,
+  XIAOCAI_LIVE_PROBE_SLUG,
+  XIAOCAI_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -285,6 +287,16 @@ describe("official project registry", () => {
     assert.ok(project.process.every((item) => !item.includes("輸入關鍵詞")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("Sign in — Hermes Agent")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("/login")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Xiaocai JS first screen without claiming a ledger write coreFlow", () => {
+    const project = projects.find((item) => item.slug === XIAOCAI_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-live-slogan/);
+    assert.equal(project.links.live, "https://untitled-5.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("快速記一筆")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("快速記一筆")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

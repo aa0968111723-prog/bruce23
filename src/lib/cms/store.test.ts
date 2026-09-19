@@ -1158,6 +1158,38 @@ describe("cms persistence", () => {
     assert.ok(agent.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Xiaocai process to the live tap-to-log slogan", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["記一筆收支"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · untitled-5.zeabur.app",
+            href: "https://untitled-5.zeabur.app",
+            note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'xiaocai_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const ledger = await getPublishedProject(sql, "xiaocai");
+    assert.ok(ledger.process.some((item) => item.includes("快速記一筆")));
+    assert.match(
+      ledger.sourceEvidence.find((item) => item.href?.includes("untitled-5"))?.note ?? "",
+      /快速記一筆/,
+    );
+    assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("clears a fake Poster Vision live URL when no public host exists", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
