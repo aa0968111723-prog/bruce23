@@ -32,6 +32,9 @@ import {
   XIAOCAI_LIVE_PROBE_VERSION,
   TKU_ZEN_AI_LIVE_PROBE_SLUG,
   TKU_ZEN_AI_LIVE_PROBE_VERSION,
+  TKU_ZEN_AGENT_LIVE_PROBE_SLUG,
+  TKU_ZEN_AGENT_LIVE_PROBE_VERSION,
+  skipGithubHydrate,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -68,7 +71,7 @@ describe("official project registry", () => {
     assert.equal(FRAMELAB_IDENTITY.canonicalLiveUrl, zh?.liveUrl);
     assert.equal(FRAMELAB_IDENTITY.health.name, "FrameLab");
     assert.equal(FRAMELAB_IDENTITY.health.version, "0.4.0");
-    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-live-home/);
+    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-github-public/);
   });
 
   it("points the FrameLab portfolio card at the ZH live host and keeps the EN host as evidence", () => {
@@ -95,8 +98,10 @@ describe("official project registry", () => {
     const lunarGit = frame.sourceReferences.find((item) =>
       item.href?.includes("lunar-crystal-falcon-granite"),
     );
-    assert.match(cabinGit?.note ?? "", /私有/);
-    assert.match(lunarGit?.note ?? "", /私有/);
+    assert.match(cabinGit?.note ?? "", /private:false/);
+    assert.match(lunarGit?.note ?? "", /private:false/);
+    assert.doesNotMatch(cabinGit?.note ?? "", /目前為私有/);
+    assert.doesNotMatch(lunarGit?.note ?? "", /目前為私有/);
   });
 
   it("records live 200 probes for 小財 and the Zen desk instead of stale 502 notes", () => {
@@ -241,7 +246,7 @@ describe("official project registry", () => {
   it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
     const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-campus-pass/);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-github-public/);
     assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("校園通行證")));
     assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));
@@ -249,6 +254,13 @@ describe("official project registry", () => {
     assert.ok(project.process.every((item) => !item.includes("校園圖鑑")));
     assert.ok(project.process.every((item) => !item.includes("WASD")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("校園通行證")));
+    assert.ok(
+      project.sourceReferences.some(
+        (item) => item.href?.includes("forge-bloom-quiet-falcon") && item.note.includes("private:false"),
+      ),
+    );
+    assert.ok(project.limitations.some((item) => item.includes("private:false")));
+    assert.ok(project.limitations.every((item) => !item.includes("目前為私有")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -321,7 +333,7 @@ describe("official project registry", () => {
   it("records TKU Zen AI first screen as the public English welcome without claiming a chat coreFlow", () => {
     const project = projects.find((item) => item.slug === TKU_ZEN_AI_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TKU_ZEN_AI_LIVE_PROBE_VERSION, /tku-zen-ai-welcome/);
+    assert.match(TKU_ZEN_AI_LIVE_PROBE_VERSION, /tku-zen-ai-agent-not-private/);
     assert.equal(project.links.live, undefined);
     assert.ok(project.process[0]?.includes("src/app/page.tsx"));
     assert.ok(project.process.some((item) => item.includes("Welcome to TKU Zen AI")));
@@ -331,5 +343,24 @@ describe("official project registry", () => {
     assert.ok(project.sourceReferences.some((item) => item.note.includes("Welcome to TKU Zen AI")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(project.limitations.some((item) => item.includes("沒有公開 Zeabur 網域")));
+    assert.ok(project.limitations.some((item) => item.includes("公開站需授權碼")));
+    assert.ok(project.limitations.every((item) => !/代理，私有/.test(item)));
+  });
+
+  it("records the Zen desk access-code gate and does not treat GitHub as a clean public dump", () => {
+    const project = projects.find((item) => item.slug === TKU_ZEN_AGENT_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-gate-github/);
+    assert.equal(skipGithubHydrate("tku-zen-agent"), true);
+    assert.equal(skipGithubHydrate("tku-zen-ai"), false);
+    assert.equal(project.links.live, "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask");
+    assert.ok(project.process.some((item) => item.includes("請輸入授權碼")));
+    assert.ok(project.process.some((item) => item.includes("淡江大學領袖禪學社")));
+    assert.ok(project.process.some((item) => item.includes("用一句話開始") && item.includes("作品集未輸入授權碼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("請先輸入授權碼")));
+    assert.ok(project.sourceReferences.some((item) => item.href?.includes("github.com") && item.note.includes("不可以轉成 public")));
+    assert.ok(project.limitations.some((item) => item.includes("knowledge/雲端文件")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.process.every((item) => !/社長|電話|學號/.test(item)));
   });
 });

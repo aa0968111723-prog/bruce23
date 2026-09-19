@@ -27,7 +27,7 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
       "公開入口是「校園通行證」：訪客可直接遊覽；Google / X 登入後巡禮蓋章才跟著帳號保存。",
-      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱。",
+      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱（公開儲存庫；公開操作仍走 Zeabur）。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
@@ -38,6 +38,7 @@ export const linkedWorks: Project[] = [
     outputs: ["可逛的 3D 校園公開站"],
     stack: ["WebGL / 3D", "Zeabur"],
     limitations: [
+      "2026-09-20 未登入 GET api.github.com/repos/aa0968111723-prog/forge-bloom-quiet-falcon private:false。不是私有倉庫。",
       "效能依裝置而變，不宣稱完整數位雙生。",
       "2026-09-19 GET / HTTP 200，標題「淡江世界」。description「以淡江大學淡水校園真實地標打造的 3D 巡禮世界：克難坡、宮燈大道、海事博物館與覺生紀念圖書館」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」",
       "GET /login HTTP 200，h1「校園通行證」。訪客可直接遊覽；登入後保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。作品集未走完訪客 3D 巡禮，coreFlow 未過。",
@@ -59,7 +60,7 @@ export const linkedWorks: Project[] = [
       {
         label: "GitHub · forge-bloom-quiet-falcon",
         href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
-        note: "公開儲存庫，3D 場景與瀏覽器巡禮原始碼完整公開。",
+        note: "2026-09-20 未登入 API private:false。公開儲存庫，3D 場景與瀏覽器巡禮原始碼完整公開。公開操作請走 Zeabur。",
       },
     ],
     visibility: "public",
@@ -363,20 +364,23 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開操作建議帶 ?mode=ask。",
       "與 tku-zen-ai（本地引擎）分開寫，避免假裝已接上雲端模型。",
-      "未輸入授權碼時只看得到工作台殼與授權邊界，不假裝已進入社團資料。",
+      "未授權時 JS 只打開授權門：h1「淡江大學領袖禪學社」、標籤「請輸入授權碼」、按鈕「進入工作台」。HTML 裡的工作台帶 hidden，不是訪客首屏。",
+      "GitHub 目前是 public，但 README 寫「這個 repo 不可以轉成 public」。作品集不複製 knowledge/雲端文件，也不展示那棵檔案樹。",
     ],
     modalities: ["對話", "文書"],
     process: [
-      "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-      "未授權時會看到「請輸入授權碼 進入工作台」",
-      "草稿模式不會自動發布",
-      "不要把產出當成已審核公告",
+      "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask（標題「淡江大學領袖禪學社 · 工作台」）",
+      "GET /api/auth 回 mode=token、authenticated=false；GET /api/health 401「請先輸入授權碼」",
+      "未授權首屏 h1「淡江大學領袖禪學社」，請輸入授權碼，進入工作台",
+      "授權後才是「用一句話開始」工作台；作品集未輸入授權碼",
     ],
     outputs: ["禪學社工作台公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
-      "2026-09-19 探測 HTTP 200，標題「淡江大學領袖禪學社 · 工作台」。不是 502。",
-      "進入工作台需要授權碼。作品集訪客看不到社團資料。",
+      "2026-09-20 GET / HTTP 200。/api/auth mode=token authenticated=false。不是 502。",
+      "進入工作台需要授權碼。作品集訪客看不到社團資料，coreFlow 未過。",
+      "未授權探測沒有進入「用一句話開始」。",
+      "2026-09-20 未登入 GET api.github.com/repos/aa0968111723-prog/tku-zen-agent private:false。README 寫 repo 不可轉 public，因為企劃書與會議紀錄正文仍有幹部與講師姓名。作品集不複製 knowledge/雲端文件，也不把社團名冊寫進本站。",
       "與本地 tku-zen-ai 不是同一個產品。",
     ],
     links: {
@@ -388,12 +392,12 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · tku-zen-agent-k7f2.zeabur.app",
         href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-        note: "2026-09-19 探測 HTTP 200。標題「淡江大學領袖禪學社 · 工作台」。未授權會看到授權碼入口。不是 502。建議 ?mode=ask。",
+        note: "2026-09-20 HTTP 200。標題「淡江大學領袖禪學社 · 工作台」。GET /api/auth mode=token authenticated=false。GET /api/health 401「請先輸入授權碼」。未授權首屏是授權門，不是工作台。不是 502。建議 ?mode=ask。",
       },
       {
         label: "GitHub · tku-zen-agent",
         href: "https://github.com/aa0968111723-prog/tku-zen-agent",
-        note: "公開儲存庫。",
+        note: "2026-09-20 未登入 API private:false。README 寫「這個 repo 不可以轉成 public」。本站不 hydrate 檔案樹、不複製 knowledge/雲端文件。",
       },
     ],
     visibility: "public",

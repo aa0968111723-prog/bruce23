@@ -274,12 +274,12 @@ const featuredWorks: Project[] = [
       {
         label: "GitHub · cabin-shale-raven-swift",
         href: "https://github.com/aa0968111723-prog/cabin-shale-raven-swift",
-        note: "中文站部署來源倉庫，原為私有，現已設為公開儲存庫。",
+        note: "中文站部署來源倉庫。2026-09-20 未登入 API private:false，已設為公開儲存庫。公開產品原始碼仍以 FrameLab 為準，不是兩個作品。",
       },
       {
         label: "GitHub · lunar-crystal-falcon-granite",
         href: "https://github.com/aa0968111723-prog/lunar-crystal-falcon-granite",
-        note: "英文站部署來源倉庫，原為私有，現已設為公開儲存庫。",
+        note: "英文站部署來源倉庫。2026-09-20 未登入 API private:false，已設為公開儲存庫。公開產品原始碼仍以 FrameLab 為準，不是兩個作品。",
       },
     ],
     visibility: "public",
@@ -738,7 +738,7 @@ const featuredWorks: Project[] = [
     stack: ["Next.js", "React", "TypeScript", "Tailwind", "Vitest"],
     limitations: [
       "不是大型語言模型，不會假裝有長期記憶或多輪推理。",
-      "與 tku-zen-agent（社團文書代理，私有）不是同一個產品，本頁只展示公開的 tku-zen-ai。",
+      "與 tku-zen-agent（社團文書代理，公開站需授權碼）不是同一個產品，本頁只展示公開的 tku-zen-ai。",
       "2026-09-20 讀取公開 src/app/page.tsx：h1「TKU Zen AI」、歡迎句 Take a breath、英文建議句。沒有公開 Zeabur 網域。作品集未送出真實心情，coreFlow 未過。",
     ],
     links: {

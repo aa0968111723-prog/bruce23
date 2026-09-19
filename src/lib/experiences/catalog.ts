@@ -314,9 +314,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "conversation-preview",
     honestyLabel: "需授權碼的社團工作台，不是本地 tku-zen-ai，也不是 Hermes",
     walkthrough: [
-      { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。HTTP 200，不是 502。" },
-      { title: "授權邊界", body: "未輸入授權碼時只看得到「請輸入授權碼 進入工作台」。" },
-      { title: "草稿", body: "頁面標示草稿模式，不會自動發布。與本地 tku-zen-ai 不是同一個產品。" },
+      { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。HTTP 200。GET /api/auth mode=token、未登入。" },
+      { title: "授權門", body: "未授權首屏 h1「淡江大學領袖禪學社」、請輸入授權碼、進入工作台。不是「用一句話開始」。" },
+      { title: "GitHub 邊界", body: "倉庫目前 public，README 寫不可轉 public。本站不複製 knowledge/雲端文件，也不展示那棵檔案樹。" },
     ],
   },
   cutos: {

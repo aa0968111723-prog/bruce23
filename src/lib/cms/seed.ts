@@ -32,6 +32,9 @@ import {
   XIAOCAI_LIVE_PROBE_VERSION,
   TKU_ZEN_AI_LIVE_PROBE_SLUG,
   TKU_ZEN_AI_LIVE_PROBE_VERSION,
+  TKU_ZEN_AGENT_LIVE_PROBE_SLUG,
+  TKU_ZEN_AGENT_LIVE_PROBE_VERSION,
+  skipGithubHydrate,
   TY_CONTRACT_SLUGS,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
@@ -185,6 +188,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshHermesAgentSignin(sql);
   await refreshXiaocaiLiveProbe(sql);
   await refreshTkuZenAiLiveProbe(sql);
+  await refreshTkuZenAgentLiveProbe(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -399,8 +403,8 @@ async function insertMissingSeedProjects(sql: Sql, actor: string): Promise<void>
       github_owner: parsed?.owner ?? null,
       github_repo: parsed?.repo ?? null,
       github_branch: null,
-      github_sync_enabled: Boolean(parsed),
-      github_sync_status: parsed ? "pending" : "not_configured",
+      github_sync_enabled: Boolean(parsed) && !skipGithubHydrate(project.slug),
+      github_sync_status: parsed && !skipGithubHydrate(project.slug) ? "pending" : "not_configured",
       live_demo_url: demoUrl,
       live_demo_label: demoUrl ? "公開網址（狀態可能變動）" : null,
       live_demo_type: demoUrl ? "link" : "unavailable",
@@ -1314,6 +1318,49 @@ async function refreshTkuZenAiLiveProbe(sql: Sql): Promise<void> {
   );
 }
 
+async function refreshTkuZenAgentLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'tku_zen_agent_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === TKU_ZEN_AGENT_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === TKU_ZEN_AGENT_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
+         github_sync_enabled = false,
+         github_sync_status = 'not_configured',
+         github_file_tree = '[]'::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('tku_zen_agent_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [TKU_ZEN_AGENT_LIVE_PROBE_VERSION],
+  );
+}
+
 /** GitHub homepage that currently serves a JS bundle, not HTML. Seed live URLs replace it. */
 const STALE_NON_PAGE_LIVE_URL = "https://ai-os-ten.vercel.app";
 
@@ -1329,7 +1376,11 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
            github_url = coalesce($5, github_url),
            github_owner = coalesce($6, github_owner),
            github_repo = coalesce($7, github_repo),
-           github_sync_enabled = case when $5 is not null then true else github_sync_enabled end,
+           github_sync_enabled = case
+             when $8::boolean then false
+             when $5 is not null then true
+             else github_sync_enabled
+           end,
            updated_at = now()
        where slug = $1`,
       [
@@ -1340,6 +1391,7 @@ async function fillLiveDemoAndEvidenceGaps(sql: Sql): Promise<void> {
         parsed?.url ?? project.links.github ?? null,
         parsed?.owner ?? null,
         parsed?.repo ?? null,
+        skipGithubHydrate(project.slug),
       ],
     );
     if (demoUrl) {

@@ -740,6 +740,11 @@ describe("cms persistence", () => {
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://cabin-shale-k7q2.zeabur.app"));
     assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
     assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(frame.sourceEvidence.every((item) => !/目前為私有/.test(item.note ?? "")));
+    assert.match(
+      frame.sourceEvidence.find((item) => item.href?.includes("cabin-shale-raven-swift"))?.note ?? "",
+      /private:false/,
+    );
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
     assert.ok(frame.process.some((item) => item.includes("登入工作室")));
     assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
@@ -1029,6 +1034,11 @@ describe("cms persistence", () => {
       /校園通行證/,
     );
     assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(world.limitations.every((item) => !item.includes("目前為私有")));
+    assert.match(
+      world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-quiet-falcon"))?.note ?? "",
+      /private:false/,
+    );
   });
 
   it("rewrites Lumen conversation so it is not Hermes chrome", async () => {
@@ -1241,6 +1251,57 @@ describe("cms persistence", () => {
     assert.match(zen.experienceConfig.conversation?.starter ?? "", /Take a breath/);
     assert.ok(zen.experienceConfig.conversation?.suggestions?.includes("I feel stressed about my exams"));
     assert.ok(zen.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(zen.limitations.some((item) => item.includes("公開站需授權碼")));
+    assert.ok(zen.limitations.every((item) => !/代理，私有/.test(item)));
+  });
+
+  it("rewrites the Zen desk to the access-code gate and disables GitHub tree hydrate", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb,
+           limitations = $3::jsonb,
+           source_evidence = $4::jsonb,
+           experience_config = $5::jsonb,
+           github_sync_enabled = true,
+           github_file_tree = $6::jsonb
+       where slug = $1`,
+      [
+        "tku-zen-agent",
+        JSON.stringify(["打開工作台", "做網宣"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "GitHub · tku-zen-agent",
+            href: "https://github.com/aa0968111723-prog/tku-zen-agent",
+            note: "公開儲存庫。",
+            kind: "github",
+          },
+        ]),
+        JSON.stringify({}),
+        JSON.stringify([{ path: "knowledge/雲端文件/108學年度/活動企劃書.md", type: "file" }]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tku_zen_agent_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const desk = await getPublishedProject(sql, "tku-zen-agent");
+    const admin = await getAdminProjectBySlug(sql, "tku-zen-agent");
+    assert.ok(desk.process.some((item) => item.includes("請輸入授權碼")));
+    assert.ok(desk.process.some((item) => item.includes("淡江大學領袖禪學社")));
+    assert.match(desk.experienceConfig.conversation?.starter ?? "", /請輸入授權碼/);
+    assert.match(
+      desk.sourceEvidence.find((item) => item.href?.includes("tku-zen-agent-k7f2"))?.note ?? "",
+      /請先輸入授權碼/,
+    );
+    assert.match(
+      desk.sourceEvidence.find((item) => item.href?.includes("github.com"))?.note ?? "",
+      /不可以轉成 public/,
+    );
+    assert.ok(desk.limitations.some((item) => item.includes("knowledge/雲端文件")));
+    assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.equal(admin.github_sync_enabled, false);
+    assert.equal(admin.github_file_tree?.length ?? 0, 0);
   });
 
   it("clears a fake Poster Vision live URL when no public host exists", async () => {

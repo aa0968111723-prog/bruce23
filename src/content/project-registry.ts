@@ -72,7 +72,7 @@ export const FRAMELAB_IDENTITY = {
   ],
 } as const;
 
-export const FRAMELAB_IDENTITY_VERSION = "framelab-live-home-20260920";
+export const FRAMELAB_IDENTITY_VERSION = "framelab-github-public-20260920";
 
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
@@ -110,7 +110,7 @@ export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
-export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-github-public-20260920";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
@@ -138,9 +138,20 @@ export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
-export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-welcome-20260920";
+export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-agent-not-private-20260920";
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
+
+export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-gate-github-20260920";
+
+export const TKU_ZEN_AGENT_LIVE_PROBE_SLUG = "tku-zen-agent";
+
+/** Public GitHub trees that still contain club Drive dumps. Do not hydrate into the portfolio. */
+export const GITHUB_HYDRATE_SKIP_SLUGS = ["tku-zen-agent"] as const;
+
+export function skipGithubHydrate(slug: string): boolean {
+  return (GITHUB_HYDRATE_SKIP_SLUGS as readonly string[]).includes(slug);
+}
 
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
