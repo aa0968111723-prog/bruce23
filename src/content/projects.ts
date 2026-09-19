@@ -197,14 +197,14 @@ const featuredWorks: Project[] = [
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
       "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
+      "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入；未登入不能匯入或修幀。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [
-      "匯入影片或圖序",
-      "時間軸標記 key / breakdown / generated",
-      "onion skin、pose ghost、motion path",
-      "框選區域後 Ask / Repair",
-      "Accept 候選或只重產問題窗",
+      "打開 cabin-shale-k7q2.zeabur.app（標題 FrameLab）",
+      "首屏副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」",
+      "主按鈕「登入工作室」到 /login；也可看「系統狀態」/api/health",
+      "登入後同一鏡頭會成為範例時間軸；作品集未登入、未匯入、未修幀",
     ],
     outputs: [
       "可跑的工作站 UI 與 REST / MCP",
@@ -216,7 +216,7 @@ const featuredWorks: Project[] = [
       "SAM 2、RTMPose、SEA-RAFT、RIFE、Wan 僅適配器，模型未註冊時不可用。",
       "不是 NLE，也不輸出完整製片管線。",
       "Grok vision 需 XAI_API_KEY，且僅使用者主動送出的幀。",
-      "公開站可看 landing 與 /api/health。工作室需登入。lunar / cabin 的 GitHub 部署倉目前為私有，公開原始碼在 FrameLab。",
+      "2026-09-20 GET / HTTP 200，h1「給它關鍵影格。只修壞掉的那幾格。」主 CTA「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。工作室需登入。作品集未登入、未匯入影片、未修幀，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/FrameLab",
@@ -263,7 +263,7 @@ const featuredWorks: Project[] = [
       {
         label: "中文公開站 · cabin-shale-k7q2.zeabur.app",
         href: "https://cabin-shale-k7q2.zeabur.app",
-        note: "中文 FrameLab landing。標題 FrameLab；主標「給它關鍵影格。只修壞掉的那幾格。」/api/health 回 0.4.0。2026-09-19 探測 RUNNING，不是 502。這是中文作品集的 Live Demo。工作室需登入。",
+        note: "中文 FrameLab landing。2026-09-20 GET / HTTP 200，標題 FrameLab。h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」→ /login。/api/health FrameLab 0.4.0 RUNNING。不是 502。這是中文作品集的 Live Demo。工作室需登入。未登入不能匯入或修幀。",
       },
       {
         label: "英文公開站 · lunar-falcon-8p2r.zeabur.app",

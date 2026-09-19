@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T17:25:00Z",
-  "runId": "grok-impl-20260920-aios-live-home",
+  "generatedAt": "2026-09-20T18:10:00Z",
+  "runId": "grok-impl-20260920-framelab-live-home",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T17:05:00Z",
+  "startedAt": "2026-09-20T17:50:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,16 +12,16 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "aios-live-home",
-  "inspectedCommit": "c19c82c",
+  "task": "framelab-live-home",
+  "inspectedCommit": "c1db4f5",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
     "doNotMerge": [10]
   },
   "validation": {
     "buildAndTypecheck": "PASS: tsc --noEmit + registry/catalog/config/store/experience 113 + vite build",
-    "browser": "NOT_YET",
+    "browser": "BLOCKED",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
     "deployment": "PR not opened yet",
@@ -29,45 +29,36 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/hermes-agent",
+      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
       "status": 200,
-      "pr36Landed": true,
-      "copy": "Sign in — Hermes Agent; leak 輸入關鍵詞看說明 = false",
+      "pr39Landed": true,
+      "copy": "進入工作台; 把想法，變成團隊真正能完成的計畫; process intro is landing not 建立專案與世界觀快速層",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:10:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/xiaocai",
-      "status": 200,
-      "pr37Landed": true,
-      "copy": "點我一下，快速記一筆吧",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:10:00Z"
+      "checkedAt": "2026-09-20T17:50:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
       "status": 200,
       "pr38Landed": true,
-      "copy": "AI 對話式影片剪輯 / 載入示範影片／上傳",
+      "copy": "載入示範影片",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:10:00Z"
+      "checkedAt": "2026-09-20T17:50:00Z"
     },
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
+      "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
       "status": 200,
-      "copy": "process still 建立專案與世界觀快速層; live JS is landing + 進入工作台",
+      "copy": "process still 匯入影片或圖序; live JS is landing h1 給它關鍵影格 plus 登入工作室 → /login",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:10:00Z"
+      "checkedAt": "2026-09-20T17:55:00Z"
     },
     {
-      "url": "https://ai-os-app.zeabur.app/",
+      "url": "https://cabin-shale-k7q2.zeabur.app/",
       "status": 200,
-      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
-      "js": "assets/index-C35UgZaf.js",
-      "firstScreen": "eyebrow 團隊日常的 AI 專案工作台; h1 把想法，變成團隊真正能完成的計畫。; CTA 進入工作台 → /login",
-      "health": "/api/health ok 0.1.0",
+      "title": "FrameLab",
+      "firstScreen": "h1 給它關鍵影格。只修壞掉的那幾格。; CTA 登入工作室 → /login; 系統狀態 /api/health",
+      "health": "/api/health FrameLab 0.4.0 RUNNING",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T17:19:00Z"
+      "checkedAt": "2026-09-20T17:55:00Z"
     }
   ],
   "gates": {
@@ -80,11 +71,12 @@
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
   "blockers": [
-    "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments"
+    "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
+    "Folio / PLANFORM / CUTOS demo-clip coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass"
   ],
   "nextSteps": [
-    "Land AI Director OS landing / login first-screen honesty repair",
-    "After deploy, verify production /work/ai-director-os process is 進入工作台",
+    "Land FrameLab landing / login first-screen honesty repair",
+    "After deploy, verify production /work/framelab process is 登入工作室",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }

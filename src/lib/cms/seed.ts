@@ -571,6 +571,8 @@ async function refreshFramelabIdentity(sql: Sql): Promise<void> {
   if (!project) return;
   const seedEn = localeEnForSlug(project.slug);
   const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
   const liveUrl = project.links.live ?? FRAMELAB_IDENTITY.canonicalLiveUrl;
   await sql.query(
     `update projects
@@ -602,6 +604,8 @@ async function refreshFramelabIdentity(sql: Sql): Promise<void> {
            when live_demo_url is distinct from $15 then null
            else live_demo_error
          end,
+         experience_mode = coalesce($17, experience_mode),
+         experience_config = $18::jsonb,
          updated_at = now()
      where slug = $1`,
     [
@@ -621,6 +625,8 @@ async function refreshFramelabIdentity(sql: Sql): Promise<void> {
       JSON.stringify({ zh: seedZh, en: seedEn }),
       liveUrl,
       "公開網址（狀態可能變動）",
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
     ],
   );
   await sql.query(

@@ -66,7 +66,7 @@ describe("official project registry", () => {
     assert.equal(FRAMELAB_IDENTITY.canonicalLiveUrl, zh?.liveUrl);
     assert.equal(FRAMELAB_IDENTITY.health.name, "FrameLab");
     assert.equal(FRAMELAB_IDENTITY.health.version, "0.4.0");
-    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-identity/);
+    assert.match(FRAMELAB_IDENTITY_VERSION, /framelab-live-home/);
   });
 
   it("points the FrameLab portfolio card at the ZH live host and keeps the EN host as evidence", () => {
@@ -82,6 +82,11 @@ describe("official project registry", () => {
     );
     assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
     assert.ok(frame.sourceReferences.every((item) => !/可能 502/.test(item.note)));
+    assert.ok(frame.process.some((item) => item.includes("登入工作室")));
+    assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
+    assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
+    assert.ok(frame.sourceReferences.some((item) => item.note.includes("登入工作室") && item.href === FRAMELAB_IDENTITY.canonicalLiveUrl));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     const cabinGit = frame.sourceReferences.find((item) =>
       item.href?.includes("cabin-shale-raven-swift"),
     );
