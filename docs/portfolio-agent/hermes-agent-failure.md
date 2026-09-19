@@ -1,6 +1,19 @@
 # Hermes Agent：入口 502 診斷與修復交接
 
-RUN_ID：codex-20260919-0903。狀態：BLOCKED（部署觀測權限），未修復。
+初次 RUN_ID：codex-20260919-0903。後續 RUN_ID：codex-20260919-zeabur。
+
+## 最新確認：服務已暫停（取代下方歷史存取阻塞）
+
+使用者提供連線資訊後，Zeabur 唯讀 API 已可查詢。服務 `6a9a385273ef6eb935f2f8a2` 在 production 環境 `6a9a380fa34c0097521b74ae` 的狀態為 **SUSPENDED**。這是目前入口不可用的直接阻塞；暫停原因仍未知，不推測為 port 或程式錯誤。
+
+- 映像：`docker.io/nousresearch/hermes-agent`，tag `v2026.7.7.2`，digest 回傳 null。
+- 網域 `455.zeabur.app` 已 PROVISIONED，對應 `web:9119`；`hermes-agent-api.zeabur.app` 已 PROVISIONED，對應 `api:5000`。
+- deployments 查詢未回傳紀錄。證據：`hermes-zeabur-evidence.json`。
+- 擬執行動作：經使用者明確授權後，恢復上述既有服務，保持目前映像、port 與所有環境變數；再驗證兩個入口、登入邊界與隔離的核心流程。
+- 計畫第 3 節禁止任意重啟外部服務，因此已提出恢復授權問題，目前 **AWAITING_AUTHORIZATION**。未發出任何服務 mutation。
+- 憑證僅用於本次 API 認證，未寫入程式、文件、PR、環境設定或自動化 prompt。
+
+以下為初次無部署存取時的歷史診斷，保留可追溯性。
 
 ## 已重現
 

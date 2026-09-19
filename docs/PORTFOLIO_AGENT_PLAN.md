@@ -916,3 +916,15 @@ Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、�
 - 整體維持 IN_PROGRESS，所有驗收通過數仍為 0/17，資安未驗證。
 - 下一輪唯一可獨立進行任務：修復 bruce23 Windows command launcher，完成標準建置驗證。有 Zeabur 唯讀服務資訊後再恢復 Hermes 診斷，避免每輪無效重試。
 
+## 27. Zeabur 來源確認與 Hermes 暫停狀態
+
+使用者補充 service ID 與 API 認證後，已完成唯讀核對，證據存於 `zeabur-service-evidence.json` 與 `hermes-zeabur-evidence.json`，沒有保存憑證。
+
+- bruce23 及 16 個外部服務 RUNNING；Hermes Agent SUSPENDED。
+- 18 個服務（作品集＋17 作品）的 domain 已核對；17 個 Git 部署紀錄的 repo／commit 已取得，Hermes 使用 Docker 映像且 deployments 清單為空。
+- tku-tamsui-drama-world 正式 domain 是 `tku-tamsui-drama-world-k4x9.zeabur.app`，canva2 是 `canva2-k7qm.zeabur.app`，不沿用使用者清單中的重複 URL。
+- lunar 與 cabin 的 repo／service 分別確認；功能與敘事仍須獨立測試，不能因兩者同名就混用。
+- Hermes 映像 tag 為 `v2026.7.7.2`，dashboard 9119、API 5000，兩個 domain 已配置。現階段不是未取得 API 權限，而是服務暫停。
+- 已提出沿用既有設定恢復服務的明確授權請求；在收到同意前不執行 resume／restart 或變更環境變數。
+- RUNNING、domain 與 repo 核對不等於核心流程完成；所有功能 gate 維持未通過。
+
