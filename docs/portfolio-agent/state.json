@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260919-aios-live",
-  "updatedAt": "2026-09-19T16:40:00Z",
+  "runId": "grok-impl-20260919-ty-public-flow",
+  "updatedAt": "2026-09-19T14:10:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "ai-director-os",
+  "currentProject": "focus-challenge",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/stale-502-aios-live",
+  "currentBranch": "fix/ty-public-flow-honesty",
   "currentPR": null,
-  "currentTask": "rewrite-stale-502-notes-ai-director-os",
+  "currentTask": "ty-public-flow-honesty",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -17,19 +17,20 @@
     "PLANFORM empty-demo sentence hidden (PR #14 live)",
     "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
     "Zeabur service IDs recorded (PR #16)",
-    "Probed ai-os-app.zeabur.app HTTP 200 title Aios",
-    "Probed vexlark.co HTTP 200 same title"
+    "AI Director OS stale 502/paused notes merged as PR #17 and live",
+    "ty process copy aligned with PRODUCT_CONTRACT (PR #18 live)",
+    "Probed leader-dna-mcp-a7k2 homepage 200, health ok, leaderboard history 67 masked rows"
   ],
   "remainingSteps": [
-    "Land AI Director OS stale 502/paused note repair",
-    "Verify production /work/ai-director-os after deploy",
-    "Operate ty core flow on leader-dna-mcp-a7k2 without sheet credentials"
+    "Land ty public-flow honesty repair",
+    "Verify production /work/focus-challenge after deploy",
+    "Operate planform core flow on planform-iso-k7d2"
   ],
-  "testsPassed": 41,
+  "testsPassed": 51,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "AIOS_STALE_502_COPY",
+  "productionStatus": "TY_SUMMARY_STILL_BOOTH_STATUS_COPY",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -50,5 +51,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/ai-director-os no longer says 502 or 暫停. Then operate ty core flow on https://leader-dna-mcp-a7k2.zeabur.app/ without sheet credentials. Do not merge PR #10."
+  "nextExactStep": "After this PR deploys, verify production /work/focus-challenge no longer says 即時看活動狀態 or 不是再填一張表. Then operate planform core flow on https://planform-iso-k7d2.zeabur.app/. Do not merge PR #10."
 }

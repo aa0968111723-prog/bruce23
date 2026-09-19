@@ -4,6 +4,7 @@ import { projects } from "./projects.ts";
 import {
   AIOS_LIVE_PROBE_SLUG,
   AIOS_LIVE_PROBE_VERSION,
+  TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
   LIVE_PROBES_20260919,
@@ -93,6 +94,18 @@ describe("official project registry", () => {
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.liveUrl));
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.customDomain));
     assert.ok(project.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
+  });
+
+  it("records the ty public flow probe without claiming coreFlow", () => {
+    const project = projects.find((item) => item.slug === "focus-challenge");
+    assert.ok(project);
+    assert.match(TY_CONTRACT_VERSION, /ty-public-flow-honesty/);
+    assert.doesNotMatch(project.summary, /即時看活動狀態/);
+    assert.doesNotMatch(project.problem, /不是再填一張表/);
+    assert.match(project.summary, /登記|填關主/);
+    assert.ok(project.process.some((item) => item.includes("登記畫面")));
+    assert.ok(project.limitations.some((item) => item.includes("67 筆")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("keeps Zeabur provisioned domains, not the two swapped URLs from the owner dump", () => {
