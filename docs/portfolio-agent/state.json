@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-duigao-live-home",
-  "updatedAt": "2026-09-20T19:10:00Z",
+  "runId": "grok-impl-20260920-tku-zen-ai-welcome",
+  "updatedAt": "2026-09-20T19:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "duigao",
+  "currentProject": "tku-zen-ai",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/duigao-live-home",
+  "currentBranch": "fix/tku-zen-ai-welcome",
   "currentPR": null,
-  "currentTask": "duigao-live-home",
+  "currentTask": "tku-zen-ai-welcome",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -38,19 +38,20 @@
     "Xiaocai tap-to-log merged as PR #37 and live",
     "CUTOS live home merged as PR #38 and live on production /work/cutos (載入示範影片)",
     "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)",
-    "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)"
+    "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)",
+    "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)"
   ],
   "remainingSteps": [
-    "Land duigao live-home first-screen honesty repair",
-    "After deploy, verify production /work/duigao process is 今天要對什麼 not 上傳文宣版本",
+    "Land tku-zen-ai welcome first-screen honesty repair",
+    "After deploy, verify production /work/tku-zen-ai process quotes Welcome to TKU Zen AI, not 輸入一句心情",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 102,
+  "testsPassed": 116,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "FRAMELAB_PR40_LIVE_DUIGAO_PROCESS_STILL_CLAIMS_UPLOAD",
+  "productionStatus": "PR41_DUIGAO_LIVE_TKU_ZEN_AI_PROCESS_STILL_GENERIC_MOOD",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -80,5 +81,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/duigao process starts at the live home h2 今天要對什麼 and 做一張圖／建立活動房. Do not claim upload/pin-comment coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/tku-zen-ai process starts at the public page.tsx welcome Welcome to TKU Zen AI and English suggestion chips. Do not claim a chat coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
