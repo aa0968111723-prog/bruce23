@@ -203,6 +203,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "v1 feedback is stored, not self-trained.",
         "Without an API key, OCR degrades to text-region boxes.",
         "Vercel without Python falls back to a JS saliency engine.",
+        "Probed 2026-09-20: no public Zeabur host. README only documents local and Docker. This portfolio does not invent a Live Demo. coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras["poster-vision-ai"],
