@@ -37,7 +37,6 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
             <ExternalLink className="size-4" />
           </a>
         ) : null}
-        {config.demoNote ? <p className="mt-3 text-xs text-muted">{config.demoNote}</p> : null}
       </div>
     );
   }
@@ -63,7 +62,6 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
             {ex.openSite}
           </a>
         </div>
-        {config.demoNote ? <p className="px-4 pb-3 text-xs text-muted">{config.demoNote}</p> : null}
       </div>
     );
   }
