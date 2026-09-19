@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updatedAt": "2026-09-19T09:24:22.1471530Z",
+  "version": 2,
+  "updatedAt": "2026-09-19T13:15:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -770,5 +770,36 @@
       "canonicalLiveUrl": "https://cutos.zeabur.app/",
       "zeaburEnvironmentId": "6a588c11e4df6e5f6d0526af"
     }
-  ]
+  ],
+  "portfolioReady": false,
+  "completedSteps": [
+    "Hermes k7q2 URL already on production",
+    "FrameLab identity split merged as PR #11 (504318e)",
+    "Probed untitled-5 HTTP 200 title 小財記帳",
+    "Probed tku-zen-agent-k7f2 HTTP 200 auth-code gate",
+    "Stale-502 note repair merged as PR #13",
+    "Live-demo note repair merged as PR #14",
+    "Walkthrough branding repair merged as PR #15",
+    "Zeabur service identity mapping merged as PR #16"
+  ],
+  "remainingSteps": [
+    "Land PR #6 long-term integration plan onto main",
+    "Verify Zeabur deploy of recent PRs on production",
+    "Verify production xiaocai and tku-zen-agent pages after deploy",
+    "Execute hourly multi-agent research and sentinel inspections"
+  ],
+  "testsPassed": 78,
+  "testsFailed": 0,
+  "buildStatus": "vite-build-pass",
+  "gates": {
+    "online": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "completeInfo": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "readiness70": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "mobileSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
+  },
+  "nextExactStep": "Merge PR #6 to establish the official long-term portfolio plan on main. Guide Grok Bot on hourly sentinel inspections and repair bots on atomic cards without duplicate PRs."
 }
+

@@ -300,7 +300,10 @@ export const linkedWorks: Project[] = [
     process: ["打開 untitled-5.zeabur.app", "記一筆收支", "看分類", "看這個月"],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["本次探測曾出現 502。連結保留，狀態會隨部署變動。"],
+    limitations: [
+      "公開站 HTTP 200、標題「小財記帳」。頁面是前端渲染，作品集未驗證記帳核心流程。",
+      "不是作品集後台。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/-1",
       live: "https://untitled-5.zeabur.app",
@@ -310,7 +313,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "Zeabur 服務 untitled-5。本次探測可能 502，仍保留連結。",
+        note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。核心記帳流程尚未黑箱驗證。",
       },
       {
         label: "GitHub · -1",
@@ -335,16 +338,22 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開操作建議帶 ?mode=ask。",
       "與 tku-zen-ai（本地引擎）分開寫，避免假裝已接上雲端模型。",
+      "未輸入授權碼時只看得到工作台殼與授權邊界，不假裝已進入社團資料。",
     ],
     modalities: ["對話", "文書"],
     process: [
       "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-      "用 Ask 模式問社團文書或現場問題",
-      "不要把回覆當成已審核公告",
+      "未授權時會看到「請輸入授權碼 進入工作台」",
+      "草稿模式不會自動發布",
+      "不要把產出當成已審核公告",
     ],
     outputs: ["禪學社工作台公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["本次探測曾出現 502。與本地 tku-zen-ai 不是同一個產品。"],
+    limitations: [
+      "2026-09-19 探測 HTTP 200，標題「淡江大學領袖禪學社 · 工作台」。不是 502。",
+      "進入工作台需要授權碼。作品集訪客看不到社團資料。",
+      "與本地 tku-zen-ai 不是同一個產品。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-zen-agent",
       live: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
@@ -354,7 +363,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · tku-zen-agent-k7f2.zeabur.app",
         href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-        note: "Zeabur 服務 tku-zen-agent。建議 ?mode=ask。本次探測可能 502。",
+        note: "2026-09-19 探測 HTTP 200。標題「淡江大學領袖禪學社 · 工作台」。未授權會看到授權碼入口。不是 502。建議 ?mode=ask。",
       },
       {
         label: "GitHub · tku-zen-agent",
@@ -402,48 +411,43 @@ export const linkedWorks: Project[] = [
   },
   {
     slug: "hermes-agent",
-    title: "Hermes Agent",
-    subtitle: "代理執行層（需登入）",
+    title: "Hermes Agent - Dashboard",
+    subtitle: "代理儀表板（需登入）",
     category: "AI Product",
     year: "2026",
     status: "in-progress",
     featured: false,
     summary:
-      "Nous Research Hermes Agent 的部署：會話、工具與 API。公開網域 455.zeabur.app，另有 hermes-agent-api.zeabur.app。打開 /sessions 會進登入頁。",
-    problem: "Console 是工作區；真正跑工具的是 Agent。兩者要分開講，避免把控制台當成大腦。",
+      "Nous Research Hermes Agent 的 Dashboard：會話與登入入口。公開網域 hermes-agent-k7q2.zeabur.app。未登入會到 Sign in — Hermes Agent。",
+    problem: "Console 是工作區；真正跑工具的是 Agent Dashboard。兩者要分開講，避免把控制台當成大腦。",
     role: "AI 產品架構：執行層與控制台分層。",
     decisions: [
-      "映像是 docker.io/nousresearch/hermes-agent，不是本作品集的原始碼。",
+      "公開站是 Zeabur 服務 hermes-agent（Dashboard），不是本作品集的原始碼。",
       "本頁不展示 API key、Dashboard 密碼或 GitHub PAT。",
-      "未登入只看得到 Sign in，不假裝已經進入會話。",
+      "未登入只看得到 Sign in，不假裝已經進入 Dashboard。",
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
-      "開啟 455.zeabur.app/sessions",
-      "登入（擁有者）",
-      "看 sessions",
-      "讓 Console（344.zeabur.app）連 HERMES_API_URL",
+      "開啟 hermes-agent-k7q2.zeabur.app",
+      "未登入會到 Sign in — Hermes Agent",
+      "登入（擁有者）後進入 Dashboard",
+      "查看 sessions 與工具狀態",
     ],
-    outputs: ["公開網域 455.zeabur.app 與 hermes-agent-api.zeabur.app"],
+    outputs: ["公開網域 hermes-agent-k7q2.zeabur.app（Dashboard）"],
     stack: ["Hermes Agent", "Docker", "Zeabur"],
-    limitations: ["需要登入。作品集訪客看不到會話內容。本次探測服務可能暫停。"],
+    limitations: ["需要登入。作品集訪客看不到 Dashboard 內容。"],
     links: {
-      live: "https://455.zeabur.app/sessions",
+      live: "https://hermes-agent-k7q2.zeabur.app/",
     },
     media: [
-      cover("hermes-agent.jpg", "Hermes Agent 光域靜物：玻璃終端與鑰匙卡"),
-      shot("hermes-agent.jpg", "Hermes Agent 公開站未登入：Sign in，AUTH REQUIRED"),
+      cover("hermes-agent.jpg", "Hermes Agent Dashboard 光域靜物：玻璃終端與鑰匙卡"),
+      shot("hermes-agent.jpg", "Hermes Agent Dashboard 公開站未登入：Sign in — Hermes Agent"),
     ],
     sourceReferences: [
       {
-        label: "公開站 · 455.zeabur.app",
-        href: "https://455.zeabur.app/sessions",
-        note: "Zeabur 服務 hermes-agent。未登入是 Sign in。本次探測可能 SUSPENDED。",
-      },
-      {
-        label: "API 網域 · hermes-agent-api.zeabur.app",
-        href: "https://hermes-agent-api.zeabur.app",
-        note: "同一服務的第二個網域。給 Console 連線，不是給訪客瀏覽的作品頁。",
+        label: "Dashboard · hermes-agent-k7q2.zeabur.app",
+        href: "https://hermes-agent-k7q2.zeabur.app/",
+        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。",
       },
     ],
     visibility: "public",

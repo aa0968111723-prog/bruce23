@@ -106,6 +106,11 @@ export function demoViewerState(demo: DemoPublicSlice, failed: boolean) {
   return "embed" as const;
 }
 
+/** The seeded "no verified demo" sentence only belongs on an empty stage. */
+export function showDemoAbsenceNote(state: ReturnType<typeof demoViewerState>) {
+  return state === "empty";
+}
+
 const SECRET_KEYS = [
   "ciphertext",
   "token",

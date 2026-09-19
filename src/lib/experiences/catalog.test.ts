@@ -45,6 +45,7 @@ describe("experience catalog", () => {
     assert.match(source, /https:\/\/duigao-k7q2\.zeabur\.app/);
     assert.match(source, /https:\/\/344\.zeabur\.app/);
     assert.match(source, /https:\/\/planform-iso-k7d2\.zeabur\.app/);
+    assert.match(source, /live: "https:\/\/cabin-shale-k7q2\.zeabur\.app"/);
     assert.match(source, /https:\/\/lunar-falcon-8p2r\.zeabur\.app/);
     assert.match(source, /https:\/\/canva2-k7qm\.zeabur\.app/);
     assert.match(source, /https:\/\/forge-bloom-k7xq\.zeabur\.app/);
@@ -57,7 +58,8 @@ describe("experience catalog", () => {
     assert.match(source, /https:\/\/untitled-5\.zeabur\.app/);
     assert.match(source, /https:\/\/tku-zen-agent-k7f2\.zeabur\.app/);
     assert.match(source, /https:\/\/cutos\.zeabur\.app/);
-    assert.match(source, /https:\/\/455\.zeabur\.app\/sessions/);
+    assert.match(source, /https:\/\/hermes-agent-k7q2\.zeabur\.app\//);
+    assert.doesNotMatch(source, /https:\/\/455\.zeabur\.app/);
     assert.doesNotMatch(source, /canva\.com\/design\/DAG/);
     assert.doesNotMatch(source, /github\.io\/planform/);
     assert.match(source, /\/media\/github-exports\/\$\{slug\}\/\$\{file\}/);
@@ -160,6 +162,13 @@ describe("frontend contract", () => {
     assert.match(localeView, /跳到內容/);
     const toggle = readFileSync(new URL("../../../src/components/site/LocaleToggle.tsx", import.meta.url), "utf8");
     assert.match(toggle, /role="radiogroup"/);
+    const walk = readFileSync(
+      new URL("../../../src/components/experience/modes/FolioWalkthrough.tsx", import.meta.url),
+      "utf8",
+    );
+    assert.match(walk, /project.slug === "folio"/);
+    assert.match(walk, /walkDemoCanvas/);
+    assert.match(walk, /isFolio \? walkthroughStageKind/);
     assert.match(toggle, /min-h-11/);
     assert.match(toggle, /min-w-11/);
     assert.match(header, /LocaleToggle/);

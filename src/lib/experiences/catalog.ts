@@ -282,21 +282,21 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     ],
   },
   xiaocai: {
-    mode: "interactive-walkthrough",
-    honestyLabel: PORTFOLIO_DEMO,
+    mode: "media-gallery",
+    honestyLabel: "公開站是小財記帳，不是 Folio 編輯器",
     walkthrough: [
-      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。若 502，是部署狀態，不是產品已下架。" },
-      { title: "記一筆", body: "記收支、看分類。" },
+      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。2026-09-19 探測 HTTP 200，標題「小財記帳」。" },
+      { title: "記一筆", body: "記收支、看分類。作品集尚未驗證這一步是否真的寫入。" },
       { title: "這個月", body: "看這個月花到哪。不是作品集後台。" },
     ],
   },
   "tku-zen-agent": {
     mode: "conversation-preview",
-    honestyLabel: "社團工作台，不是本地 tku-zen-ai",
+    honestyLabel: "需授權碼的社團工作台，不是本地 tku-zen-ai，也不是 Hermes",
     walkthrough: [
-      { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。" },
-      { title: "問答", body: "問社團文書或現場問題。回覆不是已審核公告。" },
-      { title: "邊界", body: "與本站展示的本地 tku-zen-ai 不是同一個產品。" },
+      { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。HTTP 200，不是 502。" },
+      { title: "授權邊界", body: "未輸入授權碼時只看得到「請輸入授權碼 進入工作台」。" },
+      { title: "草稿", body: "頁面標示草稿模式，不會自動發布。與本地 tku-zen-ai 不是同一個產品。" },
     ],
   },
   cutos: {
@@ -310,11 +310,11 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
   },
   "hermes-agent": {
     mode: "conversation-preview",
-    honestyLabel: "需登入的執行層，不是免登入 Console",
+    honestyLabel: "需登入的 Dashboard，不是免登入 Console",
     walkthrough: [
-      { title: "Sessions", body: "打開 455.zeabur.app/sessions。未登入只看得到 Sign in。" },
-      { title: "執行層", body: "這是 Hermes Agent，不是 344 的 Console。" },
-      { title: "連線", body: "擁有者把 Console 的 HERMES_API_URL 指到 hermes-agent-api.zeabur.app。" },
+      { title: "Dashboard", body: "打開 hermes-agent-k7q2.zeabur.app。未登入會到 Sign in — Hermes Agent。" },
+      { title: "執行層", body: "這是 Hermes Agent Dashboard，不是 344 的 Console。" },
+      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。" },
     ],
   },
 };

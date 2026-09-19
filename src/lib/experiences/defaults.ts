@@ -153,6 +153,42 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "xiaocai") {
+    return {
+      ...base,
+      intro: "公開站是小財記帳 untitled-5。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
+    };
+  }
+
+  if (slug === "tku-zen-agent") {
+    return {
+      ...base,
+      intro: "公開站是淡江大學領袖禪學社工作台。未輸入授權碼時只看得到登入邊界。",
+      conversation: {
+        engine: "hermes-preview",
+        disclaimer: "這是作品集預覽，沒有連到社團資料庫，也不是 Hermes Agent。",
+        starter: "公開站需要授權碼。未登入時只看得到「請輸入授權碼 進入工作台」。這裡不會假裝已經進入。",
+        placeholder: "輸入一句社團文書或現場問題",
+        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。草稿模式不會自動發布。",
+        suggestions: ["授權碼", "做網宣", "草稿"],
+        replies: [
+          {
+            match: "授權",
+            reply: "真實工作台要輸入授權碼。作品集這一頁不會幫你登入，也不會讀社團資料。",
+          },
+          {
+            match: "網宣",
+            reply: "公開站有「做網宣」入口。產出標示為草稿，不會自動發布。",
+          },
+          {
+            match: "草稿",
+            reply: "公開站寫「目前為草稿模式——不會自動發布任何內容」。本頁不展示真實社團檔。",
+          },
+        ],
+      },
+    };
+  }
+
   if (slug === "ai-director-os") {
     return {
       ...base,

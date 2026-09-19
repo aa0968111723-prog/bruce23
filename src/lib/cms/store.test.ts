@@ -667,6 +667,132 @@ describe("cms persistence", () => {
     assert.match(photo?.summary ?? "", /不是原作照片/);
   });
 
+  it("replaces the stale 455 Hermes URL with the dashboard domain", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set title = 'Hermes Agent',
+           summary = '公開網域 455.zeabur.app',
+           live_demo_url = 'https://455.zeabur.app/sessions',
+           source_evidence = $2::jsonb,
+           locale_json = $3::jsonb
+       where slug = $1`,
+      [
+        "hermes-agent",
+        JSON.stringify([
+          {
+            label: "公開站 · 455.zeabur.app",
+            href: "https://455.zeabur.app/sessions",
+            note: "stale",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({
+          zh: { title: "Hermes Agent", summary: "公開網域 455.zeabur.app" },
+          en: { title: "Hermes Agent", summary: "Public domain 455.zeabur.app" },
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_dashboard_live_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const hermes = await getPublishedProject(sql, "hermes-agent");
+    assert.equal(hermes.title, "Hermes Agent - Dashboard");
+    assert.equal(hermes.demo.url, "https://hermes-agent-k7q2.zeabur.app/");
+    assert.match(hermes.summary, /hermes-agent-k7q2\.zeabur\.app/);
+    assert.doesNotMatch(hermes.summary, /455\.zeabur\.app/);
+    assert.ok(hermes.sourceEvidence.some((item) => item.href === "https://hermes-agent-k7q2.zeabur.app/"));
+    assert.ok(!hermes.sourceEvidence.some((item) => item.href?.includes("455.zeabur.app")));
+    assert.equal(hermes.locale.en?.title, "Hermes Agent - Dashboard");
+  });
+
+  it("rewrites FrameLab live URL and cabin 502 notes to the ZH canonical host", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set live_demo_url = $2,
+           source_evidence = $3::jsonb,
+           decisions = $4::jsonb,
+           limitations = $5::jsonb
+       where slug = $1`,
+      [
+        "framelab",
+        "https://lunar-falcon-8p2r.zeabur.app",
+        JSON.stringify([
+          {
+            label: "工作站 · cabin-shale-k7q2.zeabur.app",
+            href: "https://cabin-shale-k7q2.zeabur.app",
+            note: "Zeabur 服務 cabin-shale-raven-swift，完整 FrameLab 工作站。本次探測可能 502。GitHub 目前為私有。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify(["stale identity"]),
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'framelab_identity_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const frame = await getPublishedProject(sql, "framelab");
+    assert.equal(frame.demo.url, "https://cabin-shale-k7q2.zeabur.app");
+    assert.ok(frame.sourceEvidence.some((item) => item.href === "https://cabin-shale-k7q2.zeabur.app"));
+    assert.ok(frame.sourceEvidence.some((item) => item.href === "https://lunar-falcon-8p2r.zeabur.app"));
+    assert.ok(frame.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(frame.decisions.some((item) => item.includes("不是兩個作品")));
+    assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
+    assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
+  });
+
+  it("rewrites stale 502 notes for 小財 and the Zen desk after a live 200 probe", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb, experience_mode = $4
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["本次探測曾出現 502。連結保留，狀態會隨部署變動。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · untitled-5.zeabur.app",
+            href: "https://untitled-5.zeabur.app",
+            note: "Zeabur 服務 untitled-5。本次探測可能 502，仍保留連結。",
+            kind: "demo",
+          },
+        ]),
+        "interactive-walkthrough",
+      ],
+    );
+    await sql.query(
+      `update projects set limitations = $2::jsonb, source_evidence = $3::jsonb where slug = $1`,
+      [
+        "tku-zen-agent",
+        JSON.stringify(["本次探測曾出現 502。與本地 tku-zen-ai 不是同一個產品。"]),
+        JSON.stringify([
+          {
+            label: "公開站 · tku-zen-agent-k7f2.zeabur.app",
+            href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+            note: "Zeabur 服務 tku-zen-agent。建議 ?mode=ask。本次探測可能 502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'stale_502_note_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const xiaocai = await getPublishedProject(sql, "xiaocai");
+    const zen = await getPublishedProject(sql, "tku-zen-agent");
+    assert.ok(xiaocai.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.ok(xiaocai.limitations.every((item) => !/曾出現 502/.test(item)));
+    assert.match(xiaocai.sourceEvidence[0]?.note ?? "", /HTTP 200/);
+    assert.ok(zen.sourceEvidence.every((item) => !/可能 502/.test(item.note ?? "")));
+    assert.match(zen.sourceEvidence[0]?.note ?? "", /授權碼/);
+    assert.ok(zen.limitations.some((item) => item.includes("授權碼")));
+    const xiaocaiAdmin = await getAdminProjectBySlug(sql, "xiaocai");
+    assert.equal(xiaocaiAdmin.experience_mode, "media-gallery");
+  });
+
   it("saves homepage highlight slugs without wiping locale_json", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

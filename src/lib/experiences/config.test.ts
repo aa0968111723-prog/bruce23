@@ -211,6 +211,12 @@ describe("experience config merge", () => {
     assert.ok(zen.conversation?.suggestions?.includes("考試好有壓力"));
     const hermes = defaultExperienceConfig("hermes-console");
     assert.ok(hermes.conversation?.suggestions?.includes("海報"));
+    const zenDesk = defaultExperienceConfig("tku-zen-agent");
+    assert.match(zenDesk.conversation?.starter ?? "", /授權碼/);
+    assert.doesNotMatch(zenDesk.conversation?.starter ?? "", /Hermes 執行期/);
+    const ledger = defaultExperienceConfig("xiaocai");
+    assert.match(ledger.intro ?? "", /小財記帳/);
+    assert.doesNotMatch(ledger.intro ?? "", /Folio 指令層/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });

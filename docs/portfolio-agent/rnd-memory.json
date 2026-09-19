@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-19T09:04:00Z",
+  "portfolioReady": false,
+  "adoptedTech": [],
+  "rejectedTech": [
+    {
+      "id": "REPLACE_FRAMELAB_WITH_OPENCHATCUT",
+      "reason": "lunar and cabin are already FrameLab. Replacing the product is out of scope. Research only the identity split and portfolio mapping."
+    },
+    {
+      "id": "TREAT_HTTP_200_AS_CORE_FLOW",
+      "reason": "PR #6 forbids scoring online-ready from status code alone."
+    }
+  ],
+  "identityDecisions": [
+    {
+      "key": "hermes-agent",
+      "canonicalPublicUrl": "https://hermes-agent-k7q2.zeabur.app/",
+      "staleUrl": "https://455.zeabur.app/sessions",
+      "evidence": [
+        "2026-09-19 curl 455.zeabur.app and /sessions both HTTP 502, 11-byte body",
+        "2026-09-19 hermes-agent-k7q2.zeabur.app HTTP 302 -> /login HTTP 200 title Sign in — Hermes Agent",
+        "login HTML references @nous-research/ui fonts"
+      ],
+      "status": "canonical_url_proposed"
+    },
+    {
+      "key": "cabin-shale-raven-swift",
+      "liveTitle": "FrameLab",
+      "repoReadmeTitle": "FrameLab",
+      "packageName": "framelab",
+      "packageRepository": "https://github.com/aa0968111723-prog/FrameLab.git",
+      "canonicalProductName": "FrameLab",
+      "status": "identity_confirmed_as_framelab"
+    },
+    {
+      "key": "lunar-crystal-falcon-granite",
+      "liveTitle": "FrameLab",
+      "repoReadmeTitle": "FrameLab",
+      "packageName": "app-builder-workspace",
+      "relationship": "duplicate_or_older_framelab_deploy",
+      "status": "do_not_invent_new_product"
+    }
+  ],
+  "nextRepairTask": "HERMES-AGENT-URL-CANONICAL",
+  "nextUpgradeTask": "FRAMELAB-IDENTITY-SPLIT",
+  "nextResearchHour": "Write Playwright smoke scaffold for portfolio homepage + one public tool; do not score 70."
+}

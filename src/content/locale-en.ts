@@ -144,6 +144,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Inbetween gets a Motion Plan first, then a linear-blend candidate; only bad frames are regenerated.",
         "Wan / RIFE and other GPU adapters report PROVIDER_NOT_AVAILABLE when unloaded — no fake depth or fake pose.",
         "UI, REST, and MCP share the same application commands.",
+        "cabin-shale-k7q2 (Chinese) and lunar-falcon-8p2r (English) are the same FrameLab 0.4.0, not two products. The Chinese portfolio uses the Chinese public host as Live Demo.",
       ],
       [
         "Import a video or image sequence",
@@ -161,6 +162,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "SAM 2, RTMPose, SEA-RAFT, RIFE, and Wan are adapters only — unavailable until a model is registered.",
         "Not an NLE, and not a full production pipeline export.",
         "Grok vision needs XAI_API_KEY and only frames the user sends.",
+        "The public landing and /api/health are viewable. The studio needs sign-in. The lunar / cabin GitHub deploy repos are private; public source is FrameLab.",
       ],
     ),
     ...featuredListExtras.framelab,
@@ -454,6 +456,10 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A small bright book for personal money",
     summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
     process: ["Open untitled-5.zeabur.app", "Log income or spend", "See categories", "See this month"],
+    limitations: [
+      "Public host HTTP 200, title Xiaocai ledger. The page is client-rendered; the ledger core flow is not verified here.",
+      "This is not the portfolio admin.",
+    ],
   },
   "tku-zen-agent": {
     title: "TKU Zen desk",
@@ -461,8 +467,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A club writing and Q&A desk. Public site tku-zen-agent-k7f2 with ?mode=ask. Not the local tku-zen-ai companion.",
     process: [
       "Open tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-      "Ask a club-writing or booth question",
-      "Do not treat replies as approved notices",
+      "Without an access code you only see the sign-in gate",
+      "Draft mode does not auto-publish",
+      "Do not treat output as approved notices",
+    ],
+    limitations: [
+      "Probed 2026-09-19: HTTP 200, title Tamkang Leader Zen club desk. Not 502.",
+      "The desk needs an access code. Portfolio visitors cannot see club data.",
+      "Not the local tku-zen-ai companion.",
     ],
   },
   cutos: {
@@ -477,14 +489,15 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     ],
   },
   "hermes-agent": {
-    title: "Hermes Agent",
-    subtitle: "The execution layer (sign-in required)",
-    summary: "Nous Research Hermes Agent: sessions, tools, API. Public domain 455.zeabur.app. /sessions shows Sign in.",
+    title: "Hermes Agent - Dashboard",
+    subtitle: "Agent dashboard (sign-in required)",
+    summary:
+      "Nous Research Hermes Agent dashboard: sessions and the sign-in gate. Public domain hermes-agent-k7q2.zeabur.app. Unsigned visitors land on Sign in — Hermes Agent.",
     process: [
-      "Open 455.zeabur.app/sessions",
-      "Sign in as the owner",
-      "Read sessions",
-      "Point Console at HERMES_API_URL",
+      "Open hermes-agent-k7q2.zeabur.app",
+      "Unsigned visitors land on Sign in — Hermes Agent",
+      "Sign in as the owner to enter the dashboard",
+      "Read sessions and tool status",
     ],
   },
 };
