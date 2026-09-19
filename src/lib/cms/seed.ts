@@ -1,6 +1,7 @@
 import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
 import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
+import { FRAMELAB_IDENTITY, FRAMELAB_IDENTITY_VERSION } from "../../content/project-registry.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
@@ -129,6 +130,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await fillProjectMediaGaps(sql);
   await clearUncustomizedHowSteps(sql);
   await refreshHermesDashboardLive(sql);
+  await refreshFramelabIdentity(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -493,6 +495,87 @@ async function refreshHermesDashboardLive(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('hermes_dashboard_live_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [HERMES_DASHBOARD_LIVE_VERSION],
+  );
+}
+
+function projectEvidence(project: (typeof projects)[number]) {
+  return project.sourceReferences.map((ref) => ({
+    label: ref.label,
+    href: ref.href,
+    note: ref.note,
+    kind: ref.href?.includes("canva.com")
+      ? ("canva" as const)
+      : ref.href?.includes("github.com")
+        ? ("github" as const)
+        : ("demo" as const),
+  }));
+}
+
+async function refreshFramelabIdentity(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'framelab_identity_version' limit 1`,
+  );
+  if (meta[0]?.value === FRAMELAB_IDENTITY_VERSION) return;
+  const project = projects.find((item) => item.slug === FRAMELAB_IDENTITY.portfolioSlug);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const liveUrl = project.links.live ?? FRAMELAB_IDENTITY.canonicalLiveUrl;
+  await sql.query(
+    `update projects
+     set title = $2,
+         subtitle = $3,
+         summary = $4,
+         problem = $5,
+         role = $6,
+         decisions = $7::jsonb,
+         process = $8::jsonb,
+         outputs = $9::jsonb,
+         limitations = $10::jsonb,
+         seo_title = $11,
+         seo_description = $12,
+         source_evidence = $13::jsonb,
+         locale_json = $14::jsonb,
+         live_demo_url = $15,
+         live_demo_label = coalesce(nullif(live_demo_label, ''), $16),
+         live_demo_type = case
+           when live_demo_type is null or live_demo_type in ('unavailable', '') then 'link'
+           else live_demo_type
+         end,
+         live_demo_embed_enabled = false,
+         live_demo_status = case
+           when live_demo_url is distinct from $15 then 'pending'
+           else live_demo_status
+         end,
+         live_demo_error = case
+           when live_demo_url is distinct from $15 then null
+           else live_demo_error
+         end,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      project.title,
+      project.subtitle,
+      project.summary,
+      project.problem,
+      project.role,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
+      JSON.stringify(project.outputs),
+      JSON.stringify(project.limitations),
+      `${project.title} · ${site.nameZh}`,
+      project.summary,
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      liveUrl,
+      "公開網址（狀態可能變動）",
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('framelab_identity_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [FRAMELAB_IDENTITY_VERSION],
   );
 }
 
