@@ -104,7 +104,7 @@ export const experienceChrome = {
     openSourceFile: "開啟原始檔",
     reducedMotion: "已依系統設定關閉多餘動態。",
     emptyObjects: "尚未設定空間物件。",
-    planformDefaultIntro: "等角場佈示意：旋轉、拖動物件、看用途與尺寸。",
+    planformDefaultIntro: "公開站首屏是「我的專案」與「＋ 新建專案」。這裡是作品集場佈示意，不是線上專案，也不假裝已經拖過物件。",
     planformKeyboard: "上下鍵旋轉，Shift＋左右移動選取物件。",
     planformAria: "PLANFORM 場佈",
     rotate: "旋轉",
@@ -269,7 +269,7 @@ export const experienceChrome = {
     openSourceFile: "Open source file",
     reducedMotion: "Extra motion is off per system settings.",
     emptyObjects: "No spatial objects are set yet.",
-    planformDefaultIntro: "Isometric layout sketch: rotate, drag objects, read use and size.",
+    planformDefaultIntro: "The public first screen is “My projects” and “+ New project”. This is a portfolio layout sketch, not a live project, and it does not pretend objects were already dragged.",
     planformKeyboard: "Up/down rotate. Shift+left/right move the selected object.",
     planformAria: "PLANFORM layout",
     rotate: "Rotate",
@@ -518,7 +518,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   planform: {
     honestyLabel: "Pre-event rehearsal, not a code-compliance calculation",
-    intro: "Isometric layout sketch: rotate, drag objects, read use and size.",
+    intro: "The public first screen is “My projects” and “+ New project”. This is a portfolio layout sketch, not a live project, and it does not pretend objects were already dragged.",
     spatial: {
       objects: [
         { id: "desk", label: "Check-in desk", use: "Check-in / materials", size: "180×60 cm" },

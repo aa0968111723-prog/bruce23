@@ -77,6 +77,12 @@ describe("experience playable chrome", () => {
     assert.match(posterEn.comparison?.estimateDisclaimer ?? "", /not eye-tracking/i);
     const planEn = overlayExperienceConfig(defaultExperienceConfig("planform"), "planform", "en");
     assert.match(planEn.honestyLabel ?? "", /not a code-compliance/i);
+    assert.match(planEn.intro ?? "", /My projects/i);
+    assert.match(planEn.intro ?? "", /New project/i);
+    assert.doesNotMatch(planEn.intro ?? "", /rotate, drag objects/i);
+    const planZh = overlayExperienceConfig(defaultExperienceConfig("planform"), "planform", "zh");
+    assert.match(planZh.intro ?? "", /我的專案/);
+    assert.doesNotMatch(planZh.intro ?? "", /旋轉、拖動物件/);
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
     assert.match(zenEn.intro ?? "", /Take a breath/i);
