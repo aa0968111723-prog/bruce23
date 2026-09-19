@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-19T15:10:00Z",
-  "runId": "grok-impl-20260919-planform-public-home",
+  "generatedAt": "2026-09-19T15:50:00Z",
+  "runId": "grok-impl-20260919-tamkang-campus-pass",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-19T14:50:00Z",
+  "startedAt": "2026-09-19T15:20:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,66 +12,73 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "planform-public-home",
-  "inspectedCommit": "7e457e8",
+  "task": "tamkang-campus-pass",
+  "inspectedCommit": "183f690",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 55 unit tests (registry 9 + catalog 8 + cms store 38) + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + registry 14 + catalog 9 + cms store 43 + vite build",
     "browser": "NOT_YET",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "code on branch fix/planform-public-home; production process still starts at 選教室模板與人數",
+    "deployment": "code on branch fix/tamkang-campus-pass; production process still invents 開始巡禮/WASD/校園圖鑑",
     "security": "NOT_VERIFIED"
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
-      "status": 200,
-      "pr20Landed": true,
-      "copy": "首頁是登記畫面，不是立刻開打；不是「完全不填表就能開打」",
-      "checkedAt": "2026-09-19T14:55:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
-      "status": 200,
-      "staleNotes": [],
-      "pr21Landed": true,
-      "copy": "不是 502",
-      "checkedAt": "2026-09-19T14:55:00Z"
-    },
-    {
-      "url": "https://cutos.zeabur.app/",
-      "status": 200,
-      "title": "CUTOS — Conversational Video Editor",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-19T14:55:00Z"
-    },
-    {
       "url": "https://bruce23-k7m2.zeabur.app/work/planform",
       "status": 200,
-      "staleProcess": "選教室模板與人數",
-      "pr22VersionJsonLanded": true,
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-19T14:55:00Z"
+      "pr23Landed": true,
+      "copy": "我的專案 / ＋ 新建專案; Live Demo verified; no empty-demo note",
+      "checkedAt": "2026-09-19T15:25:00Z"
     },
     {
-      "url": "https://planform-iso-k7d2.zeabur.app/",
+      "url": "https://bruce23-k7m2.zeabur.app/work/folio",
       "status": 200,
-      "title": "PLANFORM｜活動空間彩排",
-      "firstScreen": "我的專案 / ＋ 新建專案",
-      "apiRoutes": [],
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-19T15:00:00Z"
+      "pr25Landed": true,
+      "copy": "文件櫃",
+      "checkedAt": "2026-09-19T15:25:00Z"
     },
     {
-      "url": "https://planform-iso-k7d2.zeabur.app/version.json",
+      "url": "https://bruce23-k7m2.zeabur.app/work/skatehub",
       "status": 200,
-      "body": { "version": "1.0.0", "commit": "1b8513b", "builtAt": "2026-09-16T15:09:46.926Z" },
-      "checkedAt": "2026-09-19T15:00:00Z"
+      "pr28Landed": true,
+      "copy": "走向健康，走向陽光",
+      "checkedAt": "2026-09-19T15:25:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/duigao",
+      "status": 200,
+      "pr24Landed": true,
+      "copy": "對稿｜圖片與影片協作空間",
+      "checkedAt": "2026-09-19T15:25:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/hermes-console",
+      "status": 200,
+      "pr26Landed": true,
+      "copy": "今天想做什麼？",
+      "checkedAt": "2026-09-19T15:25:00Z"
+    },
+    {
+      "url": "https://forge-bloom-k7xq.zeabur.app/",
+      "status": 200,
+      "title": "淡江世界",
+      "description": "以淡江大學淡水校園真實地標打造的 3D 巡禮世界：克難坡、宮燈大道、海事博物館與覺生紀念圖書館。",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T15:35:00Z"
+    },
+    {
+      "url": "https://forge-bloom-k7xq.zeabur.app/login",
+      "status": 200,
+      "title": "淡江世界",
+      "firstScreen": "校園通行證 / 先以訪客巡禮 / 使用 Google 繼續 / 使用 X 繼續",
+      "missingStrings": ["開始巡禮", "校園圖鑑", "WASD"],
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T15:35:00Z"
     }
   ],
   "gates": {
@@ -84,11 +91,11 @@
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
   "blockers": [
-    "Zeabur MCP ERROR_INVALID_TOKEN; cannot inspect or trigger bruce23 deploy"
+    "Zeabur MCP ERROR_INVALID_TOKEN; GraphQL token unset; cannot inspect bruce23 deployments"
   ],
   "nextSteps": [
-    "Open PR for planform public-home honesty",
-    "After deploy, verify production /work/planform",
-    "Then probe next unrepaired official work"
+    "Open PR for tamkang campus-pass honesty",
+    "After deploy, verify production /work/tamkang-world",
+    "Then probe tamsui-drama / zen-studio / lumen. Lumen conversation-preview is still Hermes-branded."
   ]
 }

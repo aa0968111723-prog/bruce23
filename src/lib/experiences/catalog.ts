@@ -235,9 +235,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "開始巡禮", body: "公開站 forge-bloom-k7xq。點「開始巡禮」進 3D；「校園圖鑑」看建築。WASD 移動、滑鼠視角。" },
-      { title: "逛五虎崗", body: "在瀏覽器裡走校園，辨認建築與山勢。效能依裝置而變。" },
-      { title: "對照現場", body: "巡禮是身體感，不是完整數位雙生。回到淡水現場再對一次。" },
+      { title: "校園通行證", body: "公開站 forge-bloom-k7xq。標題「淡江世界」。/login h1「校園通行證」：訪客可直接遊覽五虎崗，或 Google／X 登入保存蓋章。" },
+      { title: "先以訪客巡禮", body: "不必登入。點「先以訪客巡禮」回首頁 3D 世界。作品集未記錄 3D 操作鍵位。" },
+      { title: "地標", body: "公開 description 寫克難坡、宮燈大道、海事博物館與覺生紀念圖書館。效能依裝置而變，不是完整數位雙生。" },
     ],
   },
   "tamsui-drama": {

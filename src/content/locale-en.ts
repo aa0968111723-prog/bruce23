@@ -402,10 +402,15 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A 3D campus walk on Wuhu Hill",
     summary: "Walk Tamkang in the browser. The hill becomes a visitable campus — not a PDF tour, and not a Google Earth screenshot.",
     process: [
-      "Open forge-bloom-k7xq.zeabur.app",
-      "Tap Start tour",
-      "WASD to move, mouse to look",
-      "Open the campus atlas",
+      "Open forge-bloom-k7xq.zeabur.app (title Tamkang World)",
+      "The public gate is Campus pass: guests can tour Wuhu Hill, or continue with Google / X",
+      "Tap Tour as guest to return to the 3D home",
+    ],
+    limitations: [
+      "GitHub forge-bloom-quiet-falcon is private.",
+      "Performance depends on the device; this is not a full digital twin.",
+      "Probed 2026-09-19: GET / HTTP 200, title Tamkang World. Description lists Kenan Slope, lantern avenue, maritime museum, and Chueh-sheng Library. og: a 3D campus walk on Wuhu Hill.",
+      "GET /login HTTP 200, h1 Campus pass. Guests can tour; sign-in saves stamps. Public JS has no Start tour, campus atlas, or WASD. This portfolio has not finished a guest 3D walk, so coreFlow is not passed.",
     ],
   },
   "tamsui-drama": {
