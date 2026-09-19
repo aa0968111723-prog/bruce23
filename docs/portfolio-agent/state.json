@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-8",
-  "updatedAt": "2026-09-20T04:00:00Z",
+  "runId": "codex-conflict-2001",
+  "updatedAt": "2026-09-19T20:07:29.036Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -41,30 +41,29 @@
       "total": 17,
       "status": "NOT_VERIFIED"
     },
+    "thumbnail": {
+      "verifiedPass": 0,
+      "total": 17,
+      "status": "NOT_VERIFIED"
+    },
     "securityBlockers": {
       "verifiedCount": null,
       "status": "NOT_VERIFIED"
     }
   },
-  "activeTask": "correct-hermes-service-identity",
+  "activeTask": "reconcile-pr27-with-pr6",
   "highestPriorityIssue": {
-    "id": "HERMES-SOURCE-CORRECTION",
-    "title": "Portfolio content and CMS need corrected Hermes service URL",
-    "severity": "high",
-    "status": "open",
-    "evidence": [
-      "User corrected service ID",
-      "Zeabur confirms RUNNING; browser confirms login boundary"
-    ],
-    "impact": "Old URL points to a suspended legacy service. Correct service is available behind login; core flow remains unverified."
+    "id": "PORTFOLIO-GATE-AGGREGATE-MISMATCH",
+    "severity": "critical",
+    "status": "FIXED_IN_PR_27_PENDING_MERGE",
+    "observed": "The shared state had two top-level gates objects. JSON.parse retained the later stale object, reporting online and completeInfo 17/17 plus security VERIFIED_PASS while all 17 project records were false or unreviewed.",
+    "impact": "Agents and reports could mistake HTTP reachability or zero known incidents for completed functional, information or security acceptance."
   },
   "inspectionLimitations": [
-    "Correct service login boundary verified; authenticated core flow, persistence and mobile/desktop acceptance not verified.",
-    "Old service remains untouched; resume authorization request withdrawn as wrong target.",
-    "Current product fallback and existing CMS may still use old URL; this cycle corrects agent registry/evidence only.",
-    "Current service exposes only the web domain; previous API domain belongs to old service and cannot be reassigned by assumption."
+    "No new live core-flow, mobile, desktop, visual or security evidence gathered in this merge repair.",
+    "Historical probe claims have future timestamps; retained as unverified in runtime-report.json."
   ],
-  "nextTask": "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation.",
+  "nextTask": "Verify PLANFORM public core flow with real desktop/mobile operation after PR #27 integration.",
   "projects": [
     {
       "key": "forge-bloom-quiet-falcon",
@@ -92,7 +91,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aacb1c40f50de6ff52c290f",
         "status": "RUNNING",
@@ -135,7 +136,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaca6461d1f5891a859ff1c",
         "status": "RUNNING",
@@ -173,7 +176,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaca70b0f50de6ff52c25ca",
         "status": "RUNNING",
@@ -211,7 +216,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaca5990f50de6ff52c2546",
         "status": "RUNNING",
@@ -254,7 +261,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaca53b0f50de6ff52c2535",
         "status": "RUNNING",
@@ -297,7 +306,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aac9e7f0f50de6ff52c23a6",
         "status": "RUNNING",
@@ -343,7 +354,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aab38b605af289f92f98118",
         "status": "RUNNING",
@@ -386,7 +399,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaca5051d1f5891a859ff01",
         "status": "RUNNING",
@@ -408,7 +423,9 @@
       "publicUrl": "https://hermes-agent-k7q2.zeabur.app/sessions",
       "urlStatus": "service_domain_verified",
       "verificationStatus": "auth_boundary_verified_core_flow_not_verified",
-      "scoreEvidence": ["docs/portfolio-agent/hermes-agent-evidence.json"],
+      "scoreEvidence": [
+        "docs/portfolio-agent/hermes-agent-evidence.json"
+      ],
       "coreFlowPass": false,
       "onlineReady": false,
       "nextRepairTask": "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation.",
@@ -471,7 +488,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aae4dc494c4cdf079b8a9ab",
         "status": "RUNNING",
@@ -516,7 +535,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aac9c1b0f50de6ff52c22f3",
         "status": "RUNNING",
@@ -554,7 +575,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6a8793c229f0931a12bfa784",
         "status": "RUNNING",
@@ -592,7 +615,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6a93c2ad64f3f700254fc464",
         "status": "RUNNING",
@@ -630,7 +655,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6a96fb5f5158a7aaa4e62a32",
         "status": "RUNNING",
@@ -668,7 +695,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6aaab0cf2433d47adfed79f1",
         "status": "RUNNING",
@@ -717,7 +746,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6a90414a04336e4571207aab",
         "status": "RUNNING",
@@ -755,7 +786,9 @@
       },
       "failedCriteria": [],
       "readinessScore": null,
-      "sourceEvidence": ["docs/portfolio-agent/zeabur-service-evidence.json"],
+      "sourceEvidence": [
+        "docs/portfolio-agent/zeabur-service-evidence.json"
+      ],
       "deploymentReference": {
         "_id": "6a8d0fcaba5938b757239a1a",
         "status": "RUNNING",
@@ -775,10 +808,10 @@
   "portfolioReady": false,
   "currentProject": "tku-zen-ai",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "codex/portfolio-agent-plan",
-  "currentPR": 6,
-  "currentTask": "hourly-multi-agent-sentinel-inspection",
-  "taskStatus": "implementing",
+  "currentBranch": "codex/portfolio-gate-evidence-audit",
+  "currentPR": 27,
+  "currentTask": "reconcile-pr27-with-pr6",
+  "taskStatus": "completed_pending_review",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
     "FrameLab identity split merged as PR #11 and live",
@@ -842,14 +875,27 @@
       "nextAction": "Do not invent a flow. Keep PORTFOLIO_READY false until 17/17 gates have evidence."
     }
   ],
-  "gates": {
-    "online": { "verifiedPass": 17, "total": 17, "status": "VERIFIED_PASS" },
-    "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "completeInfo": { "verifiedPass": 17, "total": 17, "status": "VERIFIED_PASS" },
-    "readiness70": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "mobileSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
-    "securityBlockers": { "verifiedCount": 0, "status": "VERIFIED_PASS" }
-  },
-  "nextExactStep": "Merge PR #6 to establish the official long-term portfolio plan on main. Guide Grok Bot on hourly sentinel inspections and repair bots on atomic cards without duplicate PRs."
+  "nextExactStep": "Review PR #27 after conflict repair, then capture one official project core flow with desktop/mobile evidence. Keep all gates evidence-based.",
+  "previousHandoff": {
+    "activeTask": "correct-hermes-service-identity",
+    "highestPriorityIssue": {
+      "id": "HERMES-SOURCE-CORRECTION",
+      "title": "Portfolio content and CMS need corrected Hermes service URL",
+      "severity": "high",
+      "status": "open",
+      "evidence": [
+        "User corrected service ID",
+        "Zeabur confirms RUNNING; browser confirms login boundary"
+      ],
+      "impact": "Old URL points to a suspended legacy service. Correct service is available behind login; core flow remains unverified."
+    },
+    "inspectionLimitations": [
+      "Correct service login boundary verified; authenticated core flow, persistence and mobile/desktop acceptance not verified.",
+      "Old service remains untouched; resume authorization request withdrawn as wrong target.",
+      "Current product fallback and existing CMS may still use old URL; this cycle corrects agent registry/evidence only.",
+      "Current service exposes only the web domain; previous API domain belongs to old service and cannot be reassigned by assumption."
+    ],
+    "nextTask": "Align portfolio fallback and existing CMS record with corrected service URL, preserving manual content. Then verify an authorized isolated core flow; do not reuse old service credentials without confirmation.",
+    "note": "Historical service-correction handoff retained for provenance; superseded by this run."
+  }
 }
