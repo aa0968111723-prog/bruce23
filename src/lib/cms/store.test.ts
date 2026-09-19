@@ -917,7 +917,7 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
        where slug = $1`,
       [
         "folio",
@@ -931,6 +931,7 @@ describe("cms persistence", () => {
             kind: "demo",
           },
         ]),
+        JSON.stringify({ intro: "依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。" }),
       ],
     );
     await sql.query(`delete from cms_meta where key = 'folio_live_probe_version'`);
@@ -941,6 +942,9 @@ describe("cms persistence", () => {
       folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
       /文件櫃/,
     );
+    assert.match(folio.experienceConfig.intro ?? "", /文件櫃/);
+    assert.match(folio.experienceConfig.intro ?? "", /不必登入/);
+    assert.doesNotMatch(folio.experienceConfig.intro ?? "", /指令層走一遍/);
     assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

@@ -183,7 +183,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "folio") {
     return {
       ...base,
-      intro: "依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。",
+      intro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
     };
   }
 

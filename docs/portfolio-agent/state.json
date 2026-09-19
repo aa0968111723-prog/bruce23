@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-planform-project-home",
-  "updatedAt": "2026-09-20T22:50:00Z",
+  "runId": "grok-impl-20260920-folio-cabinet-intro",
+  "updatedAt": "2026-09-20T23:40:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "planform",
+  "currentProject": "folio",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/planform-project-home",
+  "currentBranch": "fix/folio-cabinet-intro",
   "currentPR": null,
-  "currentTask": "planform-project-home",
+  "currentTask": "folio-cabinet-intro",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -43,11 +43,13 @@
     "TKU Zen AI welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)",
     "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)",
     "GitHub visibility public probe merged as PR #44 and live: tamkang / FrameLab cabin+lunar no longer 訪客打不開原始碼 / 目前為私有",
-    "Hermes Console conversation stamp merged as PR #45 and live on production /work/hermes-console (今天想做什麼 / 研究／創作／分析, not 輸入關鍵詞看說明)"
+    "Hermes Console conversation stamp merged as PR #45 and live on production /work/hermes-console (今天想做什麼 / 研究／創作／分析, not 輸入關鍵詞看說明)",
+    "PLANFORM canvas stamp merged as PR #46 and live on production /work/planform (我的專案 / ＋ 新建專案, not 等角場佈示意：旋轉、拖動物件)",
+    "Live Demo iframe enlarge merged as PR #47"
   ],
   "remainingSteps": [
-    "Land PLANFORM canvas stamp: intro 我的專案 / ＋ 新建專案, not 旋轉、拖動物件",
-    "After deploy, verify production /work/planform canvas quotes 我的專案, not 等角場佈示意：旋轉、拖動物件",
+    "Land Folio canvas intro stamp: 文件櫃 / 不必登入, not 指令層走一遍; EN first step File cabinet not Canvas",
+    "After deploy, verify production /work/folio canvas quotes 文件櫃, not 指令層走一遍",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
@@ -56,7 +58,7 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR45_HERMES_CONSOLE_LIVE_PLANFORM_CANVAS_STALE",
+  "productionStatus": "PR46_PLANFORM_CANVAS_LIVE_FOLIO_INTRO_STALE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -95,5 +97,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/planform canvas quotes 我的專案 / ＋ 新建專案, not 旋轉、拖動物件. Do not mark PLANFORM coreFlow. Folio/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/folio canvas quotes 文件櫃 / 不必登入, not 指令層走一遍. EN first walkthrough step is File cabinet, not Canvas. Do not mark Folio coreFlow. PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
