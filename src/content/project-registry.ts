@@ -78,6 +78,14 @@ export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
 
+export const AIOS_LIVE_PROBE_VERSION = "aios-live-probe-20260919";
+
+export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
+
+export const TY_CONTRACT_VERSION = "ty-contract-health-20260919";
+
+export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
@@ -214,6 +222,15 @@ export const LIVE_PROBES_20260919 = {
     title: "淡江大學領袖禪學社 · 工作台",
     runtimeStatus: "RUNNING" as const,
     authBoundary: "authorization-code" as const,
+    coreFlowPass: false,
+  },
+  "ai-director-os": {
+    officialKey: "ai_os" as const,
+    liveUrl: "https://ai-os-app.zeabur.app",
+    customDomain: "https://vexlark.co",
+    httpStatus: 200,
+    title: "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
+    runtimeStatus: "RUNNING" as const,
     coreFlowPass: false,
   },
 } as const;

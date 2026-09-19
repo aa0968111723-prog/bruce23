@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-19T13:10:00Z",
-  "runId": "grok-impl-20260919-stale-502",
+  "generatedAt": "2026-09-19T16:40:00Z",
+  "runId": "grok-impl-20260919-aios-live",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-19T12:50:00Z",
+  "startedAt": "2026-09-19T16:00:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,42 +12,55 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "rewrite-stale-502-notes-xiaocai-zen-desk",
-  "inspectedCommit": "504318e",
+  "task": "rewrite-stale-502-notes-ai-director-os",
+  "inspectedCommit": "cc46fff",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": 11,
+    "mergedRepair": [11, 13, 14, 15, 16],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: typecheck + 78 unit tests + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + 41 unit tests (registry + cms store) + vite build",
     "browser": "NOT_YET",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "PR #11 merged to main; production /work/framelab still pre-#11 as of 2026-09-19T13:00Z",
+    "deployment": "code on branch fix/stale-502-aios-live; production still has stale AIOS 502/paused notes",
     "security": "NOT_VERIFIED"
   },
   "probes": [
     {
-      "url": "https://untitled-5.zeabur.app/",
+      "url": "https://ai-os-app.zeabur.app/",
       "status": 200,
-      "title": "小財記帳",
-      "checkedAt": "2026-09-19T13:00:00Z"
+      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
+      "checkedAt": "2026-09-19T16:20:00Z"
     },
     {
-      "url": "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+      "url": "https://vexlark.co/",
       "status": 200,
-      "title": "淡江大學領袖禪學社 · 工作台",
-      "authBoundary": "請輸入授權碼 進入工作台",
-      "checkedAt": "2026-09-19T13:00:00Z"
+      "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
+      "checkedAt": "2026-09-19T16:20:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
       "status": 200,
-      "liveDemo": "https://lunar-falcon-8p2r.zeabur.app",
-      "cabinNote": "本次探測可能 502",
-      "pr11Landed": false,
-      "checkedAt": "2026-09-19T13:00:00Z"
+      "liveDemo": "https://cabin-shale-k7q2.zeabur.app",
+      "cabinNote": "RUNNING, not 502",
+      "pr11Landed": true,
+      "checkedAt": "2026-09-19T16:10:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
+      "status": 200,
+      "staleNotes": ["本次探測服務可能暫停", "本次探測可能 502／暫停"],
+      "prAiosLanded": false,
+      "checkedAt": "2026-09-19T16:10:00Z"
+    },
+    {
+      "url": "https://leader-dna-mcp-a7k2.zeabur.app/",
+      "status": 200,
+      "title": "淡江大學禪學社｜專注力挑戰賽",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T16:20:00Z"
     }
   ],
   "gates": {
@@ -63,7 +76,8 @@
     "Zeabur MCP ERROR_INVALID_TOKEN; cannot inspect or trigger bruce23 deploy"
   ],
   "nextSteps": [
-    "Commit and open PR for stale 502 note repair",
-    "Retry production FrameLab verify when Zeabur deploys 504318e"
+    "Open PR for AI Director OS stale 502/paused note repair",
+    "After deploy, verify production /work/ai-director-os",
+    "Then operate ty core flow on leader-dna-mcp-a7k2"
   ]
 }

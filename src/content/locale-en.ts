@@ -120,6 +120,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
       [
         "The asset knowledge base (RAG) is not done.",
         "Database-layer RLS as a second isolation boundary is not done.",
+        "Probed 2026-09-19: ai-os-app.zeabur.app and vexlark.co both HTTP 200, title Aios. Not 502 and not paused. The team OS core flow is not verified here.",
         "The public deploy URL changes with the environment; this page does not claim a stable SLA or user count.",
         "Dev-time fake identities and seed accounts do not appear on this site.",
       ],
@@ -435,9 +436,15 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A 60-second booth game: warm-up, official run, live status. Not a psychological test.",
     process: [
       "Open leader-dna-mcp-a7k2.zeabur.app",
-      "Warm up, then start the 60-second run",
-      "See your result",
-      "Hosts can view event status",
+      "Read the meaning vs color rules",
+      "Two tutorial questions and a 15-second practice (not scored, not saved)",
+      "Start the official 60-second Stroop",
+      "See the score and the public leaderboard (masked names)",
+    ],
+    limitations: [
+      "2026-09-19 GET /api/health returned ok, sheets true, smtp false.",
+      "The public leaderboard API does not include phone numbers or full names.",
+      "This portfolio has not yet completed an official 60-second black-box run, so coreFlow is not passed.",
     ],
   },
   lumen: {

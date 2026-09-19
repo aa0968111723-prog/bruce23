@@ -210,17 +210,23 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。",
       "GitHub 是 ty；Zeabur 服務 leader-dna-sheet-sync。",
+      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。",
     ],
     modalities: ["互動", "現場"],
     process: [
       "打開 leader-dna-mcp-a7k2.zeabur.app",
-      "先暖身再進入 60 秒正式挑戰",
-      "看自己的結果",
-      "主辦方可看活動狀態（需權限）",
+      "看懂字義／顏色兩種規則",
+      "兩題新手教學與 15 秒練習（不計分、不登記）",
+      "開始 60 秒正式 Stroop",
+      "看分數與公開排行榜（遮罩姓名）",
     ],
-    outputs: ["現場挑戰公開站"],
+    outputs: ["現場挑戰公開站", "公開排行榜（遮罩姓名）"],
     stack: ["Web", "Google Sheets", "Zeabur"],
-    limitations: ["成績寫入試算表，本作品集不展示個資或完整名冊。"],
+    limitations: [
+      "2026-09-19 GET /api/health 回 ok，sheets true，smtp false。",
+      "公開排行榜 API 不含電話或完整姓名。本作品集不展示名冊。",
+      "作品集尚未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/ty",
       live: "https://leader-dna-mcp-a7k2.zeabur.app",
@@ -230,7 +236,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · leader-dna-mcp-a7k2.zeabur.app",
         href: "https://leader-dna-mcp-a7k2.zeabur.app",
-        note: "Zeabur 服務 leader-dna-sheet-sync。本次探測 RUNNING。",
+        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。",
       },
       {
         label: "GitHub · ty",

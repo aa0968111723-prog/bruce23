@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "updatedAt": "2026-09-19T13:15:00Z",
+  "runId": "portfolio-agent-hour-1",
+  "updatedAt": "2026-09-19T22:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -774,23 +775,35 @@
   "portfolioReady": false,
   "completedSteps": [
     "Hermes k7q2 URL already on production",
-    "FrameLab identity split merged as PR #11 (504318e)",
-    "Probed untitled-5 HTTP 200 title 小財記帳",
-    "Probed tku-zen-agent-k7f2 HTTP 200 auth-code gate",
-    "Stale-502 note repair merged as PR #13",
-    "Live-demo note repair merged as PR #14",
-    "Walkthrough branding repair merged as PR #15",
-    "Zeabur service identity mapping merged as PR #16"
+    "FrameLab identity split merged as PR #11 and live on production (cabin-shale-k7q2)",
+    "Xiaocai/Zen stale 502 notes merged as PR #13 and live",
+    "PLANFORM empty-demo sentence hidden (PR #14 live)",
+    "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
+    "Zeabur service IDs recorded (PR #16)",
+    "AI Director OS stale 502/paused note repair merged as PR #17",
+    "TY focus-challenge copy aligned with product contract as PR #18",
+    "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency"
   ],
   "remainingSteps": [
-    "Land PR #6 long-term integration plan onto main",
-    "Verify Zeabur deploy of recent PRs on production",
-    "Verify production xiaocai and tku-zen-agent pages after deploy",
-    "Execute hourly multi-agent research and sentinel inspections"
+    "Merge PR #6 long-term integration plan onto main",
+    "Operate ty core flow on leader-dna-mcp-a7k2 without sheet credentials",
+    "Verify production /work/ai-director-os and /work/focus-challenge after deploy",
+    "Continuous UI/UX polish and hourly multi-agent sentinel inspections"
   ],
-  "testsPassed": 78,
+  "testsPassed": 262,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
+  "blockers": [
+    {
+      "id": "ZEABUR_TOKEN",
+      "severity": "high",
+      "error": "Zeabur MCP ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed 2026-09-19",
+      "requiredAccess": "valid ZEABUR_API_TOKEN",
+      "blocks17of17": false,
+      "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"
+    }
+  ],
   "gates": {
     "online": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
@@ -802,4 +815,3 @@
   },
   "nextExactStep": "Merge PR #6 to establish the official long-term portfolio plan on main. Guide Grok Bot on hourly sentinel inspections and repair bots on atomic cards without duplicate PRs."
 }
-

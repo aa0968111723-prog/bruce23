@@ -97,6 +97,7 @@ const featuredWorks: Project[] = [
     limitations: [
       "素材知識庫（RAG）尚未完成。",
       "資料庫層 RLS 第二道隔離尚未完成。",
+      "2026-09-19 探測 ai-os-app.zeabur.app 與 vexlark.co 均 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。頁面是前端渲染，作品集未驗證團隊創作核心流程。",
       "公開部署網址狀態會隨環境變動，不在此宣稱穩定 SLA 或使用者數。",
       "開發期假身分與種子帳號不會出現在本站。",
     ],
@@ -162,12 +163,12 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · ai-os-app.zeabur.app",
         href: "https://ai-os-app.zeabur.app",
-        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。本次探測服務可能暫停。",
+        note: "INSTALL.md 與 Capacitor 記載的 HTML 公開站。禁止嵌入時只開新分頁。2026-09-19 探測 HTTP 200，標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」。不是 502、也不是暫停。核心流程尚未黑箱驗證。",
       },
       {
         label: "自訂網域 · vexlark.co",
         href: "https://vexlark.co",
-        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。本次探測可能 502／暫停。",
+        note: "同一 Zeabur 服務 ai-os-app 的自訂網域。2026-09-19 探測 HTTP 200，標題與公開站相同。不是 502、也不是暫停。",
       },
       {
         label: "GitHub homepage · ai-os-ten.vercel.app",
