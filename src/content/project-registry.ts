@@ -110,6 +110,10 @@ export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
+
+export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

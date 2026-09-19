@@ -1,45 +1,50 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260919-planform-public-home",
-  "updatedAt": "2026-09-19T15:10:00Z",
+  "runId": "grok-impl-20260919-tamkang-campus-pass",
+  "updatedAt": "2026-09-19T15:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "planform",
+  "currentProject": "tamkang-world",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/planform-public-home",
+  "currentBranch": "fix/tamkang-campus-pass",
   "currentPR": null,
-  "currentTask": "planform-public-home",
+  "currentTask": "tamkang-campus-pass",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
-    "FrameLab identity split merged as PR #11 and live on production (cabin-shale-k7q2)",
+    "FrameLab identity split merged as PR #11 and live",
     "Xiaocai/Zen stale 502 notes merged as PR #13 and live",
     "PLANFORM empty-demo sentence hidden (PR #14 live)",
-    "Non-Folio walkthrough branding fixed (PR #15 live on /work/focus-challenge)",
+    "Non-Folio walkthrough branding fixed (PR #15 live)",
     "Zeabur service IDs recorded (PR #16)",
     "AI Director OS stale 502/paused notes merged as PR #17 and live",
     "ty process copy aligned with PRODUCT_CONTRACT (PR #18 live)",
-    "ty public-flow honesty merged as PR #20 and live (registration-first copy)",
+    "ty public-flow honesty merged as PR #20 and live",
     "CUTOS stale 502 dropped as PR #21 and live",
     "PLANFORM version.json probe merged as PR #22 and live",
-    "Probed planform-iso-k7d2 public home: 我的專案 / ＋ 新建專案; no /api; occupancy calc refused in live JS"
+    "PLANFORM public-home 我的專案 / 新建專案 merged as PR #23 and live on production",
+    "duigao live title merged as PR #24 and live",
+    "Folio file-cabinet merged as PR #25 and live",
+    "Hermes Console live home merged as PR #26 and live",
+    "SkateHub live slogan merged as PR #28 and live",
+    "Probed forge-bloom-k7xq: title 淡江世界; /login h1 校園通行證; no 開始巡禮/校園圖鑑/WASD in public JS"
   ],
   "remainingSteps": [
-    "Land planform public-home honesty repair",
-    "Verify production /work/planform after deploy",
-    "Probe next unrepaired official work public core flow"
+    "Land tamkang campus-pass honesty repair",
+    "Verify production /work/tamkang-world after deploy",
+    "Probe next unrepaired official work public core flow (tamsui-drama / zen-studio / lumen)"
   ],
-  "testsPassed": 55,
+  "testsPassed": 66,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PLANFORM_PROCESS_STILL_STARTS_AT_TEMPLATE_NOT_PROJECT_HOME",
+  "productionStatus": "TAMKANG_PROCESS_STILL_INVENTS_START_TOUR_WASD_ATLAS",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed 2026-09-19",
+      "evidence": "get-me failed 2026-09-19; GraphQL token unset in this shell",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"
@@ -54,5 +59,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/planform process starts with 我的專案 / ＋ 新建專案. Then probe the next unrepaired official work. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/tamkang-world process starts at 校園通行證 / 先以訪客巡禮 and does not invent WASD. Then probe tamsui-drama, zen-studio, or lumen. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

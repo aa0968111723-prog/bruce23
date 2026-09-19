@@ -16,6 +16,8 @@ import {
   HERMES_CONSOLE_LIVE_PROBE_VERSION,
   SKATEHUB_LIVE_PROBE_SLUG,
   SKATEHUB_LIVE_PROBE_VERSION,
+  TAMKANG_LIVE_PROBE_SLUG,
+  TAMKANG_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -203,6 +205,20 @@ describe("official project registry", () => {
     assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
     assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
     assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
+    const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-campus-pass/);
+    assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("校園通行證")));
+    assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));
+    assert.ok(project.process.every((item) => !item.includes("開始巡禮")));
+    assert.ok(project.process.every((item) => !item.includes("校園圖鑑")));
+    assert.ok(project.process.every((item) => !item.includes("WASD")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("校園通行證")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

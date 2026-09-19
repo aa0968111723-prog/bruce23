@@ -981,6 +981,40 @@ describe("cms persistence", () => {
     assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Tamkang World process to the live campus pass", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "tamkang-world",
+        JSON.stringify(["點「開始巡禮」進入 3D", "WASD 移動", "開「校園圖鑑」對照建築"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · forge-bloom-k7xq.zeabur.app",
+            href: "https://forge-bloom-k7xq.zeabur.app",
+            note: "Zeabur 服務 forge-bloom-quiet-falcon。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamkang_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const world = await getPublishedProject(sql, "tamkang-world");
+    assert.ok(world.process.some((item) => item.includes("校園通行證")));
+    assert.equal(world.process.some((item) => item.includes("開始巡禮")), false);
+    assert.equal(world.process.some((item) => item.includes("WASD")), false);
+    assert.match(
+      world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-k7xq"))?.note ?? "",
+      /校園通行證/,
+    );
+    assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
