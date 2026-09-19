@@ -72,9 +72,24 @@ describe("portfolio concierge agent", () => {
     assert.ok(reply.actions?.some((a) => a.href?.includes("cutos.zeabur.app")));
   });
 
+  it("answers TKU Zen AI emotional companion features", () => {
+    const reply = answerQuestion("TKU Zen AI 是做什麼的心情陪伴？");
+    assert.ok(reply.text.includes("Welcome to TKU Zen AI"));
+    assert.ok(reply.text.includes("確定性情緒標註引擎"));
+    assert.ok(reply.actions?.some((a) => a.href?.includes("tku-zen-ai")));
+  });
+
+  it("answers full endpoint probe health and latency question", () => {
+    const reply = answerQuestion("全部網站端點健康狀態與在線延遲如何？");
+    assert.ok(reply.text.includes("全部 19 個端點 100% HTTP 200 OK"));
+    assert.ok(reply.text.includes("淡江世界 3D"));
+    assert.ok(reply.text.includes("Public 公開"));
+  });
+
   it("gracefully falls back for unknown topics", () => {
     const reply = answerQuestion("宇宙大爆炸是哪一年發生的？");
     assert.ok(reply.text.includes("感謝您的提問"));
     assert.ok(reply.actions && reply.actions.length >= 4);
   });
 });
+
