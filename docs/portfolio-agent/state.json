@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-aios-live-home",
-  "updatedAt": "2026-09-20T17:25:00Z",
+  "runId": "grok-impl-20260920-framelab-live-home",
+  "updatedAt": "2026-09-20T18:10:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "ai-director-os",
+  "currentProject": "framelab",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/aios-live-home",
+  "currentBranch": "fix/framelab-live-home",
   "currentPR": null,
-  "currentTask": "aios-live-home",
+  "currentTask": "framelab-live-home",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -36,28 +36,38 @@
     "Poster Vision no public host merged as PR #35 and live",
     "Hermes Agent Sign in merged as PR #36 and live on production /work/hermes-agent (no 輸入關鍵詞看說明)",
     "Xiaocai tap-to-log merged as PR #37 and live",
-    "CUTOS live home merged as PR #38 and live"
+    "CUTOS live home merged as PR #38 and live on production /work/cutos (載入示範影片)",
+    "AI Director OS landing / login first-screen honesty merged as PR #39 and live on production /work/ai-director-os (進入工作台, not 建立專案與世界觀快速層)"
   ],
   "remainingSteps": [
-    "Land AI Director OS landing / login first-screen honesty repair",
-    "After deploy, verify production /work/ai-director-os process is 進入工作台 not 建立專案與世界觀快速層",
-    "Then stamp next unrepaired first screen (folio/planform canvas still needs a real browser)",
+    "Land FrameLab landing / login first-screen honesty repair",
+    "After deploy, verify production /work/framelab process is 登入工作室 not 匯入影片或圖序",
+    "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
   "testsPassed": 113,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "HERMES_XIAOCAI_CUTOS_LIVE_AIOS_PROCESS_STILL_CLAIMS_CREATE_PROJECT",
+  "productionStatus": "AIOS_PR39_LIVE_FRAMELAB_PROCESS_STILL_CLAIMS_IMPORT",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
+    },
+    {
+      "id": "BROWSER_COREFLOW",
+      "severity": "high",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, and CUTOS 載入示範影片 need a real browser.",
+      "evidence": "No headless browser in this agent loop; copy probes only",
+      "requiredAccess": "browser coreFlow operator",
+      "blocks17of17": true,
+      "nextAction": "Do not invent a flow. Keep PORTFOLIO_READY false until 17/17 gates have evidence."
     }
   ],
   "gates": {
@@ -69,5 +79,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/ai-director-os process starts at the live landing h1 and 進入工作台 → /login. Do not claim create-project coreFlow. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/framelab process starts at the live landing h1 and 登入工作室 → /login. Do not claim import/repair coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

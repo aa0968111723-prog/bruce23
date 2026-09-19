@@ -72,7 +72,7 @@ export const FRAMELAB_IDENTITY = {
   ],
 } as const;
 
-export const FRAMELAB_IDENTITY_VERSION = "framelab-identity-zh-canonical-20260919";
+export const FRAMELAB_IDENTITY_VERSION = "framelab-live-home-20260920";
 
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 

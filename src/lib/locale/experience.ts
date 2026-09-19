@@ -482,7 +482,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   framelab: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "A portfolio demo timeline, conceptually aligned with FrameLab’s sample-ball / timeline-engine.",
+    intro: "The public site opens on a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in. This is a portfolio demo timeline, not the live workstation.",
     timeline: {
       demoDisclaimer: "Frames labeled “demo” are not GPU model output. Real Wan / RIFE / SAM adapters are not loaded.",
     },
