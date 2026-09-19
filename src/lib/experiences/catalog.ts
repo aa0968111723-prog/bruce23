@@ -199,7 +199,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     walkthrough: [
       {
         title: "工作區",
-        body: "聊天、任務與工具入口同一處。未設定 HERMES_API_URL 時仍應開啟並顯示尚未連線。",
+        body: "公開站 344 免登入。首屏「龜龜創作助手／今天想做什麼？」。作品集這一頁仍是本地說明，不是 Agent 執行。",
         path: "app/api/chat/route.ts",
       },
       {
