@@ -419,9 +419,12 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "Tamkang / Tamsui as a playable script. The public site is a campus quest, not FrameLab.",
     process: [
       "Open tku-tamsui-drama-world-k4x9.zeabur.app",
-      "Wait for the world to load",
-      "Start episode one under the lanterns",
-      "Walk the campus gates",
+      "Title is Tamkang freshman quest — Anjie's campus gates",
+      "First screen is Loading the Tamkang · Tamsui world…",
+      "Public JS describes lantern avenue, the library, and Ching-Sheng Hall",
+    ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title 淡江新生導覽 — 安倢的校園闖關. HTML first screen is Loading the Tamkang · Tamsui world… Public JS has no 第一集. This portfolio has not finished the quest, so coreFlow is not passed.",
     ],
   },
   skatehub: {

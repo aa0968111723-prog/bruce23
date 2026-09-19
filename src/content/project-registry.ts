@@ -122,6 +122,10 @@ export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 
+export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-drama-live-load-20260919";
+
+export const TAMSUI_DRAMA_LIVE_PROBE_SLUG = "tamsui-drama";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

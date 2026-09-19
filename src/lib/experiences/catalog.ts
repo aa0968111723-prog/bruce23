@@ -244,9 +244,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "載入世界", body: "打開 tku-tamsui-drama-world-k4x9。等「淡江·淡水世界」載入，不是 FrameLab。" },
-      { title: "第一集", body: "從宮燈下的迎新開始，依關卡走校園闖關。" },
-      { title: "關卡", body: "把淡江／淡水當成可持續開發的劇本，而不是一次導覽 PDF。" },
+      { title: "載入世界", body: "公開站 tku-tamsui-drama-world-k4x9。標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。不是 FrameLab。" },
+      { title: "描述", body: "公開 JS 的 description 寫走訪宮燈大道、圖書館與驚聲大樓。作品集還沒看到第一集畫面。" },
+      { title: "闖關", body: "作品集未走完迎新闖關。HTTP 200 不是 coreFlow。" },
     ],
   },
   skatehub: {

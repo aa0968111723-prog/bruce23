@@ -83,13 +83,16 @@ export const linkedWorks: Project[] = [
     modalities: ["互動", "敘事", "3D"],
     process: [
       "打開 tku-tamsui-drama-world-k4x9.zeabur.app",
-      "等世界載入",
-      "從第一集宮燈下的迎新開始",
-      "依關卡走完校園",
+      "標題「淡江新生導覽 — 安倢的校園闖關」",
+      "首屏「載入淡江·淡水世界…」",
+      "公開 JS 寫走訪宮燈大道、圖書館與驚聲大樓",
     ],
     outputs: ["校園闖關公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["內容會隨學期更新，不宣稱完整學年劇本。"],
+    limitations: [
+      "內容會隨學期更新，不宣稱完整學年劇本。",
+      "2026-09-19 GET / HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。HTML 首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。作品集未走完闖關，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-tamsui-drama-world",
       live: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
@@ -102,7 +105,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
         href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
-        note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。不是 lunar-falcon-8p2r（那是 FrameLab）。",
+        note: "2026-09-19 HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。不是 FrameLab。",
       },
       {
         label: "GitHub · tku-tamsui-drama-world",
