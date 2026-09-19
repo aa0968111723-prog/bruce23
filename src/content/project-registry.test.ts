@@ -6,7 +6,9 @@ import {
   FRAMELAB_IDENTITY_VERSION,
   LIVE_PROBES_20260919,
   OFFICIAL_PROJECT_KEYS,
+  REJECTED_OWNER_DOMAIN_GUESSES,
   STALE_502_NOTE_SLUGS,
+  ZEABUR_SERVICES,
   framelabDeployByKey,
   isOfficialProjectKey,
   officialProjectCount,
@@ -73,5 +75,22 @@ describe("official project registry", () => {
       assert.ok(project.sourceReferences.every((item) => !/可能 502/.test(item.note)));
       assert.ok(project.limitations.every((item) => !/曾出現 502/.test(item)));
     }
+  });
+
+  it("keeps Zeabur provisioned domains, not the two swapped URLs from the owner dump", () => {
+    const drama = projects.find((item) => item.slug === "tamsui-drama");
+    const folio = projects.find((item) => item.slug === "folio");
+    const skate = projects.find((item) => item.slug === "skatehub");
+    const hermes = projects.find((item) => item.slug === "hermes-agent");
+    assert.equal(drama?.links.live, `https://${ZEABUR_SERVICES["tku-tamsui-drama-world"].domains[0]}`);
+    assert.equal(folio?.links.live, `https://${ZEABUR_SERVICES.canva2.domains[0]}`);
+    assert.equal(skate?.links.live, `https://${ZEABUR_SERVICES.dd.domains[0]}`);
+    assert.equal(hermes?.links.live, `https://${ZEABUR_SERVICES["hermes-agent"].domains[0]}/`);
+    assert.notEqual(drama?.links.live, "https://lunar-falcon-8p2r.zeabur.app");
+    assert.notEqual(folio?.links.live, "https://dd-k3f9.zeabur.app");
+    assert.equal(ZEABUR_SERVICES["hermes-agent-legacy-455"].domains[0], "455.zeabur.app");
+    assert.equal(REJECTED_OWNER_DOMAIN_GUESSES.length, 2);
+    assert.equal(REJECTED_OWNER_DOMAIN_GUESSES[0]?.actualDomain, ZEABUR_SERVICES["tku-tamsui-drama-world"].domains[0]);
+    assert.equal(REJECTED_OWNER_DOMAIN_GUESSES[1]?.actualDomain, ZEABUR_SERVICES.canva2.domains[0]);
   });
 });
