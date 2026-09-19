@@ -819,6 +819,7 @@ describe("cms persistence", () => {
     assert.ok(cutos.limitations.every((item) => !/SUSPENDED／502/.test(item)));
     assert.ok(cutos.sourceEvidence.every((item) => !/SUSPENDED／502/.test(item.note ?? "")));
     assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
+    assert.ok(cutos.process.some((item) => item.includes("載入示範影片")));
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

@@ -86,7 +86,7 @@ export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-200-20260919";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-home-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 

@@ -308,8 +308,8 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。標題 CUTOS — Conversational Video Editor。" },
-      { title: "匯入", body: "匯入一支影片。作品集這一頁沒有代替你上傳。" },
+      { title: "打開 CUTOS", body: "公開站 cutos.zeabur.app。首屏「AI 對話式影片剪輯」。可載入示範影片或上傳。" },
+      { title: "匯入", body: "示範片含停頓。作品集這一頁沒有代替你上傳。" },
       { title: "計畫", body: "用一句話產生可檢查的 Edit Plan，再套用非破壞時間軸。" },
     ],
   },
