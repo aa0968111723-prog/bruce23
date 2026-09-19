@@ -838,6 +838,8 @@ async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
   if (!project) return;
   const seedEn = localeEnForSlug(project.slug);
   const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
   await sql.query(
     `update projects
      set decisions = $2::jsonb,
@@ -845,6 +847,8 @@ async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
          limitations = $4::jsonb,
          source_evidence = $5::jsonb,
          locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
          updated_at = now()
      where slug = $1`,
     [
@@ -854,6 +858,8 @@ async function refreshPlanformLiveProbe(sql: Sql): Promise<void> {
       JSON.stringify(project.limitations),
       JSON.stringify(projectEvidence(project)),
       JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
     ],
   );
   await sql.query(

@@ -22,6 +22,8 @@ describe("experience playable chrome", () => {
     assert.equal(en.folioDocumentLayer, "document layer");
     assert.equal(zh.folioArtboards, "畫板");
     assert.equal(en.folioArtboards, "Artboards");
+    assert.equal(zh.folioNewDoc, "新增文件");
+    assert.equal(en.folioNewDoc, "New document");
     assert.equal(zh.hintInTree, "在同步樹中");
     assert.equal(en.hintInTree, "In the synced tree");
     assert.equal(zh.hintMissingFromTree, "不在這次有限檔案樹裡");
@@ -77,6 +79,20 @@ describe("experience playable chrome", () => {
     assert.match(posterEn.comparison?.estimateDisclaimer ?? "", /not eye-tracking/i);
     const planEn = overlayExperienceConfig(defaultExperienceConfig("planform"), "planform", "en");
     assert.match(planEn.honestyLabel ?? "", /not a code-compliance/i);
+    assert.match(planEn.intro ?? "", /My projects/i);
+    assert.match(planEn.intro ?? "", /New project/i);
+    assert.doesNotMatch(planEn.intro ?? "", /rotate, drag objects/i);
+    const planZh = overlayExperienceConfig(defaultExperienceConfig("planform"), "planform", "zh");
+    assert.match(planZh.intro ?? "", /我的專案/);
+    assert.doesNotMatch(planZh.intro ?? "", /旋轉、拖動物件/);
+    const folioZh = overlayExperienceConfig(defaultExperienceConfig("folio"), "folio", "zh");
+    const folioEn = overlayExperienceConfig(defaultExperienceConfig("folio"), "folio", "en");
+    assert.match(folioZh.intro ?? "", /文件櫃/);
+    assert.doesNotMatch(folioZh.intro ?? "", /指令層走一遍/);
+    assert.match(folioEn.intro ?? "", /file cabinet/i);
+    assert.doesNotMatch(folioEn.intro ?? "", /command layer/i);
+    assert.equal(folioZh.walkthrough?.[0]?.title, "文件櫃");
+    assert.equal(folioEn.walkthrough?.[0]?.title, "File cabinet");
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
     assert.match(zenEn.intro ?? "", /Take a breath/i);
@@ -196,8 +212,10 @@ describe("experience playable chrome", () => {
       { slug: "folio", experienceConfig: {}, interactionSteps: [], process: [] },
       "en",
     );
+    assert.ok(zh.some((step) => step.includes("文件櫃")));
     assert.ok(zh.some((step) => step.includes("畫布")));
     assert.ok(zh.some((step) => step.includes("畫板")));
+    assert.ok(en.some((step) => step.includes("File cabinet")));
     assert.ok(en.some((step) => step.includes("Canvas")));
     assert.ok(en.some((step) => step.includes("Artboards")));
     assert.ok(en.some((step) => step.includes("(src/components/editor/canvas-stage.tsx)")));

@@ -47,7 +47,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
         <iframe
           title={demo.label ?? `${project.title} live demo`}
           src={demo.url}
-          className="aspect-[16/10] w-full bg-surface-blue"
+          className="aspect-[16/10] w-full min-h-[28rem] bg-surface-blue sm:min-h-[min(70vh,36rem)]"
           loading="lazy"
           onError={() => setFailed(true)}
         />
@@ -73,3 +73,5 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
     </div>
   );
 }
+
+

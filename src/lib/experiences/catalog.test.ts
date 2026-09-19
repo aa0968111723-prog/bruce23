@@ -360,6 +360,8 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /ArtboardStage/);
     assert.match(folioWalk, /data-folio-artboard/);
     assert.match(folioWalk, /data-folio-shell/);
+    assert.match(folioWalk, /data-folio-cabinet/);
+    assert.match(folioWalk, /CabinetStage/);
     assert.match(folioWalk, /folioInsertText/);
     assert.match(folioWalk, /folioDocumentLayer/);
     assert.doesNotMatch(folioWalk, /\$\{title\} 文件層/);

@@ -183,7 +183,7 @@ describe("official project registry", () => {
   it("records PLANFORM public home as 我的專案 without claiming canvas coreFlow", () => {
     const project = projects.find((item) => item.slug === PLANFORM_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-public-home/);
+    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-project-home/);
     assert.equal(project.links.live, "https://planform-iso-k7d2.zeabur.app");
     assert.ok(project.process[0]?.includes("我的專案"));
     assert.ok(project.process[0]?.includes("新建專案"));
@@ -215,7 +215,7 @@ describe("official project registry", () => {
   it("records Folio first screen as 文件櫃 without claiming a publish coreFlow", () => {
     const project = projects.find((item) => item.slug === FOLIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-file-cabinet/);
+    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-cabinet-intro/);
     assert.equal(project.links.live, "https://canva2-k7qm.zeabur.app");
     assert.ok(project.process[0]?.includes("文件櫃"));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("文件櫃")));

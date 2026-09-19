@@ -104,7 +104,7 @@ export const experienceChrome = {
     openSourceFile: "開啟原始檔",
     reducedMotion: "已依系統設定關閉多餘動態。",
     emptyObjects: "尚未設定空間物件。",
-    planformDefaultIntro: "等角場佈示意：旋轉、拖動物件、看用途與尺寸。",
+    planformDefaultIntro: "公開站首屏是「我的專案」與「＋ 新建專案」。這裡是作品集場佈示意，不是線上專案，也不假裝已經拖過物件。",
     planformKeyboard: "上下鍵旋轉，Shift＋左右移動選取物件。",
     planformAria: "PLANFORM 場佈",
     rotate: "旋轉",
@@ -143,7 +143,7 @@ export const experienceChrome = {
     emptyWalkthrough: "尚未設定走查步驟。",
     walkDefaultIntro: "這是作品集逐步走查，不是線上產品本身。",
     walkDemoCanvas: "作品集走查畫面 · 不是線上產品",
-    folioDefaultIntro: "依公開 canva2／Folio 指令層走一遍。不是站內 Canva 編輯器。",
+    folioDefaultIntro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
     folioNotCounter: "左右鍵換步驟。畫面依儲存的走查步驟繪製，不是空白計數器。",
     walkAria: "Folio 走查",
     walkStepsAria: "走查步驟",
@@ -183,6 +183,9 @@ export const experienceChrome = {
     folioPreview: "預覽",
     folioDocumentLayer: "文件層",
     folioArtboards: "畫板",
+    folioNewDoc: "新增文件",
+    folioOnDevice: "存在這台裝置",
+    folioNoLogin: "不必登入",
   },
   en: {
     tabPlay: "Play",
@@ -269,7 +272,7 @@ export const experienceChrome = {
     openSourceFile: "Open source file",
     reducedMotion: "Extra motion is off per system settings.",
     emptyObjects: "No spatial objects are set yet.",
-    planformDefaultIntro: "Isometric layout sketch: rotate, drag objects, read use and size.",
+    planformDefaultIntro: "The public first screen is “My projects” and “+ New project”. This is a portfolio layout sketch, not a live project, and it does not pretend objects were already dragged.",
     planformKeyboard: "Up/down rotate. Shift+left/right move the selected object.",
     planformAria: "PLANFORM layout",
     rotate: "Rotate",
@@ -308,7 +311,7 @@ export const experienceChrome = {
     emptyWalkthrough: "No walkthrough steps are set yet.",
     walkDefaultIntro: "This is a portfolio walkthrough, not the live product.",
     walkDemoCanvas: "Portfolio walkthrough stage · not the live product",
-    folioDefaultIntro: "Walk the public canva2 / Folio command layer. This is not an in-site Canva editor.",
+    folioDefaultIntro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
     folioNotCounter: "Left and right change steps. The stage is drawn from saved walkthrough steps, not a blank counter.",
     walkAria: "Folio walkthrough",
     walkStepsAria: "Walkthrough steps",
@@ -348,6 +351,9 @@ export const experienceChrome = {
     folioPreview: "Preview",
     folioDocumentLayer: "document layer",
     folioArtboards: "Artboards",
+    folioNewDoc: "New document",
+    folioOnDevice: "On this device",
+    folioNoLogin: "No sign-in",
   },
 } as const;
 
@@ -518,7 +524,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   planform: {
     honestyLabel: "Pre-event rehearsal, not a code-compliance calculation",
-    intro: "Isometric layout sketch: rotate, drag objects, read use and size.",
+    intro: "The public first screen is “My projects” and “+ New project”. This is a portfolio layout sketch, not a live project, and it does not pretend objects were already dragged.",
     spatial: {
       objects: [
         { id: "desk", label: "Check-in desk", use: "Check-in / materials", size: "180×60 cm" },
@@ -563,8 +569,12 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   folio: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "Walk the public canva2 / Folio command layer. This is not an in-site Canva editor.",
+    intro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
+      {
+        title: "File cabinet",
+        body: "The public canva2-k7qm first screen is the file cabinet. It lives on this device; no sign-in.",
+      },
       {
         title: "Canvas",
         body: "Text, shapes, and components share one document model.",

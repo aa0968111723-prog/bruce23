@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-10",
-  "updatedAt": "2026-09-20T06:00:00Z",
+  "runId": "portfolio-agent-hour-11",
+  "updatedAt": "2026-09-20T07:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -806,7 +806,7 @@
     }
   ],
   "portfolioReady": false,
-  "currentProject": "hermes-console",
+  "currentProject": "folio",
   "currentRepository": "aa0968111723-prog/bruce23",
   "currentBranch": "codex/portfolio-agent-plan",
   "currentPR": 6,
@@ -846,24 +846,31 @@
     "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)",
     "GitHub visibility public probe merged as PR #44 and live: tamkang / FrameLab cabin+lunar no longer 訪客打不開原始碼 / 目前為私有",
     "Hermes Console conversation starter merged as PR #45 and live on production /work/hermes-console (今天想做什麼 quick-action chips, not 輸入關鍵詞看說明)",
-    "Probed all 17 Zeabur endpoints 100% HTTP 200 with low latency",
+    "PLANFORM canvas stamp merged as PR #46 and live on production /work/planform (我的專案 / ＋ 新建專案, not 等角場佈示意：旋轉、拖動物件)",
+    "Live Demo iframe enlarge merged as PR #47",
+    "Folio canvas intro merged as PR #48 (文件櫃 / 不必登入, not 指令層走一遍; EN first step File cabinet not Canvas)",
+    "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
-    "Merge PR #6 long-term integration plan onto main",
-    "Operate ty core flow on leader-dna-mcp-a7k2 without sheet credentials",
+    "Merge PR #6 long-term integration plan onto main without duplicate PRs",
+    "Folio / PLANFORM / CUTOS demo-clip coreFlow verification on a real browser",
+    "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
+    "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
     "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
   ],
   "testsPassed": 306,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
+  "deploymentStatus": "PR_6_OPEN",
+  "productionStatus": "PR46_PLANFORM_CANVAS_LIVE_FOLIO_INTRO_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
+      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN; cannot inspect deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
@@ -897,5 +904,5 @@
     "thumbnail": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": null, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Merge PR #6 to establish the official long-term portfolio plan on main. Guide Grok Bot on hourly sentinel inspections and repair bots on atomic cards without duplicate PRs."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After main deploys PR #46-#48, verify production /work/folio canvas quotes 文件櫃 / 不必登入. Folio / PLANFORM / CUTOS coreFlow stays BLOCKED on real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

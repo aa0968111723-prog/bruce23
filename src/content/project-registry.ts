@@ -90,7 +90,7 @@ export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-home-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
-export const PLANFORM_LIVE_PROBE_VERSION = "planform-public-home-20260919";
+export const PLANFORM_LIVE_PROBE_VERSION = "planform-project-home-20260920";
 
 export const PLANFORM_LIVE_PROBE_SLUG = "planform";
 
@@ -98,7 +98,7 @@ export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-home-20260920";
 
 export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
 
-export const FOLIO_LIVE_PROBE_VERSION = "folio-file-cabinet-20260919";
+export const FOLIO_LIVE_PROBE_VERSION = "folio-cabinet-intro-20260920";
 
 export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
