@@ -300,7 +300,10 @@ export const linkedWorks: Project[] = [
     process: ["打開 untitled-5.zeabur.app", "記一筆收支", "看分類", "看這個月"],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["本次探測曾出現 502。連結保留，狀態會隨部署變動。"],
+    limitations: [
+      "公開站 HTTP 200、標題「小財記帳」。頁面是前端渲染，作品集未驗證記帳核心流程。",
+      "不是作品集後台。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/-1",
       live: "https://untitled-5.zeabur.app",
@@ -310,7 +313,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "Zeabur 服務 untitled-5。本次探測可能 502，仍保留連結。",
+        note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。核心記帳流程尚未黑箱驗證。",
       },
       {
         label: "GitHub · -1",
@@ -335,16 +338,22 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開操作建議帶 ?mode=ask。",
       "與 tku-zen-ai（本地引擎）分開寫，避免假裝已接上雲端模型。",
+      "未輸入授權碼時只看得到工作台殼與授權邊界，不假裝已進入社團資料。",
     ],
     modalities: ["對話", "文書"],
     process: [
       "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-      "用 Ask 模式問社團文書或現場問題",
-      "不要把回覆當成已審核公告",
+      "未授權時會看到「請輸入授權碼 進入工作台」",
+      "草稿模式不會自動發布",
+      "不要把產出當成已審核公告",
     ],
     outputs: ["禪學社工作台公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["本次探測曾出現 502。與本地 tku-zen-ai 不是同一個產品。"],
+    limitations: [
+      "2026-09-19 探測 HTTP 200，標題「淡江大學領袖禪學社 · 工作台」。不是 502。",
+      "進入工作台需要授權碼。作品集訪客看不到社團資料。",
+      "與本地 tku-zen-ai 不是同一個產品。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-zen-agent",
       live: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
@@ -354,7 +363,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · tku-zen-agent-k7f2.zeabur.app",
         href: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
-        note: "Zeabur 服務 tku-zen-agent。建議 ?mode=ask。本次探測可能 502。",
+        note: "2026-09-19 探測 HTTP 200。標題「淡江大學領袖禪學社 · 工作台」。未授權會看到授權碼入口。不是 502。建議 ?mode=ask。",
       },
       {
         label: "GitHub · tku-zen-agent",

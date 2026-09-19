@@ -74,6 +74,30 @@ export const FRAMELAB_IDENTITY = {
 
 export const FRAMELAB_IDENTITY_VERSION = "framelab-identity-zh-canonical-20260919";
 
+export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
+
+export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
+
+export const LIVE_PROBES_20260919 = {
+  xiaocai: {
+    officialKey: "-1" as const,
+    liveUrl: "https://untitled-5.zeabur.app",
+    httpStatus: 200,
+    title: "小財記帳",
+    runtimeStatus: "RUNNING" as const,
+    coreFlowPass: false,
+  },
+  "tku-zen-agent": {
+    officialKey: "tku-zen-agent" as const,
+    liveUrl: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+    httpStatus: 200,
+    title: "淡江大學領袖禪學社 · 工作台",
+    runtimeStatus: "RUNNING" as const,
+    authBoundary: "authorization-code" as const,
+    coreFlowPass: false,
+  },
+} as const;
+
 export function officialProjectCount(): number {
   return OFFICIAL_PROJECT_KEYS.length;
 }

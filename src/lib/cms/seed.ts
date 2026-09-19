@@ -1,7 +1,12 @@
 import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
 import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
-import { FRAMELAB_IDENTITY, FRAMELAB_IDENTITY_VERSION } from "../../content/project-registry.ts";
+import {
+  FRAMELAB_IDENTITY,
+  FRAMELAB_IDENTITY_VERSION,
+  STALE_502_NOTE_VERSION,
+  STALE_502_NOTE_SLUGS,
+} from "../../content/project-registry.ts";
 import { projects } from "../../content/projects.ts";
 import { site } from "../../content/site.ts";
 import { canvaFieldsForArchive, canvaFieldsForProject } from "../canva/inventory.ts";
@@ -131,6 +136,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await clearUncustomizedHowSteps(sql);
   await refreshHermesDashboardLive(sql);
   await refreshFramelabIdentity(sql);
+  await refreshStale502Notes(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -576,6 +582,48 @@ async function refreshFramelabIdentity(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('framelab_identity_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [FRAMELAB_IDENTITY_VERSION],
+  );
+}
+
+async function refreshStale502Notes(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'stale_502_note_version' limit 1`,
+  );
+  if (meta[0]?.value === STALE_502_NOTE_VERSION) return;
+  for (const slug of STALE_502_NOTE_SLUGS) {
+    const project = projects.find((item) => item.slug === slug);
+    if (!project) continue;
+    const seedEn = localeEnForSlug(project.slug);
+    const seedZh = localeZhFromProject(project.slug);
+    const catalog = experienceForSlug(project.slug);
+    const experience = defaultExperienceConfig(project.slug);
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb,
+           process = $3::jsonb,
+           limitations = $4::jsonb,
+           source_evidence = $5::jsonb,
+           locale_json = $6::jsonb,
+           experience_mode = coalesce($7, experience_mode),
+           experience_config = $8::jsonb,
+           updated_at = now()
+       where slug = $1`,
+      [
+        project.slug,
+        JSON.stringify(project.decisions),
+        JSON.stringify(project.process),
+        JSON.stringify(project.limitations),
+        JSON.stringify(projectEvidence(project)),
+        JSON.stringify({ zh: seedZh, en: seedEn }),
+        catalog?.mode ?? null,
+        JSON.stringify(experience),
+      ],
+    );
+  }
+  await sql.query(
+    `insert into cms_meta (key, value) values ('stale_502_note_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [STALE_502_NOTE_VERSION],
   );
 }
 

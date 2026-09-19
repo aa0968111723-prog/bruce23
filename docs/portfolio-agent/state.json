@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "runId": "grok-impl-20260919-stale-502",
+  "updatedAt": "2026-09-19T13:10:00Z",
+  "overallStatus": "IN_PROGRESS",
+  "portfolioReady": false,
+  "currentProject": "xiaocai + tku-zen-agent",
+  "currentRepository": "aa0968111723-prog/bruce23",
+  "currentBranch": "fix/stale-502-xiaocai-zen-desk",
+  "currentPR": null,
+  "currentTask": "rewrite-stale-502-notes-xiaocai-zen-desk",
+  "taskStatus": "implementing",
+  "completedSteps": [
+    "Hermes k7q2 URL already on production",
+    "FrameLab identity split merged as PR #11 (504318e)",
+    "Probed untitled-5 HTTP 200 title 小財記帳",
+    "Probed tku-zen-agent-k7f2 HTTP 200 auth-code gate"
+  ],
+  "remainingSteps": [
+    "Land stale-502 note repair",
+    "Verify Zeabur deploy of 504318e on production FrameLab",
+    "Verify production xiaocai and tku-zen-agent pages after this PR deploys"
+  ],
+  "testsPassed": 78,
+  "testsFailed": 0,
+  "buildStatus": "vite-build-pass",
+  "deploymentStatus": "PR11_MERGED_PRODUCTION_NOT_YET_UPDATED",
+  "productionStatus": "STALE_CMS_COPY",
+  "blockers": [
+    {
+      "id": "ZEABUR_TOKEN",
+      "severity": "high",
+      "error": "Zeabur MCP ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed 2026-09-19",
+      "requiredAccess": "valid ZEABUR_API_TOKEN",
+      "blocks17of17": false,
+      "nextAction": "Retry deploy verify after token is valid or Zeabur auto-deploys main"
+    }
+  ],
+  "gates": {
+    "online": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "coreFlow": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "completeInfo": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "readiness70": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "mobileSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
+    "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
+  },
+  "nextExactStep": "After this branch is PR'd: if production /work/framelab still has lunar live URL and cabin 502, diagnose Zeabur deploy of 504318e. Then after this PR deploys, confirm /work/xiaocai and /work/tku-zen-agent no longer say 502. Next product core flow: planform-iso or ty."
+}
