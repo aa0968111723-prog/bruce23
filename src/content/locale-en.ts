@@ -242,6 +242,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No legal occupancy or egress-width calculation.",
         "Not listed on the App Store.",
         "This is pre-event rehearsal, not a live command system.",
+        "Probed 2026-09-19: GET /version.json returns 1.0.0 commit 1b8513b. The public site is an SPA; this portfolio has not completed create-project → drag-object, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.planform,

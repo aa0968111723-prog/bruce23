@@ -6,6 +6,8 @@ import {
   AIOS_LIVE_PROBE_VERSION,
   CUTOS_LIVE_PROBE_SLUG,
   CUTOS_LIVE_PROBE_VERSION,
+  PLANFORM_LIVE_PROBE_SLUG,
+  PLANFORM_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -135,6 +137,17 @@ describe("official project registry", () => {
     assert.ok(project.sourceReferences.every((item) => !/SUSPENDED／502/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/SUSPENDED／502/.test(item)));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 502")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records PLANFORM live version.json without claiming canvas coreFlow", () => {
+    const project = projects.find((item) => item.slug === PLANFORM_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(PLANFORM_LIVE_PROBE_VERSION, /planform-version-json/);
+    assert.equal(project.links.live, "https://planform-iso-k7d2.zeabur.app");
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("1.0.0")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("1b8513b")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

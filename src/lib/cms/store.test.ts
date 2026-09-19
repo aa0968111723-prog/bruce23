@@ -822,6 +822,34 @@ describe("cms persistence", () => {
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites PLANFORM evidence with version.json probe and honest coreFlow gap", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       where slug = $1`,
+      [
+        "planform",
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · planform-iso-k7d2.zeabur.app",
+            href: "https://planform-iso-k7d2.zeabur.app",
+            note: "AGENT_PROTOCOL.md 記載的 Zeabur 正式站。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'planform_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const plan = await getPublishedProject(sql, "planform");
+    assert.match(plan.sourceEvidence.find((item) => item.href?.includes("planform-iso-k7d2"))?.note ?? "", /1\.0\.0/);
+    assert.ok(plan.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(plan.sourceEvidence.some((item) => item.note.includes("docs/agent-handoff/AGENT_PROTOCOL.md")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
