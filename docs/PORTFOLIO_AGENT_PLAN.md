@@ -304,8 +304,8 @@ https://canva2-k7qm.zeabur.app/
 
 ### Phase 0：安全與基準
 
-- [ ] 建立 docs/portfolio-agent/state.json。
-- [ ] 建立 lock 與單一寫入線規則。
+- [x] 建立 docs/portfolio-agent/state.json。
+- [x] 建立本機 lock 與單一寫入線規則（見第 25 節；跨主機仍須協調）。
 - [ ] 掃描 secrets 是否進入 Git、public、client bundle。
 - [ ] 檢查未提交修改。
 - [ ] 記錄目前 HEAD、部署狀態與 build baseline。
@@ -884,4 +884,23 @@ Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、�
 - Grok Bot 不得直接推送 main/master。
 - Grok Bot 必須使用實測證據，不得只依賴 README 或卡片上的狀態。
 - Grok Bot 的 PORTFOLIO_READY 必須與主代理的完成報告相互核對。
+
+## 25. 首輪啟動與本機執行協定（2026-09-19）
+
+本輪唯一任務：Phase 0 執行基準與單一寫入鎖。工作目錄為 `D:\bruce23`，沿用 PR #6 分支。
+
+- Codex 每小時整點續跑已啟用，automation ID：`bruce23`。
+- Grok Bot 尚未啟動；本次沒有已設定的 Grok 執行管道。
+- 新增 `scripts/portfolio-agent-lock.mjs`。修改前執行 `node scripts/portfolio-agent-lock.mjs acquire <unique-run-id>`；結束後以相同 ID 執行 `release`。`status` 可讀取目前持有人。
+- 鎖位於 Git common directory，不進入 Git 或 client bundle，同一 clone 的 worktree 共用。其他 clone／主機不共用此鎖；啟動另一寫入者前必須另行協調。不得僅因鎖過期便刪除；中斷留下的鎖需先確認原執行者已停止。
+- 入口實測：作品集 HTTP 200；外部作品 16/17 HTTP 200，Hermes Agent 三次 HTTP 502。HTTP 200 不代表 online-ready 或核心流程通過。
+- lunar 與 cabin 都回傳 FrameLab title，仍須核對 repo 與 Zeabur service，未確認 canonical identity。
+- typecheck 通過；lint 0 errors、3 個既有 warnings；鎖的競爭／持有人測試通過。
+- 原有 `npm run build` 在 Windows 因 `spawn vite ENOENT` 失敗。使用相同環境 wrapper 直接呼叫 `node node_modules/vite/bin/vite.js build` 成功，PGLite 素材複製成功；未設定 DATABASE_URL，資料庫 migration 跳過。
+- 目前程式與生成 client assets 的常見 token／private-key pattern 掃描未命中；這不是完整資安或 Git 歷史稽核。
+- 本輪沒有修改 UI、CMS、資料庫、外部作品或部署。Mobile／desktop 核心操作與 production deployment 仍未驗證，所有完成 gate 維持未通過。
+
+公開入口證據：`docs/portfolio-agent/endpoint-evidence.json`。完整結果見 `runtime-report.json`。
+
+下一輪唯一任務：確認 Hermes Agent 的 repo 與 Zeabur service 身分，定位重複 HTTP 502 的原因，再依外部修復流程處理。
 

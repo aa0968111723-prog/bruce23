@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-18T23:06:56Z",
+  "updatedAt": "2026-09-19T09:01:13.2070164Z",
   "overallStatus": "IN_PROGRESS",
-  "verificationStatus": "BASELINE_NOT_VERIFIED",
+  "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
     "planPullRequest": 6,
@@ -45,142 +45,465 @@
       "status": "NOT_VERIFIED"
     }
   },
-  "activeTask": "baseline-public-and-black-box-verification",
+  "activeTask": "phase-0-lock-and-execution-baseline",
   "highestPriorityIssue": {
-    "id": "PORTFOLIO-STATE-001",
-    "title": "Shared runtime state files were missing",
+    "id": "HERMES-AGENT-HTTP-502",
+    "title": "Hermes Agent public sessions route repeatedly returns HTTP 502",
     "severity": "high",
-    "status": "addressed_in_this_pr",
+    "status": "open",
     "evidence": [
-      "docs/portfolio-agent/state.json was absent on the plan branch",
-      "docs/portfolio-agent/runtime-report.json was absent on the plan branch"
+      "docs/portfolio-agent/endpoint-evidence.json",
+      "Three requests returned HTTP 502 this run."
     ],
-    "impact": "The main agent and Grok Bot could not share a durable per-project verification baseline."
+    "impact": "Blocks online and core-flow readiness."
   },
   "inspectionLimitations": [
-    "The current runner could not reach the 17 public hosts: curl failed at proxy CONNECT timeout and the web reader reported the hosts as inaccessible.",
-    "No deployment, core-flow, mobile, desktop, thumbnail, or security gate is marked as passed without direct evidence."
+    "HTTP checks do not verify rendered pages, core flows, UX, or deployed identity.",
+    "Zeabur deployment metadata and repository/service mappings remain unverified.",
+    "Grok Bot is not activated: no execution channel configured."
   ],
-  "nextTask": "Run authenticated/public endpoint verification from a network that can reach the configured hosts, then test one highest-priority repair target.",
+  "nextTask": "Identify Hermes Agent repository and Zeabur service from authoritative metadata, then diagnose repeated HTTP 502 without changing service secrets.",
   "projects": [
     {
       "key": "forge-bloom-quiet-falcon",
       "repository": "aa0968111723-prog/forge-bloom-quiet-falcon",
       "publicUrl": "https://forge-bloom-k7xq.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "forge-bloom-quiet-falcon",
+        "url": "https://forge-bloom-k7xq.zeabur.app/",
+        "status": 200,
+        "title": "淡江世界",
+        "ogTags": [
+          "<meta property=\"og:type\" content=\"x:game\"/>",
+          "<meta property=\"og:title\" content=\"淡江世界\"/>",
+          "<meta property=\"og:description\" content=\"五虎崗上的 3D 校園巡禮。樸實剛毅。\"/>"
+        ],
+        "checkedAt": "2026-09-19T08:58:57.0931106Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "lunar-crystal-falcon-granite",
       "repository": "aa0968111723-prog/lunar-crystal-falcon-granite",
       "publicUrl": "https://lunar-falcon-8p2r.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "lunar-crystal-falcon-granite",
+        "url": "https://lunar-falcon-8p2r.zeabur.app/",
+        "status": 200,
+        "title": "FrameLab",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"FrameLab\">",
+          "<meta property=\"og:image\" content=\"https://lunar-falcon-8p2r.zeabur.app/og.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:56.9724713Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "tku-tamsui-drama-world",
       "repository": "aa0968111723-prog/tku-tamsui-drama-world",
       "publicUrl": "https://tku-tamsui-drama-world-k4x9.zeabur.app/",
       "urlStatus": "candidate_requires_confirmation",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "tku-tamsui-drama-world",
+        "url": "https://tku-tamsui-drama-world-k4x9.zeabur.app/",
+        "status": 200,
+        "title": "淡江新生導覽 — 安倢的校園闖關",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:57.1876802Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "dd",
       "repository": "aa0968111723-prog/dd",
       "publicUrl": "https://dd-k3f9.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "dd",
+        "url": "https://dd-k3f9.zeabur.app/",
+        "status": 200,
+        "title": "直排輪基地 SkateHub｜走向健康，走向陽光",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:56.9724658Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "canva2",
       "repository": "aa0968111723-prog/canva2",
       "publicUrl": "https://canva2-k7qm.zeabur.app/",
       "urlStatus": "candidate_requires_confirmation",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "canva2",
+        "url": "https://canva2-k7qm.zeabur.app/",
+        "status": 200,
+        "title": "Folio",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"Folio\">",
+          "<meta property=\"og:image\" content=\"https://canva2-k7qm.zeabur.app/og.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:56.9724657Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "delta-horizon-cliff-fern",
       "repository": "aa0968111723-prog/delta-horizon-cliff-fern",
       "publicUrl": "https://delta-horizon-k7f2.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "delta-horizon-cliff-fern",
+        "url": "https://delta-horizon-k7f2.zeabur.app/",
+        "status": 200,
+        "title": "禪學社 Studio",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"淡江禪學社 Studio\">",
+          "<meta property=\"og:image\" content=\"https://delta-horizon-k7f2.zeabur.app/og.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:57.5917832Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "ty",
       "repository": "aa0968111723-prog/ty",
       "publicUrl": "https://leader-dna-mcp-a7k2.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "ty",
+        "url": "https://leader-dna-mcp-a7k2.zeabur.app/",
+        "status": 200,
+        "title": "淡江大學禪學社｜專注力挑戰賽",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"淡江大學禪學社｜專注力挑戰賽\">",
+          "<meta property=\"og:description\" content=\"60 秒專注力挑戰，現場暖身、正式挑戰、即時查看活動狀態。\">",
+          "<meta property=\"og:type\" content=\"x:game\">",
+          "<meta property=\"og:url\" content=\"https://leader-dna-mcp-a7k2.zeabur.app/\">",
+          "<meta property=\"og:image\" content=\"https://leader-dna-mcp-a7k2.zeabur.app/og/og-focus-challenge-3d-turtle-v2.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:57.1362258Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "cabin-shale-raven-swift",
       "repository": "aa0968111723-prog/cabin-shale-raven-swift",
       "publicUrl": "https://cabin-shale-k7q2.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "cabin-shale-raven-swift",
+        "url": "https://cabin-shale-k7q2.zeabur.app/",
+        "status": 200,
+        "title": "FrameLab",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"FrameLab\">",
+          "<meta property=\"og:image\" content=\"https://cabin-shale-k7q2.zeabur.app/og.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:57.5415492Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "hermes-agent",
       "repository": null,
       "publicUrl": "https://455.zeabur.app/sessions",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "http_failure",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Identify Hermes Agent repository and Zeabur service from authoritative metadata, then diagnose repeated HTTP 502 without changing service secrets.",
+      "readinessStatus": "repair-needed",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "hermes-agent",
+        "url": "https://455.zeabur.app/sessions",
+        "status": 502,
+        "title": "",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:57.1791603Z"
+      },
+      "failedCriteria": ["Public sessions endpoint returns HTTP 502"],
+      "readinessScore": null
     },
     {
       "key": "hermes-console",
       "repository": null,
       "publicUrl": "https://344.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "hermes-console",
+        "url": "https://344.zeabur.app/",
+        "status": 200,
+        "title": "Hermes",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:57.698589Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "wood-ivory-blaze-maple",
       "repository": "aa0968111723-prog/wood-ivory-blaze-maple",
       "publicUrl": "https://ai-chat-8rq3.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "wood-ivory-blaze-maple",
+        "url": "https://ai-chat-8rq3.zeabur.app/",
+        "status": 200,
+        "title": "Lumen",
+        "ogTags": [
+          "<meta property=\"og:title\" content=\"Lumen\">",
+          "<meta property=\"og:description\" content=\"口袋裡的多模態 AI 語音創作球。說話就能設計、搜尋、生成，手指直接整理。\">",
+          "<meta property=\"og:type\" content=\"x:game\">",
+          "<meta property=\"og:image\" content=\"https://ai-chat-8rq3.zeabur.app/og.jpg\">",
+          "<meta property=\"og:image:width\" content=\"1200\">",
+          "<meta property=\"og:image:height\" content=\"630\">"
+        ],
+        "checkedAt": "2026-09-19T08:58:57.7149968Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "-1",
       "repository": "aa0968111723-prog/-1",
       "publicUrl": "https://untitled-5.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "-1",
+        "url": "https://untitled-5.zeabur.app/",
+        "status": 200,
+        "title": "小財記帳",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:57.7978778Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "tku-zen-agent",
       "repository": "aa0968111723-prog/tku-zen-agent",
       "publicUrl": "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "tku-zen-agent",
+        "url": "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
+        "status": 200,
+        "title": "淡江大學領袖禪學社 · 工作台",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:58.2055648Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "duigao",
       "repository": "aa0968111723-prog/duigao",
       "publicUrl": "https://duigao-k7q2.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "duigao",
+        "url": "https://duigao-k7q2.zeabur.app/",
+        "status": 200,
+        "title": "對稿｜圖片與影片協作空間",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:57.9292089Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "planform-iso",
       "repository": "aa0968111723-prog/planform-iso",
       "publicUrl": "https://planform-iso-k7d2.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "planform-iso",
+        "url": "https://planform-iso-k7d2.zeabur.app/",
+        "status": 200,
+        "title": "PLANFORM｜活動空間彩排",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:58.0055798Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "ai_os",
       "repository": "aa0968111723-prog/ai_os",
       "publicUrl": "https://vexlark.co/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "ai_os",
+        "url": "https://vexlark.co/",
+        "status": 200,
+        "title": "Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫",
+        "ogTags": [
+          "<meta property=\"og:type\" content=\"website\" />",
+          "<meta property=\"og:site_name\" content=\"Aios\" />",
+          "<meta property=\"og:locale\" content=\"zh_TW\" />",
+          "<meta property=\"og:title\" content=\"Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫\" />",
+          "<meta property=\"og:description\" content=\"Aios 是 AI 創作作業系統：從一句目標開始，AI 理解你的資料、規劃下一步，並協調 AI 與團隊一起把想法變成可執行的完整計畫。進度、來源與成本一目了然，重要動作由你核准。\" />",
+          "<meta property=\"og:url\" content=\"https://ai-os-app.zeabur.app/\" />",
+          "<meta property=\"og:image\" content=\"https://ai-os-app.zeabur.app/screenshots/desktop-dashboard.png\" />",
+          "<meta property=\"og:image:alt\" content=\"Aios 今日工作台：把想法變成可執行的團隊計畫\" />",
+          "<meta property=\"og:image:width\" content=\"1280\" />",
+          "<meta property=\"og:image:height\" content=\"800\" />"
+        ],
+        "checkedAt": "2026-09-19T08:58:58.0048475Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     },
     {
       "key": "CUTOS",
       "repository": "aa0968111723-prog/CUTOS",
       "publicUrl": "https://cutos.zeabur.app/",
       "urlStatus": "configured",
-      "verificationStatus": "not_verified"
+      "verificationStatus": "not_verified",
+      "scoreEvidence": [],
+      "coreFlowPass": false,
+      "onlineReady": false,
+      "nextRepairTask": "Verify source identity and a safe core flow before scoring.",
+      "readinessStatus": "unknown",
+      "completeInfo": false,
+      "endpointEvidence": {
+        "key": "CUTOS",
+        "url": "https://cutos.zeabur.app/",
+        "status": 200,
+        "title": "CUTOS — Conversational Video Editor",
+        "ogTags": [],
+        "checkedAt": "2026-09-19T08:58:58.1724393Z"
+      },
+      "failedCriteria": [],
+      "readinessScore": null
     }
   ]
 }
