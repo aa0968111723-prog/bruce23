@@ -2,6 +2,10 @@ import type { Sql } from "../db.ts";
 import { archiveItems } from "../../content/archive.ts";
 import { archiveLocaleEnForId, localeEnForSlug, localeZhFromArchive, localeZhFromProject, mergeSeedEnglish, siteLocaleEn, siteLocaleZh } from "../../content/locale-en.ts";
 import {
+  AIOS_LIVE_PROBE_SLUG,
+  AIOS_LIVE_PROBE_VERSION,
+  TY_CONTRACT_SLUGS,
+  TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
   STALE_502_NOTE_VERSION,
@@ -137,6 +141,8 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshHermesDashboardLive(sql);
   await refreshFramelabIdentity(sql);
   await refreshStale502Notes(sql);
+  await refreshAiosLiveProbe(sql);
+  await refreshTyContractCopy(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -624,6 +630,86 @@ async function refreshStale502Notes(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('stale_502_note_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [STALE_502_NOTE_VERSION],
+  );
+}
+
+async function refreshAiosLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'aios_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === AIOS_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === AIOS_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set limitations = $2::jsonb,
+         source_evidence = $3::jsonb,
+         locale_json = $4::jsonb,
+         live_demo_status = case
+           when live_demo_status in ('failed', 'unavailable') then 'pending'
+           else live_demo_status
+         end,
+         live_demo_error = case
+           when live_demo_status in ('failed', 'unavailable') then null
+           else live_demo_error
+         end,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('aios_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [AIOS_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshTyContractCopy(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'ty_contract_version' limit 1`,
+  );
+  if (meta[0]?.value === TY_CONTRACT_VERSION) return;
+  for (const slug of TY_CONTRACT_SLUGS) {
+    const project = projects.find((item) => item.slug === slug);
+    if (!project) continue;
+    const seedEn = localeEnForSlug(project.slug);
+    const seedZh = localeZhFromProject(project.slug);
+    const catalog = experienceForSlug(project.slug);
+    const experience = defaultExperienceConfig(project.slug);
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb,
+           process = $3::jsonb,
+           limitations = $4::jsonb,
+           source_evidence = $5::jsonb,
+           locale_json = $6::jsonb,
+           experience_mode = coalesce($7, experience_mode),
+           experience_config = $8::jsonb,
+           updated_at = now()
+       where slug = $1`,
+      [
+        project.slug,
+        JSON.stringify(project.decisions),
+        JSON.stringify(project.process),
+        JSON.stringify(project.limitations),
+        JSON.stringify(projectEvidence(project)),
+        JSON.stringify({ zh: seedZh, en: seedEn }),
+        catalog?.mode ?? null,
+        JSON.stringify(experience),
+      ],
+    );
+  }
+  await sql.query(
+    `insert into cms_meta (key, value) values ('ty_contract_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [TY_CONTRACT_VERSION],
   );
 }
 
