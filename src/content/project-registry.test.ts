@@ -229,8 +229,11 @@ describe("official project registry", () => {
     assert.equal(project.links.live, "https://344.zeabur.app");
     assert.ok(project.process[0]?.includes("344.zeabur.app"));
     assert.ok(project.process.some((item) => item.includes("今天想做什麼")));
+    assert.ok(project.process.some((item) => item.includes("研究／創作／分析")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("今天想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("研究／創作／分析")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.limitations.every((item) => !item.includes("輸入關鍵詞")));
   });
 
   it("records SkateHub live slogan without claiming a mileage coreFlow", () => {

@@ -125,26 +125,26 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "hermes-console") {
     return {
       ...base,
-      intro: "未連線。任何回覆都是本地說明，不是 Agent 執行結果。",
+      intro: "公開站首屏是「今天想做什麼？」與快速開始（研究／創作／分析）。這裡是作品集本地說明，不是 Agent 執行結果。",
       conversation: {
         engine: "hermes-preview",
         disclaimer: "這是作品集互動展示，沒有連到 Hermes 執行期。",
-        starter: "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。",
-        placeholder: "輸入一句話",
+        starter: "公開站首屏是「今天想做什麼？」。快速開始是研究、創作、分析。這裡不會假裝已經送出任務。",
+        placeholder: "輸入研究、創作、分析",
         sourceNote: "未連線。任何回覆都是本地說明，不是 Agent 執行結果。",
-        suggestions: ["海報", "連線", "任務"],
+        suggestions: ["研究", "創作", "分析"],
         replies: [
           {
-            match: "海報",
-            reply: "這會是對稿或 Poster Vision 的事。Hermes Console 若連上 MCP，才會把意圖交給工具。這裡沒有連線。",
+            match: "研究",
+            reply: "公開站快速開始「研究」會填「幫我找網宣靈感。」。作品集這一頁沒有連到 Agent，不會真的去找。",
           },
           {
-            match: "連線",
-            reply: "未設定 HERMES_API_URL 時，工作區仍應開啟，並顯示尚未連線。GitHub 網址不是 MCP。",
+            match: "創作",
+            reply: "公開站「創作」會填「幫我做一張網宣海報。」。這裡不會生成海報。",
           },
           {
-            match: "任務",
-            reply: "Console 保存會話與任務版本；秘密不進瀏覽器。本頁是作品集對話預覽。",
+            match: "分析",
+            reply: "公開站「分析」會填「請分析這張文宣。」。這裡沒有文宣，也不會假裝已分析畫面。",
           },
         ],
       },
