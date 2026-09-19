@@ -349,7 +349,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
       ],
       [
         "Open 344.zeabur.app (no sign-in)",
-        "First screen is “What do you want to do today?” and a personal workspace",
+        "First screen is “What do you want to do today?”, Quick start (Research / Create / Analyze), and a personal workspace",
         "Optionally open Settings and connections",
         "The portfolio conversation preview is not an Agent execution",
       ],
@@ -358,7 +358,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Needs persistent disk and a long-lived Node process — not a fit for stateless serverless.",
         "Contract tests are not live third-party verification.",
         "This page shows no keys, invite codes, or secrets from internal console screenshots.",
-        "Probed 2026-09-19: GET / HTTP 200, title Hermes. First screen is the turtle assistant / what-do-you-want-today workspace. This portfolio has not sent a real task, so coreFlow is not passed.",
+        "Probed 2026-09-20: GET / HTTP 200, title Hermes. First screen h1 is “What do you want to do today?” plus Quick start (Research / Create / Analyze). This portfolio has not sent a real task, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras["hermes-console"],

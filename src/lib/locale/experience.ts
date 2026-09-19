@@ -125,7 +125,7 @@ export const experienceChrome = {
     zenPlaceholder: "輸入一句心情",
     zenStarter: "這是本地回應引擎，不是雲端 LLM。同一句話會得到同一組回覆。",
     hermesPlaceholder: "輸入一句話",
-    hermesStarter: "這是作品集互動展示，沒有連到 Hermes 執行期。輸入關鍵詞看說明。",
+    hermesStarter: "這是作品集互動展示，沒有連到 Hermes 執行期。",
     hermesUnmatched: "收到「{value}」。沒有雲端模型，也不會假裝工具已執行。來源：{repo}。",
     uploadPoster: "上傳海報",
     samplePoster: "樣本海報",
@@ -290,7 +290,7 @@ export const experienceChrome = {
     zenPlaceholder: "Type a mood line",
     zenStarter: "This is a local reply engine, not a cloud LLM. The same line gets the same replies.",
     hermesPlaceholder: "Type a line",
-    hermesStarter: "This is a portfolio interactive demo; it is not connected to the Hermes runtime. Type a keyword for a note.",
+    hermesStarter: "This is a portfolio interactive demo; it is not connected to the Hermes runtime.",
     hermesUnmatched: "Got “{value}”. There is no cloud model, and no tool is pretended to have run. Source: {repo}.",
     uploadPoster: "Upload poster",
     samplePoster: "Sample poster",
@@ -603,36 +603,39 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   "hermes-console": {
     honestyLabel: "Portfolio interactive demo; not connected to the Hermes runtime",
-    intro: "Offline. Every reply is a local note, not an agent execution result.",
+    intro:
+      "The public first screen is “What do you want to do today?” plus Quick start (Research / Create / Analyze). This page is a local note, not an Agent execution.",
     conversation: {
       disclaimer: "This is a portfolio interactive demo; it is not connected to the Hermes runtime.",
-      starter: "This is a portfolio interactive demo; it is not connected to the Hermes runtime. Type a keyword for a note.",
-      placeholder: "Type a line",
+      starter:
+        "The public first screen is “What do you want to do today?” Quick start is Research, Create, Analyze. This page does not pretend a task was sent.",
+      placeholder: "Type Research, Create, or Analyze",
       sourceNote: "Offline. Every reply is a local note, not an agent execution result.",
-      suggestions: ["Poster", "Connection", "Task"],
+      suggestions: ["Research", "Create", "Analyze"],
       replies: [
         {
-          matchZh: "海報",
-          match: "poster",
+          matchZh: "研究",
+          match: "research",
           reply:
-            "That would be review or Poster Vision. Hermes Console only hands intent to tools if MCP is actually linked. It is not linked here.",
+            "On the live site, Research fills “Help me find flyer inspiration.” This page is not connected to the Agent, so it will not actually search.",
         },
         {
-          matchZh: "連線",
-          match: "connect",
-          reply: "Without HERMES_API_URL the workspace should still open and show not connected. A GitHub URL is not MCP.",
+          matchZh: "創作",
+          match: "create",
+          reply: "On the live site, Create fills “Help me make a flyer poster.” This page will not generate a poster.",
         },
         {
-          matchZh: "任務",
-          match: "task",
-          reply: "The console keeps sessions and task versions; secrets stay out of the browser. This page is a portfolio chat preview.",
+          matchZh: "分析",
+          match: "analyze",
+          reply:
+            "On the live site, Analyze fills “Please analyze this flyer.” There is no flyer here, and the page does not pretend it analyzed one.",
         },
       ],
     },
     walkthrough: [
       {
         title: "Workspace",
-        body: "Chat, tasks, and tool entry in one place. Without HERMES_API_URL it should still open and show not connected.",
+        body: "Public host 344 needs no sign-in. First screen h1 is “What do you want to do today?” plus Quick start (Research / Create / Analyze). This portfolio page is still a local note, not Agent execution.",
         path: "app/api/chat/route.ts",
       },
       {

@@ -112,6 +112,13 @@ describe("experience catalog", () => {
     assert.ok((experienceCatalog["tku-zen-ai"].fileHints ?? []).some((item) => item.path === "src/app/page.tsx"));
   });
 
+  it("keeps hermes-console walkthrough on the live what-to-do-today chips", () => {
+    const steps = experienceCatalog["hermes-console"].walkthrough ?? [];
+    assert.match(steps[0]?.body ?? "", /今天想做什麼/);
+    assert.match(steps[0]?.body ?? "", /研究／創作／分析/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入關鍵詞看說明/);
+  });
+
   it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
     const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "Sign in"));

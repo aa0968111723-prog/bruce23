@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T21:20:00Z",
-  "runId": "grok-impl-20260920-github-visibility-public",
+  "generatedAt": "2026-09-20T22:10:00Z",
+  "runId": "grok-impl-20260920-hermes-console-quick-start",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T20:50:00Z",
+  "startedAt": "2026-09-20T21:30:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,15 +12,15 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "github-visibility-public-probe",
-  "inspectedCommit": "64f2d01",
+  "task": "hermes-console-quick-start",
+  "inspectedCommit": "cabbe06",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + project-registry 22 + cms store 51 + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + project-registry/catalog/config/locale 68 + cms store 51 + vite build",
     "browser": "BLOCKED",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
@@ -29,33 +29,34 @@
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/tku-zen-agent",
+      "url": "https://bruce23-k7m2.zeabur.app/work/tamkang-world",
       "status": 200,
-      "pr43Landed": true,
-      "copy": "process 請輸入授權碼 / 淡江大學領袖禪學社; GitHub note 不可以轉成 public / knowledge/雲端文件",
+      "pr44Landed": true,
+      "copy": "GitHub evidence 未登入 API private:false / 公開儲存庫. No 訪客打不開原始碼.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T20:55:00Z"
+      "checkedAt": "2026-09-20T21:40:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
+      "status": 200,
+      "pr44Landed": true,
+      "copy": "cabin-shale-raven-swift and lunar-crystal-falcon-granite notes private:false. No 目前為私有.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T21:40:00Z"
     },
     {
       "url": "https://api.github.com/repos/aa0968111723-prog/forge-bloom-quiet-falcon",
       "status": 200,
-      "copy": "unauthenticated private:false. Production /work/tamkang-world still says 目前為私有 / 訪客打不開原始碼.",
+      "copy": "unauthenticated private:false",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T21:00:00Z"
+      "checkedAt": "2026-09-20T21:40:00Z"
     },
     {
-      "url": "https://api.github.com/repos/aa0968111723-prog/cabin-shale-raven-swift",
+      "url": "https://344.zeabur.app/",
       "status": 200,
-      "copy": "unauthenticated private:false. FrameLab card still labels cabin/lunar GitHub 目前為私有.",
+      "copy": "title Hermes. JS h1 今天想做什麼？ quick-actions 研究／創作／分析／客群／靈感／設計. Production /work/hermes-console canvas still 輸入關鍵詞看說明 + 海報／連線／任務.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T21:00:00Z"
-    },
-    {
-      "url": "https://api.github.com/repos/aa0968111723-prog/lunar-crystal-falcon-granite",
-      "status": 200,
-      "copy": "unauthenticated private:false. Canonical product source remains public FrameLab.",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T21:00:00Z"
+      "checkedAt": "2026-09-20T21:50:00Z"
     }
   ],
   "gates": {
@@ -73,8 +74,8 @@
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件"
   ],
   "nextSteps": [
-    "Land GitHub visibility honesty for tamkang and FrameLab locale deploys",
-    "After deploy, verify production no longer claims those repos are private",
+    "Land Hermes Console conversation stamp to live 今天想做什麼 chips",
+    "After deploy, verify production canvas no longer says 輸入關鍵詞看說明",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }

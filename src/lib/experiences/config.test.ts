@@ -213,7 +213,13 @@ describe("experience config merge", () => {
     assert.match(zen.conversation?.starter ?? "", /Take a breath/);
     assert.doesNotMatch(zen.conversation?.starter ?? "", /輸入一句心情/);
     const hermes = defaultExperienceConfig("hermes-console");
-    assert.ok(hermes.conversation?.suggestions?.includes("海報"));
+    assert.match(hermes.intro ?? "", /今天想做什麼/);
+    assert.match(hermes.conversation?.starter ?? "", /今天想做什麼/);
+    assert.doesNotMatch(hermes.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.ok(hermes.conversation?.suggestions?.includes("研究"));
+    assert.ok(hermes.conversation?.suggestions?.includes("創作"));
+    assert.ok(hermes.conversation?.suggestions?.includes("分析"));
+    assert.ok(!hermes.conversation?.suggestions?.includes("海報"));
     const zenDesk = defaultExperienceConfig("tku-zen-agent");
     assert.match(zenDesk.conversation?.starter ?? "", /請輸入授權碼/);
     assert.match(zenDesk.intro ?? "", /淡江大學領袖禪學社/);

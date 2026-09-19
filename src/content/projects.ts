@@ -644,7 +644,7 @@ const featuredWorks: Project[] = [
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
       "打開 344.zeabur.app（免登入）",
-      "首屏是「今天想做什麼？」與個人工作區",
+      "首屏是「今天想做什麼？」、快速開始（研究／創作／分析）與個人工作區",
       "可選「設定與連線」",
       "作品集這一頁的對話預覽不是 Agent 執行結果",
     ],
@@ -654,7 +654,7 @@ const featuredWorks: Project[] = [
       "需要持久化磁碟與長駐 Node，不適用無狀態 serverless。",
       "契約測試不是第三方服務的實機驗證。",
       "此頁不展示任何金鑰、邀請碼或內部控制台截圖中的秘密。",
-      "2026-09-19 GET / HTTP 200，標題 Hermes。首屏「龜龜創作助手／今天想做什麼？」。作品集未送出真實任務，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題 Hermes。首屏 h1「今天想做什麼？」與快速開始（研究／創作／分析）。作品集未送出真實任務，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/hermes-console",
@@ -702,7 +702,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · 344.zeabur.app",
         href: "https://344.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題 Hermes。免登入工作區，首屏「今天想做什麼？」。禁止嵌入時只開新分頁。",
+        note: "2026-09-20 HTTP 200，標題 Hermes。免登入工作區，h1「今天想做什麼？」與快速開始（研究／創作／分析）。禁止嵌入時只開新分頁。",
       },
     ],
     visibility: "public",

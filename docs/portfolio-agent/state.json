@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-github-visibility-public",
-  "updatedAt": "2026-09-20T21:20:00Z",
+  "runId": "grok-impl-20260920-hermes-console-quick-start",
+  "updatedAt": "2026-09-20T22:10:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "tamkang-world",
+  "currentProject": "hermes-console",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/github-visibility-public-probe",
+  "currentBranch": "fix/hermes-console-quick-start",
   "currentPR": null,
-  "currentTask": "github-visibility-public-probe",
+  "currentTask": "hermes-console-quick-start",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -41,20 +41,21 @@
     "FrameLab landing / login first-screen honesty merged as PR #40 and live on production /work/framelab (登入工作室, not 匯入影片或圖序)",
     "duigao live-home first-screen honesty merged as PR #41 and live on production /work/duigao (今天要對什麼, not 上傳文宣版本)",
     "TKU Zen AI welcome first-screen honesty merged as PR #42 and live on production /work/tku-zen-ai (Welcome to TKU Zen AI, not 輸入一句心情)",
-    "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)"
+    "TKU Zen desk gate + GitHub dump skip merged as PR #43 and live on production /work/tku-zen-agent (請輸入授權碼; README 不可以轉成 public)",
+    "GitHub visibility public probe merged as PR #44 and live: tamkang / FrameLab cabin+lunar no longer 訪客打不開原始碼 / 目前為私有"
   ],
   "remainingSteps": [
-    "Land GitHub visibility honesty: tamkang / FrameLab locale deploys are public, not 私有",
-    "After deploy, verify production /work/tamkang-world no longer says 訪客打不開原始碼",
+    "Land Hermes Console conversation stamp: live chips 研究／創作／分析, not 輸入關鍵詞看說明",
+    "After deploy, verify production /work/hermes-console canvas no longer says 輸入關鍵詞看說明",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 73,
+  "testsPassed": 119,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR43_TKU_ZEN_AGENT_GATE_LIVE_TAMKANG_GITHUB_STILL_FALSE_PRIVATE",
+  "productionStatus": "PR44_GITHUB_VISIBILITY_LIVE_HERMES_CONSOLE_KEYWORD_STARTER_STALE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -93,5 +94,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/tamkang-world GitHub evidence says private:false / 公開儲存庫, not 訪客打不開原始碼. FrameLab cabin/lunar notes should not say 目前為私有. Do not claim a 3D coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/hermes-console conversation starter quotes 今天想做什麼 / 研究／創作／分析, not 輸入關鍵詞看說明. Do not mark Agent coreFlow. Folio/PLANFORM/CUTOS coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
