@@ -475,6 +475,9 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
       "Pick poster / photo / video / long task",
       "Continue from recent projects",
     ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title Lumen. First screen is What do you want to do? / tap to listen. This portfolio has not held-to-speak, so coreFlow is not passed.",
+    ],
   },
   xiaocai: {
     title: "Xiaocai ledger",

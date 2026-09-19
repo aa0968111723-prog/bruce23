@@ -279,9 +279,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
   },
   lumen: {
     mode: "conversation-preview",
-    honestyLabel: PORTFOLIO_DEMO,
+    honestyLabel: "作品集預覽，不是 Lumen 語音執行期",
     walkthrough: [
-      { title: "想做什麼", body: "打開 ai-chat-8rq3。點一下開始聽，或按住說話。" },
+      { title: "想做什麼", body: "公開站 ai-chat-8rq3 首屏「想做什麼？」「點一下開始聽 · 按住說話」。這頁不是語音執行期。" },
       { title: "入口", body: "做海報、拍照、開始做影片、長任務。" },
       { title: "最近", body: "從最近專案繼續，不要把未生成的結果假裝完成。" },
     ],

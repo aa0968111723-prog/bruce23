@@ -275,7 +275,10 @@ export const linkedWorks: Project[] = [
     ],
     outputs: ["Lumen 公開站"],
     stack: ["TanStack Start", "Postgres", "Zeabur"],
-    limitations: ["雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。"],
+    limitations: [
+      "雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。",
+      "2026-09-19 GET / HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。作品集未按住說話，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/wood-ivory-blaze-maple",
       live: "https://ai-chat-8rq3.zeabur.app",
@@ -285,7 +288,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · ai-chat-8rq3.zeabur.app",
         href: "https://ai-chat-8rq3.zeabur.app",
-        note: "Zeabur 服務 wood-ivory-blaze-maple。本次探測 RUNNING。",
+        note: "2026-09-19 HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。不是 Hermes。",
       },
       {
         label: "GitHub · wood-ivory-blaze-maple",

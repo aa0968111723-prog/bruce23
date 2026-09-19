@@ -114,6 +114,10 @@ export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-campus-pass-20260919";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
+export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
+
+export const LUMEN_LIVE_PROBE_SLUG = "lumen";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
