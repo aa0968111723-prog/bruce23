@@ -103,6 +103,14 @@ describe("experience catalog", () => {
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
   });
 
+  it("keeps tamsui-drama walkthrough on the live load splash", () => {
+    const steps = experienceCatalog["tamsui-drama"].walkthrough ?? [];
+    assert.ok(steps.some((step) => step.title === "載入世界"));
+    assert.equal(steps.some((step) => step.title === "第一集"), false);
+    assert.match(steps[0]?.body ?? "", /載入淡江·淡水世界/);
+    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /從宮燈下的迎新開始/);
+  });
+
   it("keeps ty focus-challenge walkthrough on the probed public flow", () => {
     const steps = experienceCatalog["focus-challenge"].walkthrough ?? [];
     assert.equal(steps.some((step) => step.title === "暖身"), false);

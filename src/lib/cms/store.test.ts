@@ -1081,6 +1081,40 @@ describe("cms persistence", () => {
     assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Tamsui drama process to the live load splash without inventing episode one", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "tamsui-drama",
+        JSON.stringify(["從第一集宮燈下的迎新開始", "依關卡走完校園"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
+            href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
+            note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamsui_drama_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const drama = await getPublishedProject(sql, "tamsui-drama");
+    assert.ok(drama.process.some((item) => item.includes("載入淡江·淡水世界")));
+    assert.equal(drama.process.some((item) => item.includes("第一集")), false);
+    assert.match(
+      drama.sourceEvidence.find((item) => item.href?.includes("tku-tamsui-drama-world-k4x9"))?.note ?? "",
+      /載入淡江·淡水世界/,
+    );
+    assert.ok(drama.limitations.some((item) => item.includes("沒有「第一集」")));
+    assert.ok(drama.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
