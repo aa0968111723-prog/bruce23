@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-19T14:10:00Z",
-  "runId": "grok-impl-20260919-ty-public-flow",
+  "generatedAt": "2026-09-19T15:10:00Z",
+  "runId": "grok-impl-20260919-planform-public-home",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-19T13:50:00Z",
+  "startedAt": "2026-09-19T14:50:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,66 +12,66 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "ty-public-flow-honesty",
-  "inspectedCommit": "a909d60",
+  "task": "planform-public-home",
+  "inspectedCommit": "7e457e8",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 51 unit tests (registry + catalog + cms store) + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + 55 unit tests (registry 9 + catalog 8 + cms store 38) + vite build",
     "browser": "NOT_YET",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "code on branch fix/ty-public-flow-honesty; production still has booth-status summary",
+    "deployment": "code on branch fix/planform-public-home; production process still starts at 選教室模板與人數",
     "security": "NOT_VERIFIED"
   },
   "probes": [
     {
-      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
-      "status": 200,
-      "staleNotes": [],
-      "pr17Landed": true,
-      "checkedAt": "2026-09-19T13:55:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
-      "status": 200,
-      "liveDemo": "https://cabin-shale-k7q2.zeabur.app",
-      "cabinNote": "RUNNING, not 502",
-      "pr11Landed": true,
-      "checkedAt": "2026-09-19T13:55:00Z"
-    },
-    {
-      "url": "https://leader-dna-mcp-a7k2.zeabur.app/",
-      "status": 200,
-      "title": "淡江大學禪學社｜專注力挑戰賽",
-      "homepage": "registration screen",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-19T13:57:00Z"
-    },
-    {
-      "url": "https://leader-dna-mcp-a7k2.zeabur.app/api/health",
-      "status": 200,
-      "body": { "status": "ok", "sheets": true, "smtp": false },
-      "checkedAt": "2026-09-19T13:57:00Z"
-    },
-    {
-      "url": "https://leader-dna-mcp-a7k2.zeabur.app/api/leaderboard?scope=history",
-      "status": 200,
-      "count": 67,
-      "public": true,
-      "pii": "masked names only",
-      "checkedAt": "2026-09-19T13:57:00Z"
-    },
-    {
       "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
       "status": 200,
-      "staleSummary": "暖身、正式挑戰、即時看活動狀態",
-      "staleProblem": "不是再填一張表",
-      "pr18ProcessLanded": true,
-      "checkedAt": "2026-09-19T13:56:00Z"
+      "pr20Landed": true,
+      "copy": "首頁是登記畫面，不是立刻開打；不是「完全不填表就能開打」",
+      "checkedAt": "2026-09-19T14:55:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
+      "status": 200,
+      "staleNotes": [],
+      "pr21Landed": true,
+      "copy": "不是 502",
+      "checkedAt": "2026-09-19T14:55:00Z"
+    },
+    {
+      "url": "https://cutos.zeabur.app/",
+      "status": 200,
+      "title": "CUTOS — Conversational Video Editor",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T14:55:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/planform",
+      "status": 200,
+      "staleProcess": "選教室模板與人數",
+      "pr22VersionJsonLanded": true,
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T14:55:00Z"
+    },
+    {
+      "url": "https://planform-iso-k7d2.zeabur.app/",
+      "status": 200,
+      "title": "PLANFORM｜活動空間彩排",
+      "firstScreen": "我的專案 / ＋ 新建專案",
+      "apiRoutes": [],
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-19T15:00:00Z"
+    },
+    {
+      "url": "https://planform-iso-k7d2.zeabur.app/version.json",
+      "status": 200,
+      "body": { "version": "1.0.0", "commit": "1b8513b", "builtAt": "2026-09-16T15:09:46.926Z" },
+      "checkedAt": "2026-09-19T15:00:00Z"
     }
   ],
   "gates": {
@@ -87,8 +87,8 @@
     "Zeabur MCP ERROR_INVALID_TOKEN; cannot inspect or trigger bruce23 deploy"
   ],
   "nextSteps": [
-    "Open PR for ty public-flow honesty",
-    "After deploy, verify production /work/focus-challenge",
-    "Then operate planform core flow on planform-iso-k7d2"
+    "Open PR for planform public-home honesty",
+    "After deploy, verify production /work/planform",
+    "Then probe next unrepaired official work"
   ]
 }

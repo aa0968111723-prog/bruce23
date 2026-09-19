@@ -375,18 +375,19 @@ const featuredWorks: Project[] = [
       "淡江教室與禪學社茶會／演講／新生場，現場才發現報到桌擋門、地墊不夠走道。需要不用 CAD 的場佈工具。",
     role: "空間體驗設計與產品建構：預設模板、動線、人流模擬與分享圖。",
     decisions: [
+      "開 app 先看到「我的專案」與「＋ 新建專案」，不是立刻進 3D 畫布。",
       "Preset-first，但一切可自訂。一場活動一份專案，不會互相覆蓋。",
       "AI 只負責理解句子與目標；座標、碰撞、走道、容量由程式計算。",
       "沒有雲端金鑰時，本機結構化解析器仍可用，結果可重現。",
-      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。",
+      "涉及消防或無障礙的條目只顯示設計提醒，程式禁止寫「已符合所有法規」。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
     ],
     modalities: ["3D", "平面圖", "動線", "物資清單", "自然語言"],
     process: [
-      "選教室模板與人數",
-      "排地墊與區域",
+      "打開 planform-iso-k7d2.zeabur.app（首頁是「我的專案」，按鈕「＋ 新建專案」）",
+      "新建專案後選淡江教室模板與人數（純前端，寫入本機 localStorage）",
+      "畫布上拖曳物件，或「排地墊」選人數出 A/B/C 方案",
       "畫動線",
-      "本地 DES 模擬排隊",
-      "分享場刊圖與夥伴唯讀視圖",
+      "分享場刊圖與夥伴唯讀視圖（無後端 API）",
     ],
     outputs: [
       "可安裝 PWA",
@@ -395,10 +396,10 @@ const featuredWorks: Project[] = [
     ],
     stack: ["Vite", "TypeScript", "Three.js", "PWA", "localStorage / IndexedDB"],
     limitations: [
-      "不做容留人數或避難寬度法定計算。",
+      "不做容留人數或避難寬度法定計算。公開 JS 寫「本工具不做容留人數計算，也不做避難寬度計算」。",
       "不上架 App Store。",
       "本工具是場前彩排，不是現場指揮系統。",
-      "2026-09-19 GET /version.json 回 version 1.0.0、commit 1b8513b。公開站是 SPA，作品集未完成「建立專案→拖動物件」黑箱操作，coreFlow 未過。",
+      "2026-09-19 GET / HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。公開 JS 首屏 h1「我的專案」與「＋ 新建專案」。無 /api 路由。作品集未在瀏覽器完成「新建專案→拖動物件」，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/planform-iso",
@@ -439,7 +440,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · planform-iso-k7d2.zeabur.app",
         href: "https://planform-iso-k7d2.zeabur.app",
-        note: "docs/agent-handoff/AGENT_PROTOCOL.md 記載的 Zeabur 正式站。2026-09-19 HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。PWA manifest 與 sw.js 存在。",
+        note: "docs/agent-handoff/AGENT_PROTOCOL.md 記載的 Zeabur 正式站。2026-09-19 HTTP 200，標題 PLANFORM｜活動空間彩排。/version.json 1.0.0（1b8513b）。PWA manifest 與 sw.js 存在。公開 JS 首屏是「我的專案」與「＋ 新建專案」，不是立刻進畫布。無 /api 路由。",
       },
     ],
     visibility: "public",
