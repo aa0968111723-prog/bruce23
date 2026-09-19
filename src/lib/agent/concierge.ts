@@ -102,7 +102,7 @@ export function answerQuestion(query: string): ConciergeMessage {
   }
 
   // 5. 詢問 PLANFORM
-  if (q.includes("planform") || q.includes("空間") || q.includes("場佈") || q.includes("3d") || q.includes("等角")) {
+  if (q.includes("planform") || q.includes("場佈") || q.includes("空間彩排") || q.includes("等角")) {
     return {
       id,
       sender: "concierge",
@@ -139,6 +139,48 @@ export function answerQuestion(query: string): ConciergeMessage {
         { label: "造訪 Vexlark.co", href: "https://vexlark.co" },
         { label: "Web 應用端點", href: "https://ai-os-app.zeabur.app" },
         { label: "查看 ai_os 倉庫", href: "https://github.com/aa0968111723-prog/ai_os" },
+      ],
+      timestamp: Date.now(),
+    };
+  }
+
+  // 8. 詢問淡江世界 3D
+  if (q.includes("淡江世界") || q.includes("五虎崗") || q.includes("forge-bloom") || q.includes("校園通行證")) {
+    return {
+      id,
+      sender: "concierge",
+      text: "【淡江世界 3D 校園巡禮 (forge-bloom)】：\n\n- 特色：在瀏覽器中直接還原淡江五虎崗真實地標（克難坡、宮燈大道、海事博物館、覺生紀念圖書館）。\n- 通行證機制：公開入口為「校園通行證」，訪客點擊「先以訪客巡禮」即可立即免登入暢遊；登入後可保存巡禮蓋章足跡。\n- 技術：WebGL + 3D 空間體驗，GitHub 倉庫已完全公開開放查閱！",
+      actions: [
+        { label: "進入淡江世界 3D", href: "https://forge-bloom-k7xq.zeabur.app" },
+        { label: "查看 GitHub 倉庫", href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon" },
+      ],
+      timestamp: Date.now(),
+    };
+  }
+
+  // 9. 詢問 SkateHub / 直排輪
+  if (q.includes("skatehub") || q.includes("直排輪") || q.includes("輪鞋") || q.includes("skate")) {
+    return {
+      id,
+      sender: "concierge",
+      text: "【SkateHub 直排輪同好平台 (dd)】：\n\n- 理念：專為直排輪社團與同好打造的專業款式圖鑑與里程記錄工具。\n- 特色：標語「輪滑的世界，從這裡開始」，提供鞋款分類、輪徑與硬度比對、個人輪鞋收藏櫃及路溜活動發起。\n- 公開性：線上服務正常運行，GitHub 倉庫已公開！",
+      actions: [
+        { label: "打開 SkateHub", href: "https://dd-k3f9.zeabur.app" },
+        { label: "查看 GitHub 倉庫", href: "https://github.com/aa0968111723-prog/dd" },
+      ],
+      timestamp: Date.now(),
+    };
+  }
+
+  // 10. 詢問 CUTOS 影片剪輯
+  if (q.includes("cutos") || q.includes("影片剪輯") || q.includes("對話剪輯")) {
+    return {
+      id,
+      sender: "concierge",
+      text: "【CUTOS 對話式影片剪輯 (CUTOS)】：\n\n- 理念：透過對話直接剪輯影片，不用在複雜的 NLE 時間軸上慢慢拉剪刀！\n- 特色：自然語言指示（如「把開頭無聲的部分切掉」、「保留兩個人對話的高潮段落」），自動生成時間軸草稿。\n- 公開性：線上服務已排除舊 502 標註，正常運行，GitHub 倉庫完全公開！",
+      actions: [
+        { label: "打開 CUTOS", href: "https://cutos.zeabur.app" },
+        { label: "查看 GitHub 倉庫", href: "https://github.com/aa0968111723-prog/CUTOS" },
       ],
       timestamp: Date.now(),
     };
