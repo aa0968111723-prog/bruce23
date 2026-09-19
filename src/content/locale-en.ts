@@ -439,9 +439,12 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "Print, events, and daily making under one lamp — not another Drive folder.",
     process: [
       "Open delta-horizon-k7f2.zeabur.app",
-      "Read today's prompt and upcoming events",
-      "Start an IG post / carousel / story",
-      "Edit due items on the calendar",
+      "First screen is “What can we make today?”",
+      "Read upcoming events and AI suggestions",
+      "Due items have no reviewer; opening the studio auto-publishes them",
+    ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title 禪學社 Studio. First screen is What can we make today? The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
     ],
   },
   "focus-challenge": {

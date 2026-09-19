@@ -20,6 +20,8 @@ import {
   TAMKANG_LIVE_PROBE_VERSION,
   LUMEN_LIVE_PROBE_SLUG,
   LUMEN_LIVE_PROBE_VERSION,
+  ZEN_STUDIO_LIVE_PROBE_SLUG,
+  ZEN_STUDIO_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -231,6 +233,16 @@ describe("official project registry", () => {
     assert.equal(project.links.live, "https://ai-chat-8rq3.zeabur.app");
     assert.ok(project.sourceReferences.some((item) => item.note.includes("想做什麼")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 Hermes")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
+    const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-home/);
+    assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

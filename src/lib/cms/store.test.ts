@@ -1048,6 +1048,39 @@ describe("cms persistence", () => {
     assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Zen Studio process to the live What can we make today home", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["從「生成 IG 貼文／Carousel／Story」開始"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · delta-horizon-k7f2.zeabur.app",
+            href: "https://delta-horizon-k7f2.zeabur.app",
+            note: "Zeabur 服務 delta-horizon-cliff-fern。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.match(
+      studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
+      /今天可以創作什麼/,
+    );
+    assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
