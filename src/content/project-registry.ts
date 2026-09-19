@@ -86,6 +86,10 @@ export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-200-20260919";
+
+export const CUTOS_LIVE_PROBE_SLUG = "cutos";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.
