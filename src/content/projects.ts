@@ -549,6 +549,7 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["畫布", "設計 token", "嵌入", "MCP"],
     process: [
+      "打開文件櫃（存在這台裝置，不必登入）",
       "在畫布建立文字／形狀／元件",
       "設計檢查（對比、溢出、安全區）",
       "可選匯入外部網站三種模式",
@@ -564,6 +565,7 @@ const featuredWorks: Project[] = [
       "沒有獨立點陣圖片物件型別，圖片以 pixel layer 或 Snapshot 存在。",
       "寫入 token 不會自動過期，需重新發布才輪替。",
       "外部 MCP 連線在單一 Node 行程記憶體，多實例不共享。",
+      "2026-09-19 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，文案「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
@@ -615,7 +617,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · canva2-k7qm.zeabur.app",
         href: "https://canva2-k7qm.zeabur.app",
-        note: "Zeabur 服務 canva2。本次探測 RUNNING，標題 Folio。不是 dd-k3f9（直排輪基地）。",
+        note: "Zeabur 服務 canva2。2026-09-19 HTTP 200，標題 Folio。首屏「文件櫃」。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",
