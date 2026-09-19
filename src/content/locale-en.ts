@@ -203,6 +203,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "v1 feedback is stored, not self-trained.",
         "Without an API key, OCR degrades to text-region boxes.",
         "Vercel without Python falls back to a JS saliency engine.",
+        "Probed 2026-09-20: no public Zeabur host. README only documents local and Docker. This portfolio does not invent a Live Demo. coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras["poster-vision-ai"],
@@ -419,9 +420,12 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "Tamkang / Tamsui as a playable script. The public site is a campus quest, not FrameLab.",
     process: [
       "Open tku-tamsui-drama-world-k4x9.zeabur.app",
-      "Wait for the world to load",
-      "Start episode one under the lanterns",
-      "Walk the campus gates",
+      "Title is Tamkang freshman quest — Anjie's campus gates",
+      "First screen is Loading the Tamkang · Tamsui world…",
+      "Public JS describes lantern avenue, the library, and Ching-Sheng Hall",
+    ],
+    limitations: [
+      "Probed 2026-09-19: GET / HTTP 200, title 淡江新生導覽 — 安倢的校園闖關. HTML first screen is Loading the Tamkang · Tamsui world… Public JS has no 第一集. This portfolio has not finished the quest, so coreFlow is not passed.",
     ],
   },
   skatehub: {
@@ -486,9 +490,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "Xiaocai ledger",
     subtitle: "A small bright book for personal money",
     summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
-    process: ["Open untitled-5.zeabur.app", "Log income or spend", "See categories", "See this month"],
+    process: [
+      "Open untitled-5.zeabur.app",
+      "First screen says tap to log a line quickly",
+      "It can log offline on the device",
+      "Sign-in syncs to the account",
+    ],
     limitations: [
-      "Public host HTTP 200, title Xiaocai ledger. The page is client-rendered; the ledger core flow is not verified here.",
+      "Probed 2026-09-20: HTTP 200, title Xiaocai ledger. JS first screen: tap to log a line. Offline works; sign-in syncs. This portfolio has not logged a real line, so coreFlow is not passed.",
       "This is not the portfolio admin.",
     ],
   },
@@ -529,10 +538,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary:
       "Nous Research Hermes Agent dashboard: sessions and the sign-in gate. Public domain hermes-agent-k7q2.zeabur.app. Unsigned visitors land on Sign in — Hermes Agent.",
     process: [
-      "Open hermes-agent-k7q2.zeabur.app",
-      "Unsigned visitors land on Sign in — Hermes Agent",
-      "Sign in as the owner to enter the dashboard",
-      "Read sessions and tool status",
+      "Open hermes-agent-k7q2.zeabur.app (unsigned visitors redirect to /login)",
+      "Title is Sign in — Hermes Agent; h1 Sign in; Username & Password",
+      "Only the owner can sign in to the dashboard",
+      "This portfolio does not submit credentials, so sessions stay hidden",
+    ],
+    limitations: [
+      "Sign-in required. Portfolio visitors cannot see dashboard contents.",
+      "Probed 2026-09-20: GET / redirects to /login?next=/, HTTP 200, title Sign in — Hermes Agent. h1 Sign in. Username & Password. This portfolio did not sign in, so coreFlow is not passed.",
     ],
   },
 };

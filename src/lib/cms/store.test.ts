@@ -1081,6 +1081,138 @@ describe("cms persistence", () => {
     assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
+  it("rewrites Tamsui drama process to the live load splash without inventing episode one", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, media = $5::jsonb
+       where slug = $1`,
+      [
+        "tamsui-drama",
+        JSON.stringify(["從第一集宮燈下的迎新開始", "依關卡走完校園"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
+            href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
+            note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify([
+          {
+            src: "/media/shots/tamsui-drama.jpg",
+            alt: "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡",
+            kind: "image",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'tamsui_drama_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const drama = await getPublishedProject(sql, "tamsui-drama");
+    assert.ok(drama.process.some((item) => item.includes("載入淡江·淡水世界")));
+    assert.equal(drama.process.some((item) => item.includes("第一集")), false);
+    assert.match(
+      drama.sourceEvidence.find((item) => item.href?.includes("tku-tamsui-drama-world-k4x9"))?.note ?? "",
+      /載入淡江·淡水世界/,
+    );
+    assert.ok(drama.limitations.some((item) => item.includes("沒有「第一集」")));
+    assert.ok(drama.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(drama.media.every((item) => !item.alt.includes("第一集")));
+  });
+
+  it("rewrites Hermes Agent conversation to the live Sign in screen", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
+       where slug = $1`,
+      [
+        "hermes-agent",
+        JSON.stringify(["開啟工作區", "輸入關鍵詞看說明"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "Dashboard · hermes-agent-k7q2.zeabur.app",
+            href: "https://hermes-agent-k7q2.zeabur.app/",
+            note: "Zeabur 服務 hermes-agent（Dashboard）。",
+            kind: "demo",
+          },
+        ]),
+        JSON.stringify({}),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'hermes_agent_signin_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const agent = await getPublishedProject(sql, "hermes-agent");
+    assert.ok(agent.process[0]?.includes("/login"));
+    assert.match(
+      agent.sourceEvidence.find((item) => item.href?.includes("hermes-agent-k7q2"))?.note ?? "",
+      /Sign in — Hermes Agent/,
+    );
+    assert.match(agent.experienceConfig.conversation?.starter ?? "", /Sign in — Hermes Agent/);
+    assert.doesNotMatch(agent.experienceConfig.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.ok(agent.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("rewrites Xiaocai process to the live tap-to-log slogan", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["記一筆收支"]),
+        JSON.stringify(["stale limitation"]),
+        JSON.stringify([
+          {
+            label: "公開站 · untitled-5.zeabur.app",
+            href: "https://untitled-5.zeabur.app",
+            note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。",
+            kind: "demo",
+          },
+        ]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'xiaocai_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const ledger = await getPublishedProject(sql, "xiaocai");
+    assert.ok(ledger.process.some((item) => item.includes("快速記一筆")));
+    assert.match(
+      ledger.sourceEvidence.find((item) => item.href?.includes("untitled-5"))?.note ?? "",
+      /快速記一筆/,
+    );
+    assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("clears a fake Poster Vision live URL when no public host exists", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set live_demo_url = $2, live_demo_type = $3, limitations = $4::jsonb
+       where slug = $1`,
+      [
+        "poster-vision-ai",
+        "https://github.com/aa0968111723-prog/poster-vision-ai",
+        "link",
+        JSON.stringify(["stale limitation"]),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'poster_vision_no_host_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const poster = await getPublishedProject(sql, "poster-vision-ai");
+    assert.equal(poster.demo.url, null);
+    assert.equal(poster.demo.type, "unavailable");
+    assert.ok(poster.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
+    assert.ok(poster.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
   it("rewrites focus-challenge copy from the ty product contract and live health probe", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });

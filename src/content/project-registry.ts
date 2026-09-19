@@ -122,6 +122,22 @@ export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 
+export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-drama-shot-alt-20260920";
+
+export const TAMSUI_DRAMA_LIVE_PROBE_SLUG = "tamsui-drama";
+
+export const POSTER_VISION_NO_HOST_VERSION = "poster-vision-no-public-host-20260920";
+
+export const POSTER_VISION_NO_HOST_SLUG = "poster-vision-ai";
+
+export const HERMES_AGENT_SIGNIN_VERSION = "hermes-agent-signin-20260920";
+
+export const HERMES_AGENT_SIGNIN_SLUG = "hermes-agent";
+
+export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
+
+export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
+
 /**
  * Zeabur service IDs and provisioned domains, queried 2026-09-19.
  * No secrets. Live URLs in the portfolio must match these domains.

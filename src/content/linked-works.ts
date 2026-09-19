@@ -82,26 +82,29 @@ export const linkedWorks: Project[] = [
     modalities: ["互動", "敘事", "3D"],
     process: [
       "打開 tku-tamsui-drama-world-k4x9.zeabur.app",
-      "等世界載入",
-      "從第一集宮燈下的迎新開始",
-      "依關卡走完校園",
+      "標題「淡江新生導覽 — 安倢的校園闖關」",
+      "首屏「載入淡江·淡水世界…」",
+      "公開 JS 寫走訪宮燈大道、圖書館與驚聲大樓",
     ],
     outputs: ["校園闖關公開站"],
     stack: ["Web", "Zeabur"],
-    limitations: ["內容會隨學期更新，不宣稱完整學年劇本。"],
+    limitations: [
+      "內容會隨學期更新，不宣稱完整學年劇本。",
+      "2026-09-19 GET / HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。HTML 首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。作品集未走完闖關，coreFlow 未過。",
+    ],
     links: {
       github: "https://github.com/aa0968111723-prog/tku-tamsui-drama-world",
       live: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
     },
     media: [
       cover("tamsui-drama.jpg", "淡江新生導覽光域靜物：宮燈、闖關地圖與玻璃角色"),
-      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：第一集宮燈下的迎新與五個關卡"),
+      shot("tamsui-drama.jpg", "淡江·淡水虛擬劇本世界：宮燈與闖關地圖"),
     ],
     sourceReferences: [
       {
         label: "公開站 · tku-tamsui-drama-world-k4x9.zeabur.app",
         href: "https://tku-tamsui-drama-world-k4x9.zeabur.app",
-        note: "Zeabur 服務 tku-tamsui-drama-world。本次探測 RUNNING。不是 lunar-falcon-8p2r（那是 FrameLab）。",
+        note: "2026-09-19 HTTP 200，標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。公開 JS 沒有「第一集」。不是 FrameLab。",
       },
       {
         label: "GitHub · tku-tamsui-drama-world",
@@ -313,11 +316,17 @@ export const linkedWorks: Project[] = [
     role: "個人工具：記帳、分類、月覽。",
     decisions: ["公開站 untitled-5；GitHub 倉庫名是 -1。"],
     modalities: ["互動", "數字"],
-    process: ["打開 untitled-5.zeabur.app", "記一筆收支", "看分類", "看這個月"],
+    process: [
+      "打開 untitled-5.zeabur.app",
+      "首屏是「點我一下，快速記一筆吧」",
+      "沒有網路也能記，資料先存在裝置",
+      "登入後才與帳號同步",
+    ],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
-      "公開站 HTTP 200、標題「小財記帳」。頁面是前端渲染，作品集未驗證記帳核心流程。",
+      "公開站 HTTP 200、標題「小財記帳」。",
+      "2026-09-20 JS 首屏「點我一下，快速記一筆吧」。離線可記；登入後同步。作品集未記一筆真實收支，coreFlow 未過。",
       "不是作品集後台。",
     ],
     links: {
@@ -329,7 +338,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "2026-09-19 探測 HTTP 200，標題「小財記帳」。不是 502。核心記帳流程尚未黑箱驗證。",
+        note: "2026-09-20 HTTP 200，標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。離線可記。不是 502，也不是 Folio。",
       },
       {
         label: "GitHub · -1",
@@ -452,14 +461,17 @@ export const linkedWorks: Project[] = [
     ],
     modalities: ["對話", "任務", "MCP 工具"],
     process: [
-      "開啟 hermes-agent-k7q2.zeabur.app",
-      "未登入會到 Sign in — Hermes Agent",
-      "登入（擁有者）後進入 Dashboard",
-      "查看 sessions 與工具狀態",
+      "打開 hermes-agent-k7q2.zeabur.app（未登入轉到 /login）",
+      "標題「Sign in — Hermes Agent」；h1 Sign in；Username & Password",
+      "登入（擁有者）後才進 Dashboard",
+      "作品集不送出帳密，看不到 sessions",
     ],
     outputs: ["公開網域 hermes-agent-k7q2.zeabur.app（Dashboard）"],
     stack: ["Hermes Agent", "Docker", "Zeabur"],
-    limitations: ["需要登入。作品集訪客看不到 Dashboard 內容。"],
+    limitations: [
+      "需要登入。作品集訪客看不到 Dashboard 內容。",
+      "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。作品集未登入，coreFlow 未過。",
+    ],
     links: {
       live: "https://hermes-agent-k7q2.zeabur.app/",
     },
@@ -471,7 +483,7 @@ export const linkedWorks: Project[] = [
       {
         label: "Dashboard · hermes-agent-k7q2.zeabur.app",
         href: "https://hermes-agent-k7q2.zeabur.app/",
-        note: "Zeabur 服務 hermes-agent（Dashboard）。未登入是 Sign in — Hermes Agent。",
+        note: "2026-09-20 GET / 轉到 /login?next=/，HTTP 200，標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。不是 344 Console，也不是 455 舊站。作品集未登入。",
       },
     ],
     visibility: "public",

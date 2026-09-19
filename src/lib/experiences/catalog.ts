@@ -244,9 +244,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "載入世界", body: "打開 tku-tamsui-drama-world-k4x9。等「淡江·淡水世界」載入，不是 FrameLab。" },
-      { title: "第一集", body: "從宮燈下的迎新開始，依關卡走校園闖關。" },
-      { title: "關卡", body: "把淡江／淡水當成可持續開發的劇本，而不是一次導覽 PDF。" },
+      { title: "載入世界", body: "公開站 tku-tamsui-drama-world-k4x9。標題「淡江新生導覽 — 安倢的校園闖關」。首屏「載入淡江·淡水世界…」。不是 FrameLab。" },
+      { title: "描述", body: "公開 JS 的 description 寫走訪宮燈大道、圖書館與驚聲大樓。作品集還沒看到第一集畫面。" },
+      { title: "闖關", body: "作品集未走完迎新闖關。HTTP 200 不是 coreFlow。" },
     ],
   },
   skatehub: {
@@ -290,8 +290,8 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "media-gallery",
     honestyLabel: "公開站是小財記帳，不是 Folio 編輯器",
     walkthrough: [
-      { title: "打開帳本", body: "公開站 untitled-5.zeabur.app。2026-09-19 探測 HTTP 200，標題「小財記帳」。" },
-      { title: "記一筆", body: "記收支、看分類。作品集尚未驗證這一步是否真的寫入。" },
+      { title: "打開帳本", body: "公開站 untitled-5。標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。" },
+      { title: "記一筆", body: "離線也可記。作品集尚未驗證這一步是否真的寫入。" },
       { title: "這個月", body: "看這個月花到哪。不是作品集後台。" },
     ],
   },
@@ -317,9 +317,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "conversation-preview",
     honestyLabel: "需登入的 Dashboard，不是免登入 Console",
     walkthrough: [
-      { title: "Dashboard", body: "打開 hermes-agent-k7q2.zeabur.app。未登入會到 Sign in — Hermes Agent。" },
-      { title: "執行層", body: "這是 Hermes Agent Dashboard，不是 344 的 Console。" },
-      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。" },
+      { title: "Sign in", body: "公開站 hermes-agent-k7q2 未登入轉到 /login。標題「Sign in — Hermes Agent」。h1 Sign in。Username & Password。" },
+      { title: "不是 Console", body: "這是需登入的 Dashboard，不是 344 的免登入工作區。" },
+      { title: "登入邊界", body: "作品集訪客只能看到登入頁，看不到會話內容。HTTP 200 不是 coreFlow。" },
     ],
   },
 };

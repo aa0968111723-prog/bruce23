@@ -22,6 +22,14 @@ import {
   LUMEN_LIVE_PROBE_VERSION,
   ZEN_STUDIO_LIVE_PROBE_SLUG,
   ZEN_STUDIO_LIVE_PROBE_VERSION,
+  TAMSUI_DRAMA_LIVE_PROBE_SLUG,
+  TAMSUI_DRAMA_LIVE_PROBE_VERSION,
+  POSTER_VISION_NO_HOST_SLUG,
+  POSTER_VISION_NO_HOST_VERSION,
+  HERMES_AGENT_SIGNIN_SLUG,
+  HERMES_AGENT_SIGNIN_VERSION,
+  XIAOCAI_LIVE_PROBE_SLUG,
+  XIAOCAI_LIVE_PROBE_VERSION,
   TY_CONTRACT_SLUGS,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
@@ -170,6 +178,10 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await refreshTamkangLiveProbe(sql);
   await refreshLumenLiveProbe(sql);
   await refreshZenStudioLiveProbe(sql);
+  await refreshTamsuiDramaLiveProbe(sql);
+  await refreshPosterVisionNoHost(sql);
+  await refreshHermesAgentSignin(sql);
+  await refreshXiaocaiLiveProbe(sql);
 }
 
 const seedLock = globalThis as typeof globalThis & {
@@ -1081,6 +1093,155 @@ async function refreshZenStudioLiveProbe(sql: Sql): Promise<void> {
     `insert into cms_meta (key, value) values ('zen_studio_live_probe_version', $1)
      on conflict (key) do update set value = excluded.value, updated_at = now()`,
     [ZEN_STUDIO_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshTamsuiDramaLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'tamsui_drama_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === TAMSUI_DRAMA_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === TAMSUI_DRAMA_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set process = $2::jsonb,
+         limitations = $3::jsonb,
+         source_evidence = $4::jsonb,
+         locale_json = $5::jsonb,
+         experience_mode = coalesce($6, experience_mode),
+         experience_config = $7::jsonb,
+         media = $8::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+      JSON.stringify(project.media),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('tamsui_drama_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [TAMSUI_DRAMA_LIVE_PROBE_VERSION],
+  );
+}
+
+async function refreshPosterVisionNoHost(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'poster_vision_no_host_version' limit 1`,
+  );
+  if (meta[0]?.value === POSTER_VISION_NO_HOST_VERSION) return;
+  const project = projects.find((item) => item.slug === POSTER_VISION_NO_HOST_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  await sql.query(
+    `update projects
+     set limitations = $2::jsonb,
+         source_evidence = $3::jsonb,
+         locale_json = $4::jsonb,
+         live_demo_url = null,
+         live_demo_type = 'unavailable',
+         live_demo_status = 'unavailable',
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('poster_vision_no_host_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [POSTER_VISION_NO_HOST_VERSION],
+  );
+}
+
+async function refreshHermesAgentSignin(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'hermes_agent_signin_version' limit 1`,
+  );
+  if (meta[0]?.value === HERMES_AGENT_SIGNIN_VERSION) return;
+  const project = projects.find((item) => item.slug === HERMES_AGENT_SIGNIN_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set process = $2::jsonb,
+         limitations = $3::jsonb,
+         source_evidence = $4::jsonb,
+         locale_json = $5::jsonb,
+         experience_mode = coalesce($6, experience_mode),
+         experience_config = $7::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('hermes_agent_signin_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [HERMES_AGENT_SIGNIN_VERSION],
+  );
+}
+
+async function refreshXiaocaiLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'xiaocai_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === XIAOCAI_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === XIAOCAI_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set process = $2::jsonb,
+         limitations = $3::jsonb,
+         source_evidence = $4::jsonb,
+         locale_json = $5::jsonb,
+         experience_mode = coalesce($6, experience_mode),
+         experience_config = $7::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('xiaocai_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [XIAOCAI_LIVE_PROBE_VERSION],
   );
 }
 

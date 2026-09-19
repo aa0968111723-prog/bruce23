@@ -22,6 +22,14 @@ import {
   LUMEN_LIVE_PROBE_VERSION,
   ZEN_STUDIO_LIVE_PROBE_SLUG,
   ZEN_STUDIO_LIVE_PROBE_VERSION,
+  TAMSUI_DRAMA_LIVE_PROBE_SLUG,
+  TAMSUI_DRAMA_LIVE_PROBE_VERSION,
+  POSTER_VISION_NO_HOST_SLUG,
+  POSTER_VISION_NO_HOST_VERSION,
+  HERMES_AGENT_SIGNIN_SLUG,
+  HERMES_AGENT_SIGNIN_VERSION,
+  XIAOCAI_LIVE_PROBE_SLUG,
+  XIAOCAI_LIVE_PROBE_VERSION,
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
@@ -243,6 +251,52 @@ describe("official project registry", () => {
     assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
     assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Tamsui drama load splash without inventing episode one", () => {
+    const project = projects.find((item) => item.slug === TAMSUI_DRAMA_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(TAMSUI_DRAMA_LIVE_PROBE_VERSION, /tamsui-drama-shot-alt/);
+    assert.equal(project.links.live, "https://tku-tamsui-drama-world-k4x9.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("載入淡江·淡水世界")));
+    assert.ok(project.process.every((item) => !item.includes("第一集")));
+    assert.ok(project.media.every((item) => !item.alt.includes("第一集")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("載入淡江·淡水世界")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("沒有「第一集」")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Poster Vision as having no public host, not a fake Live Demo", () => {
+    const project = projects.find((item) => item.slug === POSTER_VISION_NO_HOST_SLUG);
+    assert.ok(project);
+    assert.match(POSTER_VISION_NO_HOST_VERSION, /poster-vision-no-public-host/);
+    assert.equal(project.links.live, undefined);
+    assert.ok(project.limitations.some((item) => item.includes("查無公開 Zeabur 網域")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("查無公開 Zeabur 網域")));
+  });
+
+  it("records Hermes Agent first screen as Sign in without claiming dashboard coreFlow", () => {
+    const project = projects.find((item) => item.slug === HERMES_AGENT_SIGNIN_SLUG);
+    assert.ok(project);
+    assert.match(HERMES_AGENT_SIGNIN_VERSION, /hermes-agent-signin/);
+    assert.equal(project.links.live, "https://hermes-agent-k7q2.zeabur.app/");
+    assert.ok(project.process[0]?.includes("/login"));
+    assert.ok(project.process.some((item) => item.includes("Sign in — Hermes Agent")));
+    assert.ok(project.process.every((item) => !item.includes("輸入關鍵詞")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("Sign in — Hermes Agent")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("/login")));
+    assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("records Xiaocai JS first screen without claiming a ledger write coreFlow", () => {
+    const project = projects.find((item) => item.slug === XIAOCAI_LIVE_PROBE_SLUG);
+    assert.ok(project);
+    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-live-slogan/);
+    assert.equal(project.links.live, "https://untitled-5.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("快速記一筆")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("快速記一筆")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 });

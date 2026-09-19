@@ -217,6 +217,10 @@ describe("experience config merge", () => {
     const lumen = defaultExperienceConfig("lumen");
     assert.match(lumen.conversation?.starter ?? "", /想做什麼/);
     assert.doesNotMatch(lumen.conversation?.starter ?? "", /Hermes 執行期/);
+    const agent = defaultExperienceConfig("hermes-agent");
+    assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
+    assert.doesNotMatch(agent.conversation?.starter ?? "", /輸入關鍵詞看說明/);
+    assert.doesNotMatch(agent.intro ?? "", /輸入關鍵詞看說明/);
     const ledger = defaultExperienceConfig("xiaocai");
     assert.match(ledger.intro ?? "", /小財記帳/);
     assert.doesNotMatch(ledger.intro ?? "", /Folio 指令層/);
