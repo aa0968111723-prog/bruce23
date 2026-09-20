@@ -302,13 +302,14 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
     role: "Creative-tool design: the command layer, design checks, publish/embed, and MCP safety bounds.",
     ...lists(
       [
+        "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK.",
         "Cross-origin sites without the SDK get Live iframe or Snapshot — not a fake DOM read.",
         "MCP writes default to dry-run; unpublished documents do not appear on public /mcp/$id.",
         "Secrets stay on the server; SSRF denies intranet, localhost, and metadata.",
         "No accounts by default; drafts live in device IndexedDB.",
       ],
       [
-        "Open the file cabinet (on this device, no sign-in)",
+        "Open the file cabinet (for MCP and embedded sites · on this device · no sign-in · Developer SDK)",
         "Create text / shapes / components on the canvas",
         "Design checks (contrast, overflow, safe area)",
         "Optional 3-mode external site import",
@@ -323,7 +324,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No standalone bitmap object type; images exist as a pixel layer or Snapshot.",
         "Write tokens do not auto-expire; republish to rotate.",
         "External MCP connections live in one Node process memory and are not shared across instances.",
-        "Probed 2026-09-19: GET / HTTP 200, title Folio. First screen is the file cabinet, local, no sign-in. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
+        "Probed 2026-09-20: GET / HTTP 200, title Folio. First screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.folio,

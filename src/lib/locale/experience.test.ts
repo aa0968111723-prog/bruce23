@@ -103,8 +103,12 @@ describe("experience playable chrome", () => {
     const folioZh = overlayExperienceConfig(defaultExperienceConfig("folio"), "folio", "zh");
     const folioEn = overlayExperienceConfig(defaultExperienceConfig("folio"), "folio", "en");
     assert.match(folioZh.intro ?? "", /文件櫃/);
+    assert.match(folioZh.intro ?? "", /給 MCP 與內嵌網站/);
+    assert.match(folioZh.intro ?? "", /開發者 SDK/);
     assert.doesNotMatch(folioZh.intro ?? "", /指令層走一遍/);
     assert.match(folioEn.intro ?? "", /file cabinet/i);
+    assert.match(folioEn.intro ?? "", /Developer SDK/);
+    assert.match(folioEn.intro ?? "", /MCP and embedded sites/);
     assert.doesNotMatch(folioEn.intro ?? "", /command layer/i);
     assert.equal(folioZh.walkthrough?.[0]?.title, "文件櫃");
     assert.equal(folioEn.walkthrough?.[0]?.title, "File cabinet");
@@ -289,6 +293,8 @@ describe("experience playable chrome", () => {
       "en",
     );
     assert.ok(zh.some((step) => step.includes("文件櫃")));
+    assert.ok(zh.some((step) => step.includes("給 MCP 與內嵌網站")));
+    assert.ok(zh.some((step) => step.includes("開發者 SDK")));
     assert.ok(zh.some((step) => step.includes("畫布")));
     assert.ok(zh.some((step) => step.includes("畫板")));
     assert.ok(en.some((step) => step.includes("File cabinet")));

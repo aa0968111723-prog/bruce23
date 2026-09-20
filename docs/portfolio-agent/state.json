@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-19",
-  "updatedAt": "2026-09-20T15:00:00Z",
+  "runId": "portfolio-agent-hour-20",
+  "updatedAt": "2026-09-20T16:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -866,24 +866,24 @@
     "Tamkang live home controls honesty merged as PR #63 and live: /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, keeps 校園通行證 on /login, without claiming 3D coreFlow",
     "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名",
     "Lumen live home chrome merged as PR #66 and live on production /work/lumen: 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板 without claiming hold-to-speak coreFlow",
+    "Folio live subtitle chrome merged as PR #68 and live: /work/folio quotes 給 MCP 與內嵌網站 / 開發者 SDK / 存在這台裝置 / 不必登入 without claiming a publish coreFlow",
     "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
-    "Merge PR #6 long-term integration plan onto main without duplicate PRs",
-    "Verify production /work/lumen quotes live controls after PR #66 deployment",
-    "Next honesty gap: Folio 給 MCP 與內嵌網站 / 開發者 SDK",
+    "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections",
+    "Verify production /work/folio quotes 給 MCP 與內嵌網站 / 開發者 SDK after PR #68 deployment",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
-    "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
+    "Continuous UI/UX polish, glassmorphism enhancements and hourly multi-agent sentinel inspections"
   ],
-  "testsPassed": 319,
+  "testsPassed": 322,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_THROUGH_PR66_MERGED",
+  "productionStatus": "PR46_THROUGH_PR68_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -913,5 +913,5 @@
       "nextAction": "Do not change tku-zen-agent GitHub visibility. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #66 deploys, verify production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow. Folio 給 MCP 與內嵌網站 is the next honesty gap. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #68 deploys, verify production /work/folio quotes 給 MCP 與內嵌網站 / 開發者 SDK, not only 文件櫃／不必登入. Do not claim a publish coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
