@@ -288,7 +288,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "ai-director-os") {
     return {
       ...base,
-      intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
+      intro: "公開站首屏是登陸頁。eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」主按鈕「進入工作台」與「登入工作台」。次按鈕「看看怎麼運作」。這裡是 GitHub 流程節點，不是線上控制台。",
     };
   }
 
