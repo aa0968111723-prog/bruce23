@@ -53,6 +53,8 @@ export const experienceChrome = {
     pageN: "第 {n} 頁",
     iframeTitle: "{title} Canva 原作",
     noGithub: "還沒有公開 GitHub 來源。不會顯示虛構架構圖。",
+    githubWithheld:
+      "來源儲存庫的可見性與自身隱私規則衝突。完成擁有者審查前，這裡不提供 GitHub 連結，也不展示檔案樹。",
     noDescription: "尚無公開 description。",
     updated: "更新",
     notSynced: "尚未同步",
@@ -218,6 +220,8 @@ export const experienceChrome = {
     pageN: "Page {n}",
     iframeTitle: "{title} Canva original",
     noGithub: "There is no public GitHub source. A fictional architecture diagram is not shown.",
+    githubWithheld:
+      "Source-repo visibility conflicts with its own privacy rules. Until the owner reviews it, this tab does not link to GitHub or show a file tree.",
     noDescription: "No public description yet.",
     updated: "Updated",
     notSynced: "not synced",
