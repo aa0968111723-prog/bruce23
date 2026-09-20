@@ -844,6 +844,25 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  skatehub: {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is Toward health, toward sunlight. Slogan: catalog of retail skates and parts, build your kit, log every kilometre. Don’t stay home on your phone — put on skates and go. Buttons: Browse the gear catalog / Log today’s mileage. This is a portfolio walkthrough, not the live hub.",
+    walkthrough: [
+      {
+        title: "Open the hub",
+        body: "Public dd-k3f9. Title SkateHub｜Toward health, toward sunlight. h1 Toward health, toward sunlight. Slogan Don’t stay home on your phone — put on skates and go. Buttons Browse the gear catalog / Log today’s mileage. Not Folio.",
+      },
+      {
+        title: "Browse the gear catalog",
+        body: "The accent button Browse the gear catalog opens catalog. This page does not tap it for you.",
+      },
+      {
+        title: "Log today’s mileage",
+        body: "The ghost button Log today’s mileage opens mileage. This portfolio has not logged real mileage.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",

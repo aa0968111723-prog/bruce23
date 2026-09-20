@@ -97,7 +97,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "skatehub") {
     return {
       ...base,
-      intro: "公開站首屏 slogan 要人穿上輪鞋出發、記錄里程。這是作品集走查，不是線上基地。",
+      intro: "公開站首屏 h1「走向健康，走向陽光」。slogan「收錄市售直排輪款式與配件圖鑑，打造你的專屬裝備庫，記錄每一公里的滑行足跡。不要在家玩手機，穿上輪鞋出發吧！」。按鈕「瀏覽裝備圖鑑／記錄今天的里程」。這是作品集走查，不是線上基地。",
     };
   }
 
