@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { publicIntegrationLine } from "./integration-line.ts";
+import { publicGithubStatusLabel, publicIntegrationLine } from "./integration-line.ts";
 
 describe("public integration line", () => {
   it("does not claim Zen GitHub is missing or that the live desk is unavailable", () => {
@@ -31,15 +31,32 @@ describe("public integration line", () => {
 
   it("keeps a public GitHub URL visible when hydrate failed", () => {
     const zh = publicIntegrationLine("zh", {
-      slug: "hermes-console",
-      github: { url: "https://github.com/aa0968111723-prog/hermes-console", syncStatus: "failed" },
-      demo: { url: "https://344.zeabur.app", status: "unavailable", embedEnabled: false },
+      slug: "cutos",
+      github: { url: "https://github.com/aa0968111723-prog/CUTOS", syncStatus: "failed" },
+      demo: { url: "https://cutos.zeabur.app", status: "verified", embedEnabled: true },
       canva: { status: "not_configured" },
     });
-    assert.match(zh, /GitHub 同步失敗/);
-    assert.match(zh, /Demo 公開網址（無法嵌入）/);
+    assert.match(zh, /GitHub 公開連結（檔案樹未同步）/);
+    assert.match(zh, /Demo 已驗證/);
+    assert.doesNotMatch(zh, /GitHub 同步失敗/);
     assert.doesNotMatch(zh, /GitHub failed/);
     assert.doesNotMatch(zh, /Demo unavailable/);
+
+    const en = publicIntegrationLine("en", {
+      slug: "xiaocai",
+      github: { url: "https://github.com/aa0968111723-prog/-1", syncStatus: "failed" },
+      demo: { url: "https://untitled-5.zeabur.app", status: "verified", embedEnabled: true },
+      canva: { status: "not_configured" },
+    });
+    assert.match(en, /GitHub public link \(file tree not synced\)/);
+    assert.doesNotMatch(en, /GitHub sync failed/);
+
+    const explorer = publicGithubStatusLabel("zh", {
+      slug: "focus-challenge",
+      github: { url: "https://github.com/aa0968111723-prog/ty", syncStatus: "failed" },
+    });
+    assert.match(explorer, /公開連結（檔案樹未同步）/);
+    assert.doesNotMatch(explorer, /同步失敗|failed|not_configured/);
   });
 
   it("says demo is not set up only when there is no public URL", () => {

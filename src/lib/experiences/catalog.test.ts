@@ -278,6 +278,8 @@ describe("frontend contract", () => {
     assert.match(explorer, /skipGithubHydrate/);
     assert.match(explorer, /githubWithheld/);
     assert.match(explorer, /skipGithubHydrate\(project\.slug\)/);
+    assert.match(explorer, /publicGithubStatusLabel/);
+    assert.doesNotMatch(explorer, /\{ex\.status\} \{github\.syncStatus\}/);
     assert.match(experienceLocale, /來源路徑/);
     assert.match(experienceLocale, /Limited file tree/);
     assert.match(css, /animation:\s*none/);

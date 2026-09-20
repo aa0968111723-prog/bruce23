@@ -2,14 +2,18 @@ import { skipGithubHydrate } from "../../content/project-registry.ts";
 import type { IntegrationStatus } from "../cms/status.ts";
 import type { ViewerLang } from "./view.ts";
 
-export type IntegrationLineInput = {
+export type GithubStatusInput = {
   slug: string;
   github: { url: string | null; syncStatus: IntegrationStatus };
+};
+
+export type IntegrationLineInput = GithubStatusInput & {
   demo: { url: string | null; status: IntegrationStatus; embedEnabled: boolean };
   canva: { status: IntegrationStatus };
 };
 
-function githubPart(lang: ViewerLang, input: IntegrationLineInput): string {
+/** Public GitHub status. A live repo URL is not 「sync failed」. */
+export function publicGithubStatusLabel(lang: ViewerLang, input: GithubStatusInput): string {
   if (skipGithubHydrate(input.slug)) {
     return lang === "en" ? "GitHub withheld pending review" : "GitHub 暫不公開連結";
   }
@@ -18,7 +22,9 @@ function githubPart(lang: ViewerLang, input: IntegrationLineInput): string {
   }
   switch (input.github.syncStatus) {
     case "failed":
-      return lang === "en" ? "GitHub sync failed" : "GitHub 同步失敗";
+      return lang === "en"
+        ? "GitHub public link (file tree not synced)"
+        : "GitHub 公開連結（檔案樹未同步）";
     case "pending":
     case "not_configured":
     case "stale":
@@ -62,5 +68,5 @@ function canvaPart(lang: ViewerLang, input: IntegrationLineInput): string {
 
 /** Public case-study integration line. Never print raw CMS enums. */
 export function publicIntegrationLine(lang: ViewerLang, input: IntegrationLineInput): string {
-  return `${githubPart(lang, input)} · ${demoPart(lang, input)} · ${canvaPart(lang, input)}`;
+  return `${publicGithubStatusLabel(lang, input)} · ${demoPart(lang, input)} · ${canvaPart(lang, input)}`;
 }

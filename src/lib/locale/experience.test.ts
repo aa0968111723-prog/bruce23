@@ -142,6 +142,10 @@ describe("experience playable chrome", () => {
     assert.equal(deskEn.walkthrough?.[2]?.title, "Source boundary");
     assert.match(experienceChromeFor("zh").githubWithheld, /可見性與自身隱私規則衝突/);
     assert.match(experienceChromeFor("en").githubWithheld, /privacy rules/i);
+    assert.match(experienceChromeFor("zh").treeFailed, /公開儲存庫仍可打開/);
+    assert.doesNotMatch(experienceChromeFor("zh").treeFailed, /這次公開同步失敗/);
+    assert.match(experienceChromeFor("en").treeFailed, /public repository still opens/i);
+    assert.doesNotMatch(experienceChromeFor("en").treeFailed, /This public sync failed/);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);
