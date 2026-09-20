@@ -1,9 +1,9 @@
 {
-  "version": 24,
-  "generatedAt": "2026-09-20T11:00:00Z",
-  "runId": "portfolio-agent-hour-23",
+  "version": 25,
+  "generatedAt": "2026-09-20T16:13:00Z",
+  "runId": "portfolio-integrity-main-sync-20260920T1613Z",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T11:00:00Z",
+  "startedAt": "2026-09-20T16:10:50Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,8 +12,8 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "hourly-multi-agent-sentinel-inspection",
-  "inspectedCommit": "d1bdc91",
+  "task": "reconcile-pr67-with-main-xiaocai",
+  "inspectedCommit": "13b9d34",
   "github": {
     "planPullRequest": 6,
     "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66, 68, 69, 70, 71, 72, 73],
@@ -21,12 +21,12 @@
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 329 unit tests pass + full npm test suite clean pass",
+    "buildAndTypecheck": "RECORDED PASS on main 13b9d34: tsc --noEmit + 130 targeted registry/experience/store tests + vite build; not freshly rerun in this isolated checkout",
     "browser": "HTTP_REACHABILITY_BASELINE_NOT_FUNCTIONAL_ACCEPTANCE",
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#73",
+    "deployment": "Main 13b9d34 contains the Xiaocai portfolio-copy change; production /work/xiaocai was not freshly verified by this run",
     "security": "NOT_VERIFIED"
   },
   "probes": [
@@ -157,6 +157,21 @@
       "copy": "Intro quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板; Live Demo `/` is the chat creation sphere without claiming hold-to-speak coreFlow.",
       "coreFlowPass": false,
       "checkedAt": "2026-09-20T11:01:00Z"
+    },
+    {
+      "url": "https://untitled-5.zeabur.app/",
+      "status": 200,
+      "title": "小財記帳",
+      "copy": "Main's 11:20 UTC evidence recorded bottom navigation 小財記帳 / 收支明細 / 小財 / 更多. This is a historical reachability/copy observation, not a ledger-write coreFlow pass.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:20:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/xiaocai",
+      "status": 200,
+      "copy": "Main's 11:20 UTC evidence still showed the older visitor copy. Commit 13b9d34 contains the replacement, but this run has not freshly verified production deployment.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:20:00Z"
     }
   ],
   "gates": {
@@ -172,15 +187,14 @@
   "portfolioReady": false,
   "blockers": [
     "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AI Director OS team / CUTOS demo-clip / Zen Studio generate coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AI Director OS team / Zen Studio generate / Xiaocai ledger write coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件; PR #55 and #57 withhold the source href and explorer view"
   ],
   "nextSteps": [
-    "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections",
-    "Verify production /work/cutos quotes 匯入影片 / 載入示範影片 / 體驗 AI 剪輯 after PR #72 deployment",
-    "Verify production /work/zen-studio quotes 建立新文宣 / 瀏覽範本庫 / 查看近期活動 after PR #73 deployment",
-    "Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen / SkateHub / FrameLab / AI Director OS / Zen Studio coreFlow stays BLOCKED on a real browser",
-    "Continuous UI/UX polish, glassmorphism enhancements and AI concierge tuning",
+    "Review and integrate PR #67 into PR #6 without discarding main 13b9d34 or the 17-project evidence",
+    "Verify production /work/xiaocai quotes 收支明細 / 小財 / 更多 with 點我一下，快速記一筆吧 without claiming a ledger-write coreFlow",
+    "Continue PLANFORM PR #64 on a non-overlapping object for drag, undo/redo, mobile touch and error-recovery evidence",
+    "Keep all functional, readiness, mobile, desktop, thumbnail and security gates unpromoted until complete evidence exists",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }

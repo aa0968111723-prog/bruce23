@@ -222,8 +222,8 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "xiaocai") {
     return {
       ...base,
-      intro: "公開站是小財記帳 untitled-5。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
-      galleryNote: "公開站首屏「點我一下，快速記一筆吧」。這是作品集媒體廊，不是記帳本體。",
+      intro: "公開站 untitled-5 首屏桌寵寫「點我一下，快速記一筆吧」。底列「小財記帳／收支明細／小財／更多」。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
+      galleryNote: "公開站首屏桌寵寫「點我一下，快速記一筆吧」。底列「小財記帳／收支明細／小財／更多」。這是作品集媒體廊，不是記帳本體。",
     };
   }
 

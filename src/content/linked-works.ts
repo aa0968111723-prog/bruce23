@@ -27,7 +27,7 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
       "Live Demo `/` 是 3D 世界，不是校園通行證。/login 才是通行證門。",
-      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱（公開儲存庫；公開操作仍走 Zeabur）。",
+      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前是公開儲存庫；公開操作仍走 Zeabur。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
@@ -60,7 +60,7 @@ export const linkedWorks: Project[] = [
       {
         label: "GitHub · forge-bloom-quiet-falcon",
         href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
-        note: "2026-09-20 未登入 API private:false。公開儲存庫，3D 場景與瀏覽器巡禮原始碼完整公開。公開操作請走 Zeabur。",
+        note: "2026-09-20 未登入 API private:false。公開儲存庫。公開操作請走 Zeabur。",
       },
     ],
     visibility: "public",
@@ -324,19 +324,22 @@ export const linkedWorks: Project[] = [
     summary: "記一筆、看分類、知道這個月花到哪。公開站 untitled-5.zeabur.app。不是作品集後台。",
     problem: "個人收支不需要完整會計系統，需要一個開得起的小帳本。",
     role: "個人工具：記帳、分類、月覽。",
-    decisions: ["公開站 untitled-5；GitHub 倉庫名是 -1。"],
+    decisions: [
+      "公開站 untitled-5；GitHub 倉庫名是 -1。",
+      "公開站首屏桌寵寫「點我一下，快速記一筆吧」。底列「小財記帳／收支明細／小財／更多」。未記一筆不能當已記。",
+    ],
     modalities: ["互動", "數字"],
     process: [
-      "打開 untitled-5.zeabur.app",
-      "首屏是「點我一下，快速記一筆吧」",
+      "打開 untitled-5.zeabur.app（標題「小財記帳」）",
+      "首屏桌寵「點我一下，快速記一筆吧」；底列「小財記帳／收支明細／小財／更多」",
       "沒有網路也能記，資料先存在裝置",
-      "登入後才與帳號同步",
+      "登入後才與帳號同步。作品集未記一筆真實收支",
     ],
     outputs: ["小財記帳公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
       "公開站 HTTP 200、標題「小財記帳」。",
-      "2026-09-20 JS 首屏「點我一下，快速記一筆吧」。離線可記；登入後同步。作品集未記一筆真實收支，coreFlow 未過。",
+      "2026-09-20 JS 首屏桌寵「點我一下，快速記一筆吧」；底列「小財記帳／收支明細／小財／更多」。離線可記；登入後同步。作品集未記一筆真實收支，coreFlow 未過。",
       "不是作品集後台。",
     ],
     links: {
@@ -348,7 +351,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · untitled-5.zeabur.app",
         href: "https://untitled-5.zeabur.app",
-        note: "2026-09-20 HTTP 200，標題「小財記帳」。JS 首屏「點我一下，快速記一筆吧」。離線可記。不是 502，也不是 Folio。",
+        note: "2026-09-20 HTTP 200，標題「小財記帳」。JS 首屏桌寵「點我一下，快速記一筆吧」；底列「小財記帳／收支明細／小財／更多」。離線可記。不是 502，也不是 Folio。",
       },
       {
         label: "GitHub · -1",

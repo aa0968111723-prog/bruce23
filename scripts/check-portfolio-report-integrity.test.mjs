@@ -57,3 +57,12 @@ test("repair inventories remain unique and mutually exclusive", () => {
     assert.ok(!doNotMerge.has(pullRequest));
   }
 });
+
+test("main integration cannot replace the canonical 17-project coordination snapshot", () => {
+  assert.equal(state.runId, report.runId);
+  assert.equal(state.projects.length, 17);
+  assert.ok(state.gates.thumbnail);
+  assert.ok(state.highestPriorityIssue);
+  assert.equal(report.portfolioReady, false);
+  assert.match(String(report.inspectedCommit), /^[0-9a-f]{7,40}$/);
+});

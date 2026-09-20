@@ -261,7 +261,10 @@ describe("experience config merge", () => {
     assert.doesNotMatch(studio.intro ?? "", /逐步走查/);
     const xiaocai = defaultExperienceConfig("xiaocai");
     assert.match(xiaocai.galleryNote ?? "", /快速記一筆/);
+    assert.match(xiaocai.galleryNote ?? "", /收支明細/);
+    assert.match(xiaocai.intro ?? "", /收支明細/);
     assert.doesNotMatch(xiaocai.galleryNote ?? "", /只顯示已發布媒體/);
+    assert.doesNotMatch(xiaocai.intro ?? "", /公開站是小財記帳 untitled-5。這是作品集說明/);
     const frameIntro = defaultExperienceConfig("framelab");
     assert.match(frameIntro.intro ?? "", /登入工作室/);
     assert.match(frameIntro.intro ?? "", /系統狀態/);
