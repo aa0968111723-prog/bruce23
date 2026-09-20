@@ -138,7 +138,7 @@ export const HERMES_AGENT_SIGNIN_VERSION = "hermes-agent-signin-20260920";
 
 export const HERMES_AGENT_SIGNIN_SLUG = "hermes-agent";
 
-export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-gallery-note-20260920";
+export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-cta-quote-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
