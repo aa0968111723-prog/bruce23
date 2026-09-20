@@ -219,6 +219,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     return {
       ...base,
       intro: "公開站是小財記帳 untitled-5。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
+      galleryNote: "公開站首屏「點我一下，快速記一筆吧」。這是作品集媒體廊，不是記帳本體。",
     };
   }
 
