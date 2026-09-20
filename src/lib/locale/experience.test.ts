@@ -126,6 +126,16 @@ describe("experience playable chrome", () => {
     assert.match(tyEn.intro ?? "", /host, name, department/i);
     assert.equal(tyZh.walkthrough?.[0]?.title, "登記");
     assert.equal(tyEn.walkthrough?.[0]?.title, "Register");
+    const campusZh = overlayExperienceConfig(defaultExperienceConfig("tamkang-world"), "tamkang-world", "zh");
+    const campusEn = overlayExperienceConfig(defaultExperienceConfig("tamkang-world"), "tamkang-world", "en");
+    assert.match(campusZh.intro ?? "", /開始巡禮/);
+    assert.match(campusZh.intro ?? "", /校園通行證在 \/login/);
+    assert.doesNotMatch(campusZh.intro ?? "", /未登入是「校園通行證/);
+    assert.equal(campusZh.walkthrough?.[0]?.title, "開始巡禮");
+    assert.match(campusEn.intro ?? "", /Start tour/);
+    assert.match(campusEn.intro ?? "", /\/login/);
+    assert.equal(campusEn.walkthrough?.[0]?.title, "Start tour");
+    assert.match(campusEn.walkthrough?.[1]?.body ?? "", /WASD move/);
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
     assert.match(zenEn.intro ?? "", /Take a breath/i);

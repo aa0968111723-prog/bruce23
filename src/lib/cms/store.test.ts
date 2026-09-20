@@ -1027,7 +1027,7 @@ describe("cms persistence", () => {
     assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
-  it("rewrites Tamkang World process to the live campus pass", async () => {
+  it("rewrites Tamkang World process to the live 3D home controls", async () => {
     const { sql } = await setup();
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
@@ -1036,13 +1036,13 @@ describe("cms persistence", () => {
        where slug = $1`,
       [
         "tamkang-world",
-        JSON.stringify(["點「開始巡禮」進入 3D", "WASD 移動", "開「校園圖鑑」對照建築"]),
-        JSON.stringify(["stale limitation"]),
+        JSON.stringify(["公開入口是校園通行證", "公開 JS 沒有開始巡禮", "公開 JS 沒有 WASD"]),
+        JSON.stringify(["公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。"]),
         JSON.stringify([
           {
             label: "公開站 · forge-bloom-k7xq.zeabur.app",
             href: "https://forge-bloom-k7xq.zeabur.app",
-            note: "Zeabur 服務 forge-bloom-quiet-falcon。本次探測 RUNNING。",
+            note: "公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。",
             kind: "demo",
           },
         ]),
@@ -1051,15 +1051,19 @@ describe("cms persistence", () => {
     await sql.query(`delete from cms_meta where key = 'tamkang_live_probe_version'`);
     await ensureSeed(sql, { skipGithubHydrate: true });
     const world = await getPublishedProject(sql, "tamkang-world");
-    assert.ok(world.process.some((item) => item.includes("校園通行證")));
-    assert.equal(world.process.some((item) => item.includes("開始巡禮")), false);
-    assert.equal(world.process.some((item) => item.includes("WASD")), false);
+    assert.ok(world.process.some((item) => item.includes("開始巡禮")));
+    assert.ok(world.process.some((item) => item.includes("校園圖鑑")));
+    assert.ok(world.process.some((item) => item.includes("WASD 移動")));
+    assert.ok(world.process.every((item) => !item.includes("公開 JS 沒有")));
     assert.match(
       world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-k7xq"))?.note ?? "",
-      /校園通行證/,
+      /開始巡禮/,
     );
+    assert.match(world.experienceConfig.intro ?? "", /開始巡禮/);
+    assert.match(world.experienceConfig.intro ?? "", /校園通行證在 \/login/);
     assert.ok(world.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(world.limitations.every((item) => !item.includes("目前為私有")));
+    assert.ok(world.limitations.every((item) => !item.includes("公開 JS 沒有")));
     assert.match(
       world.sourceEvidence.find((item) => item.href?.includes("forge-bloom-quiet-falcon"))?.note ?? "",
       /private:false/,

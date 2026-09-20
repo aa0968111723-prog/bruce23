@@ -248,16 +248,16 @@ describe("official project registry", () => {
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
-  it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
+  it("records Tamkang World live home controls without claiming a 3D coreFlow", () => {
     const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-canvas-intro/);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-live-home-controls/);
     assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
-    assert.ok(project.process.some((item) => item.includes("校園通行證")));
-    assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));
-    assert.ok(project.process.every((item) => !item.includes("開始巡禮")));
-    assert.ok(project.process.every((item) => !item.includes("校園圖鑑")));
-    assert.ok(project.process.every((item) => !item.includes("WASD")));
+    assert.ok(project.process.some((item) => item.includes("開始巡禮")));
+    assert.ok(project.process.some((item) => item.includes("校園圖鑑")));
+    assert.ok(project.process.some((item) => item.includes("WASD 移動")));
+    assert.ok(project.process.every((item) => !item.includes("公開 JS 沒有")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("開始巡禮")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("校園通行證")));
     assert.ok(
       project.sourceReferences.some(
@@ -266,6 +266,7 @@ describe("official project registry", () => {
     );
     assert.ok(project.limitations.some((item) => item.includes("private:false")));
     assert.ok(project.limitations.every((item) => !item.includes("目前為私有")));
+    assert.ok(project.limitations.every((item) => !item.includes("公開 JS 沒有")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

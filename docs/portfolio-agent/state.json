@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-17",
-  "updatedAt": "2026-09-20T13:00:00Z",
+  "runId": "portfolio-agent-hour-18",
+  "updatedAt": "2026-09-20T14:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -863,13 +863,14 @@
     "Live Demo / Canva status chrome honesty merged as PR #60 and live: Visual tab iframe footer prints Live Demo · 已驗證 not Live Demo · 狀態 verified; Canva source mark prints 尚未設定/無法嵌入 not 状态 not_configured",
     "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身; Folio keeps that honesty note",
     "Zen AI local SVG flow thumb recognized as local asset merged as PR #62 and live: /work/tku-zen-ai prints Canva 尚未設定 not Canva 無法嵌入",
+    "Tamkang live home controls honesty merged as PR #63 and live: /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, keeps 校園通行證 on /login, without claiming 3D coreFlow",
     "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
     "Merge PR #6 long-term integration plan onto main without duplicate PRs",
-    "Verify production /work/tku-zen-ai prints Canva 尚未設定 not Canva 無法嵌入 after PR #62 deployment",
+    "Verify production /work/tamkang-world quotes live controls after PR #63 deployment",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
@@ -879,7 +880,7 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_THROUGH_PR62_MERGED",
+  "productionStatus": "PR46_THROUGH_PR63_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -909,5 +910,5 @@
       "nextAction": "Do not change tku-zen-agent GitHub visibility. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #62 deploys, verify production /work/tku-zen-ai prints Canva 尚未設定, not Canva 無法嵌入. AI Director OS may keep 無法嵌入 because it has a /d/ short URL. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #63 deploys, verify production /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, and keeps 校園通行證 on /login. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
