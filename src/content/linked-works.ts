@@ -419,18 +419,21 @@ export const linkedWorks: Project[] = [
     summary: "Conversational Video Editor：用句子找精華、看時間軸、產出剪輯計畫。公開站 cutos.zeabur.app，與 AI Director 同專案叢集。",
     problem: "粗剪仍要自己拖時間軸。需要先用句子找出精華。",
     role: "剪輯入口設計：對話、時間軸、計畫。",
-    decisions: ["與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。"],
+    decisions: [
+      "與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。",
+      "公開站首屏產品句「AI 對話式影片剪輯」，頁首有「系統狀態」。主區塊「匯入影片」，說明「可以先載入內建示範影片（內含停頓）」。按鈕「載入示範影片」與「上傳影片…」。未載入不能剪。",
+    ],
     modalities: ["影片", "對話", "時間軸"],
     process: [
-      "打開 cutos.zeabur.app",
-      "首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」，可載入示範影片或上傳",
-      "用一句話描述要剪的意圖",
-      "檢查 Edit Plan 後套用非破壞時間軸",
+      "打開 cutos.zeabur.app（標題 CUTOS — Conversational Video Editor）",
+      "頁首產品句「AI 對話式影片剪輯」，旁有「系統狀態」",
+      "主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片」與「上傳影片…」",
+      "作品集未載入示範片也未上傳真實影片",
     ],
     outputs: ["CUTOS 公開站"],
     stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
     limitations: [
-      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。",
+      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」；頁首「系統狀態」；主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片／上傳影片…」。/api/health ok。",
       "作品集未載入示範片也未上傳真實影片，coreFlow 未過。",
     ],
     links: {
@@ -442,7 +445,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。不是 502。",
+        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」；頁首「系統狀態」；主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片／上傳影片…」。/api/health ok。不是 502。",
       },
       {
         label: "GitHub · CUTOS",

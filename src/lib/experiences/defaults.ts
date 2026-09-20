@@ -295,7 +295,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "cutos") {
     return {
       ...base,
-      intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+      intro: "公開站首屏產品句「AI 對話式影片剪輯」，頁首有「系統狀態」。主區塊「匯入影片」，說明「可以先載入內建示範影片（內含停頓）」。按鈕「載入示範影片」與「上傳影片…」。這裡是作品集走查，不是線上剪輯器。",
     };
   }
 

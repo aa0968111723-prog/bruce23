@@ -120,9 +120,16 @@ describe("experience playable chrome", () => {
     const cutosEn = overlayExperienceConfig(defaultExperienceConfig("cutos"), "cutos", "en");
     assert.match(cutosZh.intro ?? "", /匯入影片/);
     assert.match(cutosZh.intro ?? "", /載入示範影片/);
+    assert.match(cutosZh.intro ?? "", /內含停頓/);
+    assert.match(cutosZh.intro ?? "", /系統狀態/);
+    assert.match(cutosZh.intro ?? "", /上傳影片…/);
+    assert.doesNotMatch(cutosZh.intro ?? "", /可載入示範影片或上傳/);
     assert.doesNotMatch(cutosZh.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     assert.match(cutosEn.intro ?? "", /Import video/i);
     assert.match(cutosEn.intro ?? "", /demo clip/i);
+    assert.match(cutosEn.intro ?? "", /includes pauses/i);
+    assert.match(cutosEn.intro ?? "", /System status/);
+    assert.match(cutosEn.intro ?? "", /Upload video…/);
     assert.equal(cutosZh.walkthrough?.[0]?.title, "匯入影片");
     assert.equal(cutosEn.walkthrough?.[0]?.title, "Import video");
     const tyZh = overlayExperienceConfig(defaultExperienceConfig("focus-challenge"), "focus-challenge", "zh");

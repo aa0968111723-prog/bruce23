@@ -294,6 +294,10 @@ describe("experience config merge", () => {
     assert.match(cutosIntro.intro ?? "", /AI 對話式影片剪輯/);
     assert.match(cutosIntro.intro ?? "", /匯入影片/);
     assert.match(cutosIntro.intro ?? "", /載入示範影片/);
+    assert.match(cutosIntro.intro ?? "", /內含停頓/);
+    assert.match(cutosIntro.intro ?? "", /系統狀態/);
+    assert.match(cutosIntro.intro ?? "", /上傳影片…/);
+    assert.doesNotMatch(cutosIntro.intro ?? "", /可載入示範影片或上傳/);
     assert.doesNotMatch(cutosIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const tyIntro = defaultExperienceConfig("focus-challenge");
     assert.match(tyIntro.intro ?? "", /看指令選顏色/);
