@@ -146,7 +146,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Wan / RIFE and other GPU adapters report PROVIDER_NOT_AVAILABLE when unloaded — no fake depth or fake pose.",
         "UI, REST, and MCP share the same application commands.",
         "cabin-shale-k7q2 (Chinese) and lunar-falcon-8p2r (English) are the same FrameLab 0.4.0, not two products. The Chinese portfolio uses the Chinese public host as Live Demo.",
-        "The public first screen is a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in; guests cannot import or repair frames.",
+        "The public first screen is a landing page. Subtitle “Frame-by-frame animation workstation”, h1 “Give it keyframes. Repair only the frames that break.” Primary buttons “Sign in to the studio” and “System status”. Not an NLE, and not a generation website. Guests cannot import or repair frames.",
       ],
       [
         "Open cabin-shale-k7q2.zeabur.app (title FrameLab)",

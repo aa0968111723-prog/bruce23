@@ -38,6 +38,8 @@ import {
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
+  FRAMELAB_LIVE_PROBE_SLUG,
+  FRAMELAB_LIVE_PROBE_VERSION,
   LIVE_PROBES_20260919,
   OFFICIAL_PROJECT_KEYS,
   REJECTED_OWNER_DOMAIN_GUESSES,
@@ -92,6 +94,10 @@ describe("official project registry", () => {
     assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
     assert.ok(frame.sourceReferences.some((item) => item.note.includes("登入工作室") && item.href === FRAMELAB_IDENTITY.canonicalLiveUrl));
     assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.equal(FRAMELAB_LIVE_PROBE_SLUG, "framelab");
+    assert.match(FRAMELAB_LIVE_PROBE_VERSION, /framelab-live-cta-quote/);
+    assert.ok(frame.decisions.some((item) => item.includes("不是生成網站")));
+    assert.ok(frame.decisions.some((item) => item.includes("登入工作室")));
     const cabinGit = frame.sourceReferences.find((item) =>
       item.href?.includes("cabin-shale-raven-swift"),
     );
