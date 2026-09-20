@@ -74,6 +74,10 @@ export const FRAMELAB_IDENTITY = {
 
 export const FRAMELAB_IDENTITY_VERSION = "framelab-github-public-20260920";
 
+export const FRAMELAB_LIVE_PROBE_VERSION = "framelab-live-cta-quote-20260920";
+
+export const FRAMELAB_LIVE_PROBE_SLUG = "framelab";
+
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;

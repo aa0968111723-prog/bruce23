@@ -83,8 +83,12 @@ describe("experience playable chrome", () => {
     const frameZh = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "zh");
     assert.equal(frameEn.honestyLabel, PORTFOLIO_DEMO_EN);
     assert.match(frameEn.timeline?.demoDisclaimer ?? "", /not GPU/i);
-    assert.match(frameZh.intro ?? "", /進入工作室要登入/);
+    assert.match(frameZh.intro ?? "", /登入工作室/);
+    assert.match(frameZh.intro ?? "", /系統狀態/);
+    assert.match(frameZh.intro ?? "", /不是生成網站/);
+    assert.doesNotMatch(frameZh.intro ?? "", /進入工作室要登入/);
     assert.match(frameEn.intro ?? "", /landing page/i);
+    assert.match(frameEn.intro ?? "", /generation website/i);
     const reviewZh = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "zh");
     const reviewEn = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "en");
     assert.match(reviewZh.intro ?? "", /今天要對什麼/);

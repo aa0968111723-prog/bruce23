@@ -50,7 +50,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "framelab") {
     return {
       ...base,
-      intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
+      intro: "公開站首屏是登陸頁。副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」與「系統狀態」。不是剪輯軟體，也不是生成網站。這裡是作品集示範時間軸，不是線上工作室。",
       timeline: {
         frames: DEFAULT_FRAMES,
         onionDefault: true,
