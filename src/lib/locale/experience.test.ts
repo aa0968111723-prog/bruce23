@@ -171,6 +171,18 @@ describe("experience playable chrome", () => {
     assert.doesNotMatch(experienceChromeFor("zh").treeFailed, /這次公開同步失敗/);
     assert.match(experienceChromeFor("en").treeFailed, /public repository still opens/i);
     assert.doesNotMatch(experienceChromeFor("en").treeFailed, /This public sync failed/);
+    const lumenZh = overlayExperienceConfig(defaultExperienceConfig("lumen"), "lumen", "zh");
+    const lumenEn = overlayExperienceConfig(defaultExperienceConfig("lumen"), "lumen", "en");
+    assert.match(lumenZh.intro ?? "", /自動聽/);
+    assert.match(lumenZh.intro ?? "", /拍照開始/);
+    assert.match(lumenZh.intro ?? "", /長任務/);
+    assert.doesNotMatch(lumenZh.intro ?? "", /首頁只有/);
+    assert.ok(lumenZh.conversation?.suggestions?.includes("拍照開始"));
+    assert.ok(!lumenZh.conversation?.suggestions?.includes("拍照"));
+    assert.match(lumenEn.intro ?? "", /自動聽/);
+    assert.match(lumenEn.intro ?? "", /拍照開始/);
+    assert.equal(lumenEn.walkthrough?.[0]?.title, "What do you want to do?");
+    assert.deepEqual(lumenEn.conversation?.suggestions, ["做海報", "拍照開始", "做影片", "長任務"]);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);

@@ -277,9 +277,15 @@ describe("official project registry", () => {
   it("records Lumen first screen without Hermes conversation chrome", () => {
     const project = projects.find((item) => item.slug === LUMEN_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-not-hermes/);
+    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-live-home-chrome/);
     assert.equal(project.links.live, "https://ai-chat-8rq3.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("自動聽")));
+    assert.ok(project.process.some((item) => item.includes("拍照開始")));
+    assert.ok(project.process.some((item) => item.includes("長任務")));
+    assert.ok(project.process.every((item) => !item.includes("選做海報／拍照／開始做影片")));
+    assert.ok(project.decisions.every((item) => !item.includes("首頁只有")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("拍照開始")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 Hermes")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });

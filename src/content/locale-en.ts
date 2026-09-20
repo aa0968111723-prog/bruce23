@@ -484,13 +484,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A multimodal voice orb in your pocket",
     summary: "Speak to design, search, and generate. Public site ai-chat-8rq3; GitHub wood-ivory-blaze-maple.",
     process: [
-      "Open ai-chat-8rq3.zeabur.app",
-      "Tap to listen or hold to speak",
-      "Pick poster / photo / video / long task",
-      "Continue from recent projects",
+      "Open ai-chat-8rq3.zeabur.app (title Lumen)",
+      "First screen is 想做什麼？; hint 點一下開始聽 · 按住說話; header has 自動聽",
+      "Four entries are 做海報, 拍照開始, 做影片, 長任務 (button is 拍照開始, not 拍照)",
+      "Recent strip switches 專案 / 生成 / 畫板. This portfolio has not held-to-speak or generated",
     ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title Lumen. First screen is What do you want to do? / tap to listen. This portfolio has not held-to-speak, so coreFlow is not passed.",
+      "Cloud models depend on keys; without a key it should degrade honestly, not fake a generation.",
+      "Probed 2026-09-20: GET / HTTP 200, title Lumen. HTML first screen has 自動聽, 想做什麼？, 點一下開始聽 · 按住說話; buttons 做海報 / 拍照開始 / 做影片 / 長任務; Recent 專案 / 生成 / 畫板. This portfolio has not held-to-speak or generated, so coreFlow is not passed.",
     ],
   },
   xiaocai: {

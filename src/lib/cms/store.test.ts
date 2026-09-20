@@ -1096,10 +1096,15 @@ describe("cms persistence", () => {
     const orb = await getPublishedProject(sql, "lumen");
     assert.match(
       orb.sourceEvidence.find((item) => item.href?.includes("ai-chat-8rq3"))?.note ?? "",
-      /想做什麼/,
+      /拍照開始/,
     );
+    assert.ok(orb.process.some((item) => item.includes("自動聽")));
+    assert.ok(orb.process.some((item) => item.includes("長任務")));
+    assert.ok(orb.decisions.every((item) => !item.includes("首頁只有")));
     assert.doesNotMatch(orb.experienceConfig.conversation?.starter ?? "", /Hermes 執行期/);
     assert.match(orb.experienceConfig.conversation?.starter ?? "", /想做什麼/);
+    assert.match(orb.experienceConfig.intro ?? "", /自動聽/);
+    assert.ok(orb.experienceConfig.conversation?.suggestions?.includes("拍照開始"));
     assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
