@@ -230,9 +230,9 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
         engine: "hermes-preview",
         disclaimer: "這是作品集預覽，沒有連到社團資料庫，也不是 Hermes Agent。",
         starter: "公開站未授權只看得到 h1「淡江大學領袖禪學社」與「請輸入授權碼」「進入工作台」。這裡不會假裝已經進入，也不展示社團文件樹。",
-        placeholder: "輸入授權碼、草稿、GitHub",
-        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。本站不複製 knowledge/雲端文件。",
-        suggestions: ["授權碼", "草稿", "GitHub"],
+        placeholder: "輸入授權碼、草稿、來源",
+        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。來源連結暫不公開，也不複製來源文件。",
+        suggestions: ["授權碼", "草稿", "來源"],
         replies: [
           {
             match: "授權",
@@ -243,8 +243,8 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
             reply: "授權後的草稿列寫「目前為草稿模式——不會自動發布任何內容」。那不是訪客首屏。",
           },
           {
-            match: "GitHub",
-            reply: "倉庫現在是 public，README 卻寫不可轉 public。本站不複製 knowledge/雲端文件，也不展示那棵檔案樹。",
+            match: "來源",
+            reply: "來源儲存庫的可見性與自身隱私規則衝突。完成擁有者審查前，作品集不提供原始碼連結，也不複製或展示檔案樹。",
           },
         ],
       },

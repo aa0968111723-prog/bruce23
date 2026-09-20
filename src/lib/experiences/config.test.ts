@@ -224,8 +224,12 @@ describe("experience config merge", () => {
     assert.match(zenDesk.conversation?.starter ?? "", /請輸入授權碼/);
     assert.match(zenDesk.intro ?? "", /淡江大學領袖禪學社/);
     assert.doesNotMatch(zenDesk.conversation?.starter ?? "", /Hermes 執行期/);
-    assert.ok(zenDesk.conversation?.suggestions?.includes("GitHub"));
+    assert.ok(zenDesk.conversation?.suggestions?.includes("來源"));
+    assert.ok(!zenDesk.conversation?.suggestions?.includes("GitHub"));
     assert.ok(!zenDesk.conversation?.suggestions?.includes("做網宣"));
+    assert.doesNotMatch(zenDesk.conversation?.sourceNote ?? "", /knowledge\/雲端文件/);
+    assert.doesNotMatch(JSON.stringify(zenDesk.conversation?.replies ?? []), /github\.com/);
+    assert.equal(zenDesk.walkthrough?.[2]?.title, "來源邊界");
     const lumen = defaultExperienceConfig("lumen");
     assert.match(lumen.conversation?.starter ?? "", /想做什麼/);
     assert.doesNotMatch(lumen.conversation?.starter ?? "", /Hermes 執行期/);

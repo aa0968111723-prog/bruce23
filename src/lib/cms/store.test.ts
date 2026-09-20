@@ -1337,6 +1337,9 @@ describe("cms persistence", () => {
     assert.equal(desk.github.owner, null);
     assert.equal(desk.github.repo, null);
     assert.equal(desk.github.readme, null);
+    assert.ok(desk.experienceConfig.conversation?.suggestions?.includes("來源"));
+    assert.ok(!desk.experienceConfig.conversation?.suggestions?.includes("GitHub"));
+    assert.doesNotMatch(desk.experienceConfig.conversation?.sourceNote ?? "", /knowledge\/雲端文件/);
     assert.equal(admin.github_sync_enabled, false);
     assert.equal(admin.github_url, null);
     assert.equal(admin.github_owner, null);

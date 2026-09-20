@@ -125,6 +125,17 @@ describe("experience playable chrome", () => {
     assert.match(zenZh.honestyLabel ?? "", /不是雲端/);
     assert.match(zenZh.intro ?? "", /Welcome to TKU Zen AI/);
     assert.match(zenZh.conversation?.starter ?? "", /Take a breath/);
+    const deskZh = overlayExperienceConfig(defaultExperienceConfig("tku-zen-agent"), "tku-zen-agent", "zh");
+    const deskEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-agent"), "tku-zen-agent", "en");
+    assert.match(deskZh.intro ?? "", /請輸入授權碼/);
+    assert.ok(deskZh.conversation?.suggestions?.includes("來源"));
+    assert.ok(!deskZh.conversation?.suggestions?.includes("GitHub"));
+    assert.doesNotMatch(JSON.stringify(deskZh), /github\.com\/aa0968111723-prog\/tku-zen-agent/);
+    assert.match(deskEn.intro ?? "", /access code/i);
+    assert.deepEqual(deskEn.conversation?.suggestions, ["Access code", "Draft", "Source"]);
+    assert.ok(!deskEn.conversation?.suggestions?.includes("GitHub"));
+    assert.doesNotMatch(JSON.stringify(deskEn), /github\.com\/aa0968111723-prog\/tku-zen-agent/);
+    assert.equal(deskEn.walkthrough?.[2]?.title, "Source boundary");
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);

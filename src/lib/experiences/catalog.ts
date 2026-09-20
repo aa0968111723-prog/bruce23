@@ -316,7 +316,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     walkthrough: [
       { title: "Ask 模式", body: "打開 tku-zen-agent-k7f2.zeabur.app/?mode=ask。HTTP 200。GET /api/auth mode=token、未登入。" },
       { title: "授權門", body: "未授權首屏 h1「淡江大學領袖禪學社」、請輸入授權碼、進入工作台。不是「用一句話開始」。" },
-      { title: "GitHub 邊界", body: "倉庫目前 public，README 寫不可轉 public。本站不複製 knowledge/雲端文件，也不展示那棵檔案樹。" },
+      { title: "來源邊界", body: "來源儲存庫的可見性與自身隱私規則衝突。完成擁有者審查前不提供原始碼連結，也不複製或展示檔案樹。" },
     ],
   },
   cutos: {

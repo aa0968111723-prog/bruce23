@@ -369,5 +369,7 @@ describe("official project registry", () => {
     assert.ok(project.limitations.some((item) => item.includes("visibility") && item.includes("來源文件")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(project.process.every((item) => !/社長|電話|學號/.test(item)));
+    assert.ok(project.limitations.every((item) => !item.includes("knowledge/雲端文件")));
+    assert.ok(project.limitations.every((item) => !item.includes("github.com")));
   });
 });
