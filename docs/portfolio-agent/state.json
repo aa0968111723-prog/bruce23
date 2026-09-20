@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-live-demo-status-honesty",
-  "updatedAt": "2026-09-20T02:10:00Z",
+  "runId": "grok-impl-20260920-github-public-sync-honesty",
+  "updatedAt": "2026-09-20T02:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/live-demo-status-honesty",
+  "currentBranch": "fix/github-public-sync-honesty",
   "currentPR": null,
-  "currentTask": "live-demo-status-honesty",
+  "currentTask": "github-public-sync-honesty",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -55,19 +55,20 @@
     "Tamsui drama canvas intro stamp merged as PR #54 and live on production /work/tamsui-drama (載入淡江·淡水世界, not 逐步走查)",
     "Zen source-link containment merged as PR #55 and live on production /work/tku-zen-agent (no github.com/aa0968111723-prog/tku-zen-agent href; 原始碼 · 暫不公開連結; chips 授權碼/草稿/來源)",
     "Xiaocai gallery note merged as PR #56 and live on production /work/xiaocai (點我一下，快速記一筆吧, not 只顯示已發布媒體)",
-    "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)"
+    "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)",
+    "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured"
   ],
   "remainingSteps": [
-    "Land PR for public integration-line honesty so live URLs are not labeled Demo unavailable",
+    "Land PR so public GitHub URLs are not labeled GitHub 同步失敗 when the tree hydrate failed",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 123,
+  "testsPassed": 157,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR57_LIVE_STATUS_LINE_STILL_SAYS_DEMO_UNAVAILABLE",
+  "productionStatus": "PR58_LIVE_GITHUB_FAILED_NEXT_TO_PUBLIC_REPOS",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -106,5 +107,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After the integration-line PR deploys, verify production /work/tku-zen-agent no longer prints GitHub not_configured · Demo unavailable, and still has no github.com/aa0968111723-prog/tku-zen-agent href. Do not mark zen-desk coreFlow. Do not change tku-zen-agent GitHub visibility. Folio/PLANFORM/CUTOS/ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After the GitHub public-sync honesty PR deploys, verify production /work/cutos /work/xiaocai /work/lumen /work/focus-challenge print GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗, still keep public GitHub hrefs, and /work/tku-zen-agent still has no github.com/aa0968111723-prog/tku-zen-agent href. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Folio/PLANFORM/CUTOS/ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
