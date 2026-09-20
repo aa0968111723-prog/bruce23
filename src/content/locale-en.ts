@@ -459,13 +459,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A bright desk for club work",
     summary: "Print, events, and daily making under one lamp — not another Drive folder.",
     process: [
-      "Open delta-horizon-k7f2.zeabur.app",
-      "First screen is “What can we make today?”",
-      "Read upcoming events and AI suggestions",
-      "Due items have no reviewer; opening the studio auto-publishes them",
+      "Open delta-horizon-k7f2.zeabur.app (title 禪學社 Studio)",
+      "h1 What can we make today?; buttons Help me create and See events",
+      "Due-item copy: no reviewer; opening the studio auto-publishes. Buttons Publish due items now and See calendar",
+      "This portfolio has not generated a post or published a due item",
     ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title 禪學社 Studio. First screen is What can we make today? The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title 禪學社 Studio. h1 What can we make today?; buttons Help me create / See events / Publish due items now / See calendar. The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
     ],
   },
   "focus-challenge": {

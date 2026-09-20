@@ -844,6 +844,25 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  "zen-studio": {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is What can we make today? Buttons: Help me create, See events, Publish due items now, See calendar. Due-item copy: no reviewer; opening the studio auto-publishes. This is a portfolio walkthrough, not the Instagram backend.",
+    walkthrough: [
+      {
+        title: "What can we make today",
+        body: "Public delta-horizon-k7f2 title is 禪學社 Studio. h1 What can we make today? Buttons Help me create and See events.",
+      },
+      {
+        title: "Generate",
+        body: "Help me create opens generation. Quick start has Generate IG post / Generate image / Generate Story / Generate Carousel / Generate Reels. This page does not generate for you.",
+      },
+      {
+        title: "Calendar",
+        body: "Buttons See calendar and Publish due items now. The page says due items auto-publish with no reviewer. This portfolio has not published a post.",
+      },
+    ],
+  },
   skatehub: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:

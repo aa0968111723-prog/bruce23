@@ -206,6 +206,16 @@ describe("experience playable chrome", () => {
     assert.match(skateEn.intro ?? "", /Don’t stay home on your phone|Don't stay home on your phone/);
     assert.match(skateEn.intro ?? "", /Browse the gear catalog/);
     assert.equal(skateEn.walkthrough?.[0]?.title, "Open the hub");
+    const studioZh = overlayExperienceConfig(defaultExperienceConfig("zen-studio"), "zen-studio", "zh");
+    const studioEn = overlayExperienceConfig(defaultExperienceConfig("zen-studio"), "zen-studio", "en");
+    assert.match(studioZh.intro ?? "", /AI 幫我創作/);
+    assert.match(studioZh.intro ?? "", /看月曆/);
+    assert.match(studioZh.intro ?? "", /現在發到期內容/);
+    assert.doesNotMatch(studioZh.intro ?? "", /看近期活動與 AI 建議/);
+    assert.match(studioEn.intro ?? "", /Help me create/);
+    assert.match(studioEn.intro ?? "", /See calendar/);
+    assert.equal(studioZh.walkthrough?.[0]?.title, "今天可以創作什麼");
+    assert.equal(studioEn.walkthrough?.[0]?.title, "What can we make today");
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);

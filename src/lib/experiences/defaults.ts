@@ -90,7 +90,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "zen-studio") {
     return {
       ...base,
-      intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+      intro: "公開站首屏 h1「今天可以創作什麼？」。按鈕「AI 幫我創作」「看活動」「現在發到期內容」「看月曆」。到期內容寫「沒有審核人。打開工作室會自動發到期內容」。這是作品集走查，不是 IG 後台。",
     };
   }
 

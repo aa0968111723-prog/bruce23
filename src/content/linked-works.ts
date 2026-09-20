@@ -180,19 +180,20 @@ export const linkedWorks: Project[] = [
     decisions: [
       "首頁先問今天可以創作什麼，而不是先給後台選單。",
       "公開站是 delta-horizon-k7f2，GitHub 是 delta-horizon-cliff-fern。",
+      "公開站首屏 h1「今天可以創作什麼？」。按鈕「AI 幫我創作」「看活動」「現在發到期內容」「看月曆」。到期內容寫「沒有審核人。打開工作室會自動發到期內容」。未生成不能當已發。",
     ],
     modalities: ["圖像", "文宣", "日曆"],
     process: [
-      "打開 delta-horizon-k7f2.zeabur.app",
-      "首屏「今天可以創作什麼？」",
-      "看近期活動與 AI 建議",
-      "到期內容沒有審核人，打開工作室會自動發",
+      "打開 delta-horizon-k7f2.zeabur.app（標題「禪學社 Studio」）",
+      "h1「今天可以創作什麼？」；按鈕「AI 幫我創作」「看活動」",
+      "到期內容寫「沒有審核人。打開工作室會自動發到期內容」；按鈕「現在發到期內容」「看月曆」",
+      "作品集未生成貼文也未發到期內容",
     ],
     outputs: ["禪學社 Studio 公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
       "連 IG 官方發布需額外授權，未接上時只在工作室內排程。",
-      "2026-09-19 GET / HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「禪學社 Studio」。h1「今天可以創作什麼？」；按鈕「AI 幫我創作／看活動／現在發到期內容／看月曆」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/delta-horizon-cliff-fern",
@@ -203,7 +204,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · delta-horizon-k7f2.zeabur.app",
         href: "https://delta-horizon-k7f2.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。到期內容寫明沒有審核人、打開會自動發。",
+        note: "2026-09-20 HTTP 200，標題「禪學社 Studio」。h1「今天可以創作什麼？」；按鈕「AI 幫我創作／看活動／現在發到期內容／看月曆」。到期內容寫明沒有審核人、打開會自動發。",
       },
       {
         label: "GitHub · delta-horizon-cliff-fern",

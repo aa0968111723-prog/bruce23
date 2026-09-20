@@ -122,7 +122,7 @@ export const LUMEN_LIVE_PROBE_VERSION = "lumen-live-home-chrome-20260920";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 
-export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-cta-quote-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 

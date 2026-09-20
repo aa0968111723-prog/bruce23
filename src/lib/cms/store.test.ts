@@ -1201,11 +1201,41 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const studio = await getPublishedProject(sql, "zen-studio");
     assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(studio.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(studio.process.every((item) => !item.includes("看近期活動與 AI 建議")));
     assert.match(
       studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
-      /今天可以創作什麼/,
+      /AI 幫我創作/,
     );
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
     assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes Zen Studio live landing CTAs without claiming a generate coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["首頁先問今天可以創作什麼，而不是先給後台選單。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
+    assert.match(studio.experienceConfig.intro ?? "", /看月曆/);
+    assert.match(studio.experienceConfig.intro ?? "", /現在發到期內容/);
+    assert.doesNotMatch(studio.experienceConfig.intro ?? "", /看近期活動與 AI 建議/);
+    assert.ok(studio.decisions.some((item) => item.includes("AI 幫我創作")));
     assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

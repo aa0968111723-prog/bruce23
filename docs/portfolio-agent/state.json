@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-cutos-live-cta-quote",
-  "updatedAt": "2026-09-20T10:06:00Z",
+  "runId": "grok-impl-20260920-zen-studio-live-cta-quote",
+  "updatedAt": "2026-09-20T10:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/cutos-live-cta-quote",
+  "currentBranch": "fix/zen-studio-live-cta-quote",
   "currentPR": null,
-  "currentTask": "cutos-live-cta-quote",
+  "currentTask": "zen-studio-live-cta-quote",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -67,19 +67,20 @@
     "Folio live subtitle SDK merged as PR #68 and live on production /work/folio: 給 MCP 與內嵌網站 / 開發者 SDK, not only 文件櫃／不必登入",
     "SkateHub slogan-quote merged as PR #69 and live on production /work/skatehub: 瀏覽裝備圖鑑 / 記錄今天的里程. Unique marker is the CTAs, not 不要在家玩手機. Not a mileage coreFlow",
     "FrameLab live-CTA quote merged as PR #70 and live on production /work/framelab: 登入工作室 / 系統狀態 / 不是生成網站, not 進入工作室要登入. Unique marker 不是生成網站. Not a repair coreFlow",
-    "AI Director OS live-CTA quote merged as PR #71 and live on production /work/ai-director-os: 進入工作台 / 登入工作台 / 看看怎麼運作, not 進入工作台要登入. Unique marker 看看怎麼運作. Not a team coreFlow"
+    "AI Director OS live-CTA quote merged as PR #71 and live on production /work/ai-director-os: 進入工作台 / 登入工作台 / 看看怎麼運作, not 進入工作台要登入. Unique marker 看看怎麼運作. Not a team coreFlow",
+    "CUTOS live-CTA quote merged as PR #72 and live on production /work/cutos: 系統狀態 / 上傳影片… / 內含停頓, not 可載入示範影片或上傳. Unique marker 內含停頓. Not a demo-clip coreFlow"
   ],
   "remainingSteps": [
-    "Land PR so /work/cutos quotes 系統狀態 / 上傳影片… / 內含停頓, not 可載入示範影片或上傳. Unique marker is 內含停頓. Do not claim a demo-clip coreFlow.",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AIOS team coreFlow stays BLOCKED on a real browser",
+    "Land PR so /work/zen-studio quotes AI 幫我創作 / 看活動 / 現在發到期內容 / 看月曆, not 看近期活動與 AI 建議. Unique marker is AI 幫我創作. Do not claim a generate coreFlow.",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AIOS team / Zen Studio generate coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 126,
+  "testsPassed": 128,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR71_LIVE_CUTOS_INTRO_PARAPHRASE",
+  "productionStatus": "PR72_LIVE_ZEN_STUDIO_INTRO_PARAPHRASE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -93,7 +94,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, Lumen hold-to-speak, and SkateHub mileage need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, Lumen hold-to-speak, SkateHub mileage, and Zen Studio generate need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -118,5 +119,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the CUTOS live-CTA PR so production /work/cutos quotes 系統狀態 / 上傳影片… / 內含停頓, not 可載入示範影片或上傳. Unique deploy marker is 內含停頓. Do not claim a demo-clip coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AIOS team stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the Zen Studio live-CTA PR so production /work/zen-studio quotes AI 幫我創作 / 看活動 / 現在發到期內容 / 看月曆, not 看近期活動與 AI 建議. Unique deploy marker is AI 幫我創作. Do not claim a generate coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AIOS team / Zen Studio generate stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

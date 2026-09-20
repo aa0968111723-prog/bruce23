@@ -320,9 +320,15 @@ describe("official project registry", () => {
   it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
     const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-canvas-intro/);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-cta-quote/);
     assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(project.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.process.some((item) => item.includes("看月曆")));
+    assert.ok(project.process.some((item) => item.includes("現在發到期內容")));
+    assert.ok(project.process.every((item) => !item.includes("看近期活動與 AI 建議")));
+    assert.ok(project.decisions.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("AI 幫我創作")));
     assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });

@@ -277,9 +277,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: PORTFOLIO_DEMO,
     walkthrough: [
-      { title: "今天可以創作什麼", body: "公開站 delta-horizon-k7f2 首屏「今天可以創作什麼？」。標題「禪學社 Studio」。" },
-      { title: "生成", body: "從 IG 貼文／Carousel／Story／畫布開始，不要先開雲端硬碟。" },
-      { title: "月曆", body: "到期內容在月曆裡改。未接 IG 時只在工作室內排程。" },
+      { title: "今天可以創作什麼", body: "公開站 delta-horizon-k7f2 標題「禪學社 Studio」。h1「今天可以創作什麼？」。按鈕「AI 幫我創作」「看活動」。" },
+      { title: "生成", body: "「AI 幫我創作」開生成。快速開始有「生成 IG 貼文／生成圖片／生成 Story／生成 Carousel／生成 Reels」。作品集這一頁沒有代替你生成。" },
+      { title: "月曆", body: "按鈕「看月曆」「現在發到期內容」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未發一則貼文。" },
     ],
   },
   "focus-challenge": {
