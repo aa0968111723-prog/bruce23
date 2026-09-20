@@ -17,9 +17,9 @@ The source SHA was read from GitHub; this run did not freshly verify the deploye
 
 ## Evidence and limits
 
-- [Mobile tools](mobile-tools.png): actual responsive browser screenshot.
-- [Desktop edited fields](desktop-edited.png): visible test inputs; input values alone do not prove persisted state.
-- [Desktop after reload](desktop-reloaded.png): retained scene and moved chair.
+- [Mobile tools](mobile-tools.jpg): actual responsive browser screenshot (JPEG).
+- [Desktop edited fields](desktop-edited.jpg): visible test inputs; input values alone do not prove persisted state (JPEG).
+- [Desktop after reload](desktop-reloaded.jpg): retained scene and moved chair (JPEG).
 - [Structured report](report.json): detailed observations, scope and remaining checks.
 
 No console warning/error entries were captured at the checks performed. This is not full security acceptance. No AI or remote sharing was invoked. The synthetic project remains only in browser storage; existing projects were not deleted. Source confirms localStorage-backed project storage and change-event field handlers.

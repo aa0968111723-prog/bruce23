@@ -67,9 +67,9 @@
     }
   ],
   "artifacts": [
-    "mobile-tools.png",
-    "desktop-edited.png",
-    "desktop-reloaded.png"
+    "mobile-tools.jpg",
+    "desktop-edited.jpg",
+    "desktop-reloaded.jpg"
   ],
   "acceptance": {
     "coreFlowPass": false,
