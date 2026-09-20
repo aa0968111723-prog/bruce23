@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-15",
-  "updatedAt": "2026-09-20T11:00:00Z",
+  "runId": "portfolio-agent-hour-16",
+  "updatedAt": "2026-09-20T12:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -859,24 +859,25 @@
     "Xiaocai gallery note merged as PR #56 and live on production /work/xiaocai (點我一下，快速記一筆吧, not 只顯示已發布媒體)",
     "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)",
     "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured",
-    "Public GitHub tree hydrate status honesty merged as PR #59: public GitHub URLs labeled GitHub 公開連結（檔案樹未同步） instead of sync failed",
+    "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href",
+    "Live Demo / Canva status chrome honesty merged as PR #60 and live: Visual tab iframe footer prints Live Demo · 已驗證 not Live Demo · 狀態 verified; Canva source mark prints 尚未設定/無法嵌入 not 狀態 not_configured",
     "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
     "Merge PR #6 long-term integration plan onto main without duplicate PRs",
-    "Verify production no longer prints GitHub 同步失敗 next to public repo URLs after PR #59 deployment",
+    "Verify production Visual and Canva tabs do not interpolate raw CMS enums after PR #60 deployment",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
     "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
   ],
-  "testsPassed": 315,
+  "testsPassed": 319,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_THROUGH_PR59_MERGED",
+  "productionStatus": "PR46_THROUGH_PR60_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -906,5 +907,5 @@
       "nextAction": "Do not change tku-zen-agent GitHub visibility. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #59 deploys, verify production /work/cutos /work/xiaocai /work/lumen /work/focus-challenge print GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗, still keep public GitHub hrefs, and /work/tku-zen-agent still has no github.com/aa0968111723-prog/tku-zen-agent href. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #60 deploys, verify production Visual tab iframe footer prints Live Demo · 已驗證 not Live Demo · 狀態 verified, and Canva tab source mark prints 尚未設定/無法嵌入 not 狀態 not_configured. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

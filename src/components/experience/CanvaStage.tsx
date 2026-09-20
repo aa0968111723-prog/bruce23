@@ -3,10 +3,11 @@ import { Expand, ExternalLink } from "lucide-react";
 import { canvaViewerState, publicCanvaEmbedUrl, type PublicProject } from "@/lib/cms/privacy";
 import { canvaEmbedSrc, canvaOpenOriginalUrl } from "@/lib/canva/embed";
 import { fillChrome } from "@/lib/locale/experience";
+import { publicCanvaSourceMark } from "@/lib/locale/integration-line";
 import { useExperienceView } from "./useExperienceView";
 
 export function CanvaStage({ project }: { project: PublicProject }) {
-  const { ex, config } = useExperienceView(project);
+  const { lang, ex, config } = useExperienceView(project);
   const canva = project.canva;
   const [failed, setFailed] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
@@ -62,7 +63,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
               <ExternalLink className="size-4" />
             </a>
           ) : null}
-          <p className="text-xs text-muted">{fillChrome(ex.sourcePublicEmbed, { status: canva.status })}</p>
+          <p className="text-xs text-muted">{publicCanvaSourceMark(lang, canva, "public-embed")}</p>
         </div>
       </div>
     );
@@ -162,7 +163,7 @@ export function CanvaStage({ project }: { project: PublicProject }) {
           </a>
         ) : null}
       </div>
-      <p className="text-xs text-muted">{fillChrome(ex.sourceCanvaEmbed, { status: canva.status })}</p>
+      <p className="text-xs text-muted">{publicCanvaSourceMark(lang, canva, "canva-embed")}</p>
       {config.canvaNote ? <p className="text-sm text-muted">{config.canvaNote}</p> : null}
       {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
     </div>
