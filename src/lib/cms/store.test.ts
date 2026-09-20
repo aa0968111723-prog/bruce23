@@ -1341,10 +1341,40 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const ledger = await getPublishedProject(sql, "xiaocai");
     assert.ok(ledger.process.some((item) => item.includes("快速記一筆")));
+    assert.ok(ledger.process.some((item) => item.includes("收支明細")));
     assert.match(
       ledger.sourceEvidence.find((item) => item.href?.includes("untitled-5"))?.note ?? "",
-      /快速記一筆/,
+      /收支明細/,
     );
+    assert.match(ledger.experienceConfig.galleryNote ?? "", /收支明細/);
+    assert.match(ledger.experienceConfig.intro ?? "", /收支明細/);
+    assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes Xiaocai live landing CTAs without claiming a ledger write coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "xiaocai",
+        JSON.stringify(["公開站 untitled-5；GitHub 倉庫名是 -1。"]),
+        JSON.stringify({
+          honestyLabel: "公開站是小財記帳，不是 Folio 編輯器",
+          intro: "公開站是小財記帳 untitled-5。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
+          galleryNote: "公開站首屏「點我一下，快速記一筆吧」。這是作品集媒體廊，不是記帳本體。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'xiaocai_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const ledger = await getPublishedProject(sql, "xiaocai");
+    assert.match(ledger.experienceConfig.galleryNote ?? "", /收支明細/);
+    assert.match(ledger.experienceConfig.intro ?? "", /收支明細/);
+    assert.doesNotMatch(ledger.experienceConfig.galleryNote ?? "", /只顯示已發布媒體/);
+    assert.ok(ledger.decisions.some((item) => item.includes("收支明細")));
     assert.ok(ledger.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

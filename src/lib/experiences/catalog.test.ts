@@ -163,6 +163,16 @@ describe("experience catalog", () => {
     assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
   });
 
+  it("keeps xiaocai walkthrough on the live tap-to-log home", () => {
+    const steps = experienceCatalog.xiaocai.walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "打開帳本");
+    assert.match(steps[0]?.body ?? "", /快速記一筆/);
+    assert.match(steps[0]?.body ?? "", /收支明細/);
+    assert.match(bodies, /小財記帳／收支明細／小財／更多/);
+    assert.doesNotMatch(bodies, /看這個月花到哪/);
+  });
+
   it("keeps lumen walkthrough on the live voice-orb home", () => {
     const steps = experienceCatalog.lumen.walkthrough ?? [];
     const bodies = steps.map((step) => step.body).join("\n");

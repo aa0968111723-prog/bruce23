@@ -372,10 +372,14 @@ describe("official project registry", () => {
   it("records Xiaocai JS first screen without claiming a ledger write coreFlow", () => {
     const project = projects.find((item) => item.slug === XIAOCAI_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-gallery-note/);
+    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-live-cta-quote/);
     assert.equal(project.links.live, "https://untitled-5.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("快速記一筆")));
+    assert.ok(project.process.some((item) => item.includes("收支明細")));
+    assert.ok(project.process.every((item) => !item.includes("看分類與這個月")));
+    assert.ok(project.decisions.some((item) => item.includes("收支明細")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("快速記一筆")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("收支明細")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

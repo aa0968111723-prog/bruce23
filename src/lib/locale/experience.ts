@@ -882,6 +882,27 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  xiaocai: {
+    honestyLabel: "Public site is Xiaocai ledger, not the Folio editor",
+    intro:
+      "Public untitled-5 first-screen mascot says tap to log a line quickly. Bottom nav: Xiaocai ledger / Transactions / Xiaocai / More. This is a portfolio note, not Folio, and not the portfolio admin.",
+    galleryNote:
+      "Public first-screen mascot: tap to log a line quickly. Bottom nav: Xiaocai ledger / Transactions / Xiaocai / More. This is a portfolio media gallery, not the ledger.",
+    walkthrough: [
+      {
+        title: "Open the ledger",
+        body: "Public untitled-5. Title Xiaocai ledger. JS first-screen mascot tap to log a line quickly. Bottom nav Xiaocai ledger / Transactions / Xiaocai / More.",
+      },
+      {
+        title: "Log a line",
+        body: "Offline logging works. This page does not log a line for you.",
+      },
+      {
+        title: "Transactions",
+        body: "Bottom-nav Transactions is the list. This portfolio has not logged a real line.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro: "The public first screen tagline is “AI 對話式影片剪輯”, with a header “System status” control. Main block “Import video”; hint “You can load the built-in demo clip (it includes pauses)”. Buttons “Load demo clip” and “Upload video…”. This is a portfolio walkthrough, not the live editor.",

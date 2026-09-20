@@ -510,13 +510,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A small bright book for personal money",
     summary: "Log a line, see categories, know where the month went. Public site untitled-5.zeabur.app.",
     process: [
-      "Open untitled-5.zeabur.app",
-      "First screen says tap to log a line quickly",
+      "Open untitled-5.zeabur.app (title Xiaocai ledger)",
+      "First-screen mascot: tap to log a line quickly; bottom nav Xiaocai ledger / Transactions / Xiaocai / More",
       "It can log offline on the device",
-      "Sign-in syncs to the account",
+      "Sign-in syncs to the account. This portfolio has not logged a real line",
     ],
     limitations: [
-      "Probed 2026-09-20: HTTP 200, title Xiaocai ledger. JS first screen: tap to log a line. Offline works; sign-in syncs. This portfolio has not logged a real line, so coreFlow is not passed.",
+      "Probed 2026-09-20: HTTP 200, title Xiaocai ledger. JS first-screen mascot tap to log a line quickly; bottom nav Xiaocai ledger / Transactions / Xiaocai / More. Offline works; sign-in syncs. This portfolio has not logged a real line, so coreFlow is not passed.",
       "This is not the portfolio admin.",
     ],
   },
