@@ -699,6 +699,28 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       { path: "src/app/page.tsx", purpose: "Public chat first screen", stage: "Talk" },
     ],
   },
+  "focus-challenge": {
+    honestyLabel: "A live game, not a psychological test",
+    intro: "The public first screen is the registration form: host, name, department, grade, and phone. It is not tap-and-play. This is a portfolio walkthrough, not a live 60-second run.",
+    walkthrough: [
+      {
+        title: "Register",
+        body: "Public leader-dna-mcp-a7k2. Title 淡江大學禪學社｜專注力挑戰賽. First screen is the registration form, not an instant game.",
+      },
+      {
+        title: "Tutorial / practice",
+        body: "Two tutorial questions and a 15-second practice are not scored and not saved. The official run still needs host and basics first.",
+      },
+      {
+        title: "60 seconds",
+        body: "The official Stroop POSTs /api/register and /api/result. This portfolio did not submit PII and has not played that round.",
+      },
+      {
+        title: "Leaderboard",
+        body: "GET /api/leaderboard?scope=history returned 67 masked names. Today is 0. Phone numbers and the full roster stay on /admin.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",

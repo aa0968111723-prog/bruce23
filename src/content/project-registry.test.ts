@@ -142,7 +142,7 @@ describe("official project registry", () => {
   it("records the ty public flow probe without claiming coreFlow", () => {
     const project = projects.find((item) => item.slug === "focus-challenge");
     assert.ok(project);
-    assert.match(TY_CONTRACT_VERSION, /ty-public-flow-honesty/);
+    assert.match(TY_CONTRACT_VERSION, /ty-register-intro/);
     assert.doesNotMatch(project.summary, /即時看活動狀態/);
     assert.doesNotMatch(project.problem, /不是再填一張表/);
     assert.match(project.summary, /登記|填關主/);

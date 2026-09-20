@@ -258,6 +258,10 @@ describe("experience config merge", () => {
     assert.match(cutosIntro.intro ?? "", /匯入影片/);
     assert.match(cutosIntro.intro ?? "", /載入示範影片/);
     assert.doesNotMatch(cutosIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
+    const tyIntro = defaultExperienceConfig("focus-challenge");
+    assert.match(tyIntro.intro ?? "", /登記畫面/);
+    assert.match(tyIntro.intro ?? "", /關主/);
+    assert.doesNotMatch(tyIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });

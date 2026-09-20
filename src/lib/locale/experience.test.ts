@@ -102,6 +102,15 @@ describe("experience playable chrome", () => {
     assert.match(cutosEn.intro ?? "", /demo clip/i);
     assert.equal(cutosZh.walkthrough?.[0]?.title, "匯入影片");
     assert.equal(cutosEn.walkthrough?.[0]?.title, "Import video");
+    const tyZh = overlayExperienceConfig(defaultExperienceConfig("focus-challenge"), "focus-challenge", "zh");
+    const tyEn = overlayExperienceConfig(defaultExperienceConfig("focus-challenge"), "focus-challenge", "en");
+    assert.match(tyZh.intro ?? "", /登記畫面/);
+    assert.match(tyZh.intro ?? "", /關主/);
+    assert.doesNotMatch(tyZh.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
+    assert.match(tyEn.intro ?? "", /registration form/i);
+    assert.match(tyEn.intro ?? "", /host, name, department/i);
+    assert.equal(tyZh.walkthrough?.[0]?.title, "登記");
+    assert.equal(tyEn.walkthrough?.[0]?.title, "Register");
     const zenEn = overlayExperienceConfig(defaultExperienceConfig("tku-zen-ai"), "tku-zen-ai", "en");
     assert.match(zenEn.honestyLabel ?? "", /not a cloud LLM/i);
     assert.match(zenEn.intro ?? "", /Take a breath/i);
