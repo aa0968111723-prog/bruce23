@@ -922,16 +922,18 @@ async function refreshFolioLiveProbe(sql: Sql): Promise<void> {
   const experience = defaultExperienceConfig(project.slug);
   await sql.query(
     `update projects
-     set process = $2::jsonb,
-         limitations = $3::jsonb,
-         source_evidence = $4::jsonb,
-         locale_json = $5::jsonb,
-         experience_mode = coalesce($6, experience_mode),
-         experience_config = $7::jsonb,
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
          updated_at = now()
      where slug = $1`,
     [
       project.slug,
+      JSON.stringify(project.decisions),
       JSON.stringify(project.process),
       JSON.stringify(project.limitations),
       JSON.stringify(projectEvidence(project)),

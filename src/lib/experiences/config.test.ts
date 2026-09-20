@@ -273,6 +273,8 @@ describe("experience config merge", () => {
     assert.doesNotMatch(planform.intro ?? "", /旋轉、拖動物件/);
     const folioIntro = defaultExperienceConfig("folio");
     assert.match(folioIntro.intro ?? "", /文件櫃/);
+    assert.match(folioIntro.intro ?? "", /給 MCP 與內嵌網站/);
+    assert.match(folioIntro.intro ?? "", /開發者 SDK/);
     assert.match(folioIntro.intro ?? "", /不必登入/);
     assert.doesNotMatch(folioIntro.intro ?? "", /指令層走一遍/);
     const cutosIntro = defaultExperienceConfig("cutos");

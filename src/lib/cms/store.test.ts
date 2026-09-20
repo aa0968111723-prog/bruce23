@@ -943,13 +943,18 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const folio = await getPublishedProject(sql, "folio");
     assert.ok(folio.process[0]?.includes("文件櫃"));
+    assert.ok(folio.process[0]?.includes("給 MCP 與內嵌網站"));
+    assert.ok(folio.process[0]?.includes("開發者 SDK"));
     assert.match(
       folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
-      /文件櫃/,
+      /給 MCP 與內嵌網站/,
     );
     assert.match(folio.experienceConfig.intro ?? "", /文件櫃/);
+    assert.match(folio.experienceConfig.intro ?? "", /給 MCP 與內嵌網站/);
+    assert.match(folio.experienceConfig.intro ?? "", /開發者 SDK/);
     assert.match(folio.experienceConfig.intro ?? "", /不必登入/);
     assert.doesNotMatch(folio.experienceConfig.intro ?? "", /指令層走一遍/);
+    assert.ok(folio.limitations.some((item) => item.includes("開發者 SDK")));
     assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

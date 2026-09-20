@@ -147,7 +147,7 @@ export const experienceChrome = {
     walkDemoCanvas: "作品集走查畫面 · 不是線上產品",
     walkKeyboard: "左右鍵換步驟。畫面依儲存的走查步驟繪製，不是線上產品本身。",
     walkDocumentLayer: "走查畫面",
-    folioDefaultIntro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
+    folioDefaultIntro: "公開站首屏是「文件櫃」。副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。這裡是作品集走查，不是線上編輯器。",
     folioNotCounter: "左右鍵換步驟。畫面依儲存的走查步驟繪製，不是空白計數器。",
     walkAria: "Folio 走查",
     walkStepsAria: "走查步驟",
@@ -190,6 +190,8 @@ export const experienceChrome = {
     folioNewDoc: "新增文件",
     folioOnDevice: "存在這台裝置",
     folioNoLogin: "不必登入",
+    folioMcpEmbed: "給 MCP 與內嵌網站",
+    folioSdk: "開發者 SDK",
   },
   en: {
     tabPlay: "Play",
@@ -319,7 +321,7 @@ export const experienceChrome = {
     walkDemoCanvas: "Portfolio walkthrough stage · not the live product",
     walkKeyboard: "Left and right change steps. The stage is drawn from saved walkthrough steps, not the live product.",
     walkDocumentLayer: "walkthrough stage",
-    folioDefaultIntro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
+    folioDefaultIntro: "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This is a portfolio walkthrough, not the live editor.",
     folioNotCounter: "Left and right change steps. The stage is drawn from saved walkthrough steps, not a blank counter.",
     walkAria: "Folio walkthrough",
     walkStepsAria: "Walkthrough steps",
@@ -362,6 +364,8 @@ export const experienceChrome = {
     folioNewDoc: "New document",
     folioOnDevice: "On this device",
     folioNoLogin: "No sign-in",
+    folioMcpEmbed: "For MCP and embedded sites",
+    folioSdk: "Developer SDK",
   },
 } as const;
 
@@ -577,11 +581,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   folio: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
+    intro: "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
       {
         title: "File cabinet",
-        body: "The public canva2-k7qm first screen is the file cabinet. It lives on this device; no sign-in.",
+        body: "The public canva2-k7qm first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK.",
       },
       {
         title: "Canvas",

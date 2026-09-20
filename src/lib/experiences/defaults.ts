@@ -215,7 +215,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "folio") {
     return {
       ...base,
-      intro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
+      intro: "公開站首屏是「文件櫃」。副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。這裡是作品集走查，不是線上編輯器。",
     };
   }
 

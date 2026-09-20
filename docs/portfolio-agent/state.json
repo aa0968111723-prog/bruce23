@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-lumen-live-home-chrome",
-  "updatedAt": "2026-09-20T06:40:00Z",
+  "runId": "grok-impl-20260920-folio-live-subtitle-sdk",
+  "updatedAt": "2026-09-20T07:30:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/lumen-live-home-chrome",
+  "currentBranch": "fix/folio-live-subtitle-sdk",
   "currentPR": null,
-  "currentTask": "lumen-live-home-chrome",
+  "currentTask": "folio-live-subtitle-sdk",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -62,26 +62,26 @@
     "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身. Folio still has 空白計數器. 空白計數器 may remain in CUTOS JS bundle as Folio chrome",
     "Zen AI Canva local-thumb merged as PR #62 and live on production /work/tku-zen-ai: Canva 尚未設定, not Canva 無法嵌入. AI Director OS keeps Canva 無法嵌入 because it has a /d/ short URL",
     "Tamkang live home controls merged as PR #63 and live on production /work/tamkang-world: 開始巡禮 / 校園圖鑑 / WASD 移動 · 滑鼠視角 · E 蓋章, not 公開 JS 沒有開始巡禮. /login remains 校園通行證",
-    "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名"
+    "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名",
+    "Lumen live home chrome merged as PR #66 and live on production /work/lumen: 自動聽 / 拍照開始 / 長任務 / 畫板, not 拍照／首頁只有想做什麼"
   ],
   "remainingSteps": [
-    "Land PR so /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow.",
-    "Folio first-screen subtitle 給 MCP 與內嵌網站 / 開發者 SDK is the next honesty gap after this lands",
+    "Land PR so /work/folio quotes 給 MCP 與內嵌網站 / 開發者 SDK, not only 文件櫃／不必登入. Do not claim a publish coreFlow.",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 121,
+  "testsPassed": 122,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR65_LIVE_LUMEN_STILL_SAYS_PHOTO_NOT_START_CAMERA",
+  "productionStatus": "PR66_LIVE_FOLIO_MISSING_MCP_SDK_SUBTITLE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
@@ -114,5 +114,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the Lumen live-home PR so production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow. Folio 給 MCP 與內嵌網站 is the next honesty gap. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the Folio live-subtitle PR so production /work/folio quotes 給 MCP 與內嵌網站 / 開發者 SDK, not only 文件櫃／不必登入. Do not claim a publish coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
