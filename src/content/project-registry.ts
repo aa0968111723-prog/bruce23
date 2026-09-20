@@ -86,7 +86,7 @@ export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-home-20260920";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-import-intro-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
@@ -106,7 +106,7 @@ export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260
 
 export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
 
-export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-20260919";
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-canvas-intro-20260920";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
@@ -118,7 +118,7 @@ export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 
-export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-home-20260919";
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 

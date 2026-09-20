@@ -233,6 +233,12 @@ describe("experience config merge", () => {
     assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
     assert.doesNotMatch(agent.conversation?.starter ?? "", /輸入關鍵詞看說明/);
     assert.doesNotMatch(agent.intro ?? "", /輸入關鍵詞看說明/);
+    const studio = defaultExperienceConfig("zen-studio");
+    assert.match(studio.intro ?? "", /今天可以創作什麼/);
+    assert.doesNotMatch(studio.intro ?? "", /逐步走查/);
+    const hub = defaultExperienceConfig("skatehub");
+    assert.match(hub.intro ?? "", /穿上輪鞋出發/);
+    assert.doesNotMatch(hub.intro ?? "", /逐步走查/);
     const ledger = defaultExperienceConfig("xiaocai");
     assert.match(ledger.intro ?? "", /小財記帳/);
     assert.doesNotMatch(ledger.intro ?? "", /Folio 指令層/);
@@ -247,6 +253,11 @@ describe("experience config merge", () => {
     assert.match(folioIntro.intro ?? "", /文件櫃/);
     assert.match(folioIntro.intro ?? "", /不必登入/);
     assert.doesNotMatch(folioIntro.intro ?? "", /指令層走一遍/);
+    const cutosIntro = defaultExperienceConfig("cutos");
+    assert.match(cutosIntro.intro ?? "", /AI 對話式影片剪輯/);
+    assert.match(cutosIntro.intro ?? "", /匯入影片/);
+    assert.match(cutosIntro.intro ?? "", /載入示範影片/);
+    assert.doesNotMatch(cutosIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);
   });

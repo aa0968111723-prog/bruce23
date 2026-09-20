@@ -73,6 +73,20 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "zen-studio") {
+    return {
+      ...base,
+      intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+    };
+  }
+
+  if (slug === "skatehub") {
+    return {
+      ...base,
+      intro: "公開站首屏 slogan 要人穿上輪鞋出發、記錄里程。這是作品集走查，不是線上基地。",
+    };
+  }
+
   if (slug === "duigao") {
     return {
       ...base,
@@ -256,6 +270,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     return {
       ...base,
       intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
+    };
+  }
+
+  if (slug === "cutos") {
+    return {
+      ...base,
+      intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
     };
   }
 

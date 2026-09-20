@@ -699,6 +699,24 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       { path: "src/app/page.tsx", purpose: "Public chat first screen", stage: "Talk" },
     ],
   },
+  cutos: {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",
+    walkthrough: [
+      {
+        title: "Import video",
+        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Main block Import video, buttons Load demo clip / Upload video.",
+      },
+      {
+        title: "Load demo",
+        body: "The demo clip includes pauses. This page does not load or upload for you.",
+      },
+      {
+        title: "Plan",
+        body: "Describe the cut in one sentence to get an Edit Plan, then apply it on a non-destructive timeline.",
+      },
+    ],
+  },
 };
 
 function trimEn(value: string | undefined): string {

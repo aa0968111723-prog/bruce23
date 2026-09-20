@@ -531,12 +531,12 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
     process: [
       "Open cutos.zeabur.app",
-      "First screen is Conversational Video Editor; load the demo clip or upload your own",
+      "First screen product line is Conversational Video Editor; main block is Import video — load the demo clip or upload",
       "Describe the cut in one sentence",
       "Review the Edit Plan, then apply it on a non-destructive timeline",
     ],
     limitations: [
-      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. First screen offers a demo clip or upload. /api/health ok.",
+      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. First screen product line AI 對話式影片剪輯; main block Import video with Load demo clip / Upload. /api/health ok.",
       "This portfolio has not loaded the demo clip or uploaded a real video, so coreFlow is not passed.",
     ],
   },
