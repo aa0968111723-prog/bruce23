@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-live-canva-status-chrome",
-  "updatedAt": "2026-09-20T03:25:00Z",
+  "runId": "grok-impl-20260920-walkthrough-not-folio-counter",
+  "updatedAt": "2026-09-20T04:20:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/live-canva-status-chrome",
+  "currentBranch": "fix/walkthrough-not-folio-counter",
   "currentPR": null,
-  "currentTask": "live-canva-status-chrome",
+  "currentTask": "walkthrough-not-folio-counter",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -57,19 +57,20 @@
     "Xiaocai gallery note merged as PR #56 and live on production /work/xiaocai (點我一下，快速記一筆吧, not 只顯示已發布媒體)",
     "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)",
     "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured",
-    "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href"
+    "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href",
+    "Live Demo/Canva status chrome merged as PR #60 and live: /work/planform and /work/duigao Visual/play footer Live Demo · 已驗證; no 狀態 verified / 狀態 not_configured on any of 17 production work pages"
   ],
   "remainingSteps": [
-    "Land PR so Visual/Canva tabs do not interpolate raw CMS enums (verified / not_configured / unavailable)",
+    "Land PR so non-Folio walkthroughs (CUTOS/ty/SkateHub/Tamkang/Tamsui/Zen Studio) no longer append Folio leftover 不是空白計數器",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 169,
+  "testsPassed": 190,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR59_LIVE_RAW_CMS_ENUM_IN_LIVE_CANVA_CHROME",
+  "productionStatus": "PR60_LIVE_NON_FOLIO_WALKTHROUGH_STILL_SAYS_BLANK_COUNTER",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -108,5 +109,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After the Live Demo/Canva status chrome PR deploys, verify production Visual tab iframe footer prints Live Demo · 已驗證 not Live Demo · 狀態 verified, and Canva tab source mark prints 尚未設定/無法嵌入 not 狀態 not_configured. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Folio/PLANFORM/CUTOS/ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the non-Folio walkthrough chrome PR so production /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio print 不是線上產品本身, not 不是空白計數器. Folio may keep 空白計數器. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
