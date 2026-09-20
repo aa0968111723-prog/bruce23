@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-tamkang-live-home-controls",
-  "updatedAt": "2026-09-20T05:20:00Z",
+  "runId": "grok-impl-20260920-ty-booth-home-chrome",
+  "updatedAt": "2026-09-20T06:20:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/tamkang-live-home-controls",
+  "currentBranch": "fix/ty-booth-home-chrome",
   "currentPR": null,
-  "currentTask": "tamkang-live-home-controls",
+  "currentTask": "ty-booth-home-chrome",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -60,10 +60,11 @@
     "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href",
     "Live Demo/Canva status chrome merged as PR #60 and live: /work/planform and /work/duigao Visual/play footer Live Demo · 已驗證; no 狀態 verified / 狀態 not_configured on any of 17 production work pages",
     "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身. Folio still has 空白計數器. 空白計數器 may remain in CUTOS JS bundle as Folio chrome",
-    "Zen AI Canva local-thumb merged as PR #62 and live on production /work/tku-zen-ai: Canva 尚未設定, not Canva 無法嵌入. AI Director OS keeps Canva 無法嵌入 because it has a /d/ short URL"
+    "Zen AI Canva local-thumb merged as PR #62 and live on production /work/tku-zen-ai: Canva 尚未設定, not Canva 無法嵌入. AI Director OS keeps Canva 無法嵌入 because it has a /d/ short URL",
+    "Tamkang live home controls merged as PR #63 and live on production /work/tamkang-world: 開始巡禮 / 校園圖鑑 / WASD 移動 · 滑鼠視角 · E 蓋章, not 公開 JS 沒有開始巡禮. /login remains 校園通行證"
   ],
   "remainingSteps": [
-    "Land PR so /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, and keeps 校園通行證 on /login. Do not claim a 3D coreFlow.",
+    "Land PR so /work/focus-challenge quotes 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名. Do not claim a 60s coreFlow.",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
@@ -72,7 +73,7 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR62_LIVE_TAMKANG_STILL_SAYS_NO_WASD",
+  "productionStatus": "PR63_LIVE_TY_STILL_SAYS_REGISTER_FORM",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -111,5 +112,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the Tamkang live-home PR so production /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 for live `/`, not 公開 JS 沒有 those strings. Campus pass stays on /login. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the ty booth-home PR so production /work/focus-challenge quotes 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名. Do not claim a 60s coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

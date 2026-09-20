@@ -753,11 +753,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   "focus-challenge": {
     honestyLabel: "A live game, not a psychological test",
-    intro: "The public first screen is the registration form: host, name, department, grade, and phone. It is not tap-and-play. This is a portfolio walkthrough, not a live 60-second run.",
+    intro: "The public booth home has 60 seconds / follow the instruction / a live drink prize, Official entry, and How to play. The form is host, real name, department, grade, and phone. The official button is Start practice. This is a portfolio walkthrough, not a live 60-second run.",
     walkthrough: [
       {
-        title: "Register",
-        body: "Public leader-dna-mcp-a7k2. Title 淡江大學禪學社｜專注力挑戰賽. First screen is the registration form, not an instant game.",
+        title: "Booth home",
+        body: "Public leader-dna-mcp-a7k2. Title 淡江大學禪學社｜專注力挑戰賽. club-header JS has 60 seconds, follow the instruction, live drink prize, Official entry, and How to play. Form fields are host / real name / department / grade / phone. Official button is Start practice. Not tap-and-play.",
       },
       {
         title: "Tutorial / practice",
