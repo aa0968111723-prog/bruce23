@@ -278,6 +278,8 @@ describe("frontend contract", () => {
     assert.match(explorer, /skipGithubHydrate/);
     assert.match(explorer, /githubWithheld/);
     assert.match(explorer, /skipGithubHydrate\(project\.slug\)/);
+    assert.match(explorer, /publicGithubStatusLabel/);
+    assert.doesNotMatch(explorer, /\{ex\.status\} \{github\.syncStatus\}/);
     assert.match(experienceLocale, /來源路徑/);
     assert.match(experienceLocale, /Limited file tree/);
     assert.match(css, /animation:\s*none/);
@@ -476,6 +478,9 @@ describe("frontend contract", () => {
     assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
     assert.match(jsonldView, /min-w-0 max-w-4xl/);
     assert.match(jsonldView, /break-all/);
+    assert.match(jsonldView, /publicIntegrationLine/);
+    assert.doesNotMatch(jsonldView, /GitHub \{view\.github\.syncStatus\}/);
+    assert.doesNotMatch(jsonldView, /Demo \{view\.demo\.status\}/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
     assert.match(form, /GithubSyncDiff/);
     assert.match(form, /ExperienceEditor/);

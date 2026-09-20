@@ -65,7 +65,7 @@ export const experienceChrome = {
     treeTitle: "有限檔案樹",
     treeAria: "有限檔案樹",
     treePending: "檔案樹還在從公開 GitHub REST 同步。沒有寫入金鑰；完成前不會顯示虛構路徑。",
-    treeFailed: "這次公開同步失敗。不會顯示虛構檔案樹。",
+    treeFailed: "這次檔案樹沒有同步成功。公開儲存庫仍可打開，不會顯示虛構檔案樹。",
     treeEmpty: "這次沒有讀到可公開的檔案樹。不會顯示虛構路徑。",
     defaultPurpose: "公開儲存庫路徑，用途以 README 與檔名為準。",
     stageLabel: "流程階段",
@@ -233,7 +233,7 @@ export const experienceChrome = {
     treeAria: "Limited file tree",
     treePending:
       "The file tree is still syncing from public GitHub REST. No write token is used; fictional paths are not shown until it finishes.",
-    treeFailed: "This public sync failed. A fictional file tree is not shown.",
+    treeFailed: "The file tree did not sync this time. The public repository still opens; a fictional file tree is not shown.",
     treeEmpty: "No public file tree was read this time. Fictional paths are not shown.",
     defaultPurpose: "A public repository path; purpose follows the README and the file name.",
     stageLabel: "Process stage",

@@ -4,6 +4,7 @@ import type { PublicProject } from "@/lib/cms/privacy";
 import { skipGithubHydrate } from "@/content/project-registry";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { labeledLine } from "@/lib/locale/experience";
+import { publicGithubStatusLabel } from "@/lib/locale/integration-line";
 import { useExperienceView } from "./useExperienceView";
 
 type Node = { path: string; type: "file" | "dir"; size?: number };
@@ -96,7 +97,12 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
         <p className="mt-1 text-sm text-muted">{github.description || ex.noDescription}</p>
         <dl className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
           <div>{ex.updated} {github.updatedAt ? github.updatedAt.slice(0, 10) : ex.notSynced}</div>
-          <div>{ex.status} {github.syncStatus}</div>
+          <div>
+            {publicGithubStatusLabel(lang, {
+              slug: project.slug,
+              github: { url: github.url, syncStatus: github.syncStatus },
+            })}
+          </div>
         </dl>
         {github.languages ? (
           <ul className="mt-3 flex flex-wrap gap-2">
