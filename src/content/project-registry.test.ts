@@ -355,7 +355,7 @@ describe("official project registry", () => {
   it("records the Zen desk access-code gate and does not treat GitHub as a clean public dump", () => {
     const project = projects.find((item) => item.slug === TKU_ZEN_AGENT_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-gate-github/);
+    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-source-link-contained/);
     assert.equal(skipGithubHydrate("tku-zen-agent"), true);
     assert.equal(skipGithubHydrate("tku-zen-ai"), false);
     assert.equal(project.links.live, "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask");
@@ -363,8 +363,10 @@ describe("official project registry", () => {
     assert.ok(project.process.some((item) => item.includes("淡江大學領袖禪學社")));
     assert.ok(project.process.some((item) => item.includes("用一句話開始") && item.includes("作品集未輸入授權碼")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("請先輸入授權碼")));
-    assert.ok(project.sourceReferences.some((item) => item.href?.includes("github.com") && item.note.includes("不可以轉成 public")));
-    assert.ok(project.limitations.some((item) => item.includes("knowledge/雲端文件")));
+    assert.equal(project.links.github, undefined);
+    assert.ok(project.sourceReferences.every((item) => !item.href?.includes("github.com")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不提供 GitHub href")));
+    assert.ok(project.limitations.some((item) => item.includes("visibility") && item.includes("來源文件")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(project.process.every((item) => !/社長|電話|學號/.test(item)));
   });
