@@ -6,6 +6,7 @@ import { useLocaleDocumentTitle, useViewerLocale } from "@/components/site/Local
 import type { PublicProject } from "@/lib/cms/privacy";
 import { publishedCreativeWorkJsonLd, serializeJsonLd } from "@/lib/cms/jsonld";
 import { englishTitle } from "@/lib/cms/locale";
+import { publicIntegrationLine } from "@/lib/locale/integration-line";
 import { overlayProject } from "@/lib/locale/view";
 import { sanitizePublicHref } from "@/lib/safe-href";
 
@@ -119,7 +120,12 @@ export function CaseStudyView({
           ))}
         </ul>
         <p className="mt-3 text-xs text-muted">
-          GitHub {view.github.syncStatus} · Demo {view.demo.status} · Canva {view.canva.status}
+          {publicIntegrationLine(lang, {
+            slug: view.slug,
+            github: view.github,
+            demo: view.demo,
+            canva: view.canva,
+          })}
         </p>
       </section>
 
