@@ -104,12 +104,12 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Worldview, characters, and the asset library enter prompts automatically so people copy-paste less.",
         "Deduct estimated points first, refund on failure. External citations stay drafts; important copy needs lead review.",
         "MCP uses revocable, expiring, personal connection keys — not a shared superadmin key as the production default.",
-        "The public first screen is a landing page, not Create project. Entering the workbench needs sign-in; without a group you cannot create a project.",
+        "The public first screen is a landing page. Eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.” Primary buttons “Enter the workbench” and “Sign in to the workbench”. Secondary “See how it works”. Without a group you cannot create a project.",
       ],
       [
         "Open ai-os-app.zeabur.app (title Aios · AI creation OS | turn an idea into a team plan)",
         "First screen eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.”",
-        "Primary CTA “Enter the workbench” goes to /login; header also has “Sign in to the workbench”",
+        "Primary CTA “Enter the workbench” goes to /login; header also has “Sign in to the workbench”; secondary “See how it works”",
         "Creating a project needs sign-in and a group. This portfolio did not sign in.",
       ],
       [

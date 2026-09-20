@@ -1514,12 +1514,42 @@ describe("cms persistence", () => {
     assert.ok(aios.process.some((item) => item.includes("進入工作台")));
     assert.ok(aios.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
     assert.ok(aios.process.every((item) => !item.includes("建立專案與世界觀快速層")));
-    assert.match(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /登入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /看看怎麼運作/);
+    assert.doesNotMatch(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
     assert.ok(aios.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
     assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(aios.locale.en?.limitations?.join(" ") ?? "", /Not 502 and not paused/i);
     assert.equal(aiosAdmin.live_demo_status, "pending");
     assert.equal(aiosAdmin.live_demo_error, null);
+  });
+
+  it("quotes AI Director OS live landing CTAs without claiming a team coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "ai-director-os",
+        JSON.stringify(["公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'aios_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const aios = await getPublishedProject(sql, "ai-director-os");
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /登入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /看看怎麼運作/);
+    assert.doesNotMatch(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
+    assert.ok(aios.decisions.some((item) => item.includes("看看怎麼運作")));
+    assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("saves homepage highlight slugs without wiping locale_json", async () => {

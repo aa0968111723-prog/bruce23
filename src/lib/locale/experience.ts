@@ -433,7 +433,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   "ai-director-os": {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:
-      "The public site opens on a landing page: “Turn an idea into a plan the team can actually finish.” Entering the workbench requires sign-in. These nodes are the public repo flow, not a live console.",
+      "The public first screen is a landing page. Eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.” Primary buttons “Enter the workbench” and “Sign in to the workbench”. Secondary “See how it works”. These nodes are the public repo flow, not a live console.",
     processNodes: [
       {
         id: "project",

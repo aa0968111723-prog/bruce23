@@ -263,6 +263,11 @@ describe("experience config merge", () => {
     assert.match(frameIntro.intro ?? "", /系統狀態/);
     assert.match(frameIntro.intro ?? "", /不是生成網站/);
     assert.doesNotMatch(frameIntro.intro ?? "", /進入工作室要登入/);
+    const aiosIntro = defaultExperienceConfig("ai-director-os");
+    assert.match(aiosIntro.intro ?? "", /進入工作台/);
+    assert.match(aiosIntro.intro ?? "", /登入工作台/);
+    assert.match(aiosIntro.intro ?? "", /看看怎麼運作/);
+    assert.doesNotMatch(aiosIntro.intro ?? "", /進入工作台要登入/);
     const hub = defaultExperienceConfig("skatehub");
     assert.match(hub.intro ?? "", /不要在家玩手機/);
     assert.match(hub.intro ?? "", /瀏覽裝備圖鑑/);
