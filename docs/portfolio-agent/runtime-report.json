@@ -21,7 +21,7 @@
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + 326 unit tests pass + full npm test suite clean pass",
+    "buildAndTypecheck": "PASS: tsc --noEmit + 329 unit tests pass + full npm test suite clean pass",
     "browser": "VERIFIED_200_ALL_19_ENDPOINTS",
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
