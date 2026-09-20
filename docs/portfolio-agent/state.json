@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-ty-booth-home-chrome",
-  "updatedAt": "2026-09-20T06:20:00Z",
+  "runId": "grok-impl-20260920-lumen-live-home-chrome",
+  "updatedAt": "2026-09-20T06:40:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/ty-booth-home-chrome",
+  "currentBranch": "fix/lumen-live-home-chrome",
   "currentPR": null,
-  "currentTask": "ty-booth-home-chrome",
+  "currentTask": "lumen-live-home-chrome",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -61,19 +61,21 @@
     "Live Demo/Canva status chrome merged as PR #60 and live: /work/planform and /work/duigao Visual/play footer Live Demo · 已驗證; no 狀態 verified / 狀態 not_configured on any of 17 production work pages",
     "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身. Folio still has 空白計數器. 空白計數器 may remain in CUTOS JS bundle as Folio chrome",
     "Zen AI Canva local-thumb merged as PR #62 and live on production /work/tku-zen-ai: Canva 尚未設定, not Canva 無法嵌入. AI Director OS keeps Canva 無法嵌入 because it has a /d/ short URL",
-    "Tamkang live home controls merged as PR #63 and live on production /work/tamkang-world: 開始巡禮 / 校園圖鑑 / WASD 移動 · 滑鼠視角 · E 蓋章, not 公開 JS 沒有開始巡禮. /login remains 校園通行證"
+    "Tamkang live home controls merged as PR #63 and live on production /work/tamkang-world: 開始巡禮 / 校園圖鑑 / WASD 移動 · 滑鼠視角 · E 蓋章, not 公開 JS 沒有開始巡禮. /login remains 校園通行證",
+    "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名"
   ],
   "remainingSteps": [
-    "Land PR so /work/focus-challenge quotes 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名. Do not claim a 60s coreFlow.",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
+    "Land PR so /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow.",
+    "Folio first-screen subtitle 給 MCP 與內嵌網站 / 開發者 SDK is the next honesty gap after this lands",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 120,
+  "testsPassed": 121,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR63_LIVE_TY_STILL_SAYS_REGISTER_FORM",
+  "productionStatus": "PR65_LIVE_LUMEN_STILL_SAYS_PHOTO_NOT_START_CAMERA",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -87,7 +89,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, and ty 60-second Stroop need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, and Lumen hold-to-speak need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -112,5 +114,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the ty booth-home PR so production /work/focus-challenge quotes 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名. Do not claim a 60s coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the Lumen live-home PR so production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow. Folio 給 MCP 與內嵌網站 is the next honesty gap. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

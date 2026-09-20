@@ -129,6 +129,17 @@ describe("experience catalog", () => {
     assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
   });
 
+  it("keeps lumen walkthrough on the live voice-orb home", () => {
+    const steps = experienceCatalog.lumen.walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "想做什麼");
+    assert.match(steps[0]?.body ?? "", /自動聽/);
+    assert.match(bodies, /拍照開始/);
+    assert.match(bodies, /長任務/);
+    assert.match(bodies, /最近/);
+    assert.doesNotMatch(bodies, /做海報、拍照、開始做影片/);
+  });
+
   it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
     const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "Sign in"));

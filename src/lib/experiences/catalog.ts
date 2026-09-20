@@ -296,9 +296,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "conversation-preview",
     honestyLabel: "作品集預覽，不是 Lumen 語音執行期",
     walkthrough: [
-      { title: "想做什麼", body: "公開站 ai-chat-8rq3 首屏「想做什麼？」「點一下開始聽 · 按住說話」。這頁不是語音執行期。" },
-      { title: "入口", body: "做海報、拍照、開始做影片、長任務。" },
-      { title: "最近", body: "從最近專案繼續，不要把未生成的結果假裝完成。" },
+      { title: "想做什麼", body: "公開站 ai-chat-8rq3 標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。header 有「自動聽」。這頁不是語音執行期。" },
+      { title: "入口", body: "四個按鈕：做海報、拍照開始、做影片、長任務。不是「拍照」。" },
+      { title: "最近", body: "下方「最近」可切專案／生成／畫板。不要把未生成的結果假裝完成。" },
     ],
   },
   xiaocai: {

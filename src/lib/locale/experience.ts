@@ -792,6 +792,54 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  lumen: {
+    honestyLabel: "Portfolio preview, not the Lumen voice runtime",
+    intro: "The public first screen is “想做什麼？” and “點一下開始聽 · 按住說話”. Header has “自動聽”. Four entries are 做海報, 拍照開始, 做影片, and 長任務. This is a portfolio note, with no microphone, and it is not Hermes.",
+    conversation: {
+      disclaimer: "This is a portfolio preview, not the Lumen voice runtime, and not Hermes Agent.",
+      starter:
+        "The public site is “想做什麼？ 點一下開始聽 · 按住說話”. Entries are 做海報, 拍照開始, 做影片, and 長任務. This page does not pretend it is already listening.",
+      placeholder: "Type 做海報, 拍照開始, 做影片, or 長任務",
+      sourceNote: "This portfolio has no microphone. Cloud models depend on keys; without a key it should degrade honestly.",
+      suggestions: ["做海報", "拍照開始", "做影片", "長任務"],
+      replies: [
+        {
+          matchZh: "海報",
+          match: "海報",
+          reply: "The public site has a 做海報 entry. This portfolio page does not generate a poster.",
+        },
+        {
+          matchZh: "拍照",
+          match: "拍照",
+          reply: "The public button is 拍照開始. This page has no camera permission.",
+        },
+        {
+          matchZh: "影片",
+          match: "影片",
+          reply: "The public site has 做影片. Ungenerated results are not shown as done.",
+        },
+        {
+          matchZh: "長任務",
+          match: "長任務",
+          reply: "The public site has 長任務. This portfolio page will not start a long task.",
+        },
+      ],
+    },
+    walkthrough: [
+      {
+        title: "What do you want to do?",
+        body: "Public ai-chat-8rq3 title Lumen. First screen “想做什麼？” / “點一下開始聽 · 按住說話”. Header has “自動聽”. This page is not the voice runtime.",
+      },
+      {
+        title: "Entries",
+        body: "Four buttons: 做海報, 拍照開始, 做影片, 長任務. Not 拍照.",
+      },
+      {
+        title: "Recent",
+        body: "The Recent strip switches 專案 / 生成 / 畫板. Do not pretend an ungenerated result is done.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",

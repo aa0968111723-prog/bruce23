@@ -114,7 +114,7 @@ export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-live-home-controls-20260920";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
-export const LUMEN_LIVE_PROBE_VERSION = "lumen-not-hermes-20260919";
+export const LUMEN_LIVE_PROBE_VERSION = "lumen-live-home-chrome-20260920";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 

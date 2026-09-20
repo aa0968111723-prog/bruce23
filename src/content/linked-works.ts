@@ -270,21 +270,22 @@ export const linkedWorks: Project[] = [
     problem: "創作入口太散。需要一個按住說話就能開始的球。",
     role: "語音介面與多模態入口設計。",
     decisions: [
-      "首頁只有「想做什麼？」與按住說話，不做控制台。",
+      "公開站首屏是「想做什麼？」與「點一下開始聽 · 按住說話」，header 有「自動聽」。不是 Hermes 控制台。",
+      "四個入口是做海報、拍照開始、做影片、長任務。下方「最近」可切專案／生成／畫板。",
       "公開站 ai-chat-8rq3；GitHub wood-ivory-blaze-maple。",
     ],
     modalities: ["語音", "圖像", "影片"],
     process: [
-      "打開 ai-chat-8rq3.zeabur.app",
-      "點一下開始聽，或按住說話",
-      "選做海報／拍照／開始做影片／長任務",
-      "從最近專案繼續",
+      "打開 ai-chat-8rq3.zeabur.app（標題 Lumen）",
+      "首屏「想做什麼？」；說明「點一下開始聽 · 按住說話」；header 有「自動聽」",
+      "四個入口是做海報、拍照開始、做影片、長任務（按鈕是「拍照開始」不是「拍照」）",
+      "下方「最近」可切專案／生成／畫板。作品集未按住說話、未生成",
     ],
     outputs: ["Lumen 公開站"],
     stack: ["TanStack Start", "Postgres", "Zeabur"],
     limitations: [
       "雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。",
-      "2026-09-19 GET / HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。作品集未按住說話，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題 Lumen。HTML 首屏有「自動聽」「想做什麼？」「點一下開始聽 · 按住說話」；按鈕「做海報」「拍照開始」「做影片」「長任務」；最近專案／生成／畫板。作品集未按住說話，也未生成，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/wood-ivory-blaze-maple",
@@ -295,7 +296,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · ai-chat-8rq3.zeabur.app",
         href: "https://ai-chat-8rq3.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。不是 Hermes。",
+        note: "2026-09-20 HTTP 200，標題 Lumen。HTML 首屏有「自動聽」「想做什麼？」「點一下開始聽 · 按住說話」；按鈕「做海報」「拍照開始」「做影片」「長任務」；最近專案／生成／畫板。不是 Hermes。",
       },
       {
         label: "GitHub · wood-ivory-blaze-maple",

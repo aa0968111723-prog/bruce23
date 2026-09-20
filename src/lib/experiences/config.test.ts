@@ -232,6 +232,12 @@ describe("experience config merge", () => {
     assert.equal(zenDesk.walkthrough?.[2]?.title, "來源邊界");
     const lumen = defaultExperienceConfig("lumen");
     assert.match(lumen.conversation?.starter ?? "", /想做什麼/);
+    assert.match(lumen.intro ?? "", /自動聽/);
+    assert.match(lumen.intro ?? "", /拍照開始/);
+    assert.match(lumen.intro ?? "", /長任務/);
+    assert.ok(lumen.conversation?.suggestions?.includes("拍照開始"));
+    assert.ok(lumen.conversation?.suggestions?.includes("長任務"));
+    assert.ok(!lumen.conversation?.suggestions?.includes("拍照"));
     assert.doesNotMatch(lumen.conversation?.starter ?? "", /Hermes 執行期/);
     const agent = defaultExperienceConfig("hermes-agent");
     assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
