@@ -355,7 +355,7 @@ describe("official project registry", () => {
   it("records the Zen desk access-code gate and does not treat GitHub as a clean public dump", () => {
     const project = projects.find((item) => item.slug === TKU_ZEN_AGENT_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-source-link-contained/);
+    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-github-explorer-withheld/);
     assert.equal(skipGithubHydrate("tku-zen-agent"), true);
     assert.equal(skipGithubHydrate("tku-zen-ai"), false);
     assert.equal(project.links.live, "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask");

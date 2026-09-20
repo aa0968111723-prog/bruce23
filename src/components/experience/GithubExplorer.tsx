@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronRight, ExternalLink, FileText, Folder } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { PublicProject } from "@/lib/cms/privacy";
+import { skipGithubHydrate } from "@/content/project-registry";
 import { githubBlobUrl } from "@/lib/github/parse";
 import { labeledLine } from "@/lib/locale/experience";
 import { useExperienceView } from "./useExperienceView";
@@ -66,6 +67,14 @@ export function GithubExplorer({ project }: { project: PublicProject }) {
   const nested = useMemo(() => nest(tree), [tree]);
   const [open, setOpen] = useState<Record<string, boolean>>({ "": true });
   const [selected, setSelected] = useState<Node | null>(null);
+
+  if (skipGithubHydrate(project.slug)) {
+    return (
+      <p className="rounded-2xl bg-surface-blue px-4 py-6 text-sm text-muted">
+        {ex.githubWithheld}
+      </p>
+    );
+  }
 
   if (!github.url) {
     return (
