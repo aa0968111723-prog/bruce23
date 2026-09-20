@@ -298,7 +298,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "focus-challenge") {
     return {
       ...base,
-      intro: "公開站首屏是登記畫面：關主、姓名、科系、年級、電話。不是立刻開打。這是作品集走查，不是現場 60 秒。",
+      intro: "公開站攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」。表單是關主、本名、科系、年級、電話；正式按鈕「開始練習」。這是作品集走查，不是現場 60 秒。",
     };
   }
 

@@ -215,19 +215,20 @@ export const linkedWorks: Project[] = [
     year: "2026",
     status: "in-progress",
     featured: false,
-    summary: "社博現場 60 秒 Stroop：首頁先填關主與基本資料，再兩題教學與 15 秒練習（不登記），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
-    problem: "攤位需要能立刻玩的 60 秒遊戲。正式賽仍要先填關主、姓名、科系、年級、電話，不是「完全不填表就能開打」。",
-    role: "現場體驗設計：登記、教學、計時、成績寫入與公開排行榜。",
+    summary: "社博現場 60 秒 Stroop：攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」。表單是關主、本名、科系、年級、電話，按鈕「開始練習」。再兩題教學與 15 秒練習（不登記抽獎），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
+    problem: "攤位需要能立刻玩的 60 秒遊戲。公開 JS 正式賽入口是「正式參賽」，仍要先填關主、本名、科系、年級、電話，不是「完全不填表就能開打」。",
+    role: "現場體驗設計：攤位首屏、教學、計時、成績寫入與公開排行榜。",
     decisions: [
-      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。",
+      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。攤位首屏是 60 秒／看指令選顏色／現場手搖杯，入口「正式參賽」，不是立刻開打。",
       "GitHub 是 ty；Zeabur 服務 leader-dna-sheet-sync。",
-      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。作品集不送出姓名或電話。",
+      "試玩與 15 秒練習不登記抽獎。正式按鈕文案是「開始練習」。公開排行榜不是得獎公告。作品集不送出本名或電話。",
     ],
     modalities: ["互動", "現場"],
     process: [
-      "打開 leader-dna-mcp-a7k2.zeabur.app（首頁是登記畫面）",
-      "填關主、姓名、科系、年級、電話後才進入教學（作品集不送出）",
-      "兩題新手教學與 15 秒練習（不計分、不登記）",
+      "打開 leader-dna-mcp-a7k2.zeabur.app（標題「淡江大學禪學社｜專注力挑戰賽」）",
+      "公開 JS 攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」",
+      "表單欄位是關主、本名、科系、年級、電話；正式按鈕「開始練習」（作品集不送出）",
+      "兩題新手教學與 15 秒練習（不計分、不登記抽獎）",
       "開始 60 秒正式 Stroop（會 POST /api/register 與 /api/result）",
       "看分數與公開排行榜（遮罩姓名）",
     ],
@@ -236,7 +237,7 @@ export const linkedWorks: Project[] = [
     limitations: [
       "2026-09-19 GET /api/health 回 ok，sheets true，smtp false。",
       "GET /api/leaderboard?scope=history 回 67 筆公開列：遮罩姓名、分數、正確率、稱號、時間。不含電話或完整姓名。今日 scope 為 0 筆。",
-      "正式 60 秒需先填表並寫入遊戲分頁。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
+      "2026-09-20 club-header JS 攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」「正式參賽」「怎麼玩」；表單欄位是「本名」不是「姓名」；正式按鈕「開始練習」。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ty",
@@ -247,7 +248,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · leader-dna-mcp-a7k2.zeabur.app",
         href: "https://leader-dna-mcp-a7k2.zeabur.app",
-        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。首頁是登記畫面。",
+        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-20 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。club-header JS 有「60 秒」「看指令選顏色」「現場手搖杯」「正式參賽」「怎麼玩」；表單關主／本名／科系／年級／電話；正式按鈕「開始練習」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。",
       },
       {
         label: "GitHub · ty",

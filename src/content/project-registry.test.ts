@@ -142,11 +142,15 @@ describe("official project registry", () => {
   it("records the ty public flow probe without claiming coreFlow", () => {
     const project = projects.find((item) => item.slug === "focus-challenge");
     assert.ok(project);
-    assert.match(TY_CONTRACT_VERSION, /ty-register-intro/);
+    assert.match(TY_CONTRACT_VERSION, /ty-booth-home-chrome/);
     assert.doesNotMatch(project.summary, /即時看活動狀態/);
     assert.doesNotMatch(project.problem, /不是再填一張表/);
-    assert.match(project.summary, /登記|填關主/);
-    assert.ok(project.process.some((item) => item.includes("登記畫面")));
+    assert.match(project.summary, /看指令選顏色/);
+    assert.match(project.summary, /正式參賽/);
+    assert.ok(project.process.some((item) => item.includes("看指令選顏色")));
+    assert.ok(project.process.some((item) => item.includes("正式參賽")));
+    assert.ok(project.process.some((item) => item.includes("本名")));
+    assert.ok(project.process.every((item) => !item.includes("登記畫面")));
     assert.ok(project.limitations.some((item) => item.includes("67 筆")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
