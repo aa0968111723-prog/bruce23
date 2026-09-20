@@ -1,0 +1,82 @@
+{
+  "runId": "codex-planform-0101",
+  "reportedAt": "2026-09-20T06:02:13.642Z",
+  "status": "IN_PROGRESS",
+  "task": "PLANFORM public browser flow evidence",
+  "project": "planform-iso",
+  "url": "https://planform-iso-k7d2.zeabur.app/",
+  "source": {
+    "repository": "aa0968111723-prog/planform-iso",
+    "mainShaObserved": "1b8513b7681feaf5ba69f8825b722ae7099aef4f",
+    "files": [
+      "src/state/projectRepository.ts",
+      "src/ui/inspector.ts",
+      "src/ui/dom.ts"
+    ],
+    "liveDeploymentShaFreshlyVerified": false
+  },
+  "browser": {
+    "type": "Codex in-app browser",
+    "desktop": {
+      "width": 1440,
+      "height": 900
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "documentScrollWidth": 390
+    },
+    "capturedConsoleWarningsAndErrors": [],
+    "limitations": [
+      "Browser log capture is not a complete security review.",
+      "Responsive viewport emulation is not a physical touch-device test."
+    ]
+  },
+  "testData": {
+    "name": "Codex QA 20260920 PLANFORM",
+    "venue": "一般矩形教室",
+    "participants": 30,
+    "storage": "Source repository identifies localStorage project persistence; no credentials, personal data, AI request or remote sharing used.",
+    "cleanup": "Synthetic project retained in browser local storage; no existing project deleted."
+  },
+  "observations": [
+    {
+      "step": "Create through three-step wizard",
+      "result": "PASS",
+      "detail": "Synthetic name -> rectangular room -> 30 participants -> Create. Generated green mat layout and 3D room visibly rendered."
+    },
+    {
+      "step": "Add chair",
+      "result": "PASS",
+      "detail": "Chair library button -> Place -> Done. Inspector initially showed X=600 cm, Z=480 cm."
+    },
+    {
+      "step": "Edit via locator fill and Tab",
+      "result": "NOT_CONFIRMED",
+      "detail": "Inputs displayed QA chair and X=720, but reopening showed the original chair name and X=600. Do not count input values alone as successful model mutation."
+    },
+    {
+      "step": "Reload and reopen project on mobile",
+      "result": "PASS",
+      "detail": "Project appeared in My Projects as one project, rectangular room, 30 people. Open restored layout; scene and mobile layout tools rendered at 390x844 without document horizontal overflow."
+    },
+    {
+      "step": "Retry with actual keyboard typing and Tab",
+      "result": "PARTIAL",
+      "detail": "Typed QA chair and 720 into selected chair fields. Subsequent reload visibly retained the chair in its new position. Exact inspector values after this final reload were not rechecked; no definitive persistence defect is claimed."
+    }
+  ],
+  "artifacts": [
+    "mobile-tools.png",
+    "desktop-edited.png",
+    "desktop-reloaded.png"
+  ],
+  "acceptance": {
+    "coreFlowPass": false,
+    "mobileSmokePass": false,
+    "desktopSmokePass": false,
+    "readinessScore": null,
+    "reason": "Partial evidence only: complete drag behavior, final numeric persistence, error recovery, touch interactions and full acceptance/security review remain unverified."
+  },
+  "nextTask": "Reopen the synthetic project, confirm final chair name/X/Z via inspector, then test drag and undo/redo on desktop and mobile before promoting any gate."
+}
