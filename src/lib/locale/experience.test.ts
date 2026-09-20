@@ -18,6 +18,10 @@ describe("experience playable chrome", () => {
     const en = experienceChromeFor("en");
     assert.equal(zh.tabPlay, "立即體驗");
     assert.equal(en.tabPlay, "Play");
+    assert.match(zh.githubWithheld, /不提供 GitHub 連結/);
+    assert.doesNotMatch(zh.githubWithheld, /還沒有公開 GitHub 來源/);
+    assert.match(en.githubWithheld, /does not link to GitHub/i);
+    assert.doesNotMatch(en.githubWithheld, /There is no public GitHub source/);
     assert.equal(zh.folioDocumentLayer, "文件層");
     assert.equal(en.folioDocumentLayer, "document layer");
     assert.equal(zh.folioArtboards, "畫板");
@@ -136,6 +140,8 @@ describe("experience playable chrome", () => {
     assert.ok(!deskEn.conversation?.suggestions?.includes("GitHub"));
     assert.doesNotMatch(JSON.stringify(deskEn), /github\.com\/aa0968111723-prog\/tku-zen-agent/);
     assert.equal(deskEn.walkthrough?.[2]?.title, "Source boundary");
+    assert.match(experienceChromeFor("zh").githubWithheld, /可見性與自身隱私規則衝突/);
+    assert.match(experienceChromeFor("en").githubWithheld, /privacy rules/i);
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);

@@ -275,6 +275,9 @@ describe("frontend contract", () => {
     assert.match(explorer, /hints.length > 0/);
     assert.match(explorer, /hintInTree/);
     assert.doesNotMatch(explorer, /tree.length === 0 && hints.length > 0/);
+    assert.match(explorer, /skipGithubHydrate/);
+    assert.match(explorer, /githubWithheld/);
+    assert.match(explorer, /skipGithubHydrate\(project\.slug\)/);
     assert.match(experienceLocale, /來源路徑/);
     assert.match(experienceLocale, /Limited file tree/);
     assert.match(css, /animation:\s*none/);

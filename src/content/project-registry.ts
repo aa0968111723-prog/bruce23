@@ -142,7 +142,7 @@ export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-agent-not-private-20260
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
 
-export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-source-link-contained-20260920";
+export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-github-explorer-withheld-20260920";
 
 export const TKU_ZEN_AGENT_LIVE_PROBE_SLUG = "tku-zen-agent";
 
