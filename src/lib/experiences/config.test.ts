@@ -233,6 +233,9 @@ describe("experience config merge", () => {
     assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
     assert.doesNotMatch(agent.conversation?.starter ?? "", /輸入關鍵詞看說明/);
     assert.doesNotMatch(agent.intro ?? "", /輸入關鍵詞看說明/);
+    const campus = defaultExperienceConfig("tamkang-world");
+    assert.match(campus.intro ?? "", /校園通行證/);
+    assert.doesNotMatch(campus.intro ?? "", /逐步走查/);
     const studio = defaultExperienceConfig("zen-studio");
     assert.match(studio.intro ?? "", /今天可以創作什麼/);
     assert.doesNotMatch(studio.intro ?? "", /逐步走查/);
