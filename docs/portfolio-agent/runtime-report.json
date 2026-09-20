@@ -1,9 +1,9 @@
 {
   "version": 20,
-  "generatedAt": "2026-09-20T15:00:00Z",
+  "generatedAt": "2026-09-20T07:00:00Z",
   "runId": "portfolio-agent-hour-19",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T15:00:00Z",
+  "startedAt": "2026-09-20T07:00:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -17,17 +17,17 @@
   "github": {
     "planPullRequest": 6,
     "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66],
-    "openRepair": [],
+    "openRepair": [64],
     "doNotMerge": [10]
   },
   "validation": {
     "buildAndTypecheck": "PASS: tsc --noEmit + all unit tests pass + integration-line tests + full npm test suite clean pass",
-    "browser": "VERIFIED_200_ALL_19_ENDPOINTS",
+    "browser": "HTTP_200_BASELINE_REPORTED_19_OF_19_NOT_FUNCTIONAL_ACCEPTANCE",
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
     "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#66",
-    "security": "VERIFIED_NO_SECRETS_EXPOSED"
+    "security": "NOT_VERIFIED"
   },
   "probes": [
     {
