@@ -1295,6 +1295,7 @@ async function refreshTkuZenAiLiveProbe(sql: Sql): Promise<void> {
   const seedZh = localeZhFromProject(project.slug);
   const catalog = experienceForSlug(project.slug);
   const experience = defaultExperienceConfig(project.slug);
+  const canva = canvaFieldsForProject(project);
   await sql.query(
     `update projects
      set decisions = $2::jsonb,
@@ -1304,6 +1305,13 @@ async function refreshTkuZenAiLiveProbe(sql: Sql): Promise<void> {
          locale_json = $6::jsonb,
          experience_mode = coalesce($7, experience_mode),
          experience_config = $8::jsonb,
+         canva_share_url = $9,
+         canva_embed_url = $10,
+         canva_design_id = $11,
+         canva_thumbnail_url = $12,
+         canva_alt = $13,
+         canva_caption = $14,
+         canva_status = $15,
          updated_at = now()
      where slug = $1`,
     [
@@ -1315,6 +1323,13 @@ async function refreshTkuZenAiLiveProbe(sql: Sql): Promise<void> {
       JSON.stringify({ zh: seedZh, en: seedEn }),
       catalog?.mode ?? null,
       JSON.stringify(experience),
+      canva.shareUrl,
+      canva.embedUrl,
+      canva.designId,
+      canva.thumbnailUrl,
+      canva.alt,
+      canva.caption,
+      canva.status,
     ],
   );
   await sql.query(
