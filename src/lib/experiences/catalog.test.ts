@@ -341,6 +341,10 @@ describe("frontend contract", () => {
       "utf8",
     );
     assert.ok(demoStage.indexOf('if (state === "embed" && demo.url') < demoStage.indexOf("<iframe"));
+    assert.match(demoStage, /publicLiveDemoMark/);
+    assert.doesNotMatch(demoStage, /status: demo\.status/);
+    assert.match(stage, /publicCanvaSourceMark/);
+    assert.doesNotMatch(stage, /status: canva\.status \}/);
     const processMap = readFileSync(
       new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
       "utf8",

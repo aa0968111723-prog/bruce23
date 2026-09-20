@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { publicGithubStatusLabel, publicIntegrationLine } from "./integration-line.ts";
+import {
+  publicCanvaSourceMark,
+  publicGithubStatusLabel,
+  publicIntegrationLine,
+  publicLiveDemoMark,
+} from "./integration-line.ts";
 
 describe("public integration line", () => {
   it("does not claim Zen GitHub is missing or that the live desk is unavailable", () => {
@@ -70,5 +75,43 @@ describe("public integration line", () => {
     assert.match(zh, /Demo 尚未設定/);
     assert.doesNotMatch(zh, /公開網址/);
     assert.doesNotMatch(zh, /unavailable/);
+  });
+
+  it("does not interpolate raw CMS enums into Live Demo or Canva chrome", () => {
+    const liveZh = publicLiveDemoMark("zh", {
+      url: "https://cutos.zeabur.app",
+      status: "verified",
+      embedEnabled: true,
+    });
+    assert.equal(liveZh, "Live Demo · 已驗證");
+    assert.doesNotMatch(liveZh, /狀態 verified|not_configured|unavailable|failed/);
+
+    const liveEn = publicLiveDemoMark("en", {
+      url: "https://untitled-5.zeabur.app",
+      status: "verified",
+      embedEnabled: true,
+    });
+    assert.equal(liveEn, "Live Demo · verified");
+    assert.doesNotMatch(liveEn, /status verified|not_configured|unavailable/);
+
+    const blockedZh = publicLiveDemoMark("zh", {
+      url: "https://344.zeabur.app",
+      status: "unavailable",
+      embedEnabled: false,
+    });
+    assert.match(blockedZh, /公開網址（無法嵌入）/);
+    assert.doesNotMatch(blockedZh, /unavailable|not_configured|狀態 /);
+
+    const canvaZh = publicCanvaSourceMark("zh", { status: "not_configured" }, "public-embed");
+    assert.match(canvaZh, /公開嵌入模式/);
+    assert.match(canvaZh, /尚未設定/);
+    assert.match(canvaZh, /未宣稱 Connect 已連線/);
+    assert.doesNotMatch(canvaZh, /not_configured|狀態 not_configured|狀態 \{status\}/);
+
+    const canvaEn = publicCanvaSourceMark("en", { status: "unavailable" }, "canva-embed");
+    assert.match(canvaEn, /Canva public embed/);
+    assert.match(canvaEn, /cannot embed/);
+    assert.match(canvaEn, /not claiming Connect is linked/);
+    assert.doesNotMatch(canvaEn, /unavailable|not_configured|status \{status\}/);
   });
 });

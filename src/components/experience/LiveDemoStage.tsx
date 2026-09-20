@@ -2,11 +2,11 @@ import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { demoViewerState, type PublicProject } from "@/lib/cms/privacy";
 import { isSafeHttpUrl } from "@/lib/safe-href";
-import { fillChrome } from "@/lib/locale/experience";
+import { publicLiveDemoMark } from "@/lib/locale/integration-line";
 import { useExperienceView } from "./useExperienceView";
 
 export function LiveDemoStage({ project }: { project: PublicProject }) {
-  const { ex, config } = useExperienceView(project);
+  const { lang, ex, config } = useExperienceView(project);
   const demo = project.demo;
   const [failed, setFailed] = useState(false);
   const state = demoViewerState(demo, failed);
@@ -52,7 +52,7 @@ export function LiveDemoStage({ project }: { project: PublicProject }) {
           onError={() => setFailed(true)}
         />
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs text-muted">
-          <span>{fillChrome(ex.liveStatus, { status: demo.status })}</span>
+          <span>{publicLiveDemoMark(lang, demo)}</span>
           <a
             href={demo.url}
             className="inline-flex min-h-11 items-center text-mint-deep"
