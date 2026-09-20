@@ -97,7 +97,7 @@ function fieldsFromParsed(
       thumbnailUrl: local.src,
       alt: local.alt,
       caption: local.caption,
-      status: "unavailable",
+      status: "not_configured",
     };
   }
   return {
@@ -158,7 +158,11 @@ export function canvaFieldsForArchive(item: (typeof archiveItems)[number]): Canv
           caption: "本地 SVG 轉譯。沒有公開分享連結，所以不嵌入空白 iframe，也不能翻頁。",
         }
       : undefined);
-  return fieldsFromParsed(parsed, local);
+  const fields = fieldsFromParsed(parsed, local);
+  if (!parsed && local && item.originNote.includes("Canva")) {
+    return { ...fields, status: "unavailable" };
+  }
+  return fields;
 }
 
 export function projectCanvaInventory(): Record<string, CanvaSeedFields> {

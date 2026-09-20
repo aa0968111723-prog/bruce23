@@ -228,6 +228,8 @@ describe("frontend contract", () => {
     assert.match(walk, /project.slug === "folio"/);
     assert.match(walk, /walkDemoCanvas/);
     assert.match(walk, /isFolio \? walkthroughStageKind/);
+    assert.match(walk, /isFolio \? ex\.folioNotCounter : ex\.walkKeyboard/);
+    assert.match(walk, /isFolio \? ex\.folioDocumentLayer : ex\.walkDocumentLayer/);
     assert.match(toggle, /min-h-11/);
     assert.match(toggle, /min-w-11/);
     assert.match(header, /LocaleToggle/);
@@ -330,7 +332,8 @@ describe("frontend contract", () => {
     assert.match(experienceLocale, /在 Canva 開啟原作/);
     assert.match(experienceLocale, /The Canva original cannot be publicly embedded/);
     assert.match(experienceLocale, /not claiming Connect is linked/);
-    assert.match(stage, /ex\.noShareTitle|ex\.unavailableTitle/);
+    assert.match(stage, /ex\.noShareTitle/);
+    assert.match(stage, /state === "local"/);
     assert.match(stage, /publicCanvaEmbedUrl/);
     assert.match(stage, /pages.length > 1/);
     assert.match(stage, /loading="lazy"/);
@@ -345,6 +348,12 @@ describe("frontend contract", () => {
     assert.doesNotMatch(demoStage, /status: demo\.status/);
     assert.match(stage, /publicCanvaSourceMark/);
     assert.doesNotMatch(stage, /status: canva\.status \}/);
+    const integrationLine = readFileSync(
+      new URL("../../../src/lib/locale/integration-line.ts", import.meta.url),
+      "utf8",
+    );
+    assert.match(integrationLine, /hasPublicCanvaUrl/);
+    assert.match(integrationLine, /if \(!hasPublicCanvaUrl\(canva\)\)/);
     const processMap = readFileSync(
       new URL("../../../src/components/experience/modes/ProcessMap.tsx", import.meta.url),
       "utf8",
@@ -384,8 +393,14 @@ describe("frontend contract", () => {
     assert.match(folioWalk, /folioInsertText/);
     assert.match(folioWalk, /folioDocumentLayer/);
     assert.doesNotMatch(folioWalk, /\$\{title\} 文件層/);
-    assert.match(folioWalk, /不是空白計數器|ex\.folioNotCounter/);
+    assert.match(folioWalk, /isFolio \? ex\.folioNotCounter : ex\.walkKeyboard/);
+    assert.match(folioWalk, /walkDocumentLayer/);
     assert.match(experienceLocale, /不是空白計數器/);
+    assert.match(experienceLocale, /walkKeyboard/);
+    assert.doesNotMatch(
+      experienceLocale.match(/walkKeyboard: "[^"]+"/)?.[0] ?? "",
+      /空白計數器|blank counter/i,
+    );
     const canvas = readFileSync(
       new URL("../../../src/components/experience/ExperienceCanvas.tsx", import.meta.url),
       "utf8",

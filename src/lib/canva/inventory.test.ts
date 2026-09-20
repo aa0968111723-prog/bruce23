@@ -74,7 +74,7 @@ describe("canva content inventory", () => {
       assert.equal(fields.designId, null, project.slug);
       if (project.slug === "tku-zen-ai") {
         assert.equal(fields.shareUrl, null, project.slug);
-        assert.equal(fields.status, "unavailable");
+        assert.equal(fields.status, "not_configured");
         assert.equal(fields.thumbnailUrl, "/media/archive/tku-zen-poster.svg");
       } else if (project.slug === "ai-director-os") {
         assert.equal(fields.shareUrl, "https://www.canva.com/d/ysK5sYZisVEjZFe");

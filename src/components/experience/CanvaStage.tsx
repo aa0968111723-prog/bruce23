@@ -47,10 +47,8 @@ export function CanvaStage({ project }: { project: PublicProject }) {
       <div className="overflow-hidden rounded-2xl bg-surface shadow-card">
         {thumb}
         <div className="space-y-2 p-4 text-sm">
-          <p className="font-medium">
-            {canva.status === "unavailable" ? ex.unavailableTitle : ex.noShareTitle}
-          </p>
-          <p className="text-muted">{canva.status === "unavailable" ? ex.unavailableBody : ex.noShareBody}</p>
+          <p className="font-medium">{ex.noShareTitle}</p>
+          <p className="text-muted">{ex.noShareBody}</p>
           {canva.caption ? <p className="text-sm text-muted">{canva.caption}</p> : null}
           {original ? (
             <a

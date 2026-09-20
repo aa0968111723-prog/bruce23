@@ -17,6 +17,8 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
   const isFolio = project.slug === "folio";
   const kind = step ? (isFolio ? walkthroughStageKind(step) : "document") : "document";
   const canvasLabel = isFolio ? ex.folioDemoCanvas : ex.walkDemoCanvas;
+  const keyboardHint = isFolio ? ex.folioNotCounter : ex.walkKeyboard;
+  const layerLabel = isFolio ? ex.folioDocumentLayer : ex.walkDocumentLayer;
 
   function go(next: number) {
     if (!steps.length) return;
@@ -40,7 +42,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
       <p className="text-sm text-muted">
         {joinSentences(
           config.intro ?? (project.slug === "folio" ? ex.folioDefaultIntro : ex.walkDefaultIntro),
-          ex.folioNotCounter,
+          keyboardHint,
         )}
       </p>
       <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label={ex.walkStepsAria}>
@@ -71,6 +73,7 @@ export function FolioWalkthrough({ project }: { project: PublicProject }) {
           total={steps.length}
           ex={ex}
           canvasLabel={canvasLabel}
+          layerLabel={layerLabel}
         />
       </div>
       <div className="mt-4 rounded-2xl bg-surface p-5 shadow-card">
@@ -120,6 +123,7 @@ function FolioStage({
   total,
   ex,
   canvasLabel,
+  layerLabel,
 }: {
   step: WalkthroughStep;
   kind: WalkthroughStageKind;
@@ -127,6 +131,7 @@ function FolioStage({
   total: number;
   ex: ExperienceChrome;
   canvasLabel: string;
+  layerLabel: string;
 }) {
   const file = step.path?.split("/").pop() ?? step.path ?? "document";
   return (
@@ -144,7 +149,9 @@ function FolioStage({
         {kind === "command" ? <CommandStage file={file} ex={ex} /> : null}
         {kind === "audit" ? <AuditStage file={file} ex={ex} /> : null}
         {kind === "mcp" ? <McpStage file={file} ex={ex} /> : null}
-        {kind === "document" ? <DocumentStage title={step.title} file={file} ex={ex} /> : null}
+        {kind === "document" ? (
+          <DocumentStage title={step.title} file={file} layerLabel={layerLabel} />
+        ) : null}
       </div>
     </div>
   );
@@ -356,9 +363,17 @@ function McpStage({ file, ex }: { file: string; ex: ExperienceChrome }) {
   );
 }
 
-function DocumentStage({ title, file, ex }: { title: string; file: string; ex: ExperienceChrome }) {
+function DocumentStage({
+  title,
+  file,
+  layerLabel,
+}: {
+  title: string;
+  file: string;
+  layerLabel: string;
+}) {
   return (
-    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={`${title} ${ex.folioDocumentLayer}`}>
+    <svg viewBox="0 0 320 200" className="h-full w-full" role="img" aria-label={`${title} ${layerLabel}`}>
       <rect width="320" height="200" className="fill-surface-blue" />
       <rect x="54" y="28" width="212" height="144" rx="10" className="fill-surface stroke-line" strokeWidth="1" />
       <rect x="70" y="44" width="180" height="16" rx="3" className="fill-mint" />

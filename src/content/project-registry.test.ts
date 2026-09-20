@@ -338,7 +338,7 @@ describe("official project registry", () => {
   it("records TKU Zen AI first screen as the public English welcome without claiming a chat coreFlow", () => {
     const project = projects.find((item) => item.slug === TKU_ZEN_AI_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TKU_ZEN_AI_LIVE_PROBE_VERSION, /tku-zen-ai-agent-not-private/);
+    assert.match(TKU_ZEN_AI_LIVE_PROBE_VERSION, /tku-zen-ai-canva-local-not-embed/);
     assert.equal(project.links.live, undefined);
     assert.ok(project.process[0]?.includes("src/app/page.tsx"));
     assert.ok(project.process.some((item) => item.includes("Welcome to TKU Zen AI")));
