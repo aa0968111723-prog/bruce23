@@ -476,6 +476,9 @@ describe("frontend contract", () => {
     assert.match(jsonldView, /publishedCreativeWorkJsonLd/);
     assert.match(jsonldView, /min-w-0 max-w-4xl/);
     assert.match(jsonldView, /break-all/);
+    assert.match(jsonldView, /publicIntegrationLine/);
+    assert.doesNotMatch(jsonldView, /GitHub \{view\.github\.syncStatus\}/);
+    assert.doesNotMatch(jsonldView, /Demo \{view\.demo\.status\}/);
     const form = readFileSync(new URL("../../../src/components/admin/ProjectForm.tsx", import.meta.url), "utf8");
     assert.match(form, /GithubSyncDiff/);
     assert.match(form, /ExperienceEditor/);
