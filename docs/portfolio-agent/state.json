@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-cutos-import-intro",
-  "updatedAt": "2026-09-20T23:55:00Z",
+  "runId": "grok-impl-20260920-ty-register-intro",
+  "updatedAt": "2026-09-20T00:05:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
-  "currentProject": "cutos",
+  "currentProject": "focus-challenge",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/cutos-import-intro",
+  "currentBranch": "fix/ty-register-intro",
   "currentPR": null,
-  "currentTask": "cutos-import-intro",
+  "currentTask": "ty-register-intro",
   "taskStatus": "implementing",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -46,13 +46,16 @@
     "Hermes Console conversation stamp merged as PR #45 and live on production /work/hermes-console (今天想做什麼 / 研究／創作／分析, not 輸入關鍵詞看說明)",
     "PLANFORM canvas stamp merged as PR #46 and live on production /work/planform (我的專案 / ＋ 新建專案, not 等角場佈示意：旋轉、拖動物件)",
     "Live Demo iframe enlarge merged as PR #47",
-    "Folio canvas intro stamp merged as PR #48 and live on production /work/folio (文件櫃 / 不必登入, not 指令層走一遍)"
+    "Folio canvas intro stamp merged as PR #48 and live on production /work/folio (文件櫃 / 不必登入, not 指令層走一遍)",
+    "CUTOS canvas intro stamp merged as PR #49 and live on production /work/cutos (匯入影片 / 載入示範影片, not 這是作品集逐步走查)",
+    "SkateHub canvas intro stamp merged as PR #50 and live on production /work/skatehub (穿上輪鞋出發, not 逐步走查)",
+    "Zen Studio canvas intro stamp merged as PR #51 and live on production /work/zen-studio (今天可以創作什麼, not 逐步走查)"
   ],
   "remainingSteps": [
-    "Land CUTOS canvas intro stamp: 匯入影片 / 載入示範影片, not generic 逐步走查",
-    "After deploy, verify production /work/cutos canvas quotes 匯入影片, not 這是作品集逐步走查",
+    "Land ty/focus-challenge canvas intro stamp: 登記畫面 / 關主, not generic 逐步走查",
+    "After deploy, verify production /work/focus-challenge canvas quotes 登記畫面, not 這是作品集逐步走查",
+    "Tamkang World and Tamsui drama canvas intros still use generic walkDefaultIntro",
     "Folio / PLANFORM / CUTOS demo-clip coreFlow stays BLOCKED on a real browser",
-    "SkateHub / Zen Studio canvas intros still use generic walkDefaultIntro",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
@@ -60,7 +63,7 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_NOT_YET_OPENED",
-  "productionStatus": "PR48_FOLIO_CABINET_LIVE_CUTOS_INTRO_STALE",
+  "productionStatus": "PR51_ZEN_STUDIO_INTRO_LIVE_TY_INTRO_STALE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -74,7 +77,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, and CUTOS 載入示範影片 need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, and ty 60-second Stroop need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -99,5 +102,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After this PR deploys, verify production /work/cutos canvas quotes 匯入影片 / 載入示範影片, not 這是作品集逐步走查. EN first walkthrough step is Import video. Do not mark CUTOS coreFlow. Folio/PLANFORM coreFlow stays BLOCKED on browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After this PR deploys, verify production /work/focus-challenge canvas quotes 登記畫面 / 關主, not 這是作品集逐步走查. EN first walkthrough step is Register. Do not mark ty coreFlow. Tamkang/Tamsui intros still generic. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

@@ -82,7 +82,7 @@ export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
-export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
+export const TY_CONTRACT_VERSION = "ty-register-intro-20260920";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 

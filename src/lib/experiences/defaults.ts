@@ -280,6 +280,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "focus-challenge") {
+    return {
+      ...base,
+      intro: "公開站首屏是登記畫面：關主、姓名、科系、年級、電話。不是立刻開打。這是作品集走查，不是現場 60 秒。",
+    };
+  }
+
   return base;
 }
 

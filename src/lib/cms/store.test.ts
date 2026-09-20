@@ -1360,7 +1360,8 @@ describe("cms persistence", () => {
        set summary = $2,
            problem = $3,
            process = $4::jsonb,
-           limitations = $5::jsonb
+           limitations = $5::jsonb,
+           experience_config = $6::jsonb
        where slug = $1`,
       [
         "focus-challenge",
@@ -1368,6 +1369,7 @@ describe("cms persistence", () => {
         "stale problem：不是再填一張表。",
         JSON.stringify(["stale process"]),
         JSON.stringify(["stale limitation"]),
+        JSON.stringify({ intro: "這是作品集逐步走查，不是線上產品本身。" }),
       ],
     );
     await sql.query(`delete from cms_meta where key = 'ty_contract_version'`);
@@ -1387,6 +1389,10 @@ describe("cms persistence", () => {
     const walk = game.experienceConfig.walkthrough ?? [];
     assert.ok(walk.some((step) => step.title === "教學／練習"));
     assert.equal(walk.some((step) => step.title === "暖身"), false);
+    assert.equal(walk[0]?.title, "登記");
+    assert.match(game.experienceConfig.intro ?? "", /登記畫面/);
+    assert.match(game.experienceConfig.intro ?? "", /關主/);
+    assert.doesNotMatch(game.experienceConfig.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     assert.match(game.locale.en?.summary ?? "", /not an activity-status dashboard/i);
   });
 
