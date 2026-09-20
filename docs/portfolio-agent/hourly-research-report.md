@@ -1,7 +1,7 @@
-# Luminous Studio 作品集系統深度研究與巡檢報告（第 18 期 · Iteration 17）
+# Luminous Studio 作品集系統深度研究與巡檢報告（第 19 期 · Iteration 18）
 
 - **執行週期**：每 1 小時自動研究與巡檢（背景常駐排程守護中：`0 * * * *`，任務 ID：`task-99`）
-- **報告產出時間**：2026-09-20 14:05:00 (UTC+8)
+- **報告產出時間**：2026-09-20 15:05:00 (UTC+8)
 - **主作品集專案**：`aa0968111723-prog/bruce23`
 - **正式環境入口**：[https://bruce23-k7m2.zeabur.app/](https://bruce23-k7m2.zeabur.app/)
 - **執行代理**：Antigravity Agent（主架構代理）
@@ -11,7 +11,7 @@
 
 ## 1. 實時端點健康度與延遲探測（在線率：100% · 19/19 綠燈）
 
-於 2026-09-20 14:00 (UTC+8) 執行第 18 輪全端點實時探測，19 個端點持續 100% 保持在線健康狀態，無任何停機或異常：
+於 2026-09-20 15:00 (UTC+8) 執行第 19 輪全端點實時探測，19 個端點持續 100% 保持在線健康狀態，無任何停機或異常：
 
 | 編號 | 專案 / 服務名稱 | 核心定位 | 線上正式入口 | HTTP 狀態 | 響應延遲 (ms) | 公開 / 授權狀態 |
 |:---:|:---|:---|:---|:---:|:---:|:---:|
@@ -39,25 +39,30 @@
 
 ## 2. 本輪重大進展與多代理整合摘要
 
-1. **唯一官方主計劃線 (PR #6) 推進與 main PR #63 無縫合併**：
+1. **唯一官方主計劃線 (PR #6) 推進與 main PR #65、PR #66 無縫合併**：
    - 恪守「查重第一，嚴禁重複開 PR」協議，全儲存庫僅維持唯一協同分支 `codex/portfolio-agent-plan`，無新建任何重複 PR。
-   - 成功拉取並合併 `origin/main` 最新提交（Commit `a9da0e4`，即 **PR #63**）：
-     - **PR #63**（`linked-works.ts`、`catalog.ts`、`defaults.ts`、`locale-en.ts`）：修復淡江世界（`tamkang-world`）的 live controls 說明，誠實呈現 Live Demo `/` 是 3D 校園首頁（包含「開始巡禮」、「校園圖鑑」、「登入」按鈕，以及「左右滑動旋轉視角 · 雙指縮放」等操作說明），而 `/login` 才是校園通行證門；不宣稱未經實體瀏覽器走查的 3D WASD 核心流。
-   - 解決 `src/content/linked-works.ts`、`runtime-report.json` 與 `state.json` 衝突，移除重複且不完整之尾部 `gates` 物件，完美落實 PR #27 的 **證據導向閘門審計規範（Evidence-backed Portfolio Gates）**。
+   - 成功拉取並合併 `origin/main` 最新提交（Commit `7b16c73` PR #65 與 Commit `c5c20c5` PR #66）：
+     - **PR #65**（`focus-challenge` / `ty` 專注力挑戰賽）：攤位首頁現場 chrome 誠實性校準，呈現「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」；登記表單為關主、本名、科系、年級、電話，正式按鈕為「開始練習」，不再混淆為「登記畫面／姓名」，且誠實聲明未在實體瀏覽器跑過 60s Stroop coreFlow。
+     - **PR #66**（`lumen` / `wood-ivory` 多模態語音創作球）：首頁 chrome 誠實性校準，呈現「自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板」，不再誤標為「首頁只有想做什麼／拍照」，且誠實聲明未跑實體 hold-to-speak coreFlow。
+   - 解決 `runtime-report.json` 與 `state.json` 衝突，移除重複且不完整之尾部 `gates` 物件，嚴格落實 PR #27 **證據導向閘門審計規範（Evidence-backed Portfolio Gates）**，維持 state.json 欄位與 gate 計算的一致性。
 2. **全套測試 100% 綠燈通過**：
    - 執行 `npm run typecheck`（`tsc --noEmit`）維持 0 錯誤。
+   - 執行 `node scripts/check-portfolio-gates.mjs` 通過。
    - 執行 `scripts/check-portfolio-gates.test.mjs` 7/7 項審計單元測試全數 PASS。
-   - 執行核心單元測試（包含專案註冊表真實性校驗、體驗模式型態轉換、客服代理測試等 86 項），全數乾淨通過。
+   - 執行全套單元測試 `npm test`，53 個 suite、322 項測試 100% PASS（322 pass, 0 fail）。
 3. **AI 客服代理與全站 UI/UX 質感升級 (`PortfolioConcierge`)**：
    - 常駐右下角懸浮 AI 客服導覽代理，支援 17 專案問答、MCP 工具協議導航與「🟢 19端點探測」即時速查。
    - Glassmorphism 2.0 磨砂玻璃視覺與呼吸綠燈持續運作。
 4. **8 大私有儲存庫持續公開**：
    - 名下原本為私有的 8 個倉庫（`forge-bloom`, `cabin-shale`, `lunar-crystal`, `CUTOS`, `tku-zen-agent` 等）維持完全 Public 狀態。
+5. **下一階段誠實性差距 (Next Honesty Gap)**：
+   - 鎖定 Folio「給 MCP 與內嵌網站／開發者 SDK」之說明校準。
+   - 嚴格守護 Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow 在未經真實瀏覽器實測前保持 `BLOCKED`，不虛報功能。
 
 ---
 
 ## 3. 下一小時排程監控焦點 (Next Hourly Focus)
 
-- 背景守護排程 `task-99` 持續常駐守護（下一次自動整點喚醒：2026-09-20 15:00 UTC+8）。
+- 背景守護排程 `task-99` 持續常駐守護（下一次自動整點喚醒：2026-09-20 16:00 UTC+8）。
 - 維持單一協同寫入線 [PR #6](https://github.com/aa0968111723-prog/bruce23/pull/6)，引導其他代理協作。
 - 持續監控全端點在線率與前端 UI/UX 質感細節。
