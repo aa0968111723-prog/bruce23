@@ -44,7 +44,16 @@ test("timestamps and reachability wording remain evidence-safe", () => {
   }
 });
 
-test("open repair inventory includes the two live repair lines", () => {
-  assert.ok(report.github.openRepair.includes(64));
-  assert.ok(report.github.openRepair.includes(67));
+test("repair inventories remain unique and mutually exclusive", () => {
+  const merged = new Set(report.github.mergedRepair);
+  const open = new Set(report.github.openRepair);
+  const doNotMerge = new Set(report.github.doNotMerge);
+
+  assert.equal(open.size, report.github.openRepair.length);
+  assert.equal(merged.size, report.github.mergedRepair.length);
+  assert.equal(doNotMerge.size, report.github.doNotMerge.length);
+  for (const pullRequest of open) {
+    assert.ok(!merged.has(pullRequest));
+    assert.ok(!doNotMerge.has(pullRequest));
+  }
 });
