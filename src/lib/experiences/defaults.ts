@@ -73,6 +73,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "tamkang-world") {
+    return {
+      ...base,
+      intro: "公開站未登入是「校園通行證／先以訪客巡禮」。這是作品集走查，不是 3D 校園。",
+    };
+  }
+
   if (slug === "zen-studio") {
     return {
       ...base,

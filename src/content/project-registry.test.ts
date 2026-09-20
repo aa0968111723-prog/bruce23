@@ -251,7 +251,7 @@ describe("official project registry", () => {
   it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
     const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-github-public/);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-canvas-intro/);
     assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("校園通行證")));
     assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));

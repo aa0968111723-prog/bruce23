@@ -110,7 +110,7 @@ export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-canvas-intro-20260920";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
-export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-github-public-20260920";
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-canvas-intro-20260920";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
