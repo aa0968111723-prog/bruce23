@@ -861,10 +861,42 @@ describe("cms persistence", () => {
     assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
     assert.ok(cutos.process.some((item) => item.includes("載入示範影片")));
     assert.ok(cutos.process.some((item) => item.includes("匯入影片")));
+    assert.ok(cutos.process.some((item) => item.includes("內含停頓")));
+    assert.ok(cutos.process.every((item) => !item.includes("可載入示範影片或上傳")));
     assert.match(cutos.experienceConfig.intro ?? "", /匯入影片/);
     assert.match(cutos.experienceConfig.intro ?? "", /載入示範影片/);
+    assert.match(cutos.experienceConfig.intro ?? "", /內含停頓/);
+    assert.match(cutos.experienceConfig.intro ?? "", /系統狀態/);
+    assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /可載入示範影片或上傳/);
     assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     assert.equal(cutos.experienceConfig.walkthrough?.[0]?.title, "匯入影片");
+    assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes CUTOS live landing CTAs without claiming a demo-clip coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "cutos",
+        JSON.stringify(["公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'cutos_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const cutos = await getPublishedProject(sql, "cutos");
+    assert.match(cutos.experienceConfig.intro ?? "", /內含停頓/);
+    assert.match(cutos.experienceConfig.intro ?? "", /系統狀態/);
+    assert.match(cutos.experienceConfig.intro ?? "", /上傳影片…/);
+    assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /可載入示範影片或上傳/);
+    assert.ok(cutos.decisions.some((item) => item.includes("內含停頓")));
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -1169,11 +1201,41 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const studio = await getPublishedProject(sql, "zen-studio");
     assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(studio.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(studio.process.every((item) => !item.includes("看近期活動與 AI 建議")));
     assert.match(
       studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
-      /今天可以創作什麼/,
+      /AI 幫我創作/,
     );
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
     assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes Zen Studio live landing CTAs without claiming a generate coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["首頁先問今天可以創作什麼，而不是先給後台選單。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
+    assert.match(studio.experienceConfig.intro ?? "", /看月曆/);
+    assert.match(studio.experienceConfig.intro ?? "", /現在發到期內容/);
+    assert.doesNotMatch(studio.experienceConfig.intro ?? "", /看近期活動與 AI 建議/);
+    assert.ok(studio.decisions.some((item) => item.includes("AI 幫我創作")));
     assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

@@ -185,14 +185,19 @@ describe("official project registry", () => {
   it("records CUTOS as live HTTP 200, not suspended 502", () => {
     const project = projects.find((item) => item.slug === CUTOS_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-import-intro/);
+    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-live-cta-quote/);
     assert.equal(project.links.live, "https://cutos.zeabur.app");
     assert.ok(project.sourceReferences.every((item) => !/SUSPENDED／502/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/SUSPENDED／502/.test(item)));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 502")));
     assert.ok(project.process.some((item) => item.includes("匯入影片")));
     assert.ok(project.process.some((item) => item.includes("載入示範影片")));
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("匯入影片")));
+    assert.ok(project.process.some((item) => item.includes("內含停頓")));
+    assert.ok(project.process.some((item) => item.includes("上傳影片…")));
+    assert.ok(project.process.some((item) => item.includes("系統狀態")));
+    assert.ok(project.process.every((item) => !item.includes("可載入示範影片或上傳")));
+    assert.ok(project.decisions.some((item) => item.includes("內含停頓")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("內含停頓")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -315,9 +320,15 @@ describe("official project registry", () => {
   it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
     const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-canvas-intro/);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-cta-quote/);
     assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(project.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.process.some((item) => item.includes("看月曆")));
+    assert.ok(project.process.some((item) => item.includes("現在發到期內容")));
+    assert.ok(project.process.every((item) => !item.includes("看近期活動與 AI 建議")));
+    assert.ok(project.decisions.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("AI 幫我創作")));
     assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });

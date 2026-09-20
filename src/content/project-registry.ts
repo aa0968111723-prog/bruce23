@@ -90,7 +90,7 @@ export const TY_CONTRACT_VERSION = "ty-booth-home-chrome-20260920";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-import-intro-20260920";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-cta-quote-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
@@ -122,7 +122,7 @@ export const LUMEN_LIVE_PROBE_VERSION = "lumen-live-home-chrome-20260920";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 
-export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-cta-quote-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 

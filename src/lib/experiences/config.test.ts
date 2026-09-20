@@ -254,6 +254,10 @@ describe("experience config merge", () => {
     assert.doesNotMatch(campus.intro ?? "", /逐步走查/);
     const studio = defaultExperienceConfig("zen-studio");
     assert.match(studio.intro ?? "", /今天可以創作什麼/);
+    assert.match(studio.intro ?? "", /AI 幫我創作/);
+    assert.match(studio.intro ?? "", /看月曆/);
+    assert.match(studio.intro ?? "", /現在發到期內容/);
+    assert.doesNotMatch(studio.intro ?? "", /看近期活動與 AI 建議/);
     assert.doesNotMatch(studio.intro ?? "", /逐步走查/);
     const xiaocai = defaultExperienceConfig("xiaocai");
     assert.match(xiaocai.galleryNote ?? "", /快速記一筆/);
@@ -294,6 +298,10 @@ describe("experience config merge", () => {
     assert.match(cutosIntro.intro ?? "", /AI 對話式影片剪輯/);
     assert.match(cutosIntro.intro ?? "", /匯入影片/);
     assert.match(cutosIntro.intro ?? "", /載入示範影片/);
+    assert.match(cutosIntro.intro ?? "", /內含停頓/);
+    assert.match(cutosIntro.intro ?? "", /系統狀態/);
+    assert.match(cutosIntro.intro ?? "", /上傳影片…/);
+    assert.doesNotMatch(cutosIntro.intro ?? "", /可載入示範影片或上傳/);
     assert.doesNotMatch(cutosIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const tyIntro = defaultExperienceConfig("focus-challenge");
     assert.match(tyIntro.intro ?? "", /看指令選顏色/);

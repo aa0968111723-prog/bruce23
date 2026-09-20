@@ -844,6 +844,25 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  "zen-studio": {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is What can we make today? Buttons: Help me create, See events, Publish due items now, See calendar. Due-item copy: no reviewer; opening the studio auto-publishes. This is a portfolio walkthrough, not the Instagram backend.",
+    walkthrough: [
+      {
+        title: "What can we make today",
+        body: "Public delta-horizon-k7f2 title is 禪學社 Studio. h1 What can we make today? Buttons Help me create and See events.",
+      },
+      {
+        title: "Generate",
+        body: "Help me create opens generation. Quick start has Generate IG post / Generate image / Generate Story / Generate Carousel / Generate Reels. This page does not generate for you.",
+      },
+      {
+        title: "Calendar",
+        body: "Buttons See calendar and Publish due items now. The page says due items auto-publish with no reviewer. This portfolio has not published a post.",
+      },
+    ],
+  },
   skatehub: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:
@@ -865,11 +884,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",
+    intro: "The public first screen tagline is “AI 對話式影片剪輯”, with a header “System status” control. Main block “Import video”; hint “You can load the built-in demo clip (it includes pauses)”. Buttons “Load demo clip” and “Upload video…”. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
       {
         title: "Import video",
-        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Main block Import video, buttons Load demo clip / Upload video.",
+        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Header “System status”. Main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip and Upload video….",
       },
       {
         title: "Load demo",

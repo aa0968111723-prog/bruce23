@@ -459,13 +459,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A bright desk for club work",
     summary: "Print, events, and daily making under one lamp — not another Drive folder.",
     process: [
-      "Open delta-horizon-k7f2.zeabur.app",
-      "First screen is “What can we make today?”",
-      "Read upcoming events and AI suggestions",
-      "Due items have no reviewer; opening the studio auto-publishes them",
+      "Open delta-horizon-k7f2.zeabur.app (title 禪學社 Studio)",
+      "h1 What can we make today?; buttons Help me create and See events",
+      "Due-item copy: no reviewer; opening the studio auto-publishes. Buttons Publish due items now and See calendar",
+      "This portfolio has not generated a post or published a due item",
     ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title 禪學社 Studio. First screen is What can we make today? The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title 禪學社 Studio. h1 What can we make today?; buttons Help me create / See events / Publish due items now / See calendar. The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
     ],
   },
   "focus-challenge": {
@@ -543,13 +543,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "Cut video by talking",
     summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
     process: [
-      "Open cutos.zeabur.app",
-      "First screen product line is Conversational Video Editor; main block is Import video — load the demo clip or upload",
-      "Describe the cut in one sentence",
-      "Review the Edit Plan, then apply it on a non-destructive timeline",
+      "Open cutos.zeabur.app (title CUTOS — Conversational Video Editor)",
+      "Header tagline “AI 對話式影片剪輯” with “System status”",
+      "Main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip and Upload video…",
+      "This portfolio has not loaded the demo clip or uploaded a real video",
     ],
     limitations: [
-      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. First screen product line AI 對話式影片剪輯; main block Import video with Load demo clip / Upload. /api/health ok.",
+      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. Tagline AI 對話式影片剪輯; header System status; main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip / Upload video…. /api/health ok.",
       "This portfolio has not loaded the demo clip or uploaded a real video, so coreFlow is not passed.",
     ],
   },

@@ -141,11 +141,25 @@ describe("experience catalog", () => {
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /輸入關鍵詞看說明/);
   });
 
+  it("keeps zen-studio walkthrough on the live create-today home", () => {
+    const steps = experienceCatalog["zen-studio"].walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "今天可以創作什麼");
+    assert.match(steps[0]?.body ?? "", /AI 幫我創作/);
+    assert.match(steps[0]?.body ?? "", /看活動/);
+    assert.match(bodies, /現在發到期內容/);
+    assert.match(bodies, /看月曆/);
+    assert.doesNotMatch(bodies, /不要先開雲端硬碟/);
+  });
+
   it("keeps cutos walkthrough on the live import-video home", () => {
     const steps = experienceCatalog.cutos.walkthrough ?? [];
     assert.equal(steps[0]?.title, "匯入影片");
     assert.match(steps[0]?.body ?? "", /AI 對話式影片剪輯/);
     assert.match(steps[0]?.body ?? "", /載入示範影片/);
+    assert.match(steps[0]?.body ?? "", /內含停頓/);
+    assert.match(steps[0]?.body ?? "", /系統狀態/);
+    assert.match(steps[0]?.body ?? "", /上傳影片…/);
     assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
   });
 
