@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-framelab-live-cta-quote",
-  "updatedAt": "2026-09-20T08:45:00Z",
+  "runId": "grok-impl-20260920-aios-live-cta-quote",
+  "updatedAt": "2026-09-20T09:20:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/framelab-live-cta-quote",
+  "currentBranch": "fix/aios-live-cta-quote",
   "currentPR": null,
-  "currentTask": "framelab-live-cta-quote",
+  "currentTask": "aios-live-cta-quote",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -65,19 +65,20 @@
     "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名",
     "Lumen live home chrome merged as PR #66 and live on production /work/lumen: 自動聽 / 拍照開始 / 長任務 / 畫板, not 拍照／首頁只有想做什麼",
     "Folio live subtitle SDK merged as PR #68 and live on production /work/folio: 給 MCP 與內嵌網站 / 開發者 SDK, not only 文件櫃／不必登入",
-    "SkateHub slogan-quote merged as PR #69 and live on production /work/skatehub: 瀏覽裝備圖鑑 / 記錄今天的里程. Unique marker is the CTAs, not 不要在家玩手機. Not a mileage coreFlow"
+    "SkateHub slogan-quote merged as PR #69 and live on production /work/skatehub: 瀏覽裝備圖鑑 / 記錄今天的里程. Unique marker is the CTAs, not 不要在家玩手機. Not a mileage coreFlow",
+    "FrameLab live-CTA quote merged as PR #70 and live on production /work/framelab: 登入工作室 / 系統狀態 / 不是生成網站, not 進入工作室要登入. Unique marker 不是生成網站. Not a repair coreFlow"
   ],
   "remainingSteps": [
-    "Land PR so /work/framelab quotes 登入工作室 / 系統狀態 / 不是生成網站, not only 進入工作室要登入. Do not claim a repair coreFlow.",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage coreFlow stays BLOCKED on a real browser",
+    "Land PR so /work/ai-director-os quotes 進入工作台 / 登入工作台 / 看看怎麼運作, not 進入工作台要登入. Unique marker is 看看怎麼運作. Do not claim a team coreFlow.",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 124,
+  "testsPassed": 108,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR69_LIVE_FRAMELAB_INTRO_PARAPHRASE",
+  "productionStatus": "PR70_LIVE_AIOS_INTRO_PARAPHRASE",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -116,5 +117,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the FrameLab live-CTA PR so production /work/framelab quotes 登入工作室 / 系統狀態 / 不是生成網站, not only 進入工作室要登入. Unique deploy marker is 不是生成網站. Do not claim a repair coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the AI Director OS live-CTA PR so production /work/ai-director-os quotes 進入工作台 / 登入工作台 / 看看怎麼運作, not 進入工作台要登入. Unique deploy marker is 看看怎麼運作. Do not claim a team coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
