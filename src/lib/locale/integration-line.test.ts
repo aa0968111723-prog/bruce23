@@ -108,10 +108,34 @@ describe("public integration line", () => {
     assert.match(canvaZh, /未宣稱 Connect 已連線/);
     assert.doesNotMatch(canvaZh, /not_configured|狀態 not_configured|狀態 \{status\}/);
 
-    const canvaEn = publicCanvaSourceMark("en", { status: "unavailable" }, "canva-embed");
+    const canvaEn = publicCanvaSourceMark(
+      "en",
+      { status: "unavailable", shareUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe" },
+      "canva-embed",
+    );
     assert.match(canvaEn, /Canva public embed/);
     assert.match(canvaEn, /cannot embed/);
     assert.match(canvaEn, /not claiming Connect is linked/);
     assert.doesNotMatch(canvaEn, /unavailable|not_configured|status \{status\}/);
+  });
+
+  it("does not call a local SVG with no Canva share URL an embed failure", () => {
+    const zh = publicIntegrationLine("zh", {
+      slug: "tku-zen-ai",
+      github: { url: "https://github.com/aa0968111723-prog/tku-zen-ai", syncStatus: "failed" },
+      demo: { url: null, status: "not_configured", embedEnabled: false },
+      canva: { status: "unavailable", shareUrl: null, embedUrl: null },
+    });
+    assert.match(zh, /Canva 尚未設定/);
+    assert.doesNotMatch(zh, /Canva 無法嵌入/);
+    assert.doesNotMatch(zh, /unavailable|not_configured/);
+
+    const aios = publicIntegrationLine("zh", {
+      slug: "ai-director-os",
+      github: { url: "https://github.com/aa0968111723-prog/ai_os", syncStatus: "failed" },
+      demo: { url: "https://ai-os-app.zeabur.app", status: "unavailable", embedEnabled: false },
+      canva: { status: "unavailable", shareUrl: "https://www.canva.com/d/ysK5sYZisVEjZFe" },
+    });
+    assert.match(aios, /Canva 無法嵌入/);
   });
 });

@@ -15,7 +15,13 @@ export type DemoStatusInput = {
 
 export type CanvaStatusInput = {
   status: IntegrationStatus;
+  shareUrl?: string | null;
+  embedUrl?: string | null;
 };
+
+export function hasPublicCanvaUrl(canva: CanvaStatusInput): boolean {
+  return Boolean(canva.shareUrl || canva.embedUrl);
+}
 
 export type IntegrationLineInput = GithubStatusInput & {
   demo: DemoStatusInput;
@@ -61,6 +67,9 @@ export function publicDemoStatusLabel(lang: ViewerLang, demo: DemoStatusInput): 
 }
 
 export function publicCanvaStatusLabel(lang: ViewerLang, canva: CanvaStatusInput): string {
+  if (!hasPublicCanvaUrl(canva)) {
+    return lang === "en" ? "Canva not set up" : "Canva 尚未設定";
+  }
   switch (canva.status) {
     case "verified":
     case "connected":
@@ -76,8 +85,11 @@ export function publicCanvaStatusLabel(lang: ViewerLang, canva: CanvaStatusInput
   }
 }
 
-function canvaStatusShort(lang: ViewerLang, status: IntegrationStatus): string {
-  switch (status) {
+function canvaStatusShort(lang: ViewerLang, canva: CanvaStatusInput): string {
+  if (!hasPublicCanvaUrl(canva)) {
+    return lang === "en" ? "not set up" : "尚未設定";
+  }
+  switch (canva.status) {
     case "verified":
     case "connected":
       return lang === "en" ? "connected" : "已連線";
@@ -113,7 +125,7 @@ export function publicCanvaSourceMark(
   canva: CanvaStatusInput,
   mode: "public-embed" | "canva-embed",
 ): string {
-  const short = canvaStatusShort(lang, canva.status);
+  const short = canvaStatusShort(lang, canva);
   if (lang === "en") {
     const modeLabel = mode === "canva-embed" ? "Canva public embed" : "public embed mode";
     return `Source mark: ${modeLabel} · ${short} · not claiming Connect is linked`;

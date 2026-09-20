@@ -138,7 +138,7 @@ export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-gallery-note-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
-export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-agent-not-private-20260920";
+export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-canva-local-not-embed-20260920";
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
 

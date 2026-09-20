@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-walkthrough-not-folio-counter",
-  "updatedAt": "2026-09-20T04:20:00Z",
+  "runId": "grok-impl-20260920-zen-ai-canva-local-not-embed",
+  "updatedAt": "2026-09-20T04:50:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/walkthrough-not-folio-counter",
+  "currentBranch": "fix/zen-ai-canva-local-not-embed",
   "currentPR": null,
-  "currentTask": "walkthrough-not-folio-counter",
+  "currentTask": "zen-ai-canva-local-not-embed",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -58,25 +58,26 @@
     "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)",
     "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured",
     "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href",
-    "Live Demo/Canva status chrome merged as PR #60 and live: /work/planform and /work/duigao Visual/play footer Live Demo · 已驗證; no 狀態 verified / 狀態 not_configured on any of 17 production work pages"
+    "Live Demo/Canva status chrome merged as PR #60 and live: /work/planform and /work/duigao Visual/play footer Live Demo · 已驗證; no 狀態 verified / 狀態 not_configured on any of 17 production work pages",
+    "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身. Folio still has 空白計數器. 空白計數器 may remain in CUTOS JS bundle as Folio chrome"
   ],
   "remainingSteps": [
-    "Land PR so non-Folio walkthroughs (CUTOS/ty/SkateHub/Tamkang/Tamsui/Zen Studio) no longer append Folio leftover 不是空白計數器",
+    "Land PR so /work/tku-zen-ai no longer prints Canva 無法嵌入 for a local SVG with no share URL",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 190,
+  "testsPassed": 167,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR60_LIVE_NON_FOLIO_WALKTHROUGH_STILL_SAYS_BLANK_COUNTER",
+  "productionStatus": "PR61_LIVE_ZEN_AI_CANVA_SAYS_CANNOT_EMBED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "list-projects failed ERROR_INVALID_TOKEN",
+      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
@@ -109,5 +110,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Open and merge the non-Folio walkthrough chrome PR so production /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio print 不是線上產品本身, not 不是空白計數器. Folio may keep 空白計數器. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Open and merge the Zen AI Canva local-thumb PR so production /work/tku-zen-ai prints Canva 尚未設定, not Canva 無法嵌入. AI Director OS may keep 無法嵌入 because it has a /d/ short URL. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

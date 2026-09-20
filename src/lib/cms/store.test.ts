@@ -1246,7 +1246,8 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb, experience_config = $5::jsonb,
+           canva_status = 'unavailable', canva_share_url = null, canva_embed_url = null
        where slug = $1`,
       [
         "tku-zen-ai",
@@ -1278,6 +1279,8 @@ describe("cms persistence", () => {
     assert.ok(zen.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(zen.limitations.some((item) => item.includes("公開站需授權碼")));
     assert.ok(zen.limitations.every((item) => !/代理，私有/.test(item)));
+    assert.equal(zen.canva.shareUrl, null);
+    assert.equal(zen.canva.status, "not_configured");
   });
 
   it("rewrites the Zen desk to the access-code gate and disables GitHub tree hydrate", async () => {
