@@ -34,6 +34,13 @@ describe("experience playable chrome", () => {
     assert.equal(en.hintMissingFromTree, "Not in this limited file tree");
     assert.equal(zh.previewWorkspace, "作品集預覽");
     assert.equal(en.previewOffline, "Not connected to the live product");
+    assert.match(zh.folioNotCounter, /空白計數器/);
+    assert.match(en.folioNotCounter, /blank counter/i);
+    assert.match(zh.walkKeyboard, /左右鍵換步驟/);
+    assert.doesNotMatch(zh.walkKeyboard, /空白計數器/);
+    assert.doesNotMatch(en.walkKeyboard, /blank counter/i);
+    assert.equal(zh.walkDocumentLayer, "走查畫面");
+    assert.equal(en.walkDocumentLayer, "walkthrough stage");
     assert.equal(zh.tabVisual, "視覺展示");
     assert.equal(en.tabVisual, "Visual");
     assert.notEqual(zh.tabGithub, en.tabGithub);

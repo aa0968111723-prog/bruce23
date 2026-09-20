@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-09-20T03:25:00Z",
-  "runId": "grok-impl-20260920-live-canva-status-chrome",
+  "generatedAt": "2026-09-20T04:20:00Z",
+  "runId": "grok-impl-20260920-walkthrough-not-folio-counter",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T03:10:00Z",
+  "startedAt": "2026-09-20T03:55:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -12,62 +12,62 @@
     "officialProjectCount": 17,
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
-  "task": "live-canva-status-chrome",
-  "inspectedCommit": "9a338c7",
+  "task": "walkthrough-not-folio-counter",
+  "inspectedCommit": "3cfb5a8",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60],
     "openRepair": [],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + locale/catalog/integration 28 + store/schema/config/registry/view 141 + vite build",
+    "buildAndTypecheck": "PASS: tsc --noEmit + locale/catalog/integration/config/registry 73 + store/schema/hydrate/view 117 + vite build",
     "browser": "BLOCKED",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "PR #59 live on production; Visual/Canva tabs still interpolate raw CMS enums via fillChrome({status})",
+    "deployment": "PR #60 live on production; non-Folio walkthroughs still append Folio leftover 不是空白計數器",
     "security": "NOT_VERIFIED"
   },
   "probes": [
     {
+      "url": "https://bruce23-k7m2.zeabur.app/work/planform",
+      "status": 200,
+      "pr60Landed": true,
+      "copy": "Live Demo · 已驗證. GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定. No 狀態 verified.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T04:05:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/duigao",
+      "status": 200,
+      "pr60Landed": true,
+      "copy": "Live Demo · 已驗證. No 狀態 verified / 狀態 not_configured.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T04:05:00Z"
+    },
+    {
       "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
       "status": 200,
-      "pr59Landed": true,
-      "copy": "GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定. Public GitHub href present.",
+      "pr60Landed": true,
+      "copy": "匯入影片 intro live. Still appends leftover Folio 不是空白計數器. GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T03:12:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/xiaocai",
-      "status": 200,
-      "pr59Landed": true,
-      "copy": "GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定. Public GitHub href present.",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T03:12:00Z"
-    },
-    {
-      "url": "https://bruce23-k7m2.zeabur.app/work/lumen",
-      "status": 200,
-      "pr59Landed": true,
-      "copy": "GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定. Public GitHub href present.",
-      "coreFlowPass": false,
-      "checkedAt": "2026-09-20T03:12:00Z"
+      "checkedAt": "2026-09-20T04:05:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
       "status": 200,
-      "pr59Landed": true,
-      "copy": "GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定. Public GitHub href present.",
+      "pr60Landed": true,
+      "copy": "登記畫面 / 關主 intro live. Still appends leftover Folio 不是空白計數器.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T03:12:00Z"
+      "checkedAt": "2026-09-20T04:05:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/tku-zen-agent",
       "status": 200,
-      "pr59Landed": true,
+      "pr60Landed": true,
       "copy": "GitHub 暫不公開連結 · Demo 公開網址（無法嵌入） · Canva 尚未設定. No github.com/aa0968111723-prog/tku-zen-agent href.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T03:12:00Z"
+      "checkedAt": "2026-09-20T04:05:00Z"
     }
   ],
   "gates": {
@@ -85,8 +85,8 @@
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件"
   ],
   "nextSteps": [
-    "Open and merge the Live Demo/Canva status chrome PR",
-    "Verify production Visual tab no longer prints Live Demo · 狀態 verified",
+    "Open and merge the non-Folio walkthrough chrome PR",
+    "Verify production /work/cutos no longer prints 不是空白計數器",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]
 }
