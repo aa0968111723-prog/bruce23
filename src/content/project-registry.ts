@@ -90,7 +90,7 @@ export const TY_CONTRACT_VERSION = "ty-booth-home-chrome-20260920";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-import-intro-20260920";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-cta-quote-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 

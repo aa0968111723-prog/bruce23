@@ -325,9 +325,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     walkthrough: [
       {
         title: "匯入影片",
-        body: "公開站 cutos.zeabur.app 標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」。主區塊「匯入影片」，按鈕「載入示範影片／上傳影片」。",
+        body: "公開站 cutos.zeabur.app 標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」。頁首「系統狀態」。主區塊「匯入影片」。說明「可以先載入內建示範影片（內含停頓）」。按鈕「載入示範影片」與「上傳影片…」。",
       },
-      { title: "載入示範", body: "示範片含停頓。作品集這一頁沒有代替你載入或上傳。" },
+      { title: "載入示範", body: "示範片內含停頓。作品集這一頁沒有代替你載入或上傳。" },
       { title: "計畫", body: "用一句話產生可檢查的 Edit Plan，再套用非破壞時間軸。" },
     ],
   },

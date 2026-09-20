@@ -146,6 +146,9 @@ describe("experience catalog", () => {
     assert.equal(steps[0]?.title, "匯入影片");
     assert.match(steps[0]?.body ?? "", /AI 對話式影片剪輯/);
     assert.match(steps[0]?.body ?? "", /載入示範影片/);
+    assert.match(steps[0]?.body ?? "", /內含停頓/);
+    assert.match(steps[0]?.body ?? "", /系統狀態/);
+    assert.match(steps[0]?.body ?? "", /上傳影片…/);
     assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
   });
 

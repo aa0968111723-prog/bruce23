@@ -865,11 +865,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",
+    intro: "The public first screen tagline is “AI 對話式影片剪輯”, with a header “System status” control. Main block “Import video”; hint “You can load the built-in demo clip (it includes pauses)”. Buttons “Load demo clip” and “Upload video…”. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
       {
         title: "Import video",
-        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Main block Import video, buttons Load demo clip / Upload video.",
+        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Header “System status”. Main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip and Upload video….",
       },
       {
         title: "Load demo",
