@@ -95,12 +95,14 @@ describe("experience catalog", () => {
     );
   });
 
-  it("keeps tamkang-world walkthrough on the live campus pass", () => {
+  it("keeps tamkang-world walkthrough on the live 3D home", () => {
     const steps = experienceCatalog["tamkang-world"].walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "開始巡禮");
     assert.ok(steps.some((step) => step.title === "校園通行證"));
-    assert.ok(steps.some((step) => step.title === "先以訪客巡禮"));
-    assert.equal(steps.some((step) => step.title === "開始巡禮"), false);
-    assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /WASD/);
+    assert.match(bodies, /WASD 移動/);
+    assert.match(bodies, /不轉到 \/login/);
+    assert.doesNotMatch(bodies, /公開 JS 沒有/);
   });
 
   it("keeps tku-zen-ai walkthrough on the public English welcome", () => {

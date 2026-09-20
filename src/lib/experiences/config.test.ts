@@ -241,7 +241,10 @@ describe("experience config merge", () => {
     assert.match(drama.intro ?? "", /載入淡江/);
     assert.doesNotMatch(drama.intro ?? "", /逐步走查/);
     const campus = defaultExperienceConfig("tamkang-world");
-    assert.match(campus.intro ?? "", /校園通行證/);
+    assert.match(campus.intro ?? "", /開始巡禮/);
+    assert.match(campus.intro ?? "", /校園圖鑑/);
+    assert.match(campus.intro ?? "", /校園通行證在 \/login/);
+    assert.doesNotMatch(campus.intro ?? "", /未登入是「校園通行證/);
     assert.doesNotMatch(campus.intro ?? "", /逐步走查/);
     const studio = defaultExperienceConfig("zen-studio");
     assert.match(studio.intro ?? "", /今天可以創作什麼/);

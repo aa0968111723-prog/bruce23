@@ -83,7 +83,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "tamkang-world") {
     return {
       ...base,
-      intro: "公開站未登入是「校園通行證／先以訪客巡禮」。這是作品集走查，不是 3D 校園。",
+      intro: "公開站 `/` 標題「淡江世界」。首屏 3D 世界有「開始巡禮」「校園圖鑑」「登入」。校園通行證在 /login。這是作品集走查，不是 3D 校園本體。",
     };
   }
 

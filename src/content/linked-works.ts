@@ -26,14 +26,14 @@ export const linkedWorks: Project[] = [
     role: "空間體驗設計：場景節奏、校園識別與可立即操作的瀏覽器巡禮。",
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
-      "公開入口是「校園通行證」：訪客可直接遊覽；Google / X 登入後巡禮蓋章才跟著帳號保存。",
+      "Live Demo `/` 是 3D 世界，不是校園通行證。/login 才是通行證門。",
       "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前是公開儲存庫；公開操作仍走 Zeabur。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
-      "打開 forge-bloom-k7xq.zeabur.app（標題「淡江世界」）",
-      "公開入口是「校園通行證」：訪客可直接遊覽五虎崗，或使用 Google／X 繼續",
-      "點「先以訪客巡禮」回首頁 3D 世界",
+      "打開 forge-bloom-k7xq.zeabur.app（標題「淡江世界」；GET / HTTP 200，不轉到 /login）",
+      "首屏 3D 世界有「開始巡禮」「校園圖鑑」「登入」",
+      "公開 JS 操作列「WASD 移動 · 滑鼠視角 · E 蓋章 · Shift 奔跑 · Esc 選單」。作品集未點開始巡禮、未蓋章",
     ],
     outputs: ["可逛的 3D 校園公開站"],
     stack: ["WebGL / 3D", "Zeabur"],
@@ -41,7 +41,7 @@ export const linkedWorks: Project[] = [
       "2026-09-20 未登入 GET api.github.com/repos/aa0968111723-prog/forge-bloom-quiet-falcon private:false。不是私有倉庫。",
       "效能依裝置而變，不宣稱完整數位雙生。",
       "2026-09-19 GET / HTTP 200，標題「淡江世界」。description「以淡江大學淡水校園真實地標打造的 3D 巡禮世界：克難坡、宮燈大道、海事博物館與覺生紀念圖書館」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」",
-      "GET /login HTTP 200，h1「校園通行證」。訪客可直接遊覽；登入後保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。作品集未走完訪客 3D 巡禮，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，不轉到 /login。routes JS 有「開始巡禮」「校園圖鑑」「登入」，操作列「WASD 移動 · 滑鼠視角 · E 蓋章 · Shift 奔跑 · Esc 選單」。觸控是左搖桿移動。GET /login HTTP 200，h1「校園通行證」；「先以訪客巡禮」回 /。作品集未點開始巡禮、未開圖鑑、未蓋章，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
@@ -49,13 +49,13 @@ export const linkedWorks: Project[] = [
     },
     media: [
       cover("tamkang-world.jpg", "淡江世界光域靜物：晨光中的玻璃校園模型"),
-      shot("tamkang-world.jpg", "淡江世界校園通行證：訪客巡禮與登入保存蓋章"),
+      shot("tamkang-world.jpg", "淡江世界公開站：3D 校園巡禮。校園通行證在 /login，不是 Live Demo 首屏。"),
     ],
     sourceReferences: [
       {
         label: "公開站 · forge-bloom-k7xq.zeabur.app",
         href: "https://forge-bloom-k7xq.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「淡江世界」。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」/login h1「校園通行證」：訪客可直接遊覽五虎崗，或 Google／X 登入保存巡禮蓋章。公開 JS 沒有「開始巡禮」「校園圖鑑」「WASD」。",
+        note: "2026-09-20 GET / HTTP 200，標題「淡江世界」，不轉到 /login。og「五虎崗上的 3D 校園巡禮。樸實剛毅。」routes JS 有「開始巡禮」「校園圖鑑」「登入」與 WASD 操作列。/login h1「校園通行證」；「先以訪客巡禮」回 /。作品集未走完 3D 巡禮。",
       },
       {
         label: "GitHub · forge-bloom-quiet-falcon",

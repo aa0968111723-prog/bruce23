@@ -773,6 +773,25 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  "tamkang-world": {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "Public `/` is titled Tamkang World. The 3D home has Start tour, Campus atlas, and Sign in. Campus pass is on /login. This is a portfolio walkthrough, not the live 3D campus.",
+    walkthrough: [
+      {
+        title: "Start tour",
+        body: "Public forge-bloom-k7xq GET / HTTP 200, title Tamkang World, no redirect to /login. routes JS has Start tour, Campus atlas, and Sign in.",
+      },
+      {
+        title: "Controls",
+        body: "Public JS says WASD move · mouse look · E stamp · Shift run · Esc menu. Touch is left-stick move. This portfolio has not tapped Start tour or stamped.",
+      },
+      {
+        title: "Campus pass",
+        body: "/login h1 Campus pass. Guests can tour Wuhu Hill, or Google / X sign-in saves stamps. Tour as guest returns to /.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",
