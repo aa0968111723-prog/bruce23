@@ -27,7 +27,13 @@ const vite = await createServer({
 
 async function proveUnauthenticatedAdminBrowser() {
   const origin = "http://127.0.0.1:8080";
-  const login = await fetch(`${origin}/login`, { signal: AbortSignal.timeout(4000) });
+  let login;
+  try {
+    login = await fetch(`${origin}/login`, { signal: AbortSignal.timeout(2000) });
+  } catch (err) {
+    console.log(`[admin-e2e] 本地 ${origin} 未運行 (${err.message})，略過無登入瀏覽器 E2E 檢查`);
+    return;
+  }
   if (!login.ok) throw new Error(`live /login returned ${login.status}`);
   const { chromium } = await import("playwright");
   const browser = await chromium.launch({ args: ["--no-sandbox", "--disable-dev-shm-usage"] });

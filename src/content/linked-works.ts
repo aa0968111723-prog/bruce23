@@ -27,7 +27,7 @@ export const linkedWorks: Project[] = [
     decisions: [
       "公開站標題就是「淡江世界」，一句話講完五虎崗。",
       "Live Demo `/` 是 3D 世界，不是校園通行證。/login 才是通行證門。",
-      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 目前是公開儲存庫；公開操作仍走 Zeabur。",
+      "部署在 Zeabur 服務 forge-bloom-quiet-falcon。GitHub 倉庫已完全公開開放查閱（公開儲存庫；公開操作仍走 Zeabur）。",
     ],
     modalities: ["3D", "空間", "互動"],
     process: [
@@ -60,7 +60,7 @@ export const linkedWorks: Project[] = [
       {
         label: "GitHub · forge-bloom-quiet-falcon",
         href: "https://github.com/aa0968111723-prog/forge-bloom-quiet-falcon",
-        note: "2026-09-20 未登入 API private:false。公開儲存庫。公開操作請走 Zeabur。",
+        note: "2026-09-20 未登入 API private:false。公開儲存庫，3D 場景與瀏覽器巡禮原始碼完整公開。公開操作請走 Zeabur。",
       },
     ],
     visibility: "public",

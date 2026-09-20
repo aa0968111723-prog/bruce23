@@ -1,0 +1,963 @@
+# Luminous Portfolio Integration Agent — 長期開發計畫
+
+- Target repository: aa0968111723-prog/bruce23
+- Target production service: bruce23
+- Target public URL: https://bruce23-k7m2.zeabur.app/
+- Schedule: 0 * * * *
+- Created: 2026-09-18
+- Scope: 只修改 bruce23；其他專案只讀取、驗證與建立來源資料
+- Owner model: 單一代理寫入線，避免多個代理同時修改相同核心檔案
+- Multi-agent collaboration: 主代理 (Codex/Antigravity)、質檢代理 (Grok Bot Sentinel)、修復代理 (Repair Bots) 協同作業；嚴禁重複建立 PR，嚴禁覆蓋已有責任範圍的 PR。
+
+## 1. 最終目標
+
+把 bruce23 建成一個可持續同步的 Luminous Studio Portfolio OS：
+
+1. 連結 GitHub 真實專案。
+2. 連結 Zeabur 實際部署與 runtime 狀態。
+3. 每個作品都有分類、縮圖、案例說明、操作入口與來源證據。
+4. 作品不是單純連結牆，而是讓訪客看懂、操作、理解技術與限制。
+5. 保留現有 CMS、後台、GitHub 同步、Canva OAuth、Live Demo、Experience Mode 與 3D 星圖。
+6. 明亮、柔和、有空氣感、有 3D 質感；不做深色 Cyberpunk、HUD 或密集 SaaS 儀表板。
+7. 所有狀態必須誠實反映 GitHub、Zeabur 與公開網站實際結果。
+
+作品集定位：
+
+- AI Designer
+- Multimodal Design Creator
+- AI Product Builder
+- Interactive Experience Designer
+
+## 2. 每小時執行協定與多代理防重複 PR 指引
+
+### 2.1 多代理任務分工與防重複 PR 協議 (Multi-Agent & De-duplication Protocol)
+
+為確保多代理協同不發生衝突與重複發 PR，所有執行代理必須遵守以下任務分工與協定：
+
+1. **查重第一（De-duplication First）**：
+   - 任何代理在開 PR 或建立分支前，必須先執行 `gh pr list --state all` 檢查現有與已關閉／合併的 PR。
+   - **長期整合計畫**：唯一對應 **PR #6**（分支 `codex/portfolio-agent-plan`），嚴禁開立第二個 Plan PR。
+   - **原子修復任務**：若要進行單一作品修正（如 Card 1、Card 2），必須先檢查是否已有同名或相同目標的 PR 處於 Open 或 Merged 狀態。
+2. **多代理實作任務方向劃分**：
+   - **主架構代理（Codex / Antigravity Agent）**：
+     - 負責維護並 landing PR #6（長期開發計畫與全域 Project Registry）。
+     - 負責多模態管線架構、各服務 API 邊界安全性與環境變數隔離審查。
+     - 每小時整點執行全景系統研究與巡檢日誌更新。
+   - **質檢代理（Grok Bot / Sentinel Agent）**：
+     - 嚴格依據 `docs/GROK_BOT_PORTFOLIO_TASK.md`，每小時針對 17 個公開端點進行黑箱測試。
+     - 驗收實際畫面、標題、OG Tags、認證邊界，計算 100 分制之客觀 Readiness Score。
+     - 專注於質檢報告產出，不發起重構或重複的計畫型 PR。
+   - **修復代理（Copilot / Repair Bots）**：
+     - 依據 `docs/portfolio-agent/implementation-cards/` 下的未完成卡片，進行單一、原子化的程式修復。
+     - 每次修復建立獨立 branch，通過相關測試後發起精確命名的 Repair PR。
+3. **語系與名詞不變量**：
+   - 全面維持繁體中文（闖關、安倢、一盞燈、發布、對稿、場佈）。
+   - 不得簡體化，不得使用錯誤替換字（如將「闖」改為「闘」、「倢」改為「倕」）。
+
+### 2.2 每小時執行步驟
+每輪執行時間上限約 50 分鐘，最後 10 分鐘保留給驗證、部署狀態與紀錄。
+
+每輪必須依序執行：
+
+1. 讀取本文件與目前進度紀錄。
+2. 讀取 Git branch、HEAD、工作區狀態與最近部署結果。
+3. 建立 portfolio-agent lock；已有 lock 時不可修改檔案。
+4. 選擇下一個未完成、風險最低、可在本輪驗證的任務。
+5. 修改最少必要檔案。
+6. 執行相關測試、typecheck、lint 或 build。
+7. 若涉及 UI，至少驗證 390x844 與 1440x900。
+8. 若涉及連結，驗證 HTTP status、頁面 title、OG metadata 與實際導覽。
+9. 若涉及 GitHub，使用 server-side API；不得把 token 傳到瀏覽器。
+10. 若涉及 Zeabur，其他服務只讀取；只有 bruce23 可以觸發部署。
+11. 通過驗證後建立小型 commit。
+12. 更新本文件的進度、阻塞、證據與下一步。
+13. 更新 docs/portfolio-agent/state.json、runtime-report.json 或等效紀錄。
+14. 釋放 lock。
+15. 回報本輪結果。
+
+每輪不可：
+
+- 同時處理多個互相無關的大功能。
+- 重寫整個前端。
+- 只改靜態 content 而不檢查 CMS seed 與資料庫。
+- 猜測失效網址。
+- 把 private repository、個資或環境變數公開。
+- 直接執行 destructive migration。
+- 執行 git reset --hard、git checkout -- 或覆蓋使用者未提交修改。
+- 為了顯示漂亮而製作假的產品截圖或假的連線狀態。
+
+## 3. 安全與權限
+
+必須使用 Zeabur Secrets 或等效 server-side secret：
+
+- GITHUB_TOKEN
+- ZEABUR_API_TOKEN
+- 其他必要的 provider credentials
+
+禁止：
+
+- 寫入 source code。
+- 寫入 README。
+- 寫入 public JSON。
+- 寫入 localStorage。
+- 輸出到 log。
+- 傳到 client bundle。
+- 放入縮圖 metadata。
+- 放入 PR body。
+
+GitHub 權限：
+
+- bruce23：可讀寫目前目標分支，但優先使用小型 branch 與 PR。
+- 其他 repository：預設只讀。
+- private repository：只能顯示 private／需權限，不得同步私有檔案到公開頁面。
+
+Zeabur 權限：
+
+- bruce23 service：可查詢、部署、讀取部署結果。
+- 其他 services：只查詢 service、domain、deployment、runtime status。
+- 不可讀取或輸出其他服務環境變數。
+- 不可任意重啟、刪除、改寫其他服務。
+
+## 4. Project Registry
+
+建立不含 secrets 的 canonical project registry。至少包含：
+
+- slug
+- title
+- titleEn
+- category
+- tags
+- githubUrl
+- githubVisibility
+- liveUrlCandidates
+- canonicalLiveUrl
+- expectedPageTitle
+- zeaburServiceId
+- runtimeStatus
+- runtimeCheckedAt
+- demoAccess
+- thumbnailSource
+- thumbnailProvenance
+- experienceMode
+- interactionSteps
+- sourceEvidence
+- limitations
+- lastVerifiedAt
+
+官方專案清單：
+
+| Repository | 建議定位 | 分類 | Live 狀態 |
+|---|---|---|---|
+| forge-bloom-quiet-falcon | 淡江世界、3D 校園巡禮 | Spatial | 先驗證 forge-bloom-k7xq |
+| lunar-crystal-falcon-granite | 待驗證的新作品 | 待分類 | 與 lunar-falcon-8p2r 有 URL 衝突 |
+| tku-tamsui-drama-world | 淡江新生導覽、校園闖關、劇本世界 | Narrative / Spatial | 候選 tku-tamsui-drama-world-k4x9 |
+| dd | SkateHub、裝備與里程 | Real-world Tool | dd-k3f9 |
+| canva2 | Folio 設計編輯器 | Creative Tool | 候選 canva2-k7qm |
+| delta-horizon-cliff-fern | 禪學社 Studio、文宣與排程 | Creative Tool | delta-horizon-k7f2 |
+| ty | 專注力挑戰賽、活動資料同步 | Real-world Experience | leader-dna-mcp-a7k2 |
+| cabin-shale-raven-swift | 待讀取 README 與部署頁面 | 待分類 | cabin-shale-k7q2 |
+| hermes-agent | Agent Runtime、Sessions、Tools、API | Agent Runtime | 455.zeabur.app/sessions，需登入 |
+| hermes-console | Agent Control Plane、Memory、MCP、Projects | AI Product | 344.zeabur.app |
+| wood-ivory-blaze-maple | Lumen、多模態語音創作 | Multimodal | ai-chat-8rq3 |
+| -1 | 小財記帳 | Real-world Tool | untitled-5 |
+| tku-zen-agent | 禪學社工作台、Ask 模式 | AI Agent | tku-zen-agent-k7f2 |
+| duigao | 圖片與影片協作、對稿與版本 | Collaboration | duigao-k7q2 |
+| planform-iso | 3D 活動空間彩排與場佈 | Spatial Design | planform-iso-k7d2 |
+| ai_os | AI Director OS、多模態創作流程 | AI Product | vexlark.co／ai-os-app |
+| CUTOS | Conversational Video Editor | Multimodal | cutos.zeabur.app |
+
+bruce23 自身不列入上述 17 個外部作品；它是作品集主體。
+
+## 5. 已知資料衝突
+
+### tku-tamsui-drama-world
+
+使用者提供的網址與 lunar-falcon-8p2r 重複。
+
+目前候選：
+
+https://tku-tamsui-drama-world-k4x9.zeabur.app/
+
+必須由以下證據共同確認：
+
+- Zeabur service ID。
+- 部署 domain。
+- 公開頁面 title。
+- GitHub README。
+- 頁面實際功能。
+
+未驗證前使用 needs_verification。
+
+### canva2
+
+使用者提供的網址與 dd-k3f9 重複。
+
+目前候選：
+
+https://canva2-k7qm.zeabur.app/
+
+不得把 SkateHub 的 live URL 寫入 Folio。
+
+### lunar-crystal-falcon-granite
+
+目前 bruce23 舊資料曾把 lunar-falcon-8p2r 用於 FrameLab。不可直接沿用舊作品敘事。
+
+必須先建立：
+
+- repo identity
+- service identity
+- canonical domain
+- expected title
+- actual feature summary
+
+### cabin-shale-raven-swift
+
+在 GitHub README、公開頁面與 Zeabur metadata 驗證完成前，不得自行命名或虛構功能。
+
+## 6. 現有程式架構必須保留
+
+先讀取並理解：
+
+- src/content/projects.ts
+- src/content/linked-works.ts
+- src/lib/cms/schema.ts
+- src/lib/cms/seed.ts
+- src/lib/cms/store.ts
+- src/lib/cms/privacy.ts
+- src/lib/github
+- src/lib/demo
+- src/components/experience
+- src/components/admin
+- src/styles.css
+
+目前資料同時存在靜態內容、CMS seed 與資料庫。任何作品更新都要確認：
+
+1. 靜態 fallback。
+2. CMS seed。
+3. database schema。
+4. public serializer。
+5. admin editor。
+6. public page。
+7. tests。
+
+不能只修改一處。
+
+## 7. 實際操作與案例頁
+
+每個作品必須提供：
+
+- 作品用途。
+- 解決的問題。
+- 觀看者可以實際做什麼。
+- 三至五個操作步驟。
+- GitHub 來源。
+- Zeabur 狀態。
+- 技術堆疊。
+- 限制。
+- 目前完成度。
+
+操作策略：
+
+- 已驗證、允許嵌入：使用 Live Demo iframe。
+- 不允許嵌入：提供「開新分頁」。
+- 需要登入：顯示登入邊界，不假裝已登入。
+- 會寫入資料的作品：使用隔離 demo session 或唯讀模式。
+- 含個資的作品：只展示公開操作，不展示名單、電話、表單內容或資料庫資料。
+- 遠端服務失敗：顯示 stale、offline、auth-required 或 unknown，不顯示 completed。
+
+## 8. 縮圖規範
+
+縮圖優先順序：
+
+1. 公開網站實際截圖。
+2. GitHub 公開圖片。
+3. 手機與桌面 Playwright 截圖。
+4. 標示為 studio-translation 的視覺封面。
+
+每張縮圖需要：
+
+- alt。
+- provenance。
+- source URL。
+- capturedAt。
+- 實際狀態。
+- 是否為產品截圖。
+
+狀態標籤：
+
+- 實際網站畫面。
+- GitHub 公開素材。
+- 工作室視覺轉譯。
+- 需要登入。
+- 部署待驗證。
+- 目前離線。
+
+不得把視覺轉譯誤標成實際產品畫面。
+
+## 9. UI/UX 設計
+
+維持 Luminous Studio：
+
+- #F7FBFF 明亮背景。
+- 薄荷綠、天空藍、晨光黃。
+- 深藍文字。
+- 玻璃感。
+- 浮動 3D 卡片。
+- 光球、軌道、柔和粒子。
+- 80% 清楚 2D 操作。
+- 20% 有意義的 3D 空間。
+
+必須：
+
+- Mobile-first。
+- 所有主要觸控目標至少 44px。
+- 支援鍵盤。
+- 支援 prefers-reduced-motion。
+- 手機使用卡片與 bottom sheet。
+- 桌面可以使用星圖與關係節點。
+- 3D 用於表達作品關係、空間或工作流。
+
+避免：
+
+- 深色 Cyberpunk。
+- HUD。
+- 紫色 SaaS。
+- 密集表格。
+- 複雜側欄。
+- 每個作品都載入重型 WebGL。
+
+## 10. 分階段任務佇列
+
+### Phase 0：安全與基準
+
+- [x] 建立 docs/portfolio-agent/state.json。
+- [x] 建立本機 lock 與單一寫入線規則（見第 25 節；跨主機仍須協調）。
+- [ ] 掃描 secrets 是否進入 Git、public、client bundle。
+- [ ] 檢查未提交修改。
+- [ ] 記錄目前 HEAD、部署狀態與 build baseline。
+
+### Phase 1：作品清單與來源
+
+- [ ] 建立 canonical Project Registry。
+- [ ] 對齊 17 個官方專案。
+- [ ] 修正 tku-tamsui-drama-world URL 衝突。
+- [ ] 修正 canva2 URL 衝突。
+- [ ] 驗證 lunar 與 cabin。
+- [ ] 將舊作品標記 official、legacy 或 archived，不直接刪除。
+
+### Phase 2：GitHub 整合
+
+- [ ] 使用 server-side GitHub API 同步公開 metadata。
+- [ ] 使用 rotated token 驗證 private repository visibility。
+- [ ] 同步 README 摘要、languages、topics、latest commit。
+- [ ] 保留中文人工敘事，不讓 README 自動覆蓋。
+- [ ] 顯示 GitHub 最後同步時間與失敗原因。
+
+### Phase 3：Zeabur 整合
+
+- [ ] 建立 server-only Zeabur client。
+- [ ] 以 service ID 取得實際 domain。
+- [ ] 取得 deployment status。
+- [ ] 取得 runtime status。
+- [ ] 取得最後部署時間與 commit。
+- [ ] 其他服務只讀取。
+- [ ] 僅 bruce23 可被部署。
+- [ ] 任何 API 錯誤都要落入 stale 或 unknown。
+
+### Phase 4：縮圖與媒體來源
+
+- [ ] 建立 live screenshot pipeline。
+- [ ] 擷取 390x844。
+- [ ] 擷取 1440x900。
+- [ ] 產生 WebP 或 AVIF。
+- [ ] 建立縮圖 cache。
+- [ ] 為所有圖片加入 provenance。
+- [ ] 遮蔽個資、管理員頁面與私密內容。
+
+### Phase 5：作品集 UI
+
+- [ ] 升級 Project Card。
+- [ ] 加入分類與 capability chips。
+- [ ] 加入 runtime status badge。
+- [ ] 加入實際操作入口。
+- [ ] 加入來源證據。
+- [ ] 升級案例頁。
+- [ ] 加入 mobile bottom sheet。
+- [ ] 保留現有 3D 星圖。
+
+### Phase 6：互動案例
+
+- [ ] AI Agent／Console 顯示真實登入邊界。
+- [ ] Planform 顯示 3D 場佈互動。
+- [ ] Duigao 顯示視覺對稿互動。
+- [ ] Folio 顯示編輯器 walkthrough。
+- [ ] CUTOS 顯示時間軸互動。
+- [ ] tku drama 顯示校園闖關。
+- [ ] ty 顯示安全的公開挑戰流程。
+- [ ] 財務與招生作品不可展示真實個資。
+
+### Phase 7：品質與部署
+
+- [ ] npm run typecheck。
+- [ ] npm run lint。
+- [ ] npm run build。
+- [ ] 相關 unit tests。
+- [ ] Playwright mobile smoke test。
+- [ ] Playwright desktop smoke test。
+- [ ] broken link 檢查。
+- [ ] broken image 檢查。
+- [ ] console error 檢查。
+- [ ] secret scan。
+- [ ] 驗證 Zeabur production deployment。
+- [ ] 更新 runtime report。
+
+## 11. 風險分級
+
+可自動執行：
+
+- 文案。
+- 分類。
+- 縮圖。
+- 來源標籤。
+- CSS。
+- 無破壞性 schema 欄位。
+- 測試。
+- README 與計畫文件。
+
+需要先建立 branch 並驗證：
+
+- CMS migration。
+- GitHub API。
+- Zeabur API。
+- public serializer。
+- authentication boundary。
+- deployment command。
+
+必須停下並回報：
+
+- 刪除資料。
+- destructive migration。
+- 改變既有登入安全。
+- 暴露 secrets。
+- 寫入其他 repository。
+- 修改其他 Zeabur service。
+- 對外發布個資。
+- 沒有證據卻要將作品標記為 verified。
+
+## 12. Definition of Done
+
+本計畫完成時：
+
+- 17 個官方作品都有 registry entry。
+- 每個作品都有明確分類。
+- 每個作品都有縮圖或明確的待驗證狀態。
+- GitHub、Zeabur、Live Demo 狀態不互相矛盾。
+- tku drama 與 canva2 不再使用錯誤重複網址。
+- private repository 不會洩漏內容。
+- 需要登入的作品明確標示。
+- 每個作品都有實際操作或誠實的替代入口。
+- 手機與桌面都能使用。
+- 沒有 secrets 進入 Git 或 client bundle。
+- build、lint、typecheck 與必要測試通過。
+- bruce23 成功部署。
+- state、runtime report 與 changelog 持續更新。
+
+## 13. 每輪回報格式
+
+RUN_ID：
+時間：
+
+本輪唯一任務：
+
+完成內容：
+
+修改檔案：
+
+GitHub 驗證：
+
+Zeabur 驗證：
+
+Build／Test 結果：
+
+Mobile／Desktop 結果：
+
+目前阻塞：
+
+風險：
+
+下一輪唯一任務：
+
+
+
+## 14. 作品真正可用的 70 分門檻
+
+作品集收錄不等於作品已完成。
+
+每個放入作品集的專案，都必須建立 readiness score，滿分 100 分；至少 70 分才可以標記為「可操作作品」或列入 Featured。
+
+評分：
+
+| 項目 | 分數 | 最低要求 |
+|---|---:|---|
+| 可建置與可部署 | 15 | build 成功、服務可啟動、production 不持續 5xx |
+| 核心流程可使用 | 25 | 使用者能完成該作品最重要的主要任務 |
+| 資料與狀態 | 15 | 資料可正確保存、讀取、恢復，或明確為唯讀產品 |
+| 錯誤與登入邊界 | 10 | 權限不足、離線、錯誤輸入與服務失敗都有清楚處理 |
+| 手機與桌面 UX | 10 | 390x844 與 1440x900 都能完成核心操作 |
+| 測試與可觀測性 | 10 | 至少有 smoke test、健康檢查或可重現驗證 |
+| 作品說明與 Demo | 10 | README、操作步驟、限制與公開入口一致 |
+| 資安與資料保護 | 5 | 沒有 secrets、個資外洩或不受控的管理功能 |
+
+### 不可妥協的最低條件
+
+即使總分達到 70，以下任一項不符合，仍不得標記為 ready：
+
+- 首頁或主要路由無法開啟。
+- 核心按鈕無法完成主要任務。
+- 資料寫入後消失，且產品宣稱支援保存。
+- 未登入可以進入不應公開的管理功能。
+- 發生錯誤時畫面卡死或無限 loading。
+- 手機版無法滾動、輸入或提交。
+- 對外洩漏 API key、密碼、個資或 service role。
+- 作品集描述與實際功能完全不一致。
+
+### 分數上限
+
+- build 失敗：最高 39 分。
+- 核心流程無法完成：最高 59 分。
+- 資料或權限有重大安全問題：Blocked，不進入公開作品集。
+- 只有 landing page、沒有可使用核心功能：最高 49 分。
+- 只有視覺 mockup、沒有真實操作：最高 49 分。
+
+每個專案必須在 registry 保存：
+
+- readinessScore
+- readinessStatus
+- scoredAt
+- scoreEvidence
+- failedCriteria
+- nextRepairTask
+
+狀態：
+
+- ready：70 分以上且通過最低條件。
+- repair-needed：1 至 69 分。
+- blocked：有安全、權限或資料重大問題。
+- unknown：尚未完成實測。
+
+## 15. 代理修復外部專案的權限規則
+
+為了讓作品真正可用，本計畫允許代理修復官方清單內的外部 repository，但必須遵守：
+
+1. 每個外部 repository 使用獨立 branch。
+2. 每個 repository 建立獨立修復 PR。
+3. 不直接覆蓋外部 repository 的 main/master。
+4. 不修改外部服務的環境變數，除非使用者另行授權。
+5. 不把 bruce23 的展示需求硬塞進外部產品。
+6. 先修復會阻止核心流程使用的錯誤，再做視覺美化。
+7. 每次只修一個 repository 的一個核心流程。
+8. 修復後必須在該 repository 執行 build、smoke test 與公開網址驗證。
+9. bruce23 只有在 readinessScore 達到 70 以上後，才把作品標示為可操作或 Featured。
+10. 如果外部 repository 沒有可用寫入權限，建立 repair specification 與 issue，不能假裝已修復。
+
+修復 PR 命名：
+
+[Repair] Make <project> core workflow usable
+
+修復 PR 必須包含：
+
+- 重現步驟。
+- 根本原因。
+- 修改內容。
+- 核心流程驗證。
+- 手機驗證。
+- 部署結果。
+- readiness score。
+- 尚未解決的限制。
+
+## 16. 每個專案的修復循環
+
+代理讀取一個作品後，依序執行：
+
+### A. 建立使用者核心旅程
+
+用一句話定義：
+
+「一位第一次使用的訪客，應該能在幾分鐘內完成什麼？」
+
+例如：
+
+- PLANFORM：建立一個空間，放置桌椅與走道，看到可操作的場佈結果。
+- Duigao：建立一個視覺討論內容，查看素材，留下評論或標記。
+- Folio：建立或開啟設計，修改基本元素，預覽或匯出。
+- ty：完成公開挑戰，看到結果，安全地送出資料。
+- AI OS：建立專案，輸入上下文，完成一個多模態工作步驟。
+- Hermes Console：查看 runtime，執行一個安全的 agent／tool workflow。
+- CUTOS：輸入影片任務，得到時間軸或剪輯計畫。
+
+### B. 實際重現
+
+- 讀取 README、package.json、環境需求與部署設定。
+- 開啟 production URL。
+- 使用 Playwright 重現手機與桌面流程。
+- 記錄第一個阻塞點。
+- 不因為頁面漂亮就判定可用。
+
+### C. 優先修復 Blocker
+
+修復順序：
+
+1. build／啟動失敗。
+2. production 5xx。
+3. 核心路由不存在。
+4. 核心按鈕無作用。
+5. API 呼叫失敗後畫面卡死。
+6. 資料保存或讀取錯誤。
+7. 登入與權限錯誤。
+8. 手機不能操作。
+9. 空狀態與錯誤狀態。
+10. 最後才是視覺細節。
+
+### D. 驗證核心流程
+
+每個作品至少要有：
+
+- 首次進入。
+- 一次核心輸入。
+- 一次主要操作。
+- 一次結果呈現。
+- 一次重新整理或返回後的狀態驗證。
+- 一次錯誤情境驗證。
+
+### E. 計分與回寫
+
+修復完成後：
+
+1. 重新執行 build。
+2. 執行測試。
+3. 執行 production smoke test。
+4. 更新 readinessScore。
+5. 將證據寫入 registry。
+6. 更新作品集的狀態。
+7. 只有達標才開放 Featured 或「立即操作」主按鈕。
+
+## 17. 每小時的修復任務選擇順序
+
+代理不可每輪隨機改 UI，應依照以下優先順序：
+
+1. 有 production 5xx 的專案。
+2. 有 build failure 的專案。
+3. 核心流程無法完成且已有明確重現步驟的專案。
+4. 已有 PR 但 CI 失敗的專案。
+5. readinessScore 最低且距離 70 分最近的專案。
+6. 手機版核心流程阻塞的專案。
+7. 只有資料同步或來源狀態未完成的專案。
+8. 最後才處理縮圖、動畫與細部視覺。
+
+每輪最多：
+
+- 修復一個核心 blocker；或
+- 完成一個小型可驗證改善；或
+- 完成一個專案的 readiness scoring。
+
+不得在同一輪同時修改多個外部 repository。
+
+## 18. 新增 Definition of Done
+
+整體計畫完成不只代表作品集頁面完成，還必須符合：
+
+- 官方清單內每個可公開展示作品都有 readiness score。
+- 至少 70 分的作品才列為可操作作品。
+- 低於 70 分的作品顯示 repair-needed，不得假裝完成。
+- blocked 作品不提供誤導性的立即操作入口。
+- 每個作品至少能完成一條核心使用旅程，或清楚標示目前不可用。
+- 每個外部修復都有獨立 PR、測試證據與部署驗證。
+- bruce23 的案例敘事、GitHub、Zeabur、Live Demo 與 readiness score 一致。
+- 代理每小時能從本文件與 state 繼續，不需要重新猜測進度。
+
+
+
+## 19. 全作品線上可操作與資訊完整硬性 Gate
+
+本作品集的完成條件不是「大部分作品可以展示」。
+
+官方清單內的 17 個專案必須全部完成：
+
+- 17/17 有可開啟的正式線上網址。
+- 17/17 正式網址可在公開網路正常載入。
+- 17/17 可以完成各自定義的核心使用旅程。
+- 17/17 至少達到 readiness score 70 分。
+- 17/17 有完整的 GitHub／來源狀態。
+- 17/17 有完整的 Zeabur／部署狀態。
+- 17/17 有真實縮圖或經過標記的實際畫面。
+- 17/17 有完整的中文作品說明。
+- 17/17 有英文基本說明或英文補助資訊。
+- 17/17 有明確的操作步驟。
+- 17/17 有技術堆疊與功能範圍。
+- 17/17 有限制、登入需求與資料安全說明。
+- 17/17 通過手機與桌面 smoke test。
+- 17/17 不得存在未處理的 broken link、broken image、主要路由 404 或持續 5xx。
+
+### 整體完成判定
+
+只有以下條件全部成立，才可以把 Portfolio Agent Plan 標記為完成：
+
+ONLINE_READY_COUNT = 17
+CORE_FLOW_PASS_COUNT = 17
+READINESS_SCORE_GE_70_COUNT = 17
+COMPLETE_INFO_COUNT = 17
+THUMBNAIL_VERIFIED_COUNT = 17
+MOBILE_SMOKE_PASS_COUNT = 17
+DESKTOP_SMOKE_PASS_COUNT = 17
+SECURITY_BLOCKER_COUNT = 0
+
+任何一項不是 17，整體狀態必須保持：
+
+PORTFOLIO_STATUS = IN_PROGRESS
+
+不得使用「幾乎完成」、「大致可用」、「部分完成」取代數字證據。
+
+## 20. 每個作品的完整資料契約
+
+每個專案在 registry 與 CMS 都不得缺少以下欄位：
+
+### 身分
+
+- slug
+- title
+- titleEn
+- repository URL
+- repository visibility
+- canonical live URL
+- Zeabur service identity
+- current deployed commit 或 deployment reference
+
+### 作品說明
+
+- 一句話定位
+- 解決的問題
+- 目標使用者
+- 主要功能
+- 使用者核心旅程
+- 代理或作者在其中做了什麼
+- 技術堆疊
+- 多模態能力
+- 目前狀態
+- 版本或最後更新時間
+
+### 線上操作
+
+- 線上網址
+- 公開／需登入／受限狀態
+- 開啟方式
+- 三至五個操作步驟
+- 預期結果
+- 可重現測試步驟
+- 最後驗證時間
+- HTTP status
+- page title
+- mobile smoke status
+- desktop smoke status
+
+### 視覺素材
+
+- 主縮圖
+- 手機截圖
+- 桌面截圖
+- alt text
+- 圖片來源
+- 圖片 provenance
+- 圖片產生時間
+- 是否為實際產品畫面
+
+### 技術證據
+
+- GitHub README 狀態
+- latest commit
+- language
+- topics
+- 重要檔案路徑
+- Zeabur deployment status
+- runtime health
+- 依賴服務
+- 目前限制
+- 尚未完成項目
+
+### 資安與資料
+
+- 是否需要登入
+- 是否使用真實資料
+- 是否使用隔離 demo data
+- 訪客能做什麼
+- 訪客不能做什麼
+- 是否含個資
+- 是否有管理員邊界
+- 是否有 API 或 provider 依賴
+
+任何欄位缺少時，該作品的 COMPLETE_INFO 狀態必須是 false。
+
+## 21. 全部專案線上修復流程
+
+代理不能因為某個專案現在無法操作，就把它從作品集移除或標記完成。
+
+每一個無法線上操作的專案必須：
+
+1. 查明是 GitHub build、Zeabur deploy、環境變數、資料庫、runtime、路由、登入或外部 provider 哪一層失敗。
+2. 建立可重現的 failure report。
+3. 在該 repository 建立獨立修復 branch。
+4. 建立修復 PR。
+5. 修復核心功能。
+6. 執行本地 build 與測試。
+7. 部署到正式線上服務或可驗證的 preview。
+8. 用手機與桌面 Playwright 驗證。
+9. 更新 readiness score。
+10. 回寫 bruce23 registry。
+11. 重新驗證作品集入口。
+12. 只有完整通過後，才可將該專案標記為 online-ready。
+
+如果遇到：
+
+- 沒有 repository 寫入權限。
+- 沒有 Zeabur 部署權限。
+- 缺少必要 provider credential。
+- 私有資料不可安全展示。
+- 原專案已無法恢復。
+- 外部服務已停止且沒有替代方案。
+
+代理必須在報告中明確標記 BLOCKED，並持續列為未完成項目。不得使用假網址、假的 demo、假的 API 回應或假的完成狀態。
+
+## 22. 全作品連續驗證
+
+每次 bruce23 部署前後，都要對 17 個專案執行完整檢查：
+
+### 入口檢查
+
+- canonical URL 可以連線。
+- HTTP status 為可接受狀態。
+- page title 與作品身份一致。
+- 沒有被導向錯誤專案。
+- 沒有使用重複或過期網址。
+
+### 操作檢查
+
+- 首頁可開啟。
+- 核心 CTA 可點擊。
+- 核心輸入可完成。
+- 主要結果可出現。
+- 重新整理後狀態符合產品設計。
+- 錯誤狀態可恢復。
+- 登入邊界正確。
+- 不會寫入不應寫入的真實資料。
+
+### 視覺檢查
+
+- 主縮圖存在。
+- 手機截圖存在。
+- 桌面截圖存在。
+- alt text 存在。
+- 來源標籤正確。
+- 圖片不會 broken。
+- 案例頁與實際網站不矛盾。
+
+### 資訊檢查
+
+- 中文說明存在。
+- 英文基本資訊存在。
+- 操作步驟存在。
+- 技術堆疊存在。
+- 限制存在。
+- GitHub 狀態存在。
+- Zeabur 狀態存在。
+- readiness score 存在。
+- 最後驗證時間存在。
+
+## 23. 最終公開呈現規則
+
+在所有 17 個專案都達標前：
+
+- 首頁可以顯示進度，但不可宣稱完成。
+- Featured 區域只能放已達 70 分且 online-ready 的作品。
+- 未達標作品必須顯示「修復中」而不是假裝可操作。
+- 作品集總覽必須顯示實際完成數，例如 12/17。
+- 「全部作品已完成」按鈕或文案不得出現。
+- 不可以用靜態 mockup 取代真正的線上操作。
+- 不可以只因為 GitHub 存在，就把作品標記為 online-ready。
+
+最終必須看到：
+
+17/17 ONLINE
+17/17 CORE FLOW PASS
+17/17 COMPLETE INFO
+17/17 READY >= 70
+
+
+
+## 24. Grok Bot 協作入口
+
+Grok Bot 的專用任務文件：
+
+docs/GROK_BOT_PORTFOLIO_TASK.md
+
+Grok Bot 是獨立的 Portfolio Sentinel，負責黑箱實測、進度複核、資訊完整性檢查與 70 分門檻複核。
+
+主代理與 Grok Bot 必須遵守：
+
+- 主代理負責主要實作與修復。
+- Grok Bot 負責獨立驗證與找出遺漏。
+- 同一時間不可讓兩個代理修改同一個 repository 的相同檔案。
+- Grok Bot 發現問題時，優先寫 review comment 或 failure report。
+- 沒有主代理正在處理時，才可建立 grok/repair/<project>/<date> 修復 branch。
+- Grok Bot 不得直接推送 main/master。
+- Grok Bot 必須使用實測證據，不得只依賴 README 或卡片上的狀態。
+- Grok Bot 的 PORTFOLIO_READY 必須與主代理的完成報告相互核對。
+
+## 25. 首輪啟動與本機執行協定（2026-09-19）
+
+本輪唯一任務：Phase 0 執行基準與單一寫入鎖。工作目錄為 `D:\bruce23`，沿用 PR #6 分支。
+
+- Codex 每小時整點續跑已啟用，automation ID：`bruce23`。
+- Grok Bot 尚未啟動；本次沒有已設定的 Grok 執行管道。
+- 新增 `scripts/portfolio-agent-lock.mjs`。修改前執行 `node scripts/portfolio-agent-lock.mjs acquire <unique-run-id>`；結束後以相同 ID 執行 `release`。`status` 可讀取目前持有人。
+- 鎖位於 Git common directory，不進入 Git 或 client bundle，同一 clone 的 worktree 共用。其他 clone／主機不共用此鎖；啟動另一寫入者前必須另行協調。不得僅因鎖過期便刪除；中斷留下的鎖需先確認原執行者已停止。
+- 入口實測：作品集 HTTP 200；外部作品 16/17 HTTP 200，Hermes Agent 三次 HTTP 502。HTTP 200 不代表 online-ready 或核心流程通過。
+- lunar 與 cabin 都回傳 FrameLab title，仍須核對 repo 與 Zeabur service，未確認 canonical identity。
+- typecheck 通過；lint 0 errors、3 個既有 warnings；鎖的競爭／持有人測試通過。
+- 原有 `npm run build` 在 Windows 因 `spawn vite ENOENT` 失敗。使用相同環境 wrapper 直接呼叫 `node node_modules/vite/bin/vite.js build` 成功，PGLite 素材複製成功；未設定 DATABASE_URL，資料庫 migration 跳過。
+- 目前程式與生成 client assets 的常見 token／private-key pattern 掃描未命中；這不是完整資安或 Git 歷史稽核。
+- 本輪沒有修改 UI、CMS、資料庫、外部作品或部署。Mobile／desktop 核心操作與 production deployment 仍未驗證，所有完成 gate 維持未通過。
+
+公開入口證據：`docs/portfolio-agent/endpoint-evidence.json`。完整結果見 `runtime-report.json`。
+
+下一輪唯一任務：確認 Hermes Agent 的 repo 與 Zeabur service 身分，定位重複 HTTP 502 的原因，再依外部修復流程處理。
+
+## 26. Hermes Agent 502 診斷（2026-09-19 09:03 UTC 輪次）
+
+- RUN_ID：`codex-20260919-0903`。唯一任務：核對來源並建立可重現的 502 診斷。
+- 主網域 `/sessions`、根頁及既有 API 網域均失敗；瀏覽器確認 Zeabur `502: SERVICE_UNAVAILABLE`，尚未到登入頁。
+- 已讀取公開上游 NousResearch/hermes-agent 的 Dockerfile/Compose；實際部署映像 digest、service ID 與 runtime 日誌仍未確認，不把上游最新版本當作部署證據。
+- 目前沒有可用 Zeabur connector／CLI／API token，使用中的瀏覽器控制台未登入；故障根因判定被部署觀測權限阻塞。
+- 修復規格與證據：`docs/portfolio-agent/hermes-agent-failure.md`、`hermes-agent-evidence.json`；追蹤 [issue #7](https://github.com/aa0968111723-prog/bruce23/issues/7)。未修改外部 repo 或服務。
+- 重新探測全部官方入口，結果見 endpoint-evidence.json。HTTP 可達仍不等於完成核心操作。瀏覽器尺寸 override 未生效，實際為 1280×721，未將其算作 mobile／desktop pass。
+- 本輪只更新文件／狀態，執行 JSON、17 筆資料一致性、gate 與 diff 驗證，不重跑未改動產品的 build。
+- 整體維持 IN_PROGRESS，所有驗收通過數仍為 0/17，資安未驗證。
+- 下一輪唯一可獨立進行任務：修復 bruce23 Windows command launcher，完成標準建置驗證。有 Zeabur 唯讀服務資訊後再恢復 Hermes 診斷，避免每輪無效重試。
+
+## 27. Zeabur 來源確認與 Hermes 暫停狀態
+
+使用者提供 service identity 後，完成唯讀核對；證據存於 `zeabur-service-evidence.json` 與 `hermes-zeabur-evidence.json`，不得保存或輸出憑證。
+
+- bruce23 與其餘 16 個外部服務當時為 RUNNING；舊 Hermes Agent 服務為 SUSPENDED。
+- 已核對作品集與 17 個作品的公開 domain；Git 部署可記錄 repo 與 commit，Hermes 使用 Docker 映像，不能把公開上游版本當成實際部署版本。
+- `tku-tamsui-drama-world` 的正式入口為 `https://tku-tamsui-drama-world-k4x9.zeabur.app/`；`canva2` 為 `https://canva2-k7qm.zeabur.app/`，不可沿用原始清單中的重複 URL。
+- lunar 與 cabin 的 repo／service 必須分開核對；即使頁面同為 FrameLab，也不可混用作品身分或證據。
+- 舊 Hermes 映像曾記錄 dashboard port 9119、API port 5000 與兩個 domain；該服務後續被使用者確認不是目前作品目標。
+- RUNNING、domain 與 repo 核對不等於核心流程完成；所有功能 gate 維持未通過。
+
+## 28. 使用者更正 Hermes 服務（取代第 26、27 節的目前目標）
+
+- 正確 service ID：`6aad03324850645efd210d94`；唯讀檢查顯示服務為 RUNNING。
+- 正確入口：`https://hermes-agent-k7q2.zeabur.app/sessions`；HTTP 200 且導向登入頁，只能標記為 AUTH REQUIRED，不能標記核心流程通過。
+- 舊 service `6a9a385273ef6eb935f2f8a2` 與 `455.zeabur.app` 不是目前作品服務；不得對它執行 resume、restart 或環境變數修改。
+- 已更新代理 registry、endpoint 與 Zeabur 證據；未修改環境變數、服務狀態或嘗試登入。
+- 最近入口證據可達 17/17 HTTP 200，但功能驗收仍為 0/17；HTTP 200 不等於 ONLINE、CORE FLOW PASS 或 READY >= 70。
+- 下一輪須同步產品 fallback、英文內容與既有 CMS 的正確 Hermes 入口；不可只改 seed 就宣稱 production 資料完成。

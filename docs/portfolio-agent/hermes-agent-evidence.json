@@ -1,0 +1,23 @@
+{
+  "runId": "codex-hermes-identity-correction",
+  "checkedAt": "2026-09-19T09:22:46.98019Z",
+  "serviceId": "6aad03324850645efd210d94",
+  "environmentId": "6aad03314eff8b1a632f15c2",
+  "publicProbe": {
+    "key": "hermes-agent",
+    "url": "https://hermes-agent-k7q2.zeabur.app/sessions",
+    "status": 200,
+    "title": "Sign in — Hermes Agent",
+    "checkedAt": "2026-09-19T09:22:46.98019Z",
+    "browserFinalUrl": "https://hermes-agent-k7q2.zeabur.app/login?next=%2Fsessions",
+    "browserResult": "Sign-in form; PUBLIC BIND / AUTH REQUIRED",
+    "coreFlowVerified": false
+  },
+  "supersededServiceId": "6a9a385273ef6eb935f2f8a2",
+  "oldServiceChanged": false,
+  "loginAttempted": false,
+  "readinessScore": null,
+  "coreFlowVerified": false,
+  "source": "Zeabur read-only API plus real browser",
+  "priorEvidence": "Old-service HTTP 502 evidence remains in Git history; not current Hermes target."
+}

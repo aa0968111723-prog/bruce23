@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-09-19T09:22:45.9737556Z",
+  "environmentId": "6aad03314eff8b1a632f15c2",
+  "evidence": {
+    "service": {
+      "_id": "6aad03324850645efd210d94",
+      "name": "hermes-agent",
+      "status": "RUNNING",
+      "image": {
+        "reference": "nousresearch/hermes-agent:v2026.7.7.2",
+        "name": "docker.io/nousresearch/hermes-agent",
+        "tag": "v2026.7.7.2",
+        "digest": null
+      },
+      "ports": [
+        {
+          "id": "web",
+          "port": 9119,
+          "type": "HTTP"
+        },
+        {
+          "id": "api",
+          "port": 5000,
+          "type": "HTTP"
+        }
+      ],
+      "domains": [
+        {
+          "domain": "hermes-agent-k7q2.zeabur.app",
+          "status": "PROVISIONED",
+          "portName": "web"
+        }
+      ],
+      "project": {
+        "_id": "6aad03311f9db09fade7b78c",
+        "name": "untitled-9-bled"
+      }
+    }
+  }
+}

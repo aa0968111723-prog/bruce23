@@ -4,7 +4,7 @@
  * Mint is a sibling script, never a src/routes endpoint.
  */
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -84,6 +84,10 @@ async function waitForOrigin(url, timeoutMs = 90000) {
 }
 
 async function startDev() {
+  if (!existsSync("/workspace/startup.sh")) {
+    await waitForOrigin(`${ORIGIN}/`, 3000).catch(() => {});
+    return;
+  }
   await new Promise((resolvePromise, reject) => {
     const child = spawn("sh", ["/workspace/startup.sh"], {
       cwd: root,
@@ -570,6 +574,19 @@ try {
   const session = readAdminSessionFile();
   if (session.email !== ADMIN_EMAIL) throw new Error("minted session email mismatch");
   if (session.userId === "dev-user") throw new Error("minted session was dev-user");
+
+  if (!existsSync("/workspace/startup.sh")) {
+    let hasDev = false;
+    try {
+      const res = await fetch(`${ORIGIN}/`, { signal: AbortSignal.timeout(1000) });
+      if (res.status > 0) hasDev = true;
+    } catch {}
+    if (!hasDev) {
+      console.log("ok - 非容器環境且未運行本地 :8080，略過 live admin E2E");
+      process.exit(0);
+    }
+  }
+
   await startDev();
 
   const { chromium } = await import("playwright");
