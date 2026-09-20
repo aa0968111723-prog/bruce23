@@ -25,3 +25,9 @@ The source SHA was read from GitHub; this run did not freshly verify the deploye
 No console warning/error entries were captured at the checks performed. This is not full security acceptance. No AI or remote sharing was invoked. The synthetic project remains only in browser storage; existing projects were not deleted. Source confirms localStorage-backed project storage and change-event field handlers.
 
 All project acceptance booleans remain false and readiness unscored. Browser viewport overrides were reset. Product code, environment variables, shared state and runtime reports were not changed; this dedicated report is the handoff record for this bounded evidence task.
+
+## Persistence follow-up (codex-planform-persist-0701)
+
+A new browser tab reopened the retained synthetic project. Selecting the moved chair confirmed **QA chair**, **X=720 cm**, **Z=480 cm**, elevation 0 in the inspector. These match the previous native-keyboard edits. The persistence uncertainty from that retry is resolved; locator-fill behavior alone is not an application defect.
+
+[Verified inspector screenshot](desktop-persistence-confirmed.jpg) · [Timestamped result](persistence-followup.json). JPEG/JFIF signature checked, viewport 1440×900. No acceptance gate promotion: drag, undo/redo, mobile touch and error recovery remain to be tested. Next task is drag/undo/redo with exact coordinates on this synthetic chair.
