@@ -129,6 +129,17 @@ describe("experience catalog", () => {
     assert.equal(steps.some((step) => step.title === "打開 CUTOS"), false);
   });
 
+  it("keeps lumen walkthrough on the live voice-orb home", () => {
+    const steps = experienceCatalog.lumen.walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "想做什麼");
+    assert.match(steps[0]?.body ?? "", /自動聽/);
+    assert.match(bodies, /拍照開始/);
+    assert.match(bodies, /長任務/);
+    assert.match(bodies, /最近/);
+    assert.doesNotMatch(bodies, /做海報、拍照、開始做影片/);
+  });
+
   it("keeps hermes-agent walkthrough on the live Sign in screen", () => {
     const steps = experienceCatalog["hermes-agent"].walkthrough ?? [];
     assert.ok(steps.some((step) => step.title === "Sign in"));
@@ -148,10 +159,14 @@ describe("experience catalog", () => {
   it("keeps ty focus-challenge walkthrough on the probed public flow", () => {
     const steps = experienceCatalog["focus-challenge"].walkthrough ?? [];
     assert.equal(steps.some((step) => step.title === "暖身"), false);
-    assert.equal(steps[0]?.title, "登記");
+    assert.equal(steps[0]?.title, "攤位首屏");
     assert.ok(steps.some((step) => step.title === "教學／練習"));
-    assert.match(steps[0]?.body ?? "", /登記畫面/);
+    assert.match(steps[0]?.body ?? "", /看指令選顏色/);
+    assert.match(steps[0]?.body ?? "", /正式參賽/);
+    assert.match(steps[0]?.body ?? "", /本名/);
+    assert.match(steps[0]?.body ?? "", /開始練習/);
     assert.match(steps[0]?.body ?? "", /關主/);
+    assert.doesNotMatch(steps[0]?.body ?? "", /登記畫面/);
     assert.match(steps.at(-1)?.body ?? "", /67 筆/);
     assert.doesNotMatch(steps.map((step) => step.body).join("\n"), /即時看活動狀態/);
   });

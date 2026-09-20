@@ -753,11 +753,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   "focus-challenge": {
     honestyLabel: "A live game, not a psychological test",
-    intro: "The public first screen is the registration form: host, name, department, grade, and phone. It is not tap-and-play. This is a portfolio walkthrough, not a live 60-second run.",
+    intro: "The public booth home has 60 seconds / follow the instruction / a live drink prize, Official entry, and How to play. The form is host, real name, department, grade, and phone. The official button is Start practice. This is a portfolio walkthrough, not a live 60-second run.",
     walkthrough: [
       {
-        title: "Register",
-        body: "Public leader-dna-mcp-a7k2. Title 淡江大學禪學社｜專注力挑戰賽. First screen is the registration form, not an instant game.",
+        title: "Booth home",
+        body: "Public leader-dna-mcp-a7k2. Title 淡江大學禪學社｜專注力挑戰賽. club-header JS has 60 seconds, follow the instruction, live drink prize, Official entry, and How to play. Form fields are host / real name / department / grade / phone. Official button is Start practice. Not tap-and-play.",
       },
       {
         title: "Tutorial / practice",
@@ -789,6 +789,54 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       {
         title: "Campus pass",
         body: "/login h1 Campus pass. Guests can tour Wuhu Hill, or Google / X sign-in saves stamps. Tour as guest returns to /.",
+      },
+    ],
+  },
+  lumen: {
+    honestyLabel: "Portfolio preview, not the Lumen voice runtime",
+    intro: "The public first screen is “想做什麼？” and “點一下開始聽 · 按住說話”. Header has “自動聽”. Four entries are 做海報, 拍照開始, 做影片, and 長任務. This is a portfolio note, with no microphone, and it is not Hermes.",
+    conversation: {
+      disclaimer: "This is a portfolio preview, not the Lumen voice runtime, and not Hermes Agent.",
+      starter:
+        "The public site is “想做什麼？ 點一下開始聽 · 按住說話”. Entries are 做海報, 拍照開始, 做影片, and 長任務. This page does not pretend it is already listening.",
+      placeholder: "Type 做海報, 拍照開始, 做影片, or 長任務",
+      sourceNote: "This portfolio has no microphone. Cloud models depend on keys; without a key it should degrade honestly.",
+      suggestions: ["做海報", "拍照開始", "做影片", "長任務"],
+      replies: [
+        {
+          matchZh: "海報",
+          match: "海報",
+          reply: "The public site has a 做海報 entry. This portfolio page does not generate a poster.",
+        },
+        {
+          matchZh: "拍照",
+          match: "拍照",
+          reply: "The public button is 拍照開始. This page has no camera permission.",
+        },
+        {
+          matchZh: "影片",
+          match: "影片",
+          reply: "The public site has 做影片. Ungenerated results are not shown as done.",
+        },
+        {
+          matchZh: "長任務",
+          match: "長任務",
+          reply: "The public site has 長任務. This portfolio page will not start a long task.",
+        },
+      ],
+    },
+    walkthrough: [
+      {
+        title: "What do you want to do?",
+        body: "Public ai-chat-8rq3 title Lumen. First screen “想做什麼？” / “點一下開始聽 · 按住說話”. Header has “自動聽”. This page is not the voice runtime.",
+      },
+      {
+        title: "Entries",
+        body: "Four buttons: 做海報, 拍照開始, 做影片, 長任務. Not 拍照.",
+      },
+      {
+        title: "Recent",
+        body: "The Recent strip switches 專案 / 生成 / 畫板. Do not pretend an ungenerated result is done.",
       },
     ],
   },

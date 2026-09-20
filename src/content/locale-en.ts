@@ -461,13 +461,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "Focus challenge",
     subtitle: "60 seconds on the TKU Zen booth",
     summary:
-      "Booth Stroop: register host and basics first, then two tutorial questions and a 15-second practice (not saved), then the official 60 seconds. A live game, not a psychological test, and not an activity-status dashboard.",
+      "Booth Stroop: the public home has 60 seconds / follow the instruction / a live drink prize, plus Official entry. The form is host, real name, department, grade, and phone; the official button is Start practice. Then two tutorial questions and a 15-second practice (not saved), then the official 60 seconds. A live game, not a psychological test, and not an activity-status dashboard.",
     problem:
-      "The booth needs a 60-second game people can play on the spot. The official run still starts with host, name, department, grade, and phone — it is not tap-and-play with no form.",
-    role: "Booth experience: registration, tutorial, timer, score write, and the public leaderboard.",
+      "The booth needs a 60-second game people can play on the spot. Public JS official entry is Official entry; it still starts with host, real name, department, grade, and phone — it is not tap-and-play with no form.",
+    role: "Booth experience: booth home, tutorial, timer, score write, and the public leaderboard.",
     process: [
-      "Open leader-dna-mcp-a7k2.zeabur.app (the homepage is the registration screen)",
-      "Fill host, name, department, grade, and phone before the tutorial (this portfolio does not submit that)",
+      "Open leader-dna-mcp-a7k2.zeabur.app (title 淡江大學禪學社｜專注力挑戰賽)",
+      "Public JS booth home has 60 seconds, follow the instruction, a live drink prize, Official entry, and How to play",
+      "Form fields are host, real name, department, grade, and phone; official button is Start practice (this portfolio does not submit that)",
       "Two tutorial questions and a 15-second practice (not scored, not saved)",
       "Start the official 60-second Stroop (POST /api/register and /api/result)",
       "See the score and the public leaderboard (masked names)",
@@ -475,7 +476,7 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     limitations: [
       "2026-09-19 GET /api/health returned ok, sheets true, smtp false.",
       "GET /api/leaderboard?scope=history returned 67 public rows: masked name, score, accuracy, title, time. No phone numbers or full names. Today's scope is 0 rows.",
-      "The official 60-second run requires the form and writes the game sheet. This portfolio did not submit PII and has not completed an official 60-second black-box run, so coreFlow is not passed.",
+      "2026-09-20 club-header JS booth home has 60 seconds / follow the instruction / live drink prize / Official entry / How to play. Form field is real name, not name. Official button is Start practice. This portfolio did not submit PII and has not completed an official 60-second black-box run, so coreFlow is not passed.",
     ],
   },
   lumen: {
@@ -483,13 +484,14 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A multimodal voice orb in your pocket",
     summary: "Speak to design, search, and generate. Public site ai-chat-8rq3; GitHub wood-ivory-blaze-maple.",
     process: [
-      "Open ai-chat-8rq3.zeabur.app",
-      "Tap to listen or hold to speak",
-      "Pick poster / photo / video / long task",
-      "Continue from recent projects",
+      "Open ai-chat-8rq3.zeabur.app (title Lumen)",
+      "First screen is 想做什麼？; hint 點一下開始聽 · 按住說話; header has 自動聽",
+      "Four entries are 做海報, 拍照開始, 做影片, 長任務 (button is 拍照開始, not 拍照)",
+      "Recent strip switches 專案 / 生成 / 畫板. This portfolio has not held-to-speak or generated",
     ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title Lumen. First screen is What do you want to do? / tap to listen. This portfolio has not held-to-speak, so coreFlow is not passed.",
+      "Cloud models depend on keys; without a key it should degrade honestly, not fake a generation.",
+      "Probed 2026-09-20: GET / HTTP 200, title Lumen. HTML first screen has 自動聽, 想做什麼？, 點一下開始聽 · 按住說話; buttons 做海報 / 拍照開始 / 做影片 / 長任務; Recent 專案 / 生成 / 畫板. This portfolio has not held-to-speak or generated, so coreFlow is not passed.",
     ],
   },
   xiaocai: {

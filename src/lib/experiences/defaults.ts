@@ -182,14 +182,14 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "lumen") {
     return {
       ...base,
-      intro: "公開站首屏是「想做什麼？」。這是作品集說明，沒有接上麥克風，也不是 Hermes。",
+      intro: "公開站首屏是「想做什麼？」與「點一下開始聽 · 按住說話」。header 有「自動聽」。四個入口是做海報、拍照開始、做影片、長任務。這是作品集說明，沒有接上麥克風，也不是 Hermes。",
       conversation: {
         engine: "hermes-preview",
         disclaimer: "這是作品集預覽，不是 Lumen 語音執行期，也不是 Hermes Agent。",
-        starter: "公開站是「想做什麼？ 點一下開始聽 · 按住說話」。這裡不會假裝已經在聽。",
-        placeholder: "輸入做海報、拍照、做影片",
+        starter: "公開站是「想做什麼？ 點一下開始聽 · 按住說話」。入口是做海報、拍照開始、做影片、長任務。這裡不會假裝已經在聽。",
+        placeholder: "輸入做海報、拍照開始、做影片、長任務",
         sourceNote: "作品集沒有接麥克風。雲端模型依金鑰；沒有金鑰應誠實降級。",
-        suggestions: ["做海報", "拍照", "做影片"],
+        suggestions: ["做海報", "拍照開始", "做影片", "長任務"],
         replies: [
           {
             match: "海報",
@@ -197,11 +197,15 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
           },
           {
             match: "拍照",
-            reply: "公開站有「拍照開始」。這裡沒有相機權限。",
+            reply: "公開站按鈕是「拍照開始」。這裡沒有相機權限。",
           },
           {
             match: "影片",
-            reply: "公開站有「開始做影片」。未生成的結果不會假裝完成。",
+            reply: "公開站有「做影片」。未生成的結果不會假裝完成。",
+          },
+          {
+            match: "長任務",
+            reply: "公開站有「長任務」。作品集這一頁不會開始長任務。",
           },
         ],
       },
@@ -298,7 +302,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "focus-challenge") {
     return {
       ...base,
-      intro: "公開站首屏是登記畫面：關主、姓名、科系、年級、電話。不是立刻開打。這是作品集走查，不是現場 60 秒。",
+      intro: "公開站攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」。表單是關主、本名、科系、年級、電話；正式按鈕「開始練習」。這是作品集走查，不是現場 60 秒。",
     };
   }
 

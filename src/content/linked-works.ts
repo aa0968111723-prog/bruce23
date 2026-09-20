@@ -215,19 +215,20 @@ export const linkedWorks: Project[] = [
     year: "2026",
     status: "in-progress",
     featured: false,
-    summary: "社博現場 60 秒 Stroop：首頁先填關主與基本資料，再兩題教學與 15 秒練習（不登記），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
-    problem: "攤位需要能立刻玩的 60 秒遊戲。正式賽仍要先填關主、姓名、科系、年級、電話，不是「完全不填表就能開打」。",
-    role: "現場體驗設計：登記、教學、計時、成績寫入與公開排行榜。",
+    summary: "社博現場 60 秒 Stroop：攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」。表單是關主、本名、科系、年級、電話，按鈕「開始練習」。再兩題教學與 15 秒練習（不登記抽獎），再正式 60 秒。這是現場遊戲，不是心理測驗，也不是活動狀態儀表板。",
+    problem: "攤位需要能立刻玩的 60 秒遊戲。公開 JS 正式賽入口是「正式參賽」，仍要先填關主、本名、科系、年級、電話，不是「完全不填表就能開打」。",
+    role: "現場體驗設計：攤位首屏、教學、計時、成績寫入與公開排行榜。",
     decisions: [
-      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。首頁是登記畫面，不是立刻開打。",
+      "公開站標題寫「淡江大學禪學社｜專注力挑戰賽」。攤位首屏是 60 秒／看指令選顏色／現場手搖杯，入口「正式參賽」，不是立刻開打。",
       "GitHub 是 ty；Zeabur 服務 leader-dna-sheet-sync。",
-      "試玩與 15 秒練習不登記、不抽獎。公開排行榜不是得獎公告。作品集不送出姓名或電話。",
+      "試玩與 15 秒練習不登記抽獎。正式按鈕文案是「開始練習」。公開排行榜不是得獎公告。作品集不送出本名或電話。",
     ],
     modalities: ["互動", "現場"],
     process: [
-      "打開 leader-dna-mcp-a7k2.zeabur.app（首頁是登記畫面）",
-      "填關主、姓名、科系、年級、電話後才進入教學（作品集不送出）",
-      "兩題新手教學與 15 秒練習（不計分、不登記）",
+      "打開 leader-dna-mcp-a7k2.zeabur.app（標題「淡江大學禪學社｜專注力挑戰賽」）",
+      "公開 JS 攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」",
+      "表單欄位是關主、本名、科系、年級、電話；正式按鈕「開始練習」（作品集不送出）",
+      "兩題新手教學與 15 秒練習（不計分、不登記抽獎）",
       "開始 60 秒正式 Stroop（會 POST /api/register 與 /api/result）",
       "看分數與公開排行榜（遮罩姓名）",
     ],
@@ -236,7 +237,7 @@ export const linkedWorks: Project[] = [
     limitations: [
       "2026-09-19 GET /api/health 回 ok，sheets true，smtp false。",
       "GET /api/leaderboard?scope=history 回 67 筆公開列：遮罩姓名、分數、正確率、稱號、時間。不含電話或完整姓名。今日 scope 為 0 筆。",
-      "正式 60 秒需先填表並寫入遊戲分頁。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
+      "2026-09-20 club-header JS 攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」「正式參賽」「怎麼玩」；表單欄位是「本名」不是「姓名」；正式按鈕「開始練習」。作品集未送出個資，也未完成一次正式 60 秒黑箱操作，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/ty",
@@ -247,7 +248,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · leader-dna-mcp-a7k2.zeabur.app",
         href: "https://leader-dna-mcp-a7k2.zeabur.app",
-        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-19 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。首頁是登記畫面。",
+        note: "Zeabur 服務 leader-dna-sheet-sync。2026-09-20 HTTP 200，標題「淡江大學禪學社｜專注力挑戰賽」。club-header JS 有「60 秒」「看指令選顏色」「現場手搖杯」「正式參賽」「怎麼玩」；表單關主／本名／科系／年級／電話；正式按鈕「開始練習」。/api/health ok。公開排行榜 history 67 筆遮罩姓名，今日 0 筆。",
       },
       {
         label: "GitHub · ty",
@@ -269,21 +270,22 @@ export const linkedWorks: Project[] = [
     problem: "創作入口太散。需要一個按住說話就能開始的球。",
     role: "語音介面與多模態入口設計。",
     decisions: [
-      "首頁只有「想做什麼？」與按住說話，不做控制台。",
+      "公開站首屏是「想做什麼？」與「點一下開始聽 · 按住說話」，header 有「自動聽」。不是 Hermes 控制台。",
+      "四個入口是做海報、拍照開始、做影片、長任務。下方「最近」可切專案／生成／畫板。",
       "公開站 ai-chat-8rq3；GitHub wood-ivory-blaze-maple。",
     ],
     modalities: ["語音", "圖像", "影片"],
     process: [
-      "打開 ai-chat-8rq3.zeabur.app",
-      "點一下開始聽，或按住說話",
-      "選做海報／拍照／開始做影片／長任務",
-      "從最近專案繼續",
+      "打開 ai-chat-8rq3.zeabur.app（標題 Lumen）",
+      "首屏「想做什麼？」；說明「點一下開始聽 · 按住說話」；header 有「自動聽」",
+      "四個入口是做海報、拍照開始、做影片、長任務（按鈕是「拍照開始」不是「拍照」）",
+      "下方「最近」可切專案／生成／畫板。作品集未按住說話、未生成",
     ],
     outputs: ["Lumen 公開站"],
     stack: ["TanStack Start", "Postgres", "Zeabur"],
     limitations: [
       "雲端模型依金鑰；沒有金鑰時應誠實降級，不假裝已生成。",
-      "2026-09-19 GET / HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。作品集未按住說話，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題 Lumen。HTML 首屏有「自動聽」「想做什麼？」「點一下開始聽 · 按住說話」；按鈕「做海報」「拍照開始」「做影片」「長任務」；最近專案／生成／畫板。作品集未按住說話，也未生成，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/wood-ivory-blaze-maple",
@@ -294,7 +296,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · ai-chat-8rq3.zeabur.app",
         href: "https://ai-chat-8rq3.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。不是 Hermes。",
+        note: "2026-09-20 HTTP 200，標題 Lumen。HTML 首屏有「自動聽」「想做什麼？」「點一下開始聽 · 按住說話」；按鈕「做海報」「拍照開始」「做影片」「長任務」；最近專案／生成／畫板。不是 Hermes。",
       },
       {
         label: "GitHub · wood-ivory-blaze-maple",

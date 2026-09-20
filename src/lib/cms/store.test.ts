@@ -1096,10 +1096,15 @@ describe("cms persistence", () => {
     const orb = await getPublishedProject(sql, "lumen");
     assert.match(
       orb.sourceEvidence.find((item) => item.href?.includes("ai-chat-8rq3"))?.note ?? "",
-      /想做什麼/,
+      /拍照開始/,
     );
+    assert.ok(orb.process.some((item) => item.includes("自動聽")));
+    assert.ok(orb.process.some((item) => item.includes("長任務")));
+    assert.ok(orb.decisions.every((item) => !item.includes("首頁只有")));
     assert.doesNotMatch(orb.experienceConfig.conversation?.starter ?? "", /Hermes 執行期/);
     assert.match(orb.experienceConfig.conversation?.starter ?? "", /想做什麼/);
+    assert.match(orb.experienceConfig.intro ?? "", /自動聽/);
+    assert.ok(orb.experienceConfig.conversation?.suggestions?.includes("拍照開始"));
     assert.ok(orb.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -1404,20 +1409,26 @@ describe("cms persistence", () => {
     const game = await getPublishedProject(sql, "focus-challenge");
     assert.doesNotMatch(game.summary, /即時看活動狀態/);
     assert.doesNotMatch(game.problem, /不是再填一張表/);
-    assert.match(game.summary, /登記|填關主/);
+    assert.match(game.summary, /看指令選顏色/);
+    assert.match(game.summary, /正式參賽/);
     assert.match(game.problem, /仍要先填/);
-    assert.ok(game.process.some((item) => item.includes("登記畫面")));
+    assert.ok(game.process.some((item) => item.includes("看指令選顏色")));
+    assert.ok(game.process.some((item) => item.includes("正式參賽")));
+    assert.ok(game.process.some((item) => item.includes("本名")));
+    assert.ok(game.process.every((item) => !item.includes("登記畫面")));
     assert.ok(game.process.some((item) => item.includes("60 秒正式 Stroop")));
     assert.ok(game.limitations.some((item) => item.includes("/api/health")));
     assert.ok(game.limitations.some((item) => item.includes("67 筆")));
     assert.ok(game.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(game.sourceEvidence[0]?.note ?? "", /health ok/);
-    assert.match(game.sourceEvidence[0]?.note ?? "", /登記畫面/);
+    assert.match(game.sourceEvidence[0]?.note ?? "", /看指令選顏色/);
+    assert.match(game.sourceEvidence[0]?.note ?? "", /本名/);
     const walk = game.experienceConfig.walkthrough ?? [];
     assert.ok(walk.some((step) => step.title === "教學／練習"));
     assert.equal(walk.some((step) => step.title === "暖身"), false);
-    assert.equal(walk[0]?.title, "登記");
-    assert.match(game.experienceConfig.intro ?? "", /登記畫面/);
+    assert.equal(walk[0]?.title, "攤位首屏");
+    assert.match(game.experienceConfig.intro ?? "", /看指令選顏色/);
+    assert.match(game.experienceConfig.intro ?? "", /正式參賽/);
     assert.match(game.experienceConfig.intro ?? "", /關主/);
     assert.doesNotMatch(game.experienceConfig.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     assert.match(game.locale.en?.summary ?? "", /not an activity-status dashboard/i);

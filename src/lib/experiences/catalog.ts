@@ -286,7 +286,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "interactive-walkthrough",
     honestyLabel: "現場遊戲，不是心理測驗",
     walkthrough: [
-      { title: "登記", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。首屏是登記畫面：關主、姓名、科系、年級、電話。不是立刻開打。" },
+      { title: "攤位首屏", body: "公開站 leader-dna-mcp-a7k2。標題「淡江大學禪學社｜專注力挑戰賽」。公開 JS 有「60 秒」「看指令選顏色」「現場手搖杯」「正式參賽」「怎麼玩」。表單欄位關主、本名、科系、年級、電話。正式按鈕「開始練習」。不是立刻開打。" },
       { title: "教學／練習", body: "兩題教學與 15 秒練習不計分、不登記。正式賽前仍要先填關主與基本資料。" },
       { title: "60 秒", body: "正式 Stroop 會 POST /api/register 與 /api/result。作品集未送出個資，也未操作這一局。" },
       { title: "排行榜", body: "GET /api/leaderboard?scope=history 回 67 筆遮罩姓名。今日 0 筆。電話與完整名冊只在 /admin。" },
@@ -296,9 +296,9 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     mode: "conversation-preview",
     honestyLabel: "作品集預覽，不是 Lumen 語音執行期",
     walkthrough: [
-      { title: "想做什麼", body: "公開站 ai-chat-8rq3 首屏「想做什麼？」「點一下開始聽 · 按住說話」。這頁不是語音執行期。" },
-      { title: "入口", body: "做海報、拍照、開始做影片、長任務。" },
-      { title: "最近", body: "從最近專案繼續，不要把未生成的結果假裝完成。" },
+      { title: "想做什麼", body: "公開站 ai-chat-8rq3 標題 Lumen。首屏「想做什麼？」「點一下開始聽 · 按住說話」。header 有「自動聽」。這頁不是語音執行期。" },
+      { title: "入口", body: "四個按鈕：做海報、拍照開始、做影片、長任務。不是「拍照」。" },
+      { title: "最近", body: "下方「最近」可切專案／生成／畫板。不要把未生成的結果假裝完成。" },
     ],
   },
   xiaocai: {

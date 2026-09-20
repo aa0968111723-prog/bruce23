@@ -142,11 +142,15 @@ describe("official project registry", () => {
   it("records the ty public flow probe without claiming coreFlow", () => {
     const project = projects.find((item) => item.slug === "focus-challenge");
     assert.ok(project);
-    assert.match(TY_CONTRACT_VERSION, /ty-register-intro/);
+    assert.match(TY_CONTRACT_VERSION, /ty-booth-home-chrome/);
     assert.doesNotMatch(project.summary, /即時看活動狀態/);
     assert.doesNotMatch(project.problem, /不是再填一張表/);
-    assert.match(project.summary, /登記|填關主/);
-    assert.ok(project.process.some((item) => item.includes("登記畫面")));
+    assert.match(project.summary, /看指令選顏色/);
+    assert.match(project.summary, /正式參賽/);
+    assert.ok(project.process.some((item) => item.includes("看指令選顏色")));
+    assert.ok(project.process.some((item) => item.includes("正式參賽")));
+    assert.ok(project.process.some((item) => item.includes("本名")));
+    assert.ok(project.process.every((item) => !item.includes("登記畫面")));
     assert.ok(project.limitations.some((item) => item.includes("67 筆")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
@@ -273,9 +277,15 @@ describe("official project registry", () => {
   it("records Lumen first screen without Hermes conversation chrome", () => {
     const project = projects.find((item) => item.slug === LUMEN_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-not-hermes/);
+    assert.match(LUMEN_LIVE_PROBE_VERSION, /lumen-live-home-chrome/);
     assert.equal(project.links.live, "https://ai-chat-8rq3.zeabur.app");
+    assert.ok(project.process.some((item) => item.includes("自動聽")));
+    assert.ok(project.process.some((item) => item.includes("拍照開始")));
+    assert.ok(project.process.some((item) => item.includes("長任務")));
+    assert.ok(project.process.every((item) => !item.includes("選做海報／拍照／開始做影片")));
+    assert.ok(project.decisions.every((item) => !item.includes("首頁只有")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("想做什麼")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("拍照開始")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 Hermes")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });

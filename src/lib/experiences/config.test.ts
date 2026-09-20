@@ -232,6 +232,12 @@ describe("experience config merge", () => {
     assert.equal(zenDesk.walkthrough?.[2]?.title, "來源邊界");
     const lumen = defaultExperienceConfig("lumen");
     assert.match(lumen.conversation?.starter ?? "", /想做什麼/);
+    assert.match(lumen.intro ?? "", /自動聽/);
+    assert.match(lumen.intro ?? "", /拍照開始/);
+    assert.match(lumen.intro ?? "", /長任務/);
+    assert.ok(lumen.conversation?.suggestions?.includes("拍照開始"));
+    assert.ok(lumen.conversation?.suggestions?.includes("長任務"));
+    assert.ok(!lumen.conversation?.suggestions?.includes("拍照"));
     assert.doesNotMatch(lumen.conversation?.starter ?? "", /Hermes 執行期/);
     const agent = defaultExperienceConfig("hermes-agent");
     assert.match(agent.conversation?.starter ?? "", /Sign in — Hermes Agent/);
@@ -275,8 +281,12 @@ describe("experience config merge", () => {
     assert.match(cutosIntro.intro ?? "", /載入示範影片/);
     assert.doesNotMatch(cutosIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const tyIntro = defaultExperienceConfig("focus-challenge");
-    assert.match(tyIntro.intro ?? "", /登記畫面/);
+    assert.match(tyIntro.intro ?? "", /看指令選顏色/);
+    assert.match(tyIntro.intro ?? "", /正式參賽/);
+    assert.match(tyIntro.intro ?? "", /本名/);
+    assert.match(tyIntro.intro ?? "", /開始練習/);
     assert.match(tyIntro.intro ?? "", /關主/);
+    assert.doesNotMatch(tyIntro.intro ?? "", /登記畫面/);
     assert.doesNotMatch(tyIntro.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     const filled = mergeExperienceConfig("tku-zen-ai", { conversation: { engine: "zen-local", suggestions: [] } });
     assert.equal(filled.conversation?.suggestions?.length, 4);

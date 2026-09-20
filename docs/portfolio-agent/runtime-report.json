@@ -1,9 +1,9 @@
 {
-  "version": 19,
-  "generatedAt": "2026-09-20T14:00:00Z",
-  "runId": "portfolio-agent-hour-18",
+  "version": 20,
+  "generatedAt": "2026-09-20T15:00:00Z",
+  "runId": "portfolio-agent-hour-19",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T14:00:00Z",
+  "startedAt": "2026-09-20T15:00:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -13,10 +13,10 @@
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
   "task": "hourly-multi-agent-sentinel-inspection",
-  "inspectedCommit": "a9da0e4",
+  "inspectedCommit": "c5c20c5",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66],
     "openRepair": [],
     "doNotMerge": [10]
   },
@@ -26,7 +26,7 @@
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#63",
+    "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#66",
     "security": "VERIFIED_NO_SECRETS_EXPOSED"
   },
   "probes": [
@@ -61,10 +61,10 @@
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
       "status": 200,
-      "pr61Landed": true,
-      "copy": "登記畫面 / 關主 intro live. 不是線上產品本身. No 不是空白計數器.",
+      "pr65Landed": true,
+      "copy": "Intro 公開站攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」。表單是關主、本名、科系、年級、電話；正式按鈕「開始練習」。No 登記畫面／姓名.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T04:42:00Z"
+      "checkedAt": "2026-09-20T06:20:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/skatehub",
@@ -106,6 +106,22 @@
       "copy": "Intro quotes 開始巡禮 / 校園圖鑑 / WASD 移動 live controls; Live Demo `/` is the 3D world, /login is the pass gate.",
       "coreFlowPass": false,
       "checkedAt": "2026-09-20T05:35:00Z"
+    },
+    {
+      "url": "https://ai-chat-8rq3.zeabur.app/",
+      "status": 200,
+      "title": "Lumen",
+      "copy": "GET / HTTP 200. HTML has 自動聽, 想做什麼？, 點一下開始聽 · 按住說話; buttons 做海報 / 拍照開始 / 做影片 / 長任務; Recent 專案 / 生成 / 畫板. Not 拍照. Not hold-to-speak coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T06:30:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/lumen",
+      "status": 200,
+      "pr66Landed": true,
+      "copy": "Intro quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板; Live Demo `/` is the chat creation sphere without claiming hold-to-speak coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T06:55:00Z"
     }
   ],
   "gates": {
@@ -121,12 +137,13 @@
   "portfolioReady": false,
   "blockers": [
     "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件; PR #55 and #57 withhold the source href and explorer view"
   ],
   "nextSteps": [
     "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections",
-    "Verify production /work/tamkang-world quotes live home controls without claiming a 3D WASD coreFlow after PR #63 deployment",
+    "Verify production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 after PR #66 deployment",
+    "Next honesty gap: Folio 給 MCP 與內嵌網站 / 開發者 SDK",
     "Continuous UI/UX polish, glassmorphism enhancements and AI concierge tuning",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]

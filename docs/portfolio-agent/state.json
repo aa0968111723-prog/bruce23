@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-18",
-  "updatedAt": "2026-09-20T14:00:00Z",
+  "runId": "portfolio-agent-hour-19",
+  "updatedAt": "2026-09-20T15:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -864,14 +864,17 @@
     "Non-Folio walkthrough leftover Folio blank-counter chrome merged as PR #61 and live: /work/cutos /work/focus-challenge /work/skatehub /work/tamkang-world /work/tamsui-drama /work/zen-studio quote 不是線上產品本身; Folio keeps that honesty note",
     "Zen AI local SVG flow thumb recognized as local asset merged as PR #62 and live: /work/tku-zen-ai prints Canva 尚未設定 not Canva 無法嵌入",
     "Tamkang live home controls honesty merged as PR #63 and live: /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, keeps 校園通行證 on /login, without claiming 3D coreFlow",
+    "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名",
+    "Lumen live home chrome merged as PR #66 and live on production /work/lumen: 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板 without claiming hold-to-speak coreFlow",
     "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
     "Merge PR #6 long-term integration plan onto main without duplicate PRs",
-    "Verify production /work/tamkang-world quotes live controls after PR #63 deployment",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
+    "Verify production /work/lumen quotes live controls after PR #66 deployment",
+    "Next honesty gap: Folio 給 MCP 與內嵌網站 / 開發者 SDK",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
     "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
@@ -880,7 +883,7 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_THROUGH_PR63_MERGED",
+  "productionStatus": "PR46_THROUGH_PR66_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -894,7 +897,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, and ty 60-second Stroop need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, and Lumen hold-to-speak need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -910,5 +913,5 @@
       "nextAction": "Do not change tku-zen-agent GitHub visibility. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #63 deploys, verify production /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, and keeps 校園通行證 on /login. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #66 deploys, verify production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板, not 首頁只有想做什麼／拍照. Do not claim a hold-to-speak coreFlow. Folio 給 MCP 與內嵌網站 is the next honesty gap. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen hold-to-speak stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
