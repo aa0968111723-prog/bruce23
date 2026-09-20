@@ -32,6 +32,8 @@ test("timestamps and reachability wording remain evidence-safe", () => {
 
   if (state.gates.online.status !== "VERIFIED_PASS") {
     assert.doesNotMatch(String(report.validation.browser), /^VERIFIED_200_ALL/);
+    assert.doesNotMatch(String(report.validation.browser), /19_OF_19/);
+    assert.doesNotMatch(state.completedSteps.join("\n"), /100% HTTP 200/);
   }
 
   const hasVisibilityBlocker = state.blockers?.some(

@@ -867,7 +867,7 @@
     "Tamkang live home controls honesty merged as PR #63 and live: /work/tamkang-world quotes 開始巡禮 / 校園圖鑑 / WASD 移動 on live `/`, keeps 校園通行證 on /login, without claiming 3D coreFlow",
     "ty booth home chrome merged as PR #65 and live on production /work/focus-challenge: 看指令選顏色 / 現場手搖杯 / 正式參賽 / 本名 / 開始練習, not 登記畫面／姓名",
     "Lumen live home chrome merged as PR #66 and live on production /work/lumen: 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板 without claiming hold-to-speak coreFlow",
-    "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
+    "Recorded a sentinel HTTP reachability baseline without promoting any functional gate",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Recorded current repository visibility without treating publication as security acceptance"
   ],

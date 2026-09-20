@@ -22,7 +22,7 @@
   },
   "validation": {
     "buildAndTypecheck": "PASS: tsc --noEmit + all unit tests pass + integration-line tests + full npm test suite clean pass",
-    "browser": "HTTP_200_BASELINE_REPORTED_19_OF_19_NOT_FUNCTIONAL_ACCEPTANCE",
+    "browser": "HTTP_REACHABILITY_BASELINE_NOT_FUNCTIONAL_ACCEPTANCE",
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
