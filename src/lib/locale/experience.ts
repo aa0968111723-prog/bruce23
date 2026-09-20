@@ -668,6 +668,50 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       { path: "lib/server/canva.ts", purpose: "Canva Connect adapter; unavailable until configured", stage: "Limits" },
     ],
   },
+  "tku-zen-agent": {
+    honestyLabel: "Access-code club desk, not local tku-zen-ai, and not Hermes",
+    intro:
+      "The unsigned public first screen is the gate: h1 Tamkang Leader Zen club, Enter access code, Enter the desk. It is not the workbench chat.",
+    conversation: {
+      disclaimer: "This is a portfolio preview. It is not connected to the club database, and it is not Hermes Agent.",
+      starter:
+        "Unsigned visitors only see h1 Tamkang Leader Zen club plus Enter access code and Enter the desk. This page does not pretend you are inside, and it does not show a club file tree.",
+      placeholder: "Type access code, draft, or source",
+      sourceNote: "Not the local tku-zen-ai companion. The source link is withheld, and source documents are not copied.",
+      suggestions: ["Access code", "Draft", "Source"],
+      replies: [
+        {
+          matchZh: "授權",
+          match: "access",
+          reply: "GET /api/auth is token mode and unsigned. This portfolio will not submit an access code or read club data.",
+        },
+        {
+          matchZh: "草稿",
+          match: "draft",
+          reply: "After auth, the draft row says draft mode will not auto-publish. That is not the visitor first screen.",
+        },
+        {
+          matchZh: "來源",
+          match: "source",
+          reply: "Source-repo visibility conflicts with its own privacy rules. Until the owner reviews it, this portfolio does not link to the source or copy a file tree.",
+        },
+      ],
+    },
+    walkthrough: [
+      {
+        title: "Ask mode",
+        body: "Open tku-zen-agent-k7f2.zeabur.app/?mode=ask. HTTP 200. GET /api/auth mode=token, unsigned.",
+      },
+      {
+        title: "Access gate",
+        body: "Unsigned first screen h1 Tamkang Leader Zen club, Enter access code, Enter the desk. Not Start with one sentence.",
+      },
+      {
+        title: "Source boundary",
+        body: "Source-repo visibility conflicts with its own privacy rules. The source link is withheld pending owner review; this site does not copy a file tree.",
+      },
+    ],
+  },
   "tku-zen-ai": {
     honestyLabel: "Local reply engine, not a cloud LLM",
     intro: "The public chat first screen is the English welcome “Welcome to TKU Zen AI. Take a breath, and share whatever is on your mind.” This page runs the same local engine, not a cloud LLM.",

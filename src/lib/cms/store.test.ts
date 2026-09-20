@@ -1289,8 +1289,13 @@ describe("cms persistence", () => {
            limitations = $3::jsonb,
            source_evidence = $4::jsonb,
            experience_config = $5::jsonb,
+           github_url = $6,
+           github_owner = $7,
+           github_repo = $8,
+           github_readme = $9,
+           github_metadata = $10::jsonb,
            github_sync_enabled = true,
-           github_file_tree = $6::jsonb
+           github_file_tree = $11::jsonb
        where slug = $1`,
       [
         "tku-zen-agent",
@@ -1305,6 +1310,11 @@ describe("cms persistence", () => {
           },
         ]),
         JSON.stringify({}),
+        "https://github.com/aa0968111723-prog/tku-zen-agent",
+        "aa0968111723-prog",
+        "tku-zen-agent",
+        "stale cached README",
+        JSON.stringify({ private: false, htmlUrl: "https://github.com/aa0968111723-prog/tku-zen-agent" }),
         JSON.stringify([{ path: "knowledge/雲端文件/108學年度/活動企劃書.md", type: "file" }]),
       ],
     );
@@ -1319,13 +1329,22 @@ describe("cms persistence", () => {
       desk.sourceEvidence.find((item) => item.href?.includes("tku-zen-agent-k7f2"))?.note ?? "",
       /請先輸入授權碼/,
     );
-    assert.match(
-      desk.sourceEvidence.find((item) => item.href?.includes("github.com"))?.note ?? "",
-      /不可以轉成 public/,
-    );
-    assert.ok(desk.limitations.some((item) => item.includes("knowledge/雲端文件")));
+    assert.ok(desk.sourceEvidence.every((item) => !item.href?.includes("github.com")));
+    assert.ok(desk.sourceEvidence.some((item) => item.note.includes("不提供 GitHub href")));
+    assert.ok(desk.limitations.some((item) => item.includes("visibility") && item.includes("來源文件")));
     assert.ok(desk.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.equal(desk.github.url, null);
+    assert.equal(desk.github.owner, null);
+    assert.equal(desk.github.repo, null);
+    assert.equal(desk.github.readme, null);
+    assert.ok(desk.experienceConfig.conversation?.suggestions?.includes("來源"));
+    assert.ok(!desk.experienceConfig.conversation?.suggestions?.includes("GitHub"));
+    assert.doesNotMatch(desk.experienceConfig.conversation?.sourceNote ?? "", /knowledge\/雲端文件/);
     assert.equal(admin.github_sync_enabled, false);
+    assert.equal(admin.github_url, null);
+    assert.equal(admin.github_owner, null);
+    assert.equal(admin.github_repo, null);
+    assert.equal(admin.github_readme, null);
     assert.equal(admin.github_file_tree?.length ?? 0, 0);
   });
 
