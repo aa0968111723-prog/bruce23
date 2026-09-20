@@ -439,9 +439,19 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "SkateHub",
     subtitle: "Toward health, toward sunlight",
     summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
-    process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+    decisions: [
+      "The public title is Toward health, toward sunlight.",
+      "The first-screen slogan is “Don’t stay home on your phone — put on skates and go,” not a paraphrase of put on skates.",
+      "The host is dd-k3f9; do not mix it with canva2 (Folio).",
+    ],
+    process: [
+      "Open dd-k3f9.zeabur.app (title SkateHub｜Toward health, toward sunlight)",
+      "First-screen h1 Toward health, toward sunlight; slogan “Don’t stay home on your phone — put on skates and go”",
+      "Buttons Browse the gear catalog / Log today’s mileage",
+      "This portfolio has not logged real mileage",
+    ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS slogan catalogs gear and mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS first screen h1 Toward health, toward sunlight; slogan catalogs gear and says Don’t stay home on your phone — put on skates and go; buttons Browse the gear catalog / Log today’s mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
     ],
   },
   "zen-studio": {

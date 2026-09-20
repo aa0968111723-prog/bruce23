@@ -106,7 +106,7 @@ export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260
 
 export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
 
-export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-canvas-intro-20260920";
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-quote-20260920";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 

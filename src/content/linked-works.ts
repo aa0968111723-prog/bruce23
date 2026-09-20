@@ -128,15 +128,21 @@ export const linkedWorks: Project[] = [
     role: "互動產品：圖鑑、裝備與里程紀錄。",
     decisions: [
       "公開站標題寫「走向健康，走向陽光」。",
+      "首屏 slogan 是「不要在家玩手機，穿上輪鞋出發吧！」，不是抽象的穿上輪鞋。",
       "網域是 dd-k3f9，不要跟 canva2（Folio）混用。",
     ],
     modalities: ["圖像", "互動"],
-    process: ["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程", "回來看自己的基地"],
+    process: [
+      "打開 dd-k3f9.zeabur.app（標題「直排輪基地 SkateHub｜走向健康，走向陽光」）",
+      "首屏 h1「走向健康，走向陽光」；slogan「不要在家玩手機，穿上輪鞋出發吧！」",
+      "按鈕「瀏覽裝備圖鑑／記錄今天的里程」",
+      "作品集未記錄真實里程",
+    ],
     outputs: ["直排輪基地公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
       "個人紀錄依部署資料庫，不在此公開他人資料。",
-      "2026-09-19 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「收錄市售直排輪款式與配件圖鑑…不要在家玩手機，穿上輪鞋出發吧！」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 h1「走向健康，走向陽光」；slogan「收錄市售直排輪款式與配件圖鑑，打造你的專屬裝備庫，記錄每一公里的滑行足跡。不要在家玩手機，穿上輪鞋出發吧！」；按鈕「瀏覽裝備圖鑑／記錄今天的里程」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/dd",
@@ -150,7 +156,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · dd-k3f9.zeabur.app",
         href: "https://dd-k3f9.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan 含圖鑑與里程。不是 Folio。",
+        note: "2026-09-20 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「不要在家玩手機，穿上輪鞋出發吧！」與按鈕「瀏覽裝備圖鑑／記錄今天的里程」。不是 Folio。",
       },
       {
         label: "GitHub · dd",

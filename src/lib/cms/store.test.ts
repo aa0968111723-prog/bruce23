@@ -1007,10 +1007,11 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
        where slug = $1`,
       [
         "skatehub",
+        JSON.stringify(["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程"]),
         JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
         JSON.stringify([
           {
@@ -1027,8 +1028,10 @@ describe("cms persistence", () => {
     const hub = await getPublishedProject(sql, "skatehub");
     assert.match(
       hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
-      /走向健康，走向陽光/,
+      /不要在家玩手機/,
     );
+    assert.ok(hub.process.some((item) => item.includes("瀏覽裝備圖鑑")));
+    assert.match(hub.experienceConfig.intro ?? "", /不要在家玩手機/);
     assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

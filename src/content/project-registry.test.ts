@@ -252,10 +252,15 @@ describe("official project registry", () => {
   it("records SkateHub live slogan without claiming a mileage coreFlow", () => {
     const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-canvas-intro/);
+    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-live-slogan-quote/);
     assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
-    assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));
+    assert.ok(project.process.some((item) => item.includes("不要在家玩手機")));
+    assert.ok(project.process.some((item) => item.includes("瀏覽裝備圖鑑")));
+    assert.ok(project.process.some((item) => item.includes("記錄今天的里程")));
+    assert.ok(project.decisions.some((item) => item.includes("不要在家玩手機")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不要在家玩手機")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("瀏覽裝備圖鑑")));
+    assert.ok(project.limitations.some((item) => item.includes("不要在家玩手機")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
