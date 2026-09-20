@@ -55,6 +55,10 @@ describe("experience playable chrome", () => {
     assert.match(en.noShareTitle, /no public share URL/i);
     assert.match(zh.sourcePublicEmbed, /未宣稱 Connect 已連線/);
     assert.match(en.sourcePublicEmbed, /not claiming Connect is linked/i);
+    assert.doesNotMatch(zh.sourcePublicEmbed, /\{status\}|not_configured/);
+    assert.doesNotMatch(en.sourcePublicEmbed, /\{status\}|not_configured/);
+    assert.doesNotMatch(zh.liveStatus, /\{status\}/);
+    assert.doesNotMatch(en.liveStatus, /\{status\}/);
     assert.doesNotMatch(en.unavailableTitle, /connected/i);
     assert.doesNotMatch(en.canvaEmptyNote, /Connect is linked/);
   });

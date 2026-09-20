@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "runId": "grok-impl-20260920-github-public-sync-honesty",
-  "updatedAt": "2026-09-20T02:50:00Z",
+  "runId": "grok-impl-20260920-live-canva-status-chrome",
+  "updatedAt": "2026-09-20T03:25:00Z",
   "overallStatus": "IN_PROGRESS",
   "portfolioReady": false,
   "currentProject": "portfolio-hub",
   "currentRepository": "aa0968111723-prog/bruce23",
-  "currentBranch": "fix/github-public-sync-honesty",
+  "currentBranch": "fix/live-canva-status-chrome",
   "currentPR": null,
-  "currentTask": "github-public-sync-honesty",
+  "currentTask": "live-canva-status-chrome",
   "taskStatus": "ready_to_pr",
   "completedSteps": [
     "Hermes k7q2 URL already on production",
@@ -56,25 +56,26 @@
     "Zen source-link containment merged as PR #55 and live on production /work/tku-zen-agent (no github.com/aa0968111723-prog/tku-zen-agent href; 原始碼 · 暫不公開連結; chips 授權碼/草稿/來源)",
     "Xiaocai gallery note merged as PR #56 and live on production /work/xiaocai (點我一下，快速記一筆吧, not 只顯示已發布媒體)",
     "Zen GitHub explorer withheld empty state merged as PR #57 and live on production /work/tku-zen-agent (可見性與自身隱私規則衝突 / 不提供 GitHub 連結, not 還沒有公開 GitHub 來源; no tku-zen-agent GitHub href)",
-    "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured"
+    "Live demo status honesty merged as PR #58 and live: /work/tku-zen-agent GitHub 暫不公開連結 · Demo 公開網址（無法嵌入）; /work/hermes-console GitHub 已同步 · Demo 公開網址（無法嵌入）; no raw Demo unavailable / not_configured",
+    "GitHub public-sync honesty merged as PR #59 and live: /work/cutos /work/xiaocai /work/lumen /work/focus-challenge GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗; /work/tku-zen-agent still has no tku-zen-agent GitHub href"
   ],
   "remainingSteps": [
-    "Land PR so public GitHub URLs are not labeled GitHub 同步失敗 when the tree hydrate failed",
+    "Land PR so Visual/Canva tabs do not interpolate raw CMS enums (verified / not_configured / unavailable)",
     "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ],
-  "testsPassed": 157,
+  "testsPassed": 169,
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "READY_TO_PR",
-  "productionStatus": "PR58_LIVE_GITHUB_FAILED_NEXT_TO_PUBLIC_REPOS",
+  "productionStatus": "PR59_LIVE_RAW_CMS_ENUM_IN_LIVE_CANVA_CHROME",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
@@ -107,5 +108,5 @@
     "desktopSmoke": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": 0, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "After the GitHub public-sync honesty PR deploys, verify production /work/cutos /work/xiaocai /work/lumen /work/focus-challenge print GitHub 公開連結（檔案樹未同步） not GitHub 同步失敗, still keep public GitHub hrefs, and /work/tku-zen-agent still has no github.com/aa0968111723-prog/tku-zen-agent href. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Folio/PLANFORM/CUTOS/ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "After the Live Demo/Canva status chrome PR deploys, verify production Visual tab iframe footer prints Live Demo · 已驗證 not Live Demo · 狀態 verified, and Canva tab source mark prints 尚未設定/無法嵌入 not 狀態 not_configured. Do not mark coreFlow. Do not change tku-zen-agent GitHub visibility. Folio/PLANFORM/CUTOS/ty coreFlow stays BLOCKED on a real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }
