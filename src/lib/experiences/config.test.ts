@@ -246,6 +246,9 @@ describe("experience config merge", () => {
     const studio = defaultExperienceConfig("zen-studio");
     assert.match(studio.intro ?? "", /今天可以創作什麼/);
     assert.doesNotMatch(studio.intro ?? "", /逐步走查/);
+    const xiaocai = defaultExperienceConfig("xiaocai");
+    assert.match(xiaocai.galleryNote ?? "", /快速記一筆/);
+    assert.doesNotMatch(xiaocai.galleryNote ?? "", /只顯示已發布媒體/);
     const hub = defaultExperienceConfig("skatehub");
     assert.match(hub.intro ?? "", /穿上輪鞋出發/);
     assert.doesNotMatch(hub.intro ?? "", /逐步走查/);
