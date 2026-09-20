@@ -73,6 +73,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "tamsui-drama") {
+    return {
+      ...base,
+      intro: "公開站首屏是「載入淡江·淡水世界…」，標題「安倢的校園闖關」。這是作品集走查，不是闖關本體。",
+    };
+  }
+
   if (slug === "tamkang-world") {
     return {
       ...base,
