@@ -221,10 +221,17 @@ describe("official project registry", () => {
   it("records Folio first screen as 文件櫃 without claiming a publish coreFlow", () => {
     const project = projects.find((item) => item.slug === FOLIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-cabinet-intro/);
+    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-live-subtitle-sdk/);
     assert.equal(project.links.live, "https://canva2-k7qm.zeabur.app");
     assert.ok(project.process[0]?.includes("文件櫃"));
+    assert.ok(project.process[0]?.includes("給 MCP 與內嵌網站"));
+    assert.ok(project.process[0]?.includes("開發者 SDK"));
+    assert.ok(project.decisions.some((item) => item.includes("給 MCP 與內嵌網站")));
+    assert.ok(project.decisions.some((item) => item.includes("開發者 SDK")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("文件櫃")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("給 MCP 與內嵌網站")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("開發者 SDK")));
+    assert.ok(project.limitations.some((item) => item.includes("開發者 SDK")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

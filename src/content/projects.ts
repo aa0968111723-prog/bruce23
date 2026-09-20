@@ -542,6 +542,7 @@ const featuredWorks: Project[] = [
       "海報、社群、投影片與 UI 草稿需要專精編輯器，而且要讓代理用同一套指令操作，而不是另做一套自動化 API。",
     role: "創意工具設計：指令層、設計檢查、發布／內嵌與 MCP 安全邊界。",
     decisions: [
+      "公開站首屏是「文件櫃」，副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。",
       "未安裝 SDK 的跨來源網站只提供 Live iframe 或 Snapshot，不假裝讀 DOM。",
       "MCP 寫入預設 dry-run，未發布文件不會出現在公開 /mcp/$id。",
       "密鑰只留伺服器；SSRF 拒絕內網、本機與 metadata。",
@@ -549,7 +550,7 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["畫布", "設計 token", "嵌入", "MCP"],
     process: [
-      "打開文件櫃（存在這台裝置，不必登入）",
+      "打開文件櫃（給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入 · 開發者 SDK）",
       "在畫布建立文字／形狀／元件",
       "設計檢查（對比、溢出、安全區）",
       "可選匯入外部網站三種模式",
@@ -565,7 +566,7 @@ const featuredWorks: Project[] = [
       "沒有獨立點陣圖片物件型別，圖片以 pixel layer 或 Snapshot 存在。",
       "寫入 token 不會自動過期，需重新發布才輪替。",
       "外部 MCP 連線在單一 Node 行程記憶體，多實例不共享。",
-      "2026-09-19 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，文案「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
@@ -617,7 +618,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · canva2-k7qm.zeabur.app",
         href: "https://canva2-k7qm.zeabur.app",
-        note: "Zeabur 服務 canva2。2026-09-19 HTTP 200，標題 Folio。首屏「文件櫃」。不是 dd-k3f9（直排輪基地）。",
+        note: "Zeabur 服務 canva2。2026-09-20 HTTP 200，標題 Folio。首屏「文件櫃」；副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」；連到「開發者 SDK」。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",

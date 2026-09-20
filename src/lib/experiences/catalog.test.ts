@@ -114,6 +114,14 @@ describe("experience catalog", () => {
     assert.ok((experienceCatalog["tku-zen-ai"].fileHints ?? []).some((item) => item.path === "src/app/page.tsx"));
   });
 
+  it("keeps folio walkthrough on the live file-cabinet subtitle", () => {
+    const steps = experienceCatalog.folio.walkthrough ?? [];
+    assert.equal(steps[0]?.title, "文件櫃");
+    assert.match(steps[0]?.body ?? "", /給 MCP 與內嵌網站/);
+    assert.match(steps[0]?.body ?? "", /開發者 SDK/);
+    assert.match(steps[0]?.body ?? "", /不必登入/);
+  });
+
   it("keeps hermes-console walkthrough on the live what-to-do-today chips", () => {
     const steps = experienceCatalog["hermes-console"].walkthrough ?? [];
     assert.match(steps[0]?.body ?? "", /今天想做什麼/);

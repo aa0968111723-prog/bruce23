@@ -155,7 +155,7 @@ export const experienceCatalog: Record<string, ExperienceCatalogEntry> = {
     walkthrough: [
       {
         title: "文件櫃",
-        body: "公開站 canva2-k7qm 首屏是文件櫃。存在這台裝置，不必登入。",
+        body: "公開站 canva2-k7qm 首屏是文件櫃。副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。",
       },
       {
         title: "畫布",
