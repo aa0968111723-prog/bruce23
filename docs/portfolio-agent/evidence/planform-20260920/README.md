@@ -31,3 +31,9 @@ All project acceptance booleans remain false and readiness unscored. Browser vie
 A new browser tab reopened the retained synthetic project. Selecting the moved chair confirmed **QA chair**, **X=720 cm**, **Z=480 cm**, elevation 0 in the inspector. These match the previous native-keyboard edits. The persistence uncertainty from that retry is resolved; locator-fill behavior alone is not an application defect.
 
 [Verified inspector screenshot](desktop-persistence-confirmed.jpg) · [Timestamped result](persistence-followup.json). JPEG/JFIF signature checked, viewport 1440×900. No acceptance gate promotion: drag, undo/redo, mobile touch and error recovery remain to be tested. Next task is drag/undo/redo with exact coordinates on this synthetic chair.
+
+## Drag follow-up (codex-planform-drag-1101)
+
+Two desktop drags opened the QA chair / 地墊區 B overlap picker. Translation was not verified. Subsequent precision-input/undo/nudge interactions did not produce reliable model-state evidence; no undo/redo pass is awarded. Reload restored normal 場佈 mode switching. No console warning/error entries were captured.
+
+[Detailed reproduction](drag-followup.json) · [Recovered scene](drag-recovery.jpg). The screenshot shows recovery only. Root cause remains unconfirmed; distinguish automation pointer/input behavior from an application defect before opening an external repair. Next: inspect the overlap/pointer lifecycle and reproduce using a non-overlapping synthetic object in 場佈 mode. All portfolio acceptance gates remain unchanged.
