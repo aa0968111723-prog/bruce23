@@ -749,10 +749,38 @@ describe("cms persistence", () => {
     assert.ok(frame.process.some((item) => item.includes("登入工作室")));
     assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
     assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
-    assert.match(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
+    assert.match(frame.experienceConfig.intro ?? "", /登入工作室/);
+    assert.match(frame.experienceConfig.intro ?? "", /不是生成網站/);
     assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
     assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
+  });
+
+  it("quotes FrameLab live landing CTAs without claiming a repair coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "framelab",
+        JSON.stringify(["公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'framelab_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const frame = await getPublishedProject(sql, "framelab");
+    assert.match(frame.experienceConfig.intro ?? "", /登入工作室/);
+    assert.match(frame.experienceConfig.intro ?? "", /系統狀態/);
+    assert.match(frame.experienceConfig.intro ?? "", /不是生成網站/);
+    assert.doesNotMatch(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
+    assert.ok(frame.decisions.some((item) => item.includes("不是生成網站")));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("rewrites stale 502 notes for 小財 and the Zen desk after a live 200 probe", async () => {
@@ -1007,10 +1035,11 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
        where slug = $1`,
       [
         "skatehub",
+        JSON.stringify(["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程"]),
         JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
         JSON.stringify([
           {
@@ -1027,8 +1056,10 @@ describe("cms persistence", () => {
     const hub = await getPublishedProject(sql, "skatehub");
     assert.match(
       hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
-      /走向健康，走向陽光/,
+      /不要在家玩手機/,
     );
+    assert.ok(hub.process.some((item) => item.includes("瀏覽裝備圖鑑")));
+    assert.match(hub.experienceConfig.intro ?? "", /不要在家玩手機/);
     assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 

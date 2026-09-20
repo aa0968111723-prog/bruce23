@@ -500,7 +500,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   framelab: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public site opens on a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in. This is a portfolio demo timeline, not the live workstation.",
+    intro: "The public first screen is a landing page. Subtitle “Frame-by-frame animation workstation”, h1 “Give it keyframes. Repair only the frames that break.” Primary buttons “Sign in to the studio” and “System status”. Not an NLE, and not a generation website. This is a portfolio demo timeline, not the live workstation.",
     timeline: {
       demoDisclaimer: "Frames labeled “demo” are not GPU model output. Real Wan / RIFE / SAM adapters are not loaded.",
     },
@@ -841,6 +841,25 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       {
         title: "Recent",
         body: "The Recent strip switches 專案 / 生成 / 畫板. Do not pretend an ungenerated result is done.",
+      },
+    ],
+  },
+  skatehub: {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is Toward health, toward sunlight. Slogan: catalog of retail skates and parts, build your kit, log every kilometre. Don’t stay home on your phone — put on skates and go. Buttons: Browse the gear catalog / Log today’s mileage. This is a portfolio walkthrough, not the live hub.",
+    walkthrough: [
+      {
+        title: "Open the hub",
+        body: "Public dd-k3f9. Title SkateHub｜Toward health, toward sunlight. h1 Toward health, toward sunlight. Slogan Don’t stay home on your phone — put on skates and go. Buttons Browse the gear catalog / Log today’s mileage. Not Folio.",
+      },
+      {
+        title: "Browse the gear catalog",
+        body: "The accent button Browse the gear catalog opens catalog. This page does not tap it for you.",
+      },
+      {
+        title: "Log today’s mileage",
+        body: "The ghost button Log today’s mileage opens mileage. This portfolio has not logged real mileage.",
       },
     ],
   },

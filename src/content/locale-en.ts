@@ -146,7 +146,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Wan / RIFE and other GPU adapters report PROVIDER_NOT_AVAILABLE when unloaded — no fake depth or fake pose.",
         "UI, REST, and MCP share the same application commands.",
         "cabin-shale-k7q2 (Chinese) and lunar-falcon-8p2r (English) are the same FrameLab 0.4.0, not two products. The Chinese portfolio uses the Chinese public host as Live Demo.",
-        "The public first screen is a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in; guests cannot import or repair frames.",
+        "The public first screen is a landing page. Subtitle “Frame-by-frame animation workstation”, h1 “Give it keyframes. Repair only the frames that break.” Primary buttons “Sign in to the studio” and “System status”. Not an NLE, and not a generation website. Guests cannot import or repair frames.",
       ],
       [
         "Open cabin-shale-k7q2.zeabur.app (title FrameLab)",
@@ -439,9 +439,19 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "SkateHub",
     subtitle: "Toward health, toward sunlight",
     summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
-    process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+    decisions: [
+      "The public title is Toward health, toward sunlight.",
+      "The first-screen slogan is “Don’t stay home on your phone — put on skates and go,” not a paraphrase of put on skates.",
+      "The host is dd-k3f9; do not mix it with canva2 (Folio).",
+    ],
+    process: [
+      "Open dd-k3f9.zeabur.app (title SkateHub｜Toward health, toward sunlight)",
+      "First-screen h1 Toward health, toward sunlight; slogan “Don’t stay home on your phone — put on skates and go”",
+      "Buttons Browse the gear catalog / Log today’s mileage",
+      "This portfolio has not logged real mileage",
+    ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS slogan catalogs gear and mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS first screen h1 Toward health, toward sunlight; slogan catalogs gear and says Don’t stay home on your phone — put on skates and go; buttons Browse the gear catalog / Log today’s mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
     ],
   },
   "zen-studio": {

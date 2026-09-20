@@ -114,6 +114,18 @@ describe("experience catalog", () => {
     assert.ok((experienceCatalog["tku-zen-ai"].fileHints ?? []).some((item) => item.path === "src/app/page.tsx"));
   });
 
+  it("keeps skatehub walkthrough on the live slogan quote", () => {
+    const steps = experienceCatalog.skatehub.walkthrough ?? [];
+    const bodies = steps.map((step) => step.body).join("\n");
+    assert.equal(steps[0]?.title, "打開基地");
+    assert.match(steps[0]?.body ?? "", /不要在家玩手機/);
+    assert.match(steps[0]?.body ?? "", /瀏覽裝備圖鑑/);
+    assert.match(steps[0]?.body ?? "", /記錄今天的里程/);
+    assert.equal(steps[1]?.title, "瀏覽裝備圖鑑");
+    assert.equal(steps[2]?.title, "記錄今天的里程");
+    assert.doesNotMatch(bodies, /slogan 要人穿上輪鞋出發/);
+  });
+
   it("keeps folio walkthrough on the live file-cabinet subtitle", () => {
     const steps = experienceCatalog.folio.walkthrough ?? [];
     assert.equal(steps[0]?.title, "文件櫃");

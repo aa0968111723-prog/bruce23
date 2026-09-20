@@ -197,7 +197,7 @@ const featuredWorks: Project[] = [
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
       "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
-      "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入；未登入不能匯入或修幀。",
+      "公開站首屏是登陸頁。副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」與「系統狀態」。不是剪輯軟體，也不是生成網站。未登入不能匯入或修幀。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [

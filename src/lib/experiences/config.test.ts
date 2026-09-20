@@ -258,8 +258,16 @@ describe("experience config merge", () => {
     const xiaocai = defaultExperienceConfig("xiaocai");
     assert.match(xiaocai.galleryNote ?? "", /快速記一筆/);
     assert.doesNotMatch(xiaocai.galleryNote ?? "", /只顯示已發布媒體/);
+    const frameIntro = defaultExperienceConfig("framelab");
+    assert.match(frameIntro.intro ?? "", /登入工作室/);
+    assert.match(frameIntro.intro ?? "", /系統狀態/);
+    assert.match(frameIntro.intro ?? "", /不是生成網站/);
+    assert.doesNotMatch(frameIntro.intro ?? "", /進入工作室要登入/);
     const hub = defaultExperienceConfig("skatehub");
-    assert.match(hub.intro ?? "", /穿上輪鞋出發/);
+    assert.match(hub.intro ?? "", /不要在家玩手機/);
+    assert.match(hub.intro ?? "", /瀏覽裝備圖鑑/);
+    assert.match(hub.intro ?? "", /記錄今天的里程/);
+    assert.doesNotMatch(hub.intro ?? "", /slogan 要人穿上輪鞋出發/);
     assert.doesNotMatch(hub.intro ?? "", /逐步走查/);
     const ledger = defaultExperienceConfig("xiaocai");
     assert.match(ledger.intro ?? "", /小財記帳/);

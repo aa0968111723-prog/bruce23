@@ -83,8 +83,12 @@ describe("experience playable chrome", () => {
     const frameZh = overlayExperienceConfig(defaultExperienceConfig("framelab"), "framelab", "zh");
     assert.equal(frameEn.honestyLabel, PORTFOLIO_DEMO_EN);
     assert.match(frameEn.timeline?.demoDisclaimer ?? "", /not GPU/i);
-    assert.match(frameZh.intro ?? "", /進入工作室要登入/);
+    assert.match(frameZh.intro ?? "", /登入工作室/);
+    assert.match(frameZh.intro ?? "", /系統狀態/);
+    assert.match(frameZh.intro ?? "", /不是生成網站/);
+    assert.doesNotMatch(frameZh.intro ?? "", /進入工作室要登入/);
     assert.match(frameEn.intro ?? "", /landing page/i);
+    assert.match(frameEn.intro ?? "", /generation website/i);
     const reviewZh = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "zh");
     const reviewEn = overlayExperienceConfig(defaultExperienceConfig("duigao"), "duigao", "en");
     assert.match(reviewZh.intro ?? "", /今天要對什麼/);
@@ -187,6 +191,14 @@ describe("experience playable chrome", () => {
     assert.match(lumenEn.intro ?? "", /拍照開始/);
     assert.equal(lumenEn.walkthrough?.[0]?.title, "What do you want to do?");
     assert.deepEqual(lumenEn.conversation?.suggestions, ["做海報", "拍照開始", "做影片", "長任務"]);
+    const skateZh = overlayExperienceConfig(defaultExperienceConfig("skatehub"), "skatehub", "zh");
+    const skateEn = overlayExperienceConfig(defaultExperienceConfig("skatehub"), "skatehub", "en");
+    assert.match(skateZh.intro ?? "", /不要在家玩手機/);
+    assert.match(skateZh.intro ?? "", /瀏覽裝備圖鑑/);
+    assert.doesNotMatch(skateZh.intro ?? "", /slogan 要人穿上輪鞋出發/);
+    assert.match(skateEn.intro ?? "", /Don’t stay home on your phone|Don't stay home on your phone/);
+    assert.match(skateEn.intro ?? "", /Browse the gear catalog/);
+    assert.equal(skateEn.walkthrough?.[0]?.title, "Open the hub");
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);

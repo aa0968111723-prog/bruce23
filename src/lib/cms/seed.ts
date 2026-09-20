@@ -39,6 +39,8 @@ import {
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
+  FRAMELAB_LIVE_PROBE_SLUG,
+  FRAMELAB_LIVE_PROBE_VERSION,
   STALE_502_NOTE_VERSION,
   STALE_502_NOTE_SLUGS,
 } from "../../content/project-registry.ts";
@@ -171,6 +173,7 @@ async function ensureSeedComplements(sql: Sql): Promise<void> {
   await clearUncustomizedHowSteps(sql);
   await refreshHermesDashboardLive(sql);
   await refreshFramelabIdentity(sql);
+  await refreshFramelabLiveProbe(sql);
   await refreshStale502Notes(sql);
   await refreshAiosLiveProbe(sql);
   await refreshTyContractCopy(sql);
@@ -643,6 +646,46 @@ async function refreshFramelabIdentity(sql: Sql): Promise<void> {
   );
 }
 
+async function refreshFramelabLiveProbe(sql: Sql): Promise<void> {
+  const meta = await sql.query<{ value: string }>(
+    `select value from cms_meta where key = 'framelab_live_probe_version' limit 1`,
+  );
+  if (meta[0]?.value === FRAMELAB_LIVE_PROBE_VERSION) return;
+  const project = projects.find((item) => item.slug === FRAMELAB_LIVE_PROBE_SLUG);
+  if (!project) return;
+  const seedEn = localeEnForSlug(project.slug);
+  const seedZh = localeZhFromProject(project.slug);
+  const catalog = experienceForSlug(project.slug);
+  const experience = defaultExperienceConfig(project.slug);
+  await sql.query(
+    `update projects
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
+         updated_at = now()
+     where slug = $1`,
+    [
+      project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
+      JSON.stringify(project.limitations),
+      JSON.stringify(projectEvidence(project)),
+      JSON.stringify({ zh: seedZh, en: seedEn }),
+      catalog?.mode ?? null,
+      JSON.stringify(experience),
+    ],
+  );
+  await sql.query(
+    `insert into cms_meta (key, value) values ('framelab_live_probe_version', $1)
+     on conflict (key) do update set value = excluded.value, updated_at = now()`,
+    [FRAMELAB_LIVE_PROBE_VERSION],
+  );
+}
+
 async function refreshStale502Notes(sql: Sql): Promise<void> {
   const meta = await sql.query<{ value: string }>(
     `select value from cms_meta where key = 'stale_502_note_version' limit 1`,
@@ -1000,15 +1043,19 @@ async function refreshSkatehubLiveProbe(sql: Sql): Promise<void> {
   const experience = defaultExperienceConfig(project.slug);
   await sql.query(
     `update projects
-     set limitations = $2::jsonb,
-         source_evidence = $3::jsonb,
-         locale_json = $4::jsonb,
-         experience_mode = coalesce($5, experience_mode),
-         experience_config = $6::jsonb,
+     set decisions = $2::jsonb,
+         process = $3::jsonb,
+         limitations = $4::jsonb,
+         source_evidence = $5::jsonb,
+         locale_json = $6::jsonb,
+         experience_mode = coalesce($7, experience_mode),
+         experience_config = $8::jsonb,
          updated_at = now()
      where slug = $1`,
     [
       project.slug,
+      JSON.stringify(project.decisions),
+      JSON.stringify(project.process),
       JSON.stringify(project.limitations),
       JSON.stringify(projectEvidence(project)),
       JSON.stringify({ zh: seedZh, en: seedEn }),
