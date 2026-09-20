@@ -104,12 +104,12 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Worldview, characters, and the asset library enter prompts automatically so people copy-paste less.",
         "Deduct estimated points first, refund on failure. External citations stay drafts; important copy needs lead review.",
         "MCP uses revocable, expiring, personal connection keys — not a shared superadmin key as the production default.",
-        "The public first screen is a landing page, not Create project. Entering the workbench needs sign-in; without a group you cannot create a project.",
+        "The public first screen is a landing page. Eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.” Primary buttons “Enter the workbench” and “Sign in to the workbench”. Secondary “See how it works”. Without a group you cannot create a project.",
       ],
       [
         "Open ai-os-app.zeabur.app (title Aios · AI creation OS | turn an idea into a team plan)",
         "First screen eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.”",
-        "Primary CTA “Enter the workbench” goes to /login; header also has “Sign in to the workbench”",
+        "Primary CTA “Enter the workbench” goes to /login; header also has “Sign in to the workbench”; secondary “See how it works”",
         "Creating a project needs sign-in and a group. This portfolio did not sign in.",
       ],
       [
@@ -146,7 +146,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "Wan / RIFE and other GPU adapters report PROVIDER_NOT_AVAILABLE when unloaded — no fake depth or fake pose.",
         "UI, REST, and MCP share the same application commands.",
         "cabin-shale-k7q2 (Chinese) and lunar-falcon-8p2r (English) are the same FrameLab 0.4.0, not two products. The Chinese portfolio uses the Chinese public host as Live Demo.",
-        "The public first screen is a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in; guests cannot import or repair frames.",
+        "The public first screen is a landing page. Subtitle “Frame-by-frame animation workstation”, h1 “Give it keyframes. Repair only the frames that break.” Primary buttons “Sign in to the studio” and “System status”. Not an NLE, and not a generation website. Guests cannot import or repair frames.",
       ],
       [
         "Open cabin-shale-k7q2.zeabur.app (title FrameLab)",
@@ -302,13 +302,14 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
     role: "Creative-tool design: the command layer, design checks, publish/embed, and MCP safety bounds.",
     ...lists(
       [
+        "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK.",
         "Cross-origin sites without the SDK get Live iframe or Snapshot — not a fake DOM read.",
         "MCP writes default to dry-run; unpublished documents do not appear on public /mcp/$id.",
         "Secrets stay on the server; SSRF denies intranet, localhost, and metadata.",
         "No accounts by default; drafts live in device IndexedDB.",
       ],
       [
-        "Open the file cabinet (on this device, no sign-in)",
+        "Open the file cabinet (for MCP and embedded sites · on this device · no sign-in · Developer SDK)",
         "Create text / shapes / components on the canvas",
         "Design checks (contrast, overflow, safe area)",
         "Optional 3-mode external site import",
@@ -323,7 +324,7 @@ export const featuredProjectLocaleEn: Record<FeaturedWorkSlug, LocaleCopy> = {
         "No standalone bitmap object type; images exist as a pixel layer or Snapshot.",
         "Write tokens do not auto-expire; republish to rotate.",
         "External MCP connections live in one Node process memory and are not shared across instances.",
-        "Probed 2026-09-19: GET / HTTP 200, title Folio. First screen is the file cabinet, local, no sign-in. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
+        "Probed 2026-09-20: GET / HTTP 200, title Folio. First screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This portfolio has not created and published a document on the public host, so coreFlow is not passed.",
       ],
     ),
     ...featuredListExtras.folio,
@@ -438,9 +439,19 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     title: "SkateHub",
     subtitle: "Toward health, toward sunlight",
     summary: "Inline-skate catalog, gear, and mileage. Public site dd-k3f9 — not Folio.",
-    process: ["Open dd-k3f9.zeabur.app", "Browse gear", "Log mileage", "Return to your hub"],
+    decisions: [
+      "The public title is Toward health, toward sunlight.",
+      "The first-screen slogan is “Don’t stay home on your phone — put on skates and go,” not a paraphrase of put on skates.",
+      "The host is dd-k3f9; do not mix it with canva2 (Folio).",
+    ],
+    process: [
+      "Open dd-k3f9.zeabur.app (title SkateHub｜Toward health, toward sunlight)",
+      "First-screen h1 Toward health, toward sunlight; slogan “Don’t stay home on your phone — put on skates and go”",
+      "Buttons Browse the gear catalog / Log today’s mileage",
+      "This portfolio has not logged real mileage",
+    ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS slogan catalogs gear and mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title SkateHub｜Toward health, toward sunlight. JS first screen h1 Toward health, toward sunlight; slogan catalogs gear and says Don’t stay home on your phone — put on skates and go; buttons Browse the gear catalog / Log today’s mileage. No sign-in shell. This portfolio has not logged real mileage, so coreFlow is not passed.",
     ],
   },
   "zen-studio": {
@@ -448,13 +459,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "A bright desk for club work",
     summary: "Print, events, and daily making under one lamp — not another Drive folder.",
     process: [
-      "Open delta-horizon-k7f2.zeabur.app",
-      "First screen is “What can we make today?”",
-      "Read upcoming events and AI suggestions",
-      "Due items have no reviewer; opening the studio auto-publishes them",
+      "Open delta-horizon-k7f2.zeabur.app (title 禪學社 Studio)",
+      "h1 What can we make today?; buttons Help me create and See events",
+      "Due-item copy: no reviewer; opening the studio auto-publishes. Buttons Publish due items now and See calendar",
+      "This portfolio has not generated a post or published a due item",
     ],
     limitations: [
-      "Probed 2026-09-19: GET / HTTP 200, title 禪學社 Studio. First screen is What can we make today? The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
+      "Probed 2026-09-20: GET / HTTP 200, title 禪學社 Studio. h1 What can we make today?; buttons Help me create / See events / Publish due items now / See calendar. The page says due items auto-publish with no reviewer. This portfolio has not generated a post, so coreFlow is not passed.",
     ],
   },
   "focus-challenge": {
@@ -532,13 +543,13 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
     subtitle: "Cut video by talking",
     summary: "A conversational video editor: find highlights with a sentence, see a timeline, get a cut plan.",
     process: [
-      "Open cutos.zeabur.app",
-      "First screen product line is Conversational Video Editor; main block is Import video — load the demo clip or upload",
-      "Describe the cut in one sentence",
-      "Review the Edit Plan, then apply it on a non-destructive timeline",
+      "Open cutos.zeabur.app (title CUTOS — Conversational Video Editor)",
+      "Header tagline “AI 對話式影片剪輯” with “System status”",
+      "Main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip and Upload video…",
+      "This portfolio has not loaded the demo clip or uploaded a real video",
     ],
     limitations: [
-      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. First screen product line AI 對話式影片剪輯; main block Import video with Load demo clip / Upload. /api/health ok.",
+      "Probed 2026-09-20: HTTP 200, title CUTOS — Conversational Video Editor. Tagline AI 對話式影片剪輯; header System status; main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip / Upload video…. /api/health ok.",
       "This portfolio has not loaded the demo clip or uploaded a real video, so coreFlow is not passed.",
     ],
   },

@@ -50,7 +50,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "framelab") {
     return {
       ...base,
-      intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
+      intro: "公開站首屏是登陸頁。副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」與「系統狀態」。不是剪輯軟體，也不是生成網站。這裡是作品集示範時間軸，不是線上工作室。",
       timeline: {
         frames: DEFAULT_FRAMES,
         onionDefault: true,
@@ -90,14 +90,14 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "zen-studio") {
     return {
       ...base,
-      intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+      intro: "公開站首屏 h1「今天可以創作什麼？」。按鈕「AI 幫我創作」「看活動」「現在發到期內容」「看月曆」。到期內容寫「沒有審核人。打開工作室會自動發到期內容」。這是作品集走查，不是 IG 後台。",
     };
   }
 
   if (slug === "skatehub") {
     return {
       ...base,
-      intro: "公開站首屏 slogan 要人穿上輪鞋出發、記錄里程。這是作品集走查，不是線上基地。",
+      intro: "公開站首屏 h1「走向健康，走向陽光」。slogan「收錄市售直排輪款式與配件圖鑑，打造你的專屬裝備庫，記錄每一公里的滑行足跡。不要在家玩手機，穿上輪鞋出發吧！」。按鈕「瀏覽裝備圖鑑／記錄今天的里程」。這是作品集走查，不是線上基地。",
     };
   }
 
@@ -215,7 +215,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "folio") {
     return {
       ...base,
-      intro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
+      intro: "公開站首屏是「文件櫃」。副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。這裡是作品集走查，不是線上編輯器。",
     };
   }
 
@@ -288,14 +288,14 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
   if (slug === "ai-director-os") {
     return {
       ...base,
-      intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
+      intro: "公開站首屏是登陸頁。eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」主按鈕「進入工作台」與「登入工作台」。次按鈕「看看怎麼運作」。這裡是 GitHub 流程節點，不是線上控制台。",
     };
   }
 
   if (slug === "cutos") {
     return {
       ...base,
-      intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+      intro: "公開站首屏產品句「AI 對話式影片剪輯」，頁首有「系統狀態」。主區塊「匯入影片」，說明「可以先載入內建示範影片（內含停頓）」。按鈕「載入示範影片」與「上傳影片…」。這裡是作品集走查，不是線上剪輯器。",
     };
   }
 

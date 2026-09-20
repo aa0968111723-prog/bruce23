@@ -79,13 +79,13 @@ const featuredWorks: Project[] = [
       "世界觀、角色與素材庫自動帶進提示詞，減少複製貼上。",
       "先扣點數預估、失敗退回；外部引文只當草稿，重要內容需組長審核。",
       "MCP 使用可撤銷、可到期、綁定個人的連線金鑰，不用共用超管金鑰當正式站預設。",
-      "公開站首屏是登陸頁，不是立刻建立專案。進入工作台要登入；未入組不能建立專案。",
+      "公開站首屏是登陸頁。eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」主按鈕「進入工作台」與「登入工作台」。次按鈕「看看怎麼運作」。未入組不能建立專案。",
     ],
     modalities: ["文字", "圖像", "影片", "音訊", "審批流程"],
     process: [
       "打開 ai-os-app.zeabur.app（標題「Aios · AI 創作作業系統｜把想法變成可執行的團隊計畫」）",
       "首屏 eyebrow「團隊日常的 AI 專案工作台」，h1「把想法，變成團隊真正能完成的計畫。」",
-      "主按鈕「進入工作台」到 /login；頁首也有「登入工作台」",
+      "主按鈕「進入工作台」到 /login；頁首也有「登入工作台」；次按鈕「看看怎麼運作」",
       "登入且加入組別後才能建立專案；作品集未登入",
     ],
     outputs: [
@@ -197,7 +197,7 @@ const featuredWorks: Project[] = [
       "Wan / RIFE 等 GPU 適配器未載入時回報 PROVIDER_NOT_AVAILABLE，不給假深度或假姿勢。",
       "UI、REST、MCP 都走同一套 application commands。",
       "cabin-shale-k7q2（中文）與 lunar-falcon-8p2r（英文）都是 FrameLab 0.4.0，不是兩個作品。中文作品集以中文公開站為 Live Demo。",
-      "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入；未登入不能匯入或修幀。",
+      "公開站首屏是登陸頁。副標「逐幀動畫工作站」，h1「給它關鍵影格。只修壞掉的那幾格。」主按鈕「登入工作室」與「系統狀態」。不是剪輯軟體，也不是生成網站。未登入不能匯入或修幀。",
     ],
     modalities: ["影像序列", "時間軸", "姿勢殘影", "對話", "MCP"],
     process: [
@@ -543,6 +543,7 @@ const featuredWorks: Project[] = [
       "海報、社群、投影片與 UI 草稿需要專精編輯器，而且要讓代理用同一套指令操作，而不是另做一套自動化 API。",
     role: "創意工具設計：指令層、設計檢查、發布／內嵌與 MCP 安全邊界。",
     decisions: [
+      "公開站首屏是「文件櫃」，副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。",
       "未安裝 SDK 的跨來源網站只提供 Live iframe 或 Snapshot，不假裝讀 DOM。",
       "MCP 寫入預設 dry-run，未發布文件不會出現在公開 /mcp/$id。",
       "密鑰只留伺服器；SSRF 拒絕內網、本機與 metadata。",
@@ -550,7 +551,7 @@ const featuredWorks: Project[] = [
     ],
     modalities: ["畫布", "設計 token", "嵌入", "MCP"],
     process: [
-      "打開文件櫃（存在這台裝置，不必登入）",
+      "打開文件櫃（給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入 · 開發者 SDK）",
       "在畫布建立文字／形狀／元件",
       "設計檢查（對比、溢出、安全區）",
       "可選匯入外部網站三種模式",
@@ -566,7 +567,7 @@ const featuredWorks: Project[] = [
       "沒有獨立點陣圖片物件型別，圖片以 pixel layer 或 Snapshot 存在。",
       "寫入 token 不會自動過期，需重新發布才輪替。",
       "外部 MCP 連線在單一 Node 行程記憶體，多實例不共享。",
-      "2026-09-19 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，文案「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題 Folio；首屏是「文件櫃」，副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。作品集未在公開站新建一份文件並發布，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/canva2",
@@ -618,7 +619,7 @@ const featuredWorks: Project[] = [
       {
         label: "公開站 · canva2-k7qm.zeabur.app",
         href: "https://canva2-k7qm.zeabur.app",
-        note: "Zeabur 服務 canva2。2026-09-19 HTTP 200，標題 Folio。首屏「文件櫃」。不是 dd-k3f9（直排輪基地）。",
+        note: "Zeabur 服務 canva2。2026-09-20 HTTP 200，標題 Folio。首屏「文件櫃」；副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」；連到「開發者 SDK」。不是 dd-k3f9（直排輪基地）。",
       },
     ],
     visibility: "public",

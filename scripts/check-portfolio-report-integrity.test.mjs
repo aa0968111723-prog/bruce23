@@ -43,3 +43,8 @@ test("timestamps and reachability wording remain evidence-safe", () => {
     assert.doesNotMatch(state.completedSteps.join("\n"), /Made all .*private .*public/i);
   }
 });
+
+test("open repair inventory includes the two live repair lines", () => {
+  assert.ok(report.github.openRepair.includes(64));
+  assert.ok(report.github.openRepair.includes(67));
+});

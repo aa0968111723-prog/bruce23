@@ -147,7 +147,7 @@ export const experienceChrome = {
     walkDemoCanvas: "作品集走查畫面 · 不是線上產品",
     walkKeyboard: "左右鍵換步驟。畫面依儲存的走查步驟繪製，不是線上產品本身。",
     walkDocumentLayer: "走查畫面",
-    folioDefaultIntro: "公開站首屏是「文件櫃」。存在這台裝置，不必登入。這裡是作品集走查，不是線上編輯器。",
+    folioDefaultIntro: "公開站首屏是「文件櫃」。副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。這裡是作品集走查，不是線上編輯器。",
     folioNotCounter: "左右鍵換步驟。畫面依儲存的走查步驟繪製，不是空白計數器。",
     walkAria: "Folio 走查",
     walkStepsAria: "走查步驟",
@@ -190,6 +190,8 @@ export const experienceChrome = {
     folioNewDoc: "新增文件",
     folioOnDevice: "存在這台裝置",
     folioNoLogin: "不必登入",
+    folioMcpEmbed: "給 MCP 與內嵌網站",
+    folioSdk: "開發者 SDK",
   },
   en: {
     tabPlay: "Play",
@@ -319,7 +321,7 @@ export const experienceChrome = {
     walkDemoCanvas: "Portfolio walkthrough stage · not the live product",
     walkKeyboard: "Left and right change steps. The stage is drawn from saved walkthrough steps, not the live product.",
     walkDocumentLayer: "walkthrough stage",
-    folioDefaultIntro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
+    folioDefaultIntro: "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This is a portfolio walkthrough, not the live editor.",
     folioNotCounter: "Left and right change steps. The stage is drawn from saved walkthrough steps, not a blank counter.",
     walkAria: "Folio walkthrough",
     walkStepsAria: "Walkthrough steps",
@@ -362,6 +364,8 @@ export const experienceChrome = {
     folioNewDoc: "New document",
     folioOnDevice: "On this device",
     folioNoLogin: "No sign-in",
+    folioMcpEmbed: "For MCP and embedded sites",
+    folioSdk: "Developer SDK",
   },
 } as const;
 
@@ -429,7 +433,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   "ai-director-os": {
     honestyLabel: PORTFOLIO_DEMO_EN,
     intro:
-      "The public site opens on a landing page: “Turn an idea into a plan the team can actually finish.” Entering the workbench requires sign-in. These nodes are the public repo flow, not a live console.",
+      "The public first screen is a landing page. Eyebrow “A daily AI project workbench for teams”, h1 “Turn an idea into a plan the team can actually finish.” Primary buttons “Enter the workbench” and “Sign in to the workbench”. Secondary “See how it works”. These nodes are the public repo flow, not a live console.",
     processNodes: [
       {
         id: "project",
@@ -496,7 +500,7 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   framelab: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public site opens on a landing page: “Give it keyframes. Repair only the frames that break.” The studio needs sign-in. This is a portfolio demo timeline, not the live workstation.",
+    intro: "The public first screen is a landing page. Subtitle “Frame-by-frame animation workstation”, h1 “Give it keyframes. Repair only the frames that break.” Primary buttons “Sign in to the studio” and “System status”. Not an NLE, and not a generation website. This is a portfolio demo timeline, not the live workstation.",
     timeline: {
       demoDisclaimer: "Frames labeled “demo” are not GPU model output. Real Wan / RIFE / SAM adapters are not loaded.",
     },
@@ -577,11 +581,11 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
   },
   folio: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public first screen is the file cabinet. It lives on this device; no sign-in. This is a portfolio walkthrough, not the live editor.",
+    intro: "The public first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
       {
         title: "File cabinet",
-        body: "The public canva2-k7qm first screen is the file cabinet. It lives on this device; no sign-in.",
+        body: "The public canva2-k7qm first screen is the file cabinet. Subtitle: for MCP and embedded sites · on this device · no sign-in, plus Developer SDK.",
       },
       {
         title: "Canvas",
@@ -840,13 +844,51 @@ export const experienceCopyEn: Record<string, ExperienceCopyEn> = {
       },
     ],
   },
+  "zen-studio": {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is What can we make today? Buttons: Help me create, See events, Publish due items now, See calendar. Due-item copy: no reviewer; opening the studio auto-publishes. This is a portfolio walkthrough, not the Instagram backend.",
+    walkthrough: [
+      {
+        title: "What can we make today",
+        body: "Public delta-horizon-k7f2 title is 禪學社 Studio. h1 What can we make today? Buttons Help me create and See events.",
+      },
+      {
+        title: "Generate",
+        body: "Help me create opens generation. Quick start has Generate IG post / Generate image / Generate Story / Generate Carousel / Generate Reels. This page does not generate for you.",
+      },
+      {
+        title: "Calendar",
+        body: "Buttons See calendar and Publish due items now. The page says due items auto-publish with no reviewer. This portfolio has not published a post.",
+      },
+    ],
+  },
+  skatehub: {
+    honestyLabel: PORTFOLIO_DEMO_EN,
+    intro:
+      "The public first screen h1 is Toward health, toward sunlight. Slogan: catalog of retail skates and parts, build your kit, log every kilometre. Don’t stay home on your phone — put on skates and go. Buttons: Browse the gear catalog / Log today’s mileage. This is a portfolio walkthrough, not the live hub.",
+    walkthrough: [
+      {
+        title: "Open the hub",
+        body: "Public dd-k3f9. Title SkateHub｜Toward health, toward sunlight. h1 Toward health, toward sunlight. Slogan Don’t stay home on your phone — put on skates and go. Buttons Browse the gear catalog / Log today’s mileage. Not Folio.",
+      },
+      {
+        title: "Browse the gear catalog",
+        body: "The accent button Browse the gear catalog opens catalog. This page does not tap it for you.",
+      },
+      {
+        title: "Log today’s mileage",
+        body: "The ghost button Log today’s mileage opens mileage. This portfolio has not logged real mileage.",
+      },
+    ],
+  },
   cutos: {
     honestyLabel: PORTFOLIO_DEMO_EN,
-    intro: "The public first screen is “AI 對話式影片剪輯” and Import video. Load the demo clip or upload. This is a portfolio walkthrough, not the live editor.",
+    intro: "The public first screen tagline is “AI 對話式影片剪輯”, with a header “System status” control. Main block “Import video”; hint “You can load the built-in demo clip (it includes pauses)”. Buttons “Load demo clip” and “Upload video…”. This is a portfolio walkthrough, not the live editor.",
     walkthrough: [
       {
         title: "Import video",
-        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Main block Import video, buttons Load demo clip / Upload video.",
+        body: "Public cutos.zeabur.app title is CUTOS — Conversational Video Editor. Product line “AI 對話式影片剪輯”. Header “System status”. Main block Import video; hint that the built-in demo clip includes pauses; buttons Load demo clip and Upload video….",
       },
       {
         title: "Load demo",

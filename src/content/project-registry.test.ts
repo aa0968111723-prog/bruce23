@@ -38,6 +38,8 @@ import {
   TY_CONTRACT_VERSION,
   FRAMELAB_IDENTITY,
   FRAMELAB_IDENTITY_VERSION,
+  FRAMELAB_LIVE_PROBE_SLUG,
+  FRAMELAB_LIVE_PROBE_VERSION,
   LIVE_PROBES_20260919,
   OFFICIAL_PROJECT_KEYS,
   REJECTED_OWNER_DOMAIN_GUESSES,
@@ -92,6 +94,10 @@ describe("official project registry", () => {
     assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
     assert.ok(frame.sourceReferences.some((item) => item.note.includes("登入工作室") && item.href === FRAMELAB_IDENTITY.canonicalLiveUrl));
     assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
+    assert.equal(FRAMELAB_LIVE_PROBE_SLUG, "framelab");
+    assert.match(FRAMELAB_LIVE_PROBE_VERSION, /framelab-live-cta-quote/);
+    assert.ok(frame.decisions.some((item) => item.includes("不是生成網站")));
+    assert.ok(frame.decisions.some((item) => item.includes("登入工作室")));
     const cabinGit = frame.sourceReferences.find((item) =>
       item.href?.includes("cabin-shale-raven-swift"),
     );
@@ -126,14 +132,18 @@ describe("official project registry", () => {
     assert.equal(probe.coreFlowPass, false);
     assert.equal(project.links.live, probe.liveUrl);
     assert.equal(project.links.demo, probe.customDomain);
-    assert.match(AIOS_LIVE_PROBE_VERSION, /aios-live-home/);
+    assert.match(AIOS_LIVE_PROBE_VERSION, /aios-live-cta-quote/);
     assert.ok(project.sourceReferences.every((item) => !/可能 502|可能暫停/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/可能 502|可能暫停/.test(item)));
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.liveUrl));
     assert.ok(project.sourceReferences.some((item) => /HTTP 200/.test(item.note) && item.href === probe.customDomain));
     assert.ok(project.process.some((item) => item.includes("進入工作台")));
+    assert.ok(project.process.some((item) => item.includes("登入工作台")));
+    assert.ok(project.process.some((item) => item.includes("看看怎麼運作")));
     assert.ok(project.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
     assert.ok(project.process.every((item) => !item.includes("建立專案與世界觀快速層")));
+    assert.ok(project.decisions.some((item) => item.includes("看看怎麼運作")));
+    assert.ok(project.decisions.every((item) => !item.includes("進入工作台要登入")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("進入工作台") && item.href === probe.liveUrl));
     assert.ok(project.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
@@ -175,14 +185,19 @@ describe("official project registry", () => {
   it("records CUTOS as live HTTP 200, not suspended 502", () => {
     const project = projects.find((item) => item.slug === CUTOS_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-import-intro/);
+    assert.match(CUTOS_LIVE_PROBE_VERSION, /cutos-live-cta-quote/);
     assert.equal(project.links.live, "https://cutos.zeabur.app");
     assert.ok(project.sourceReferences.every((item) => !/SUSPENDED／502/.test(item.note)));
     assert.ok(project.limitations.every((item) => !/SUSPENDED／502/.test(item)));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("不是 502")));
     assert.ok(project.process.some((item) => item.includes("匯入影片")));
     assert.ok(project.process.some((item) => item.includes("載入示範影片")));
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("匯入影片")));
+    assert.ok(project.process.some((item) => item.includes("內含停頓")));
+    assert.ok(project.process.some((item) => item.includes("上傳影片…")));
+    assert.ok(project.process.some((item) => item.includes("系統狀態")));
+    assert.ok(project.process.every((item) => !item.includes("可載入示範影片或上傳")));
+    assert.ok(project.decisions.some((item) => item.includes("內含停頓")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("內含停頓")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -221,10 +236,17 @@ describe("official project registry", () => {
   it("records Folio first screen as 文件櫃 without claiming a publish coreFlow", () => {
     const project = projects.find((item) => item.slug === FOLIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-cabinet-intro/);
+    assert.match(FOLIO_LIVE_PROBE_VERSION, /folio-live-subtitle-sdk/);
     assert.equal(project.links.live, "https://canva2-k7qm.zeabur.app");
     assert.ok(project.process[0]?.includes("文件櫃"));
+    assert.ok(project.process[0]?.includes("給 MCP 與內嵌網站"));
+    assert.ok(project.process[0]?.includes("開發者 SDK"));
+    assert.ok(project.decisions.some((item) => item.includes("給 MCP 與內嵌網站")));
+    assert.ok(project.decisions.some((item) => item.includes("開發者 SDK")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("文件櫃")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("給 MCP 與內嵌網站")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("開發者 SDK")));
+    assert.ok(project.limitations.some((item) => item.includes("開發者 SDK")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -245,10 +267,15 @@ describe("official project registry", () => {
   it("records SkateHub live slogan without claiming a mileage coreFlow", () => {
     const project = projects.find((item) => item.slug === SKATEHUB_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-canvas-intro/);
+    assert.match(SKATEHUB_LIVE_PROBE_VERSION, /skatehub-live-slogan-quote/);
     assert.equal(project.links.live, "https://dd-k3f9.zeabur.app");
-    assert.ok(project.sourceReferences.some((item) => item.note.includes("走向健康，走向陽光")));
-    assert.ok(project.limitations.some((item) => item.includes("穿上輪鞋出發")));
+    assert.ok(project.process.some((item) => item.includes("不要在家玩手機")));
+    assert.ok(project.process.some((item) => item.includes("瀏覽裝備圖鑑")));
+    assert.ok(project.process.some((item) => item.includes("記錄今天的里程")));
+    assert.ok(project.decisions.some((item) => item.includes("不要在家玩手機")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不要在家玩手機")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("瀏覽裝備圖鑑")));
+    assert.ok(project.limitations.some((item) => item.includes("不要在家玩手機")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -293,9 +320,15 @@ describe("official project registry", () => {
   it("records Zen Studio live home without claiming an IG publish coreFlow", () => {
     const project = projects.find((item) => item.slug === ZEN_STUDIO_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-canvas-intro/);
+    assert.match(ZEN_STUDIO_LIVE_PROBE_VERSION, /zen-studio-live-cta-quote/);
     assert.equal(project.links.live, "https://delta-horizon-k7f2.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(project.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.process.some((item) => item.includes("看月曆")));
+    assert.ok(project.process.some((item) => item.includes("現在發到期內容")));
+    assert.ok(project.process.every((item) => !item.includes("看近期活動與 AI 建議")));
+    assert.ok(project.decisions.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("AI 幫我創作")));
     assert.ok(project.limitations.some((item) => item.includes("沒有審核人")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
   });

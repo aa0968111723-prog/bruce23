@@ -749,10 +749,38 @@ describe("cms persistence", () => {
     assert.ok(frame.process.some((item) => item.includes("登入工作室")));
     assert.ok(frame.process.some((item) => item.includes("給它關鍵影格。只修壞掉的那幾格")));
     assert.ok(frame.process.every((item) => !item.includes("匯入影片或圖序")));
-    assert.match(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
+    assert.match(frame.experienceConfig.intro ?? "", /登入工作室/);
+    assert.match(frame.experienceConfig.intro ?? "", /不是生成網站/);
     assert.ok(frame.limitations.some((item) => item.includes("工作室需登入")));
     assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(frame.locale.en?.limitations?.at(-1) ?? "", /studio needs sign-in/i);
+  });
+
+  it("quotes FrameLab live landing CTAs without claiming a repair coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "framelab",
+        JSON.stringify(["公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是登陸頁「給它關鍵影格。只修壞掉的那幾格。」進入工作室要登入。這裡是作品集示範時間軸，不是線上工作室。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'framelab_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const frame = await getPublishedProject(sql, "framelab");
+    assert.match(frame.experienceConfig.intro ?? "", /登入工作室/);
+    assert.match(frame.experienceConfig.intro ?? "", /系統狀態/);
+    assert.match(frame.experienceConfig.intro ?? "", /不是生成網站/);
+    assert.doesNotMatch(frame.experienceConfig.intro ?? "", /進入工作室要登入/);
+    assert.ok(frame.decisions.some((item) => item.includes("不是生成網站")));
+    assert.ok(frame.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("rewrites stale 502 notes for 小財 and the Zen desk after a live 200 probe", async () => {
@@ -833,10 +861,42 @@ describe("cms persistence", () => {
     assert.match(cutos.sourceEvidence[0]?.note ?? "", /health ok/);
     assert.ok(cutos.process.some((item) => item.includes("載入示範影片")));
     assert.ok(cutos.process.some((item) => item.includes("匯入影片")));
+    assert.ok(cutos.process.some((item) => item.includes("內含停頓")));
+    assert.ok(cutos.process.every((item) => !item.includes("可載入示範影片或上傳")));
     assert.match(cutos.experienceConfig.intro ?? "", /匯入影片/);
     assert.match(cutos.experienceConfig.intro ?? "", /載入示範影片/);
+    assert.match(cutos.experienceConfig.intro ?? "", /內含停頓/);
+    assert.match(cutos.experienceConfig.intro ?? "", /系統狀態/);
+    assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /可載入示範影片或上傳/);
     assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /這是作品集逐步走查，不是線上產品本身/);
     assert.equal(cutos.experienceConfig.walkthrough?.[0]?.title, "匯入影片");
+    assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes CUTOS live landing CTAs without claiming a demo-clip coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "cutos",
+        JSON.stringify(["公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'cutos_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const cutos = await getPublishedProject(sql, "cutos");
+    assert.match(cutos.experienceConfig.intro ?? "", /內含停頓/);
+    assert.match(cutos.experienceConfig.intro ?? "", /系統狀態/);
+    assert.match(cutos.experienceConfig.intro ?? "", /上傳影片…/);
+    assert.doesNotMatch(cutos.experienceConfig.intro ?? "", /可載入示範影片或上傳/);
+    assert.ok(cutos.decisions.some((item) => item.includes("內含停頓")));
     assert.ok(cutos.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -943,13 +1003,18 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const folio = await getPublishedProject(sql, "folio");
     assert.ok(folio.process[0]?.includes("文件櫃"));
+    assert.ok(folio.process[0]?.includes("給 MCP 與內嵌網站"));
+    assert.ok(folio.process[0]?.includes("開發者 SDK"));
     assert.match(
       folio.sourceEvidence.find((item) => item.href?.includes("canva2-k7qm"))?.note ?? "",
-      /文件櫃/,
+      /給 MCP 與內嵌網站/,
     );
     assert.match(folio.experienceConfig.intro ?? "", /文件櫃/);
+    assert.match(folio.experienceConfig.intro ?? "", /給 MCP 與內嵌網站/);
+    assert.match(folio.experienceConfig.intro ?? "", /開發者 SDK/);
     assert.match(folio.experienceConfig.intro ?? "", /不必登入/);
     assert.doesNotMatch(folio.experienceConfig.intro ?? "", /指令層走一遍/);
+    assert.ok(folio.limitations.some((item) => item.includes("開發者 SDK")));
     assert.ok(folio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -1002,10 +1067,11 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     await sql.query(
       `update projects
-       set limitations = $2::jsonb, source_evidence = $3::jsonb
+       set process = $2::jsonb, limitations = $3::jsonb, source_evidence = $4::jsonb
        where slug = $1`,
       [
         "skatehub",
+        JSON.stringify(["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程"]),
         JSON.stringify(["個人紀錄依部署資料庫，不在此公開他人資料。"]),
         JSON.stringify([
           {
@@ -1022,8 +1088,10 @@ describe("cms persistence", () => {
     const hub = await getPublishedProject(sql, "skatehub");
     assert.match(
       hub.sourceEvidence.find((item) => item.href?.includes("dd-k3f9"))?.note ?? "",
-      /走向健康，走向陽光/,
+      /不要在家玩手機/,
     );
+    assert.ok(hub.process.some((item) => item.includes("瀏覽裝備圖鑑")));
+    assert.match(hub.experienceConfig.intro ?? "", /不要在家玩手機/);
     assert.ok(hub.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -1133,11 +1201,41 @@ describe("cms persistence", () => {
     await ensureSeed(sql, { skipGithubHydrate: true });
     const studio = await getPublishedProject(sql, "zen-studio");
     assert.ok(studio.process.some((item) => item.includes("今天可以創作什麼")));
+    assert.ok(studio.process.some((item) => item.includes("AI 幫我創作")));
+    assert.ok(studio.process.every((item) => !item.includes("看近期活動與 AI 建議")));
     assert.match(
       studio.sourceEvidence.find((item) => item.href?.includes("delta-horizon-k7f2"))?.note ?? "",
-      /今天可以創作什麼/,
+      /AI 幫我創作/,
     );
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
     assert.ok(studio.limitations.some((item) => item.includes("沒有審核人")));
+    assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
+  });
+
+  it("quotes Zen Studio live landing CTAs without claiming a generate coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "zen-studio",
+        JSON.stringify(["首頁先問今天可以創作什麼，而不是先給後台選單。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是「今天可以創作什麼？」。到期內容沒有審核人、打開會自動發。這是作品集走查，不是 IG 後台。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'zen_studio_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const studio = await getPublishedProject(sql, "zen-studio");
+    assert.match(studio.experienceConfig.intro ?? "", /AI 幫我創作/);
+    assert.match(studio.experienceConfig.intro ?? "", /看月曆/);
+    assert.match(studio.experienceConfig.intro ?? "", /現在發到期內容/);
+    assert.doesNotMatch(studio.experienceConfig.intro ?? "", /看近期活動與 AI 建議/);
+    assert.ok(studio.decisions.some((item) => item.includes("AI 幫我創作")));
     assert.ok(studio.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
@@ -1478,12 +1576,42 @@ describe("cms persistence", () => {
     assert.ok(aios.process.some((item) => item.includes("進入工作台")));
     assert.ok(aios.process.some((item) => item.includes("把想法，變成團隊真正能完成的計畫")));
     assert.ok(aios.process.every((item) => !item.includes("建立專案與世界觀快速層")));
-    assert.match(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /登入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /看看怎麼運作/);
+    assert.doesNotMatch(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
     assert.ok(aios.limitations.some((item) => item.includes("未驗證團隊創作核心流程")));
     assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.match(aios.locale.en?.limitations?.join(" ") ?? "", /Not 502 and not paused/i);
     assert.equal(aiosAdmin.live_demo_status, "pending");
     assert.equal(aiosAdmin.live_demo_error, null);
+  });
+
+  it("quotes AI Director OS live landing CTAs without claiming a team coreFlow", async () => {
+    const { sql } = await setup();
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    await sql.query(
+      `update projects
+       set decisions = $2::jsonb, experience_config = $3::jsonb
+       where slug = $1`,
+      [
+        "ai-director-os",
+        JSON.stringify(["公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。"]),
+        JSON.stringify({
+          honestyLabel: "作品集互動展示",
+          intro: "公開站首屏是登陸頁「把想法，變成團隊真正能完成的計畫」。進入工作台要登入。這裡是 GitHub 流程節點，不是線上控制台。",
+        }),
+      ],
+    );
+    await sql.query(`delete from cms_meta where key = 'aios_live_probe_version'`);
+    await ensureSeed(sql, { skipGithubHydrate: true });
+    const aios = await getPublishedProject(sql, "ai-director-os");
+    assert.match(aios.experienceConfig.intro ?? "", /進入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /登入工作台/);
+    assert.match(aios.experienceConfig.intro ?? "", /看看怎麼運作/);
+    assert.doesNotMatch(aios.experienceConfig.intro ?? "", /進入工作台要登入/);
+    assert.ok(aios.decisions.some((item) => item.includes("看看怎麼運作")));
+    assert.ok(aios.limitations.some((item) => item.includes("coreFlow 未過")));
   });
 
   it("saves homepage highlight slugs without wiping locale_json", async () => {

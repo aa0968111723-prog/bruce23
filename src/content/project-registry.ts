@@ -74,11 +74,15 @@ export const FRAMELAB_IDENTITY = {
 
 export const FRAMELAB_IDENTITY_VERSION = "framelab-github-public-20260920";
 
+export const FRAMELAB_LIVE_PROBE_VERSION = "framelab-live-cta-quote-20260920";
+
+export const FRAMELAB_LIVE_PROBE_SLUG = "framelab";
+
 export const STALE_502_NOTE_VERSION = "stale-502-xiaocai-zen-20260919";
 
 export const STALE_502_NOTE_SLUGS = ["xiaocai", "tku-zen-agent"] as const;
 
-export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
+export const AIOS_LIVE_PROBE_VERSION = "aios-live-cta-quote-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
@@ -86,7 +90,7 @@ export const TY_CONTRACT_VERSION = "ty-booth-home-chrome-20260920";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
-export const CUTOS_LIVE_PROBE_VERSION = "cutos-import-intro-20260920";
+export const CUTOS_LIVE_PROBE_VERSION = "cutos-live-cta-quote-20260920";
 
 export const CUTOS_LIVE_PROBE_SLUG = "cutos";
 
@@ -98,7 +102,7 @@ export const DUIGAO_LIVE_PROBE_VERSION = "duigao-live-home-20260920";
 
 export const DUIGAO_LIVE_PROBE_SLUG = "duigao";
 
-export const FOLIO_LIVE_PROBE_VERSION = "folio-cabinet-intro-20260920";
+export const FOLIO_LIVE_PROBE_VERSION = "folio-live-subtitle-sdk-20260920";
 
 export const FOLIO_LIVE_PROBE_SLUG = "folio";
 
@@ -106,7 +110,7 @@ export const HERMES_CONSOLE_LIVE_PROBE_VERSION = "hermes-console-live-home-20260
 
 export const HERMES_CONSOLE_LIVE_PROBE_SLUG = "hermes-console";
 
-export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-canvas-intro-20260920";
+export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-live-slogan-quote-20260920";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
@@ -118,7 +122,7 @@ export const LUMEN_LIVE_PROBE_VERSION = "lumen-live-home-chrome-20260920";
 
 export const LUMEN_LIVE_PROBE_SLUG = "lumen";
 
-export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
+export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-live-cta-quote-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 

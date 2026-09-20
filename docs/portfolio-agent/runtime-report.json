@@ -1,9 +1,9 @@
 {
-  "version": 20,
-  "generatedAt": "2026-09-20T07:00:00Z",
-  "runId": "portfolio-agent-hour-19",
+  "version": 24,
+  "generatedAt": "2026-09-20T11:00:00Z",
+  "runId": "portfolio-agent-hour-23",
   "runStatus": "IN_PROGRESS",
-  "startedAt": "2026-09-20T07:00:00Z",
+  "startedAt": "2026-09-20T11:00:00Z",
   "endedAt": null,
   "scope": {
     "portfolioRepository": "aa0968111723-prog/bruce23",
@@ -13,20 +13,20 @@
     "portfolioPublicUrl": "https://bruce23-k7m2.zeabur.app/"
   },
   "task": "hourly-multi-agent-sentinel-inspection",
-  "inspectedCommit": "c5c20c5",
+  "inspectedCommit": "d1bdc91",
   "github": {
     "planPullRequest": 6,
-    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66],
-    "openRepair": [64],
+    "mergedRepair": [11, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66, 68, 69, 70, 71, 72, 73],
+    "openRepair": [64, 67],
     "doNotMerge": [10]
   },
   "validation": {
-    "buildAndTypecheck": "PASS: tsc --noEmit + all unit tests pass + integration-line tests + full npm test suite clean pass",
+    "buildAndTypecheck": "PASS: tsc --noEmit + 329 unit tests pass + full npm test suite clean pass",
     "browser": "HTTP_REACHABILITY_BASELINE_NOT_FUNCTIONAL_ACCEPTANCE",
     "gateAudit": "PASS: enforced evidence-backed portfolio gates (PR #27 landed in PR #6)",
     "mobileSmoke": "NOT_YET",
     "desktopSmoke": "NOT_YET",
-    "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#66",
+    "deployment": "PR #6 updated with concierge + public repos + UIUX microbadges + merged main PR #46-#73",
     "security": "NOT_VERIFIED"
   },
   "probes": [
@@ -40,7 +40,7 @@
       "pr61Landed": true,
       "copy": "GitHub 暫不公開連結 · Demo 公開網址（無法嵌入） · Canva 尚未設定. No github.com/aa0968111723-prog/tku-zen-agent href. 原始碼 · 暫不公開連結. Gate copy 請輸入授權碼 is live.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T04:42:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/hermes-console",
@@ -48,15 +48,24 @@
       "pr58Landed": true,
       "copy": "GitHub 已同步 · Demo 公開網址（無法嵌入） · Canva 尚未設定. Public GitHub href present.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T02:45:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/cutos",
       "status": 200,
       "pr61Landed": true,
-      "copy": "匯入影片 intro live. 左右鍵換步驟…不是線上產品本身. No visitor-visible 不是空白計數器. GitHub 公開連結（檔案樹未同步） · Demo 已驗證 · Canva 尚未設定.",
+      "pr72Landed": true,
+      "copy": "Intro quotes 匯入影片 / 載入示範影片 / 體驗 AI 剪輯 live landing CTAs without claiming a demo-clip coreFlow.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T04:42:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/zen-studio",
+      "status": 200,
+      "pr73Landed": true,
+      "copy": "Intro quotes 建立新文宣 / 瀏覽範本庫 / 查看近期活動 live landing CTAs without claiming a generate coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/focus-challenge",
@@ -64,23 +73,49 @@
       "pr65Landed": true,
       "copy": "Intro 公開站攤位首屏有「60 秒」「看指令選顏色」「現場手搖杯」，入口「正式參賽」與「怎麼玩」。表單是關主、本名、科系、年級、電話；正式按鈕「開始練習」。No 登記畫面／姓名.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T06:20:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/skatehub",
       "status": 200,
       "pr61Landed": true,
-      "copy": "穿上輪鞋出發 intro live. 不是線上產品本身. No 不是空白計數器.",
+      "pr69Landed": true,
+      "copy": "穿上輪鞋出發 intro live. Slogan 不要在家玩手機 / CTAs 瀏覽裝備圖鑑、記錄今天的里程. 不是線上產品本身.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T04:42:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/folio",
       "status": 200,
       "pr61Landed": true,
-      "copy": "文件櫃 intro live. Folio chrome still 不是空白計數器 (expected).",
+      "pr68Landed": true,
+      "copy": "文件櫃 intro live. 副標「給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入」，連到「開發者 SDK」。",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T04:42:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/framelab",
+      "status": 200,
+      "pr70Landed": true,
+      "copy": "Intro quotes 進入修復工作室 / 查看範例專案 / 快速開始修復 live landing CTAs without claiming a repair coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:01:00Z"
+    },
+    {
+      "url": "https://bruce23-k7m2.zeabur.app/work/ai-director-os",
+      "status": 200,
+      "pr71Landed": true,
+      "copy": "Intro quotes 進入工作台 / 查看最新版本 / 探索更多功能 live landing CTAs without claiming a team coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:01:00Z"
+    },
+    {
+      "url": "https://canva2-k7qm.zeabur.app/",
+      "status": 200,
+      "title": "Folio",
+      "copy": "GET / HTTP 200. HTML h1 文件櫃; subtitle 給 MCP 與內嵌網站 · 存在這台裝置 · 不必登入 · 開發者 SDK (link /sdk). Not a publish coreFlow.",
+      "coreFlowPass": false,
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/tku-zen-ai",
@@ -88,7 +123,7 @@
       "pr62Landed": true,
       "copy": "Welcome to TKU Zen AI intro live. GitHub 公開連結（檔案樹未同步） · Demo 尚未設定 · Canva 尚未設定. No Canva 無法嵌入.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T05:05:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://forge-bloom-k7xq.zeabur.app/",
@@ -97,7 +132,7 @@
       "redirectToLogin": false,
       "copy": "GET / HTTP 200, no Location. routes-DYYRlAAE.js has 開始巡禮, 校園圖鑑, 登入, WASD 移動 · 滑鼠視角 · E 蓋章 · Shift 奔跑 · Esc 選單. /login h1 校園通行證; 先以訪客巡禮 -> /.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T05:12:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/tamkang-world",
@@ -105,7 +140,7 @@
       "pr63Landed": true,
       "copy": "Intro quotes 開始巡禮 / 校園圖鑑 / WASD 移動 live controls; Live Demo `/` is the 3D world, /login is the pass gate.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T05:35:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://ai-chat-8rq3.zeabur.app/",
@@ -113,7 +148,7 @@
       "title": "Lumen",
       "copy": "GET / HTTP 200. HTML has 自動聽, 想做什麼？, 點一下開始聽 · 按住說話; buttons 做海報 / 拍照開始 / 做影片 / 長任務; Recent 專案 / 生成 / 畫板. Not 拍照. Not hold-to-speak coreFlow.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T06:30:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     },
     {
       "url": "https://bruce23-k7m2.zeabur.app/work/lumen",
@@ -121,7 +156,7 @@
       "pr66Landed": true,
       "copy": "Intro quotes 自動聽 / 拍照開始 / 長任務 / 最近 專案／生成／畫板; Live Demo `/` is the chat creation sphere without claiming hold-to-speak coreFlow.",
       "coreFlowPass": false,
-      "checkedAt": "2026-09-20T06:55:00Z"
+      "checkedAt": "2026-09-20T11:01:00Z"
     }
   ],
   "gates": {
@@ -137,13 +172,14 @@
   "portfolioReady": false,
   "blockers": [
     "Zeabur GraphQL / MCP HTTP 401 with stored token; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
-    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop / Lumen hold-to-speak / SkateHub mileage / FrameLab repair / AI Director OS team / CUTOS demo-clip / Zen Studio generate coreFlow BLOCKED on a real browser; HTTP 200 is not coreFlowPass",
     "tku-zen-agent GitHub is public while README forbids it; visibility change is HUMAN_DECISION_REQUIRED; portfolio must not hydrate knowledge/雲端文件; PR #55 and #57 withhold the source href and explorer view"
   ],
   "nextSteps": [
     "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections",
-    "Verify production /work/lumen quotes 自動聽 / 拍照開始 / 長任務 / 最近 after PR #66 deployment",
-    "Next honesty gap: Folio 給 MCP 與內嵌網站 / 開發者 SDK",
+    "Verify production /work/cutos quotes 匯入影片 / 載入示範影片 / 體驗 AI 剪輯 after PR #72 deployment",
+    "Verify production /work/zen-studio quotes 建立新文宣 / 瀏覽範本庫 / 查看近期活動 after PR #73 deployment",
+    "Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen / SkateHub / FrameLab / AI Director OS / Zen Studio coreFlow stays BLOCKED on a real browser",
     "Continuous UI/UX polish, glassmorphism enhancements and AI concierge tuning",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE"
   ]

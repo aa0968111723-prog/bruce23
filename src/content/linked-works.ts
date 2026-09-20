@@ -128,15 +128,21 @@ export const linkedWorks: Project[] = [
     role: "互動產品：圖鑑、裝備與里程紀錄。",
     decisions: [
       "公開站標題寫「走向健康，走向陽光」。",
+      "首屏 slogan 是「不要在家玩手機，穿上輪鞋出發吧！」，不是抽象的穿上輪鞋。",
       "網域是 dd-k3f9，不要跟 canva2（Folio）混用。",
     ],
     modalities: ["圖像", "互動"],
-    process: ["打開 dd-k3f9.zeabur.app", "逛裝備圖鑑", "記錄滑行里程", "回來看自己的基地"],
+    process: [
+      "打開 dd-k3f9.zeabur.app（標題「直排輪基地 SkateHub｜走向健康，走向陽光」）",
+      "首屏 h1「走向健康，走向陽光」；slogan「不要在家玩手機，穿上輪鞋出發吧！」",
+      "按鈕「瀏覽裝備圖鑑／記錄今天的里程」",
+      "作品集未記錄真實里程",
+    ],
     outputs: ["直排輪基地公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
       "個人紀錄依部署資料庫，不在此公開他人資料。",
-      "2026-09-19 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「收錄市售直排輪款式與配件圖鑑…不要在家玩手機，穿上輪鞋出發吧！」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 h1「走向健康，走向陽光」；slogan「收錄市售直排輪款式與配件圖鑑，打造你的專屬裝備庫，記錄每一公里的滑行足跡。不要在家玩手機，穿上輪鞋出發吧！」；按鈕「瀏覽裝備圖鑑／記錄今天的里程」。沒有登入殼。作品集未記錄真實里程，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/dd",
@@ -150,7 +156,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · dd-k3f9.zeabur.app",
         href: "https://dd-k3f9.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan 含圖鑑與里程。不是 Folio。",
+        note: "2026-09-20 HTTP 200，標題「直排輪基地 SkateHub｜走向健康，走向陽光」。JS 首屏 slogan「不要在家玩手機，穿上輪鞋出發吧！」與按鈕「瀏覽裝備圖鑑／記錄今天的里程」。不是 Folio。",
       },
       {
         label: "GitHub · dd",
@@ -174,19 +180,20 @@ export const linkedWorks: Project[] = [
     decisions: [
       "首頁先問今天可以創作什麼，而不是先給後台選單。",
       "公開站是 delta-horizon-k7f2，GitHub 是 delta-horizon-cliff-fern。",
+      "公開站首屏 h1「今天可以創作什麼？」。按鈕「AI 幫我創作」「看活動」「現在發到期內容」「看月曆」。到期內容寫「沒有審核人。打開工作室會自動發到期內容」。未生成不能當已發。",
     ],
     modalities: ["圖像", "文宣", "日曆"],
     process: [
-      "打開 delta-horizon-k7f2.zeabur.app",
-      "首屏「今天可以創作什麼？」",
-      "看近期活動與 AI 建議",
-      "到期內容沒有審核人，打開工作室會自動發",
+      "打開 delta-horizon-k7f2.zeabur.app（標題「禪學社 Studio」）",
+      "h1「今天可以創作什麼？」；按鈕「AI 幫我創作」「看活動」",
+      "到期內容寫「沒有審核人。打開工作室會自動發到期內容」；按鈕「現在發到期內容」「看月曆」",
+      "作品集未生成貼文也未發到期內容",
     ],
     outputs: ["禪學社 Studio 公開站"],
     stack: ["Web", "Zeabur"],
     limitations: [
       "連 IG 官方發布需額外授權，未接上時只在工作室內排程。",
-      "2026-09-19 GET / HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
+      "2026-09-20 GET / HTTP 200，標題「禪學社 Studio」。h1「今天可以創作什麼？」；按鈕「AI 幫我創作／看活動／現在發到期內容／看月曆」。頁面寫「沒有審核人。打開工作室會自動發到期內容」。作品集未生成一則貼文，coreFlow 未過。",
     ],
     links: {
       github: "https://github.com/aa0968111723-prog/delta-horizon-cliff-fern",
@@ -197,7 +204,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · delta-horizon-k7f2.zeabur.app",
         href: "https://delta-horizon-k7f2.zeabur.app",
-        note: "2026-09-19 HTTP 200，標題「禪學社 Studio」。首屏「今天可以創作什麼？」。到期內容寫明沒有審核人、打開會自動發。",
+        note: "2026-09-20 HTTP 200，標題「禪學社 Studio」。h1「今天可以創作什麼？」；按鈕「AI 幫我創作／看活動／現在發到期內容／看月曆」。到期內容寫明沒有審核人、打開會自動發。",
       },
       {
         label: "GitHub · delta-horizon-cliff-fern",
@@ -413,18 +420,21 @@ export const linkedWorks: Project[] = [
     summary: "Conversational Video Editor：用句子找精華、看時間軸、產出剪輯計畫。公開站 cutos.zeabur.app，與 AI Director 同專案叢集。",
     problem: "粗剪仍要自己拖時間軸。需要先用句子找出精華。",
     role: "剪輯入口設計：對話、時間軸、計畫。",
-    decisions: ["與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。"],
+    decisions: [
+      "與 AI Director OS 同 Zeabur 專案叢集，但產品頁分開。",
+      "公開站首屏產品句「AI 對話式影片剪輯」，頁首有「系統狀態」。主區塊「匯入影片」，說明「可以先載入內建示範影片（內含停頓）」。按鈕「載入示範影片」與「上傳影片…」。未載入不能剪。",
+    ],
     modalities: ["影片", "對話", "時間軸"],
     process: [
-      "打開 cutos.zeabur.app",
-      "首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」，可載入示範影片或上傳",
-      "用一句話描述要剪的意圖",
-      "檢查 Edit Plan 後套用非破壞時間軸",
+      "打開 cutos.zeabur.app（標題 CUTOS — Conversational Video Editor）",
+      "頁首產品句「AI 對話式影片剪輯」，旁有「系統狀態」",
+      "主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片」與「上傳影片…」",
+      "作品集未載入示範片也未上傳真實影片",
     ],
     outputs: ["CUTOS 公開站"],
     stack: ["Next.js", "FFmpeg", "SQLite", "Zeabur"],
     limitations: [
-      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。",
+      "2026-09-20 GET / 標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」；頁首「系統狀態」；主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片／上傳影片…」。/api/health ok。",
       "作品集未載入示範片也未上傳真實影片，coreFlow 未過。",
     ],
     links: {
@@ -436,7 +446,7 @@ export const linkedWorks: Project[] = [
       {
         label: "公開站 · cutos.zeabur.app",
         href: "https://cutos.zeabur.app",
-        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。首屏產品句「AI 對話式影片剪輯」；主區塊「匯入影片」「載入示範影片／上傳影片」。/api/health ok。不是 502。",
+        note: "2026-09-20 HTTP 200，標題 CUTOS — Conversational Video Editor。產品句「AI 對話式影片剪輯」；頁首「系統狀態」；主區塊「匯入影片」；說明「可以先載入內建示範影片（內含停頓）」；按鈕「載入示範影片／上傳影片…」。/api/health ok。不是 502。",
       },
       {
         label: "GitHub · CUTOS",

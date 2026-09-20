@@ -189,8 +189,11 @@ function CabinetStage({ title, ex }: { title: string; ex: ExperienceChrome }) {
       <text x="124" y="140" className="fill-ink" fontSize="7">
         embed
       </text>
-      <text x="16" y="190" className="fill-muted" fontSize="7">
-        {ex.folioOnDevice}
+      <text x="16" y="186" className="fill-muted" fontSize="6">
+        {ex.folioMcpEmbed} · {ex.folioSdk}
+      </text>
+      <text x="16" y="196" className="fill-muted" fontSize="6">
+        {ex.folioOnDevice} · {ex.folioNoLogin}
       </text>
     </svg>
   );
