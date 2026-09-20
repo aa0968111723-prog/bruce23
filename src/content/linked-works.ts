@@ -365,7 +365,7 @@ export const linkedWorks: Project[] = [
       "公開操作建議帶 ?mode=ask。",
       "與 tku-zen-ai（本地引擎）分開寫，避免假裝已接上雲端模型。",
       "未授權時 JS 只打開授權門：h1「淡江大學領袖禪學社」、標籤「請輸入授權碼」、按鈕「進入工作台」。HTML 裡的工作台帶 hidden，不是訪客首屏。",
-      "GitHub 目前是 public，但 README 寫「這個 repo 不可以轉成 public」。作品集不複製 knowledge/雲端文件，也不展示那棵檔案樹。",
+      "來源儲存庫的可見性與自身隱私規則衝突；完成擁有者審查前，作品集暫不提供原始碼連結，也不複製或展示任何檔案樹。",
     ],
     modalities: ["對話", "文書"],
     process: [
@@ -380,11 +380,10 @@ export const linkedWorks: Project[] = [
       "2026-09-20 GET / HTTP 200。/api/auth mode=token authenticated=false。不是 502。",
       "進入工作台需要授權碼。作品集訪客看不到社團資料，coreFlow 未過。",
       "未授權探測沒有進入「用一句話開始」。",
-      "2026-09-20 未登入 GET api.github.com/repos/aa0968111723-prog/tku-zen-agent private:false。README 寫 repo 不可轉 public，因為企劃書與會議紀錄正文仍有幹部與講師姓名。作品集不複製 knowledge/雲端文件，也不把社團名冊寫進本站。",
+      "2026-09-20 repository metadata 與 README 的隱私規則互相衝突。原始碼入口已隱藏，等待擁有者完成 visibility 與內容審查；本站不複製來源文件或名冊。",
       "與本地 tku-zen-ai 不是同一個產品。",
     ],
     links: {
-      github: "https://github.com/aa0968111723-prog/tku-zen-agent",
       live: "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask",
     },
     media: [cover("tku-zen-agent.jpg", "禪學社工作台光域靜物：玻璃控制台與蓮花")],
@@ -395,9 +394,8 @@ export const linkedWorks: Project[] = [
         note: "2026-09-20 HTTP 200。標題「淡江大學領袖禪學社 · 工作台」。GET /api/auth mode=token authenticated=false。GET /api/health 401「請先輸入授權碼」。未授權首屏是授權門，不是工作台。不是 502。建議 ?mode=ask。",
       },
       {
-        label: "GitHub · tku-zen-agent",
-        href: "https://github.com/aa0968111723-prog/tku-zen-agent",
-        note: "2026-09-20 未登入 API private:false。README 寫「這個 repo 不可以轉成 public」。本站不 hydrate 檔案樹、不複製 knowledge/雲端文件。",
+        label: "原始碼 · 暫不公開連結",
+        note: "Repository visibility 與自身隱私規則衝突。完成擁有者審查前不提供 GitHub href、不 hydrate 檔案樹，也不複製來源文件。",
       },
     ],
     visibility: "public",

@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-12",
-  "updatedAt": "2026-09-20T08:00:00Z",
+  "runId": "portfolio-agent-hour-13",
+  "updatedAt": "2026-09-20T09:00:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -806,7 +806,7 @@
     }
   ],
   "portfolioReady": false,
-  "currentProject": "cutos",
+  "currentProject": "tku-zen-agent",
   "currentRepository": "aa0968111723-prog/bruce23",
   "currentBranch": "codex/portfolio-agent-plan",
   "currentPR": 6,
@@ -852,13 +852,18 @@
     "CUTOS canvas intro stamp merged as PR #49 (匯入影片 / 載入示範影片, not 這是作品集逐步走查)",
     "SkateHub canvas intro stamp merged as PR #50 (直排輪款式圖鑑與里程記錄)",
     "Zen Studio canvas intro stamp merged as PR #51 (What can we make today 首頁)",
+    "ty canvas intro stamp merged as PR #52 and live on production /work/focus-challenge (登記畫面 / 關主)",
+    "Tamkang World canvas intro stamp merged as PR #53 and live on production /work/tamkang-world (校園通行證／先以訪客巡禮)",
+    "Tamsui drama canvas intro stamp merged as PR #54 and live on production /work/tamsui-drama (載入淡江·淡水世界)",
+    "Zen source-link containment merged as PR #55 (withhold conflicted Zen source link on public card)",
+    "Xiaocai gallery note merged as PR #56 (live tap-to-log home)",
     "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
     "Made all 8 private GitHub repositories completely public via gh CLI"
   ],
   "remainingSteps": [
     "Merge PR #6 long-term integration plan onto main without duplicate PRs",
-    "Folio / PLANFORM / CUTOS demo-clip coreFlow verification on a real browser",
+    "Folio / PLANFORM / CUTOS demo-clip / ty 60s Stroop coreFlow verification on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
     "Continuous UI/UX polish, glassmorphism and hourly multi-agent sentinel inspections"
@@ -867,13 +872,13 @@
   "testsFailed": 0,
   "buildStatus": "vite-build-pass",
   "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_PLANFORM_PR48_FOLIO_PR49_CUTOS_MERGED",
+  "productionStatus": "PR46_THROUGH_PR56_MERGED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
       "severity": "high",
       "error": "Zeabur GraphQL HTTP 401 / MCP ERROR_INVALID_TOKEN",
-      "evidence": "get-service 6aaab333a91f86e0dd4fc7d9 failed ERROR_INVALID_TOKEN; cannot inspect deployments",
+      "evidence": "list-projects failed ERROR_INVALID_TOKEN; cannot inspect bruce23 6aaab333a91f86e0dd4fc7d9 deployments",
       "requiredAccess": "valid ZEABUR_API_TOKEN",
       "blocks17of17": false,
       "nextAction": "Retry deploy verify after a valid token exists or after auto-deploy of main; HTTP copy probes still work"
@@ -881,7 +886,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, and CUTOS 載入示範影片 need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, and ty 60-second Stroop need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -891,10 +896,10 @@
       "id": "TKU_ZEN_AGENT_PUBLIC_GITHUB",
       "severity": "high",
       "error": "tku-zen-agent GitHub is public while README says the repo must not be public.",
-      "evidence": "2026-09-20 unauthenticated GET api.github.com/repos/aa0968111723-prog/tku-zen-agent private:false. README: 這個 repo 不可以轉成 public. Portfolio will not copy knowledge/雲端文件.",
+      "evidence": "2026-09-20 production /work/tku-zen-agent still links https://github.com/aa0968111723-prog/tku-zen-agent and shows a GitHub canvas chip. PR #55 withholds the href without changing upstream visibility.",
       "requiredAccess": "repo visibility change is HUMAN_DECISION_REQUIRED; do not change it from bruce23",
       "blocks17of17": true,
-      "nextAction": "Keep GitHub sync off for this slug. Do not claim security VERIFIED_PASS."
+      "nextAction": "Merge and deploy PR #55. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
   "gates": {
@@ -907,5 +912,5 @@
     "thumbnail": { "verifiedPass": 0, "total": 17, "status": "NOT_VERIFIED" },
     "securityBlockers": { "verifiedCount": null, "status": "NOT_VERIFIED" }
   },
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After main deploys PR #46-#51, verify production canvas quotes. Folio / PLANFORM / CUTOS coreFlow stays BLOCKED on real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After main deploys PR #46-#56, verify production canvas quotes and Zen source-link containment. Folio / PLANFORM / CUTOS / ty coreFlow stays BLOCKED on real browser. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

@@ -142,7 +142,7 @@ describe("official project registry", () => {
   it("records the ty public flow probe without claiming coreFlow", () => {
     const project = projects.find((item) => item.slug === "focus-challenge");
     assert.ok(project);
-    assert.match(TY_CONTRACT_VERSION, /ty-public-flow-honesty/);
+    assert.match(TY_CONTRACT_VERSION, /ty-register-intro/);
     assert.doesNotMatch(project.summary, /即時看活動狀態/);
     assert.doesNotMatch(project.problem, /不是再填一張表/);
     assert.match(project.summary, /登記|填關主/);
@@ -251,7 +251,7 @@ describe("official project registry", () => {
   it("records Tamkang World campus pass without inventing WASD or a campus atlas", () => {
     const project = projects.find((item) => item.slug === TAMKANG_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-github-public/);
+    assert.match(TAMKANG_LIVE_PROBE_VERSION, /tamkang-canvas-intro/);
     assert.equal(project.links.live, "https://forge-bloom-k7xq.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("校園通行證")));
     assert.ok(project.process.some((item) => item.includes("先以訪客巡禮")));
@@ -292,7 +292,7 @@ describe("official project registry", () => {
   it("records Tamsui drama load splash without inventing episode one", () => {
     const project = projects.find((item) => item.slug === TAMSUI_DRAMA_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TAMSUI_DRAMA_LIVE_PROBE_VERSION, /tamsui-drama-shot-alt/);
+    assert.match(TAMSUI_DRAMA_LIVE_PROBE_VERSION, /tamsui-canvas-intro/);
     assert.equal(project.links.live, "https://tku-tamsui-drama-world-k4x9.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("載入淡江·淡水世界")));
     assert.ok(project.process.every((item) => !item.includes("第一集")));
@@ -328,7 +328,7 @@ describe("official project registry", () => {
   it("records Xiaocai JS first screen without claiming a ledger write coreFlow", () => {
     const project = projects.find((item) => item.slug === XIAOCAI_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-live-slogan/);
+    assert.match(XIAOCAI_LIVE_PROBE_VERSION, /xiaocai-gallery-note/);
     assert.equal(project.links.live, "https://untitled-5.zeabur.app");
     assert.ok(project.process.some((item) => item.includes("快速記一筆")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("快速記一筆")));
@@ -355,7 +355,7 @@ describe("official project registry", () => {
   it("records the Zen desk access-code gate and does not treat GitHub as a clean public dump", () => {
     const project = projects.find((item) => item.slug === TKU_ZEN_AGENT_LIVE_PROBE_SLUG);
     assert.ok(project);
-    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-gate-github/);
+    assert.match(TKU_ZEN_AGENT_LIVE_PROBE_VERSION, /tku-zen-agent-source-link-contained/);
     assert.equal(skipGithubHydrate("tku-zen-agent"), true);
     assert.equal(skipGithubHydrate("tku-zen-ai"), false);
     assert.equal(project.links.live, "https://tku-zen-agent-k7f2.zeabur.app/?mode=ask");
@@ -363,9 +363,13 @@ describe("official project registry", () => {
     assert.ok(project.process.some((item) => item.includes("淡江大學領袖禪學社")));
     assert.ok(project.process.some((item) => item.includes("用一句話開始") && item.includes("作品集未輸入授權碼")));
     assert.ok(project.sourceReferences.some((item) => item.note.includes("請先輸入授權碼")));
-    assert.ok(project.sourceReferences.some((item) => item.href?.includes("github.com") && item.note.includes("不可以轉成 public")));
-    assert.ok(project.limitations.some((item) => item.includes("knowledge/雲端文件")));
+    assert.equal(project.links.github, undefined);
+    assert.ok(project.sourceReferences.every((item) => !item.href?.includes("github.com")));
+    assert.ok(project.sourceReferences.some((item) => item.note.includes("不提供 GitHub href")));
+    assert.ok(project.limitations.some((item) => item.includes("visibility") && item.includes("來源文件")));
     assert.ok(project.limitations.some((item) => item.includes("coreFlow 未過")));
     assert.ok(project.process.every((item) => !/社長|電話|學號/.test(item)));
+    assert.ok(project.limitations.every((item) => !item.includes("knowledge/雲端文件")));
+    assert.ok(project.limitations.every((item) => !item.includes("github.com")));
   });
 });

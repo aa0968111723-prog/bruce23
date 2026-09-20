@@ -82,7 +82,7 @@ export const AIOS_LIVE_PROBE_VERSION = "aios-live-home-20260920";
 
 export const AIOS_LIVE_PROBE_SLUG = "ai-director-os";
 
-export const TY_CONTRACT_VERSION = "ty-public-flow-honesty-20260919";
+export const TY_CONTRACT_VERSION = "ty-register-intro-20260920";
 
 export const TY_CONTRACT_SLUGS = ["focus-challenge"] as const;
 
@@ -110,7 +110,7 @@ export const SKATEHUB_LIVE_PROBE_VERSION = "skatehub-canvas-intro-20260920";
 
 export const SKATEHUB_LIVE_PROBE_SLUG = "skatehub";
 
-export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-github-public-20260920";
+export const TAMKANG_LIVE_PROBE_VERSION = "tamkang-canvas-intro-20260920";
 
 export const TAMKANG_LIVE_PROBE_SLUG = "tamkang-world";
 
@@ -122,7 +122,7 @@ export const ZEN_STUDIO_LIVE_PROBE_VERSION = "zen-studio-canvas-intro-20260920";
 
 export const ZEN_STUDIO_LIVE_PROBE_SLUG = "zen-studio";
 
-export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-drama-shot-alt-20260920";
+export const TAMSUI_DRAMA_LIVE_PROBE_VERSION = "tamsui-canvas-intro-20260920";
 
 export const TAMSUI_DRAMA_LIVE_PROBE_SLUG = "tamsui-drama";
 
@@ -134,7 +134,7 @@ export const HERMES_AGENT_SIGNIN_VERSION = "hermes-agent-signin-20260920";
 
 export const HERMES_AGENT_SIGNIN_SLUG = "hermes-agent";
 
-export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-live-slogan-20260920";
+export const XIAOCAI_LIVE_PROBE_VERSION = "xiaocai-gallery-note-20260920";
 
 export const XIAOCAI_LIVE_PROBE_SLUG = "xiaocai";
 
@@ -142,7 +142,7 @@ export const TKU_ZEN_AI_LIVE_PROBE_VERSION = "tku-zen-ai-agent-not-private-20260
 
 export const TKU_ZEN_AI_LIVE_PROBE_SLUG = "tku-zen-ai";
 
-export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-gate-github-20260920";
+export const TKU_ZEN_AGENT_LIVE_PROBE_VERSION = "tku-zen-agent-source-link-contained-20260920";
 
 export const TKU_ZEN_AGENT_LIVE_PROBE_SLUG = "tku-zen-agent";
 

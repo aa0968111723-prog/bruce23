@@ -73,6 +73,20 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     };
   }
 
+  if (slug === "tamsui-drama") {
+    return {
+      ...base,
+      intro: "公開站首屏是「載入淡江·淡水世界…」，標題「安倢的校園闖關」。這是作品集走查，不是闖關本體。",
+    };
+  }
+
+  if (slug === "tamkang-world") {
+    return {
+      ...base,
+      intro: "公開站未登入是「校園通行證／先以訪客巡禮」。這是作品集走查，不是 3D 校園。",
+    };
+  }
+
   if (slug === "zen-studio") {
     return {
       ...base,
@@ -205,6 +219,7 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     return {
       ...base,
       intro: "公開站是小財記帳 untitled-5。這是作品集說明，不是 Folio 編輯器，也不是作品集後台。",
+      galleryNote: "公開站首屏「點我一下，快速記一筆吧」。這是作品集媒體廊，不是記帳本體。",
     };
   }
 
@@ -216,9 +231,9 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
         engine: "hermes-preview",
         disclaimer: "這是作品集預覽，沒有連到社團資料庫，也不是 Hermes Agent。",
         starter: "公開站未授權只看得到 h1「淡江大學領袖禪學社」與「請輸入授權碼」「進入工作台」。這裡不會假裝已經進入，也不展示社團文件樹。",
-        placeholder: "輸入授權碼、草稿、GitHub",
-        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。本站不複製 knowledge/雲端文件。",
-        suggestions: ["授權碼", "草稿", "GitHub"],
+        placeholder: "輸入授權碼、草稿、來源",
+        sourceNote: "與本站 tku-zen-ai 本地陪伴不是同一個產品。來源連結暫不公開，也不複製來源文件。",
+        suggestions: ["授權碼", "草稿", "來源"],
         replies: [
           {
             match: "授權",
@@ -229,8 +244,8 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
             reply: "授權後的草稿列寫「目前為草稿模式——不會自動發布任何內容」。那不是訪客首屏。",
           },
           {
-            match: "GitHub",
-            reply: "倉庫現在是 public，README 卻寫不可轉 public。本站不複製 knowledge/雲端文件，也不展示那棵檔案樹。",
+            match: "來源",
+            reply: "來源儲存庫的可見性與自身隱私規則衝突。完成擁有者審查前，作品集不提供原始碼連結，也不複製或展示檔案樹。",
           },
         ],
       },
@@ -277,6 +292,13 @@ export function defaultExperienceConfig(slug: string): ExperienceConfig {
     return {
       ...base,
       intro: "公開站首屏是「AI 對話式影片剪輯」與「匯入影片」。可載入示範影片或上傳。這裡是作品集走查，不是線上剪輯器。",
+    };
+  }
+
+  if (slug === "focus-challenge") {
+    return {
+      ...base,
+      intro: "公開站首屏是登記畫面：關主、姓名、科系、年級、電話。不是立刻開打。這是作品集走查，不是現場 60 秒。",
     };
   }
 

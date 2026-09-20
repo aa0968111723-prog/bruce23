@@ -521,7 +521,7 @@ const linkedProjectLocaleEn: Record<string, LocaleCopy> = {
       "Probed 2026-09-20: GET / HTTP 200. /api/auth mode=token authenticated=false. Not 502.",
       "The desk needs an access code. Portfolio visitors cannot see club data, so coreFlow is not passed.",
       "The unsigned probe did not reach Start with one sentence.",
-      "Unauthenticated GitHub API private:false on 2026-09-20. README says this repo must not be public because planning docs still contain officer names. This portfolio does not copy knowledge/雲端文件.",
+      "Repository metadata conflicts with the repo's own privacy rules. The source link is withheld pending owner visibility and content review; this site does not copy source documents or rosters.",
       "Not the local tku-zen-ai companion.",
     ],
   },
