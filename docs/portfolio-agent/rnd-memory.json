@@ -1,16 +1,20 @@
 {
-  "version": 1,
-  "updatedAt": "2026-09-19T09:04:00Z",
+  "version": 2,
+  "updatedAt": "2026-09-22T03:08:00Z",
   "portfolioReady": false,
   "adoptedTech": [],
   "rejectedTech": [
     {
       "id": "REPLACE_FRAMELAB_WITH_OPENCHATCUT",
-      "reason": "lunar and cabin are already FrameLab. Replacing the product is out of scope. Research only the identity split and portfolio mapping."
+      "reason": "lunar and cabin are already FrameLab. Replacing the product is out of scope."
     },
     {
       "id": "TREAT_HTTP_200_AS_CORE_FLOW",
-      "reason": "PR #6 forbids scoring online-ready from status code alone."
+      "reason": "PR #6 section 14 forbids scoring online-ready from status code alone."
+    },
+    {
+      "id": "MERGE_PR_10",
+      "reason": "CJK encoding corruption. Do not merge."
     }
   ],
   "identityDecisions": [
@@ -18,32 +22,37 @@
       "key": "hermes-agent",
       "canonicalPublicUrl": "https://hermes-agent-k7q2.zeabur.app/",
       "staleUrl": "https://455.zeabur.app/sessions",
-      "evidence": [
-        "2026-09-19 curl 455.zeabur.app and /sessions both HTTP 502, 11-byte body",
-        "2026-09-19 hermes-agent-k7q2.zeabur.app HTTP 302 -> /login HTTP 200 title Sign in — Hermes Agent",
-        "login HTML references @nous-research/ui fonts"
-      ],
-      "status": "canonical_url_proposed"
+      "status": "canonical_url_live_on_portfolio_sign_in_boundary",
+      "probedVersion": "0.18.2"
     },
     {
       "key": "cabin-shale-raven-swift",
-      "liveTitle": "FrameLab",
-      "repoReadmeTitle": "FrameLab",
-      "packageName": "framelab",
-      "packageRepository": "https://github.com/aa0968111723-prog/FrameLab.git",
       "canonicalProductName": "FrameLab",
+      "liveHost": "https://cabin-shale-k7q2.zeabur.app",
       "status": "identity_confirmed_as_framelab"
     },
     {
       "key": "lunar-crystal-falcon-granite",
-      "liveTitle": "FrameLab",
-      "repoReadmeTitle": "FrameLab",
-      "packageName": "app-builder-workspace",
       "relationship": "duplicate_or_older_framelab_deploy",
       "status": "do_not_invent_new_product"
+    },
+    {
+      "key": "canva2",
+      "canonicalProductName": "Folio",
+      "liveHost": "https://canva2-k7qm.zeabur.app/"
+    },
+    {
+      "key": "dd",
+      "canonicalProductName": "SkateHub",
+      "liveHost": "https://dd-k3f9.zeabur.app/"
+    },
+    {
+      "key": "tku-tamsui-drama-world",
+      "canonicalProductName": "淡江新生導覽 / drama world",
+      "liveHost": "https://tku-tamsui-drama-world-k4x9.zeabur.app/"
     }
   ],
-  "nextRepairTask": "HERMES-AGENT-URL-CANONICAL",
-  "nextUpgradeTask": "FRAMELAB-IDENTITY-SPLIT",
-  "nextResearchHour": "Write Playwright smoke scaffold for portfolio homepage + one public tool; do not score 70."
+  "nextRepairTask": "FOLIO-PUBLIC-CABINET-EVIDENCE",
+  "nextUpgradeTask": "LAND-PORTFOLIO-AGENT-PLAN-ON-MAIN",
+  "nextResearchHour": "Do not score 70. Browser cabinet path on canva2-k7qm. Leave PLANFORM to PR #64."
 }
