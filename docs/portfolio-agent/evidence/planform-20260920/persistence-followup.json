@@ -1,0 +1,44 @@
+{
+  "runId": "codex-planform-persist-0701",
+  "verifiedAt": "2026-09-20T07:03:29.841Z",
+  "url": "https://planform-iso-k7d2.zeabur.app/",
+  "task": "Verify exact persisted chair name and coordinates",
+  "result": "PASS_FOR_THIS_CHECK_ONLY",
+  "method": [
+    "Open public URL in a new browser tab; retained synthetic project opens automatically.",
+    "Select the visibly moved chair, then QA chair in the overlap picker.",
+    "Read inspector name, display label, X and Z; dismiss picker and capture screenshot."
+  ],
+  "project": "Codex QA 20260920 PLANFORM",
+  "observed": {
+    "name": "QA chair",
+    "displayLabel": "QA chair",
+    "xCm": 720,
+    "zCm": 480,
+    "elevationCm": 0
+  },
+  "expected": {
+    "name": "QA chair",
+    "xCm": 720,
+    "zCm": 480
+  },
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "documentScrollWidth": 1440
+  },
+  "artifact": "desktop-persistence-confirmed.jpg",
+  "artifactFormat": "JPEG/JFIF; signature verified",
+  "conclusion": "Native keyboard edits from the preceding run persisted across a new tab. The earlier locator-fill observation does not establish an application persistence defect.",
+  "gatePromotion": false,
+  "overallStatus": "IN_PROGRESS",
+  "remaining": [
+    "drag",
+    "undo/redo",
+    "mobile touch interaction",
+    "error recovery",
+    "full security and readiness acceptance"
+  ],
+  "nextTask": "Verify drag and undo/redo on this synthetic chair; use exact before/after coordinates and confirm restoration.",
+  "safety": "Read-only UI verification of existing synthetic project; no new data edits, credentials, AI requests or remote sharing. Shared main checkout merge untouched; browser viewport reset."
+}

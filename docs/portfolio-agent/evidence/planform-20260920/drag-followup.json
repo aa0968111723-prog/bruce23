@@ -1,0 +1,33 @@
+{
+  "runId": "codex-planform-drag-1101",
+  "reportedAt": "2026-09-20T11:05:10.056Z",
+  "status": "IN_PROGRESS",
+  "url": "https://planform-iso-k7d2.zeabur.app/",
+  "task": "Desktop drag/undo/redo verification",
+  "result": "INCONCLUSIVE_INTERACTION_BLOCKER",
+  "project": "Codex QA 20260920 PLANFORM",
+  "initial": {
+    "name": "QA chair",
+    "xCm": 720,
+    "zCm": 480
+  },
+  "observations": [
+    "At 1440x900 in the restored scene, drag from visible chair (950,464) to (1030,500) opened an overlap picker containing QA chair and 地墊區 B. Scene framing moved; no chair translation was verified.",
+    "Selected QA chair. Inspector still showed X=720, Z=480. Closed picker and dragged the selected chair from (865,492) to (970,540); overlap picker opened again.",
+    "Closed picker. Attempted precision input X=780, then undo. Field still showed 780 while wall-distance summary remained consistent with earlier position. Retried native keyboard with X=840 and undo, then right nudge; no reliable model-state transition was observed. Input values alone are not accepted as evidence.",
+    "Switching to 場佈 did not visibly take effect in that interaction sequence. No error/warning log entries were captured.",
+    "Reloaded, then clicked 場佈. Checkbox changed to selected and material library appeared. Recovery screenshot saved."
+  ],
+  "classification": "The automated drag path encountered overlap selection and subsequent unreliable UI updates. Root cause is unconfirmed: may involve pointer/input automation or application interaction handling. This is not a confirmed product regression.",
+  "acceptance": {
+    "drag": "NOT_VERIFIED",
+    "undo": "NOT_VERIFIED",
+    "redo": "NOT_RUN_WITH_VERIFIED_EDIT",
+    "gatePromotion": false,
+    "readinessScore": null
+  },
+  "artifact": "drag-recovery.jpg",
+  "artifactMeaning": "Scene and layout tools after reload; not proof of successful drag or undo.",
+  "nextTask": "Inspect PLANFORM overlap-selection/pointer lifecycle against source and reproduce with a non-overlapping synthetic object in 場佈 mode before proposing any external repair PR.",
+  "safety": "No external code/service/environment changes. Only existing synthetic local project used; no credentials, AI or remote sharing. Main checkout merge untouched. Viewport reset."
+}
