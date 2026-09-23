@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "runId": "portfolio-agent-hour-23",
-  "updatedAt": "2026-09-20T19:00:00Z",
+  "runId": "portfolio-integrity-main-sync-20260920T1613Z",
+  "updatedAt": "2026-09-20T16:13:00Z",
   "overallStatus": "IN_PROGRESS",
   "verificationStatus": "ENDPOINT_BASELINE_COMPLETE_CORE_FLOWS_NOT_VERIFIED",
   "scope": {
@@ -51,19 +51,21 @@
       "status": "NOT_VERIFIED"
     }
   },
-  "activeTask": "reconcile-pr27-with-pr6",
+  "activeTask": "reconcile-pr67-with-main-xiaocai",
   "highestPriorityIssue": {
-    "id": "PORTFOLIO-GATE-AGGREGATE-MISMATCH",
+    "id": "PR67-LATEST-MAIN-STATE-PRESERVATION",
     "severity": "critical",
-    "status": "FIXED_IN_PR_27_PENDING_MERGE",
-    "observed": "The shared state had two top-level gates objects. JSON.parse retained the later stale object, reporting online and completeInfo 17/17 plus security VERIFIED_PASS while all 17 project records were false or unreviewed.",
-    "impact": "Agents and reports could mistake HTTP reachability or zero known incidents for completed functional, information or security acceptance."
+    "status": "FIXED_IN_PR_67_PENDING_REVIEW",
+    "observed": "Main commit 13b9d34 added the latest Xiaocai implementation but replaced the rich 17-project coordination state with a compact snapshot. PR #67 was based on the previous main commit, so integrating either side without reconciliation could discard the latest product progress or the full project evidence.",
+    "impact": "Agents could lose the canonical 17-project records, overwrite Grok progress, or reintroduce stale completion claims while resolving PR #6 conflicts."
   },
   "inspectionLimitations": [
-    "No new live core-flow, mobile, desktop, visual or security evidence gathered in this merge repair.",
-    "Historical probe claims have future timestamps; retained as unverified in runtime-report.json."
+    "HTTP reachability is not functional acceptance and does not promote any gate.",
+    "Main commit 13b9d34 contains the Xiaocai portfolio-copy implementation, but this run has not promoted Xiaocai write, mobile, desktop, readiness, thumbnail or security acceptance.",
+    "PLANFORM evidence in PR #64 confirms keyboard persistence, but drag and undo/redo remain inconclusive after overlap-picker interference; mobile touch, error recovery and full security acceptance are not verified.",
+    "The source visibility conflict requires an owner decision and remains a security blocker."
   ],
-  "nextTask": "Verify PLANFORM public core flow with real desktop/mobile operation after PR #27 integration.",
+  "nextTask": "Review PR #67's latest-main reconciliation, then continue PR #64 by reproducing PLANFORM drag and undo/redo on a non-overlapping synthetic object.",
   "projects": [
     {
       "key": "forge-bloom-quiet-falcon",
@@ -872,24 +874,25 @@
     "AI Director OS live landing CTAs merged as PR #71 and live: /work/ai-director-os quotes 進入工作台 / 查看最新版本 / 探索更多功能 without claiming a team coreFlow",
     "CUTOS live landing CTAs merged as PR #72 and live: /work/cutos quotes 系統狀態 / 上傳影片… / 內含停頓 without claiming a demo-clip coreFlow",
     "Zen Studio live landing CTAs merged as PR #73 and live: /work/zen-studio quotes AI 幫我創作 / 看活動 / 現在發到期內容 / 看月曆 without claiming a generate coreFlow",
-    "Probed all 19 endpoints (17 projects + main + Hermes backend) 100% HTTP 200 with low latency",
+    "Xiaocai portfolio-copy implementation landed on main at 13b9d34; production /work/xiaocai and ledger-write coreFlow remain unverified",
+    "Recorded a sentinel HTTP reachability baseline without promoting any functional gate",
     "Launched Luminous Studio Portfolio AI Concierge (PortfolioConcierge) on site shell",
-    "Made all 8 private GitHub repositories completely public via gh CLI"
+    "Recorded current repository visibility without treating publication as security acceptance"
   ],
   "remainingSteps": [
-    "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections",
-    "Verify production /work/cutos quotes 系統狀態 / 上傳影片… / 內含停頓 after PR #72 deployment",
-    "Verify production /work/zen-studio quotes AI 幫我創作 / 看活動 / 現在發到期內容 / 看月曆 after PR #73 deployment",
-    "Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen / SkateHub / FrameLab / AI Director OS / Zen Studio coreFlow stays BLOCKED on a real browser",
+    "Review and integrate PR #67 into PR #6 without discarding main commit 13b9d34 or the canonical 17-project evidence",
+    "Verify production /work/xiaocai quotes 收支明細 / 小財 / 更多 with 點我一下，快速記一筆吧; do not claim a ledger-write coreFlow",
+    "Continue PLANFORM PR #64 with non-overlapping drag, undo/redo, mobile touch and error-recovery evidence",
+    "Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen / SkateHub / FrameLab / AI Director OS / Zen Studio / Xiaocai coreFlow stays BLOCKED on a real browser",
     "Making tku-zen-agent private is HUMAN_DECISION_REQUIRED",
     "Do not merge PR #10. PORTFOLIO_READY stays FALSE",
     "Continuous UI/UX polish, glassmorphism enhancements and hourly multi-agent sentinel inspections"
   ],
-  "testsPassed": 329,
+  "testsPassed": 130,
   "testsFailed": 0,
-  "buildStatus": "vite-build-pass",
-  "deploymentStatus": "PR_6_OPEN",
-  "productionStatus": "PR46_THROUGH_PR73_MERGED",
+  "buildStatus": "main-13b9d34-targeted-tests-and-vite-build-pass",
+  "deploymentStatus": "PR_6_PR_64_PR_67_OPEN",
+  "productionStatus": "MAIN_13B9D34_LANDED_XIAOCAI_PORTFOLIO_DEPLOY_NOT_FRESHLY_VERIFIED",
   "blockers": [
     {
       "id": "ZEABUR_TOKEN",
@@ -903,7 +906,7 @@
     {
       "id": "BROWSER_COREFLOW",
       "severity": "high",
-      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, Lumen hold-to-speak, SkateHub mileage, and Zen Studio generate need a real browser.",
+      "error": "HTTP 200 is not coreFlowPass. Folio file-cabinet, PLANFORM 我的專案→拖動物件, CUTOS 載入示範影片, ty 60-second Stroop, Lumen hold-to-speak, SkateHub mileage, Zen Studio generate, and Xiaocai ledger write need a real browser.",
       "evidence": "No headless browser in this agent loop; copy probes only",
       "requiredAccess": "browser coreFlow operator",
       "blocks17of17": true,
@@ -919,5 +922,5 @@
       "nextAction": "Do not change tku-zen-agent GitHub visibility. Keep GitHub sync off. Do not claim security VERIFIED_PASS."
     }
   ],
-  "nextExactStep": "Maintain single-writer PR #6 as official multi-agent plan and guide Grok bot inspections. After PR #72 and PR #73 deploy, verify production /work/cutos quotes 系統狀態 / 上傳影片… / 內含停頓, and /work/zen-studio quotes 建立新文宣 / 瀏覽範本庫 / 查看近期活動. Do not claim a demo-clip or generate coreFlow. Folio / PLANFORM / CUTOS / ty 60s Stroop / Lumen / SkateHub / FrameLab / AI Director OS / Zen Studio coreFlow stays BLOCKED on a real browser. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
+  "nextExactStep": "Review and integrate PR #67 into PR #6 without losing main 13b9d34 or the 17-project evidence. Then verify production /work/xiaocai copy and continue PR #64 on a non-overlapping PLANFORM object. Do not claim Xiaocai write or PLANFORM drag coreFlow. Do not change tku-zen-agent GitHub visibility. Do not merge PR #10. PORTFOLIO_READY stays FALSE."
 }

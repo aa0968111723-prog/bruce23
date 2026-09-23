@@ -1,0 +1,68 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+function loadJson(path) {
+  return JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
+}
+
+const state = loadJson("../docs/portfolio-agent/state.json");
+const report = loadJson("../docs/portfolio-agent/runtime-report.json");
+
+test("shared report cannot claim verified security while the gate is unverified", () => {
+  if (state.gates.securityBlockers.status !== "VERIFIED_PASS") {
+    assert.doesNotMatch(String(report.validation.security), /^VERIFIED/);
+  }
+});
+
+test("shared coordination state cannot keep a merged repair pending", () => {
+  if (report.github.mergedRepair.includes(27)) {
+    assert.notEqual(state.activeTask, "reconcile-pr27-with-pr6");
+    assert.doesNotMatch(JSON.stringify(state.highestPriorityIssue), /PR_27_PENDING_MERGE/);
+    assert.doesNotMatch(String(state.nextTask), /PR #27 integration/);
+  }
+});
+
+test("timestamps and reachability wording remain evidence-safe", () => {
+  const generatedAt = Date.parse(report.generatedAt);
+  const updatedAt = Date.parse(state.updatedAt);
+  assert.ok(Number.isFinite(generatedAt));
+  assert.equal(updatedAt, generatedAt);
+  assert.ok(generatedAt <= Date.now() + 5 * 60 * 1000, "report timestamp must not be in the future");
+
+  if (state.gates.online.status !== "VERIFIED_PASS") {
+    assert.doesNotMatch(String(report.validation.browser), /^VERIFIED_200_ALL/);
+    assert.doesNotMatch(String(report.validation.browser), /19_OF_19/);
+    assert.doesNotMatch(state.completedSteps.join("\n"), /100% HTTP 200/);
+  }
+
+  const hasVisibilityBlocker = state.blockers?.some(
+    (blocker) => blocker.id === "TKU_ZEN_AGENT_PUBLIC_GITHUB",
+  );
+  if (hasVisibilityBlocker) {
+    assert.doesNotMatch(state.completedSteps.join("\n"), /Made all .*private .*public/i);
+  }
+});
+
+test("repair inventories remain unique and mutually exclusive", () => {
+  const merged = new Set(report.github.mergedRepair);
+  const open = new Set(report.github.openRepair);
+  const doNotMerge = new Set(report.github.doNotMerge);
+
+  assert.equal(open.size, report.github.openRepair.length);
+  assert.equal(merged.size, report.github.mergedRepair.length);
+  assert.equal(doNotMerge.size, report.github.doNotMerge.length);
+  for (const pullRequest of open) {
+    assert.ok(!merged.has(pullRequest));
+    assert.ok(!doNotMerge.has(pullRequest));
+  }
+});
+
+test("main integration cannot replace the canonical 17-project coordination snapshot", () => {
+  assert.equal(state.runId, report.runId);
+  assert.equal(state.projects.length, 17);
+  assert.ok(state.gates.thumbnail);
+  assert.ok(state.highestPriorityIssue);
+  assert.equal(report.portfolioReady, false);
+  assert.match(String(report.inspectedCommit), /^[0-9a-f]{7,40}$/);
+});

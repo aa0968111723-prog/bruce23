@@ -216,6 +216,14 @@ describe("experience playable chrome", () => {
     assert.match(studioEn.intro ?? "", /See calendar/);
     assert.equal(studioZh.walkthrough?.[0]?.title, "今天可以創作什麼");
     assert.equal(studioEn.walkthrough?.[0]?.title, "What can we make today");
+    const xiaocaiZh = overlayExperienceConfig(defaultExperienceConfig("xiaocai"), "xiaocai", "zh");
+    const xiaocaiEn = overlayExperienceConfig(defaultExperienceConfig("xiaocai"), "xiaocai", "en");
+    assert.match(xiaocaiZh.galleryNote ?? "", /收支明細/);
+    assert.match(xiaocaiZh.intro ?? "", /收支明細/);
+    assert.doesNotMatch(xiaocaiZh.galleryNote ?? "", /只顯示已發布媒體/);
+    assert.match(xiaocaiEn.galleryNote ?? "", /Transactions/);
+    assert.match(xiaocaiEn.intro ?? "", /Transactions/);
+    assert.equal(xiaocaiEn.walkthrough?.[0]?.title, "Open the ledger");
     const hermesEn = overlayExperienceConfig(defaultExperienceConfig("hermes-console"), "hermes-console", "en");
     assert.match(hermesEn.honestyLabel ?? "", /not connected to the Hermes runtime/i);
     assert.match(hermesEn.intro ?? "", /What do you want to do today/i);
